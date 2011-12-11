@@ -1,0 +1,40 @@
+<idea-plugin version="2">
+    <name>IntelliJ4R</name>
+    <description>A coding tools for Intellij Idea</description>
+    <version>0.1</version>
+    <vendor>Holger Brandl</vendor>
+    <idea-version since-build="8000"/>
+
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
+
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
+
+    <actions>
+        <!-- Add your actions here -->
+        <group id="MyPlugin.SampleMenu" text="_Sample Menu" description="Sample menu">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+            <action id="Myplugin.Textboxes" class="com.r4intellij.TextBoxes" text="Text _Boxes"
+                    description="A test menu item"/>
+            <!--<action id="Myplugin.Dialogs" class="com.r4intellij.MyShowDialog" text="Show _Dialog" description="A test menu item" />-->
+        </group>
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <fileTypeFactory implementation="com.r4intellij.file.RFileTypeFactory"/>
+
+        <lang.parserDefinition language="R"
+                               implementationClass="com.r4intellij.lang.parser.RParserDefinition"/>
+
+        <lang.braceMatcher language="R"
+                           implementationClass="com.r4intellij.editor.highlighting.RBraceMatcher"/>
+
+        <lang.commenter language="R"
+                        implementationClass="com.r4intellij.editor.highlighting.RCommenter"/>
+
+    </extensions>
+</idea-plugin>
