@@ -1,6 +1,6 @@
 <idea-plugin version="2">
-    <name>IntelliJ4R</name>
-    <description>A coding tools for Intellij Idea</description>
+    <name>R4Intellij</name>
+    <description>R coding tools for Intellij Idea</description>
     <version>0.1</version>
     <vendor>Holger Brandl</vendor>
     <idea-version since-build="8000"/>
