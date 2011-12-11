@@ -1,19 +1,8 @@
 /*
- * Copyright 2010 Holger Brandl
- * File: BashTokenTypes.java, Class: BashTokenTypes
- * Last modified: 2010-05-26
+ * Copyright 2011 Holger Brandl
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * This code is licensed under BSD. For details see
+ * http://www.opensource.org/licenses/bsd-license.php
  */
 
 package com.r4intellij.lang.lexer;
@@ -27,7 +16,7 @@ import com.r4intellij.file.RFileType;
 
 /**
  * Identifies all of the token types (at least, the ones we'll care about) in Arc.
- * Used by the lexer to break a Bash source file down into tokens.
+ * Used by the lexer to break a R source file down into tokens.
  *
  * @author Holger Brandl
  */
@@ -55,7 +44,7 @@ public interface RTokenTypes {
     IElementType LEFT_SQUARE = new RElementType("[ (left square)");
     IElementType RIGHT_SQUARE = new RElementType("] (right square)");
 
-    // bash reserved keywords, in alphabetic order
+    // R reserved keywords, in alphabetic order
 //    IElementType BANG_TOKEN = new RElementType("!"); //!
     IElementType CASE_KEYWORD = new RElementType("case"); //case
     IElementType DO_KEYWORD = new RElementType("do"); //do

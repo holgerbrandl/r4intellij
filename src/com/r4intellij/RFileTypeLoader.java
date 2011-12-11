@@ -13,13 +13,6 @@ import com.r4intellij.file.RFileType;
 import org.jetbrains.annotations.NotNull;
 
 
-/**
- * Created by IntelliJ IDEA.
- * User: kurtc
- * Date: Mar 2, 2009
- * Time: 9:59:50 AM
- * To change this template use File | Settings | File Templates.
- */
 public class RFileTypeLoader extends FileTypeFactory {
 
     public static final RFileType R_FILE_TYPE = new RFileType();

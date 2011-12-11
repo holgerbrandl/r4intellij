@@ -19,12 +19,9 @@ import static com.r4intellij.lang.lexer.RTokenTypes.*;
 
 
 /**
- * Braces matcher for bash files. Referenced by the plugin.xml file.
- * <p/>
- * Date: 23.03.2009
- * Time: 15:06:18
+ * Braces matcher for R files. Referenced by the plugin.xml file.
  *
- * @author Joachim Ansorg
+ * @author Holger Brandl
  */
 public class RBraceMatcher implements PairedBraceMatcher {
 

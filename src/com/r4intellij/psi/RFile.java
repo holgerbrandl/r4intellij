@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * PSI element for an Arc file
+ *
+ * @author Holger Brandl
  */
 public class RFile extends PsiFileBase {
 
