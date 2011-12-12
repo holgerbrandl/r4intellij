@@ -2,7 +2,7 @@
     <name>R4Intellij</name>
     <description>R coding tools for Intellij Idea</description>
     <version>0.3</version>
-    <vendor>Holger Brandl</vendor>
+    <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
 
     <description><![CDATA[
@@ -80,13 +80,6 @@
             <separator/>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </group>
-
-        <!--<group id="MyPlugin.SampleMenu" text="_Sample Menu" description="Sample menu">-->
-        <!--<add-to-group group-id="MainMenu" anchor="last"/>-->
-        <!--<action id="Myplugin.Textboxes" class="com.r4intellij.TextBoxes" text="Text _Boxes"-->
-        <!--description="A test menu item"/>-->
-        <!--&lt;!&ndash;<action id="Myplugin.Dialogs" class="com.r4intellij.MyShowDialog" text="Show _Dialog" description="A test menu item" />&ndash;&gt;-->
-        <!--</group>-->
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
