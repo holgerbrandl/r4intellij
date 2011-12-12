@@ -45,7 +45,6 @@ public interface RTokenTypes {
     IElementType RIGHT_SQUARE = new RElementType("] (right square)");
 
     // R reserved keywords, in alphabetic order
-//    IElementType BANG_TOKEN = new RElementType("!"); //!
     IElementType CASE_KEYWORD = new RElementType("case"); //case
     IElementType DO_KEYWORD = new RElementType("do"); //do
     IElementType DONE_KEYWORD = new RElementType("done"); //done
@@ -77,10 +76,7 @@ public interface RTokenTypes {
     IElementType DOT = new RElementType(".");
     IElementType TILDE = new RElementType("~");
 
-    IElementType ASSIGNMENT = new RElementType("assignment_word"); //"a" =2
-    IElementType DOLLAR = new RElementType("$");
-
-
+    IElementType ASSIGNMENT = new RElementType("assignment_word");
     IElementType LOG_OPERATOR = new RElementType("logical operator");
     IElementType LIST_SUBSET = new RElementType("$");
     IElementType VARARGS = new RElementType("...");

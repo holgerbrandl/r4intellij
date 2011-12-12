@@ -1,9 +1,60 @@
 <idea-plugin version="2">
     <name>R4Intellij</name>
     <description>R coding tools for Intellij Idea</description>
-    <version>0.1</version>
+    <version>0.3</version>
     <vendor>Holger Brandl</vendor>
     <idea-version since-build="8000"/>
+
+    <description><![CDATA[
+  <html>
+    <h3>R support for IntelliJ</h3>
+
+    This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features
+    or to point out bugs at our <a href="https://code.google.com/p/r4intellij/">project homepage.</a>
+    <br>
+    <b>Features:</b><br>
+    <ul>
+        <li> Advanced syntax highlighting and configuration</li>
+        <li> Evaluate the current selection or line in R (MacOS only for now)</li>
+        <li> Line un-/commenting, brace matching</li>
+        <li> Various live templates</li>
+    </ul>
+
+    <br>
+    <b>Coming soon & Planned</b>
+    <ul>
+        <li> Code formatter (turned off by default)</li>
+        <li> Autocompletion for variables, functions and file paths</li>
+        <li> Inspections and quickfixes for common problems</li>
+        <li> Basic refactorings (rename variables, functions and heredoc markers)</li>
+        <li> Advanced navigation (structure view, go to declaration, ...)</li>
+        <li> Ctrl+Q (Quick documentation lookup) for internal commands, external commands and functions</li>
+        <li> Highlight usages in file for functions and variables</li>
+        <li> Code folding</li>    
+        <li> R Console within Intellij</li>    
+    </ul>
+  </html>
+  ]]></description>
+
+    <change-notes><![CDATA[
+    <html>
+       <b>Changes in version 0.3:</b>
+       <ul>
+         <li>Evaluate selection of current line in R (MacOS only)</li>
+         <li>Improved code highlighting</li>
+       </ul>
+
+       <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+       <ul>
+         <li>Syntax highlighting</li>
+         <li>Comment code blocks with usual shortcut ⌘/ </li>
+         <li>Register .R as file type</li>
+       </ul>
+    </html>
+    ]]>
+    </change-notes>
+
 
     <application-components>
         <!-- Add your application components here -->
@@ -14,13 +65,28 @@
     </project-components>
 
     <actions>
-        <!-- Add your actions here -->
-        <group id="MyPlugin.SampleMenu" text="_Sample Menu" description="Sample menu">
-            <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="Myplugin.Textboxes" class="com.r4intellij.TextBoxes" text="Text _Boxes"
-                    description="A test menu item"/>
-            <!--<action id="Myplugin.Dialogs" class="com.r4intellij.MyShowDialog" text="Show _Dialog" description="A test menu item" />-->
+        <group class="com.r4intellij.actions.RActionGroup" id="ArcEditorActionGroup">
+
+            <separator/>
+            <action id="EvalSelction" class="com.r4intellij.actions.RunSelectedTextOrLineAction" text="Evaluate"
+                    description="Evaluates the current line or selection in R">
+                <keyboard-shortcut keymap="$default" first-keystroke="meta alt ENTER"/>
+            </action>
+            <action id="HeadSelction" class="com.r4intellij.actions.EvalHeadOfCurVarAction" text="head+nrow"
+                    description="Evaluates head and nrow for the current data.frame object">
+                <keyboard-shortcut keymap="$default" first-keystroke="meta H"/>
+            </action>
+
+            <separator/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
         </group>
+
+        <!--<group id="MyPlugin.SampleMenu" text="_Sample Menu" description="Sample menu">-->
+        <!--<add-to-group group-id="MainMenu" anchor="last"/>-->
+        <!--<action id="Myplugin.Textboxes" class="com.r4intellij.TextBoxes" text="Text _Boxes"-->
+        <!--description="A test menu item"/>-->
+        <!--&lt;!&ndash;<action id="Myplugin.Dialogs" class="com.r4intellij.MyShowDialog" text="Show _Dialog" description="A test menu item" />&ndash;&gt;-->
+        <!--</group>-->
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

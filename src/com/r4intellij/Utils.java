@@ -39,4 +39,21 @@ public class Utils {
         }
     }
 
+
+    public static boolean isWindowsPlatform() {
+        String os = System.getProperty("os.name");
+        return os != null && os.startsWith("Windows");
+    }
+
+
+    public static boolean isMacOSX() {
+        String osName = System.getProperty("os.name");
+        return osName.startsWith("Mac OS X");
+    }
+
+
+    public static boolean isLinux() {
+        return !isWindowsPlatform() & !isMacOSX();
+    }
+
 }
