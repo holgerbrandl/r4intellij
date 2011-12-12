@@ -8,6 +8,7 @@
 package com.r4intellij.editor.highlighting;
 
 import com.intellij.lexer.Lexer;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.SyntaxHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -33,15 +34,17 @@ import java.util.Map;
  */
 public class RSyntaxHighlighter extends SyntaxHighlighterBase implements RTokenTypes {
 
+    private static final Logger log = Logger.getInstance("#RPlugin");
+
     private static final TokenSet lineCommentSet = TokenSet.create(COMMENT);
     private static final TokenSet parenthesisSet = TokenSet.create(LEFT_PAREN, RIGHT_PAREN);
     private static final TokenSet curlySet = TokenSet.create(LEFT_CURLY, RIGHT_CURLY);
     private static final TokenSet bracketSet = TokenSet.create(LEFT_SQUARE, RIGHT_SQUARE);
     private static final TokenSet string2Set = TokenSet.create(RTokenTypes.STRING_LITERAL);
     private static final TokenSet numberSet = TokenSet.create(RTokenTypes.NUMBER, INTEGER_LITERAL);
-    private static final TokenSet internalCommandSet = TokenSet.create(RTokenTypes.INTERNAL_COMMAND);
-    private static final TokenSet varUseSet = TokenSet.create(RTokenTypes.VARIABLE);
-    private static final TokenSet badCharacterSet = TokenSet.create(RTokenTypes.BAD_CHARACTER);
+//    private static final TokenSet internalCommandSet = TokenSet.create(RTokenTypes.INTERNAL_COMMAND);
+//    private static final TokenSet varUseSet = TokenSet.create(RTokenTypes.VARIABLE);
+//    private static final TokenSet badCharacterSet = TokenSet.create(RTokenTypes.BAD_CHARACTER);
 
     @NonNls
     public static final String LINE_COMMENT_ID = "Line comment";
@@ -117,14 +120,14 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase implements RTokenT
     public static final TextAttributesKey BRACKET = TextAttributesKey.createTextAttributesKey(BRACKETS_ID);
     public static final TextAttributesKey STRING2 = TextAttributesKey.createTextAttributesKey(STRING_ID);
     public static final TextAttributesKey NUMBER = TextAttributesKey.createTextAttributesKey(NUMBER_ID);
-    public static final TextAttributesKey INTERNAL_COMMAND = TextAttributesKey.createTextAttributesKey(INTERNAL_COMMAND_ID);
-    public static final TextAttributesKey VAR_USE = TextAttributesKey.createTextAttributesKey(VAR_USE_ID);
-    public static final TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(BAD_CHARACTER_ID);
-
-    //psi highlighting
-    public static final TextAttributesKey FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(FUNCTION_CALL_ID);
-    public static final TextAttributesKey VAR_DEF = TextAttributesKey.createTextAttributesKey(VAR_DEF_ID);
-    public static final TextAttributesKey VAR_USE_BUILTIN = TextAttributesKey.createTextAttributesKey(VAR_USE_BUILTIN_ID);
+//    public static final TextAttributesKey INTERNAL_COMMAND = TextAttributesKey.createTextAttributesKey(INTERNAL_COMMAND_ID);
+//    public static final TextAttributesKey VAR_USE = TextAttributesKey.createTextAttributesKey(VAR_USE_ID);
+//    public static final TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(BAD_CHARACTER_ID);
+//
+//    //psi highlighting
+//    public static final TextAttributesKey FUNCTION_CALL = TextAttributesKey.createTextAttributesKey(FUNCTION_CALL_ID);
+//    public static final TextAttributesKey VAR_DEF = TextAttributesKey.createTextAttributesKey(VAR_DEF_ID);
+//    public static final TextAttributesKey VAR_USE_BUILTIN = TextAttributesKey.createTextAttributesKey(VAR_USE_BUILTIN_ID);
 
     //
     public static final TextAttributesKey NONE = HighlighterColors.TEXT;
@@ -170,18 +173,21 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase implements RTokenT
         fillMap(attributes, bracketSet, BRACKET);
         fillMap(attributes, string2Set, STRING2);
         fillMap(attributes, numberSet, NUMBER);
-        fillMap(attributes, internalCommandSet, INTERNAL_COMMAND);
-        fillMap(attributes, varUseSet, VAR_USE);
-        fillMap(attributes, badCharacterSet, BAD_CHARACTER);
+//        fillMap(attributes, internalCommandSet, INTERNAL_COMMAND);
+//        fillMap(attributes, varUseSet, VAR_USE);
+//        fillMap(attributes, badCharacterSet, BAD_CHARACTER);
     }
 
     @NotNull
     public Lexer getHighlightingLexer() {
+        log.warn("creat new lexer");
+
         return new RLexer();
     }
 
     @NotNull
     public TextAttributesKey[] getTokenHighlights(final IElementType tokenType) {
+//        log.warn("getTokenHighlightslo");
         return pack(attributes.get(tokenType));
     }
 }

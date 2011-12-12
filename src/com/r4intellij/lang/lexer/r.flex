@@ -142,7 +142,7 @@ YYINITIAL. */
 //    {Identifier} {System.out.print("word:"+yytext());  return IDENTIFIER; }
 
     {Comment} {return COMMENT; }
-    {WhiteSpace} { return com.intellij.psi.TokenType.WHITE_SPACE }
+    {WhiteSpace} { return com.intellij.psi.TokenType.WHITE_SPACE; }
 
     "\"" ({StringCharacter} | "\'")* "\""   { return STRING_LITERAL; }
     "\'" ({StringCharacter} | "\"")* "\'"   { return STRING_LITERAL; }

@@ -1,0 +1,61 @@
+<!--
+  ~ Copyright 2009 Holger Brandl
+  ~ File: build.xml, Class: build.xml
+  ~ Last modified: 2009-12-04
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!--
+ This build file is used to create the lexer's Java source code.
+ Whenever you change bash.flex you have to run this build script.
+
+ We're using the patched jflex library provided by JetBrains.
+-->
+<project name="JFlex Compiler for RLexer" default="create_flex4r">
+    <property name="lexer.file" value="src/com/r4intellij/lang/lexer/_RLexer.java"/>
+    <property name="lexer.log" value="jflex.log"/>
+    <property name="lexer.source" value="src/com/r4intellij/lang/lexer/r.flex"/>
+    <!--<property name="lexer.source" value="src/com/r4intellij/lang/lexer/simpler.flex"/>-->
+    <!--<property name="lexer.source" value="src/com/r4intellij/lang/lexer/calc.flex"/>-->
+    <property name="lexer.skeleton" value="lib/idea-flex.skeleton"/>
+    <property name="jflex.jar" value="lib/JFlex.jar"/>
+
+    <target name="clean">
+        <delete file="${lexer.file}~"/>
+        <delete file="${lexer.log}"/>
+    </target>
+
+
+    <target name="create_flex4r"
+            description="Generate lexer from bash.flex, using idea flex skeleton and patched JFlex"
+            depends="clean">
+        <java jar="${jflex.jar}" output="${lexer.log}" fork="true">
+            <arg value="--charat"/>
+            <!-- <arg value="- -nomin"/>-->
+            <arg value="-skel"/>
+            <arg value="${lexer.skeleton}"/>
+            <arg value="${lexer.source}"/>
+        </java>
+    </target>
+
+
+    <!--<target name="copy-resources">-->
+    <!--<copy todir="out/production/intellij4R/resources">-->
+    <!--<fileset dir="resources"/>-->
+    <!--</copy>-->
+    <!--<copy todir="out/production/intellij4R/doc">-->
+    <!--<fileset dir="doc"/>-->
+    <!--</copy>-->
+    <!--</target>-->
+</project>
