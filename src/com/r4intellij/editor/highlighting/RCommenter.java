@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 public class RCommenter implements CodeDocumentationAwareCommenter, RTokenTypes {
 
     public String getLineCommentPrefix() {
-        return "#";
+        return "# ";
     }
 
     public String getBlockCommentPrefix() {

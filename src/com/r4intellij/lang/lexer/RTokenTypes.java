@@ -65,19 +65,10 @@ public interface RTokenTypes {
     IElementType BRACKET_KEYWORD = new RElementType("[[ (left bracket)");//[[
     IElementType _BRACKET_KEYWORD = new RElementType("]] (right bracket)");//]]
 
-    // arithmetic expressions
-    IElementType EXPR_ARITH = new RElementType("((");//))
-    IElementType _EXPR_ARITH = new RElementType("))");//]] after a $((
-
-    //conditional expressions
-    IElementType EXPR_CONDITIONAL = new RElementType("[ (left conditional)");//"[ "
-    IElementType _EXPR_CONDITIONAL = new RElementType(" ] (right conditional)");//" ]"
-
     TokenSet keywords = TokenSet.create(CASE_KEYWORD, DO_KEYWORD, DONE_KEYWORD,
             ELIF_KEYWORD, ELSE_KEYWORD, ESAC_KEYWORD, FI_KEYWORD, FOR_KEYWORD, FUNCTION_KEYWORD,
             IF_KEYWORD, IN_KEYWORD, SELECT_KEYWORD, THEN_KEYWORD, UNTIL_KEYWORD, WHILE_KEYWORD,
-            TIME_KEYWORD, BRACKET_KEYWORD, _BRACKET_KEYWORD,
-            EXPR_ARITH, _EXPR_ARITH, EXPR_CONDITIONAL, _EXPR_CONDITIONAL);
+            TIME_KEYWORD, BRACKET_KEYWORD, _BRACKET_KEYWORD);
 
     // single characters
     IElementType COLON = new RElementType(":");

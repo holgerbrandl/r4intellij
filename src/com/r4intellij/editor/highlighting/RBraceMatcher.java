@@ -28,8 +28,6 @@ public class RBraceMatcher implements PairedBraceMatcher {
     private static final BracePair[] PAIRS = new BracePair[]{
             new BracePair(LEFT_PAREN, RIGHT_PAREN, false),
             new BracePair(LEFT_SQUARE, RIGHT_SQUARE, false),
-            new BracePair(EXPR_ARITH, _EXPR_ARITH, true),
-            new BracePair(EXPR_CONDITIONAL, _EXPR_CONDITIONAL, false),
 //            new BracePair(STRING_BEGIN, STRING_END, false),
             new BracePair(LEFT_CURLY, RIGHT_CURLY, true), //structural
     };
