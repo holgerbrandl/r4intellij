@@ -17,13 +17,13 @@
         <li> Advanced syntax highlighting and configuration</li>
         <li> Evaluate the current selection or line in R (MacOS only for now)</li>
         <li> Line un-/commenting, brace matching</li>
-        <li> Various live templates</li>
+        <li> Some (simple) live templates</li>
     </ul>
 
     <br>
     <b>Coming soon & Planned</b>
     <ul>
-        <li> Code formatter (turned off by default)</li>
+        <li> Code formatter</li>
         <li> Autocompletion for variables, functions and file paths</li>
         <li> Inspections and quickfixes for common problems</li>
         <li> Basic refactorings (rename variables, functions and heredoc markers)</li>
@@ -42,6 +42,7 @@
        <ul>
          <li>Evaluate selection of current line in R (MacOS only)</li>
          <li>Improved code highlighting</li>
+         <li>Added first live-templates</li>
        </ul>
 
        <b>Changes in version 0.2:</b>
@@ -94,6 +95,10 @@
 
         <lang.commenter language="R"
                         implementationClass="com.r4intellij.editor.highlighting.RCommenter"/>
+
+        <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
+        <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
+
 
     </extensions>
 </idea-plugin>
