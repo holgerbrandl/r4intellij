@@ -59,8 +59,10 @@ public class RunSelectedTextOrLineAction extends AnAction {
             if (Utils.isMacOSX()) {
                 Runtime runtime = Runtime.getRuntime();
 
+                String dquotesExpandedText = text.replace("\"", "\\\"");
                 String evalSelection = "tell application \"R64\" to activate\n" +
-                        "tell application \"R64\" to cmd \"" + text + "\"";
+                        "tell application \"R64\" to cmd \"" + dquotesExpandedText + "\"";
+
 
                 String[] args = {"osascript", "-e", evalSelection};
 
