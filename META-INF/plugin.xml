@@ -75,7 +75,7 @@
             </action>
             <action id="HeadSelction" class="com.r4intellij.actions.EvalHeadOfCurVarAction" text="head+nrow"
                     description="Evaluates head and nrow for the current data.frame object">
-                <keyboard-shortcut keymap="$default" first-keystroke="meta H"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="meta alt H"/>
             </action>
 
             <separator/>
@@ -99,6 +99,8 @@
         <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
         <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
 
+        <!--what does it do?-->
+        <!--<cacheBuilder fileType="R" wordsScannerClass="com.intellij.lang.cacheBuilder.SimpleWordsScanner"/>-->
 
     </extensions>
 </idea-plugin>

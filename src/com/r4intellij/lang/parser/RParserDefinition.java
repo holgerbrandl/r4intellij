@@ -16,6 +16,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -48,23 +49,22 @@ public class RParserDefinition implements ParserDefinition, RTokenTypes {
 
     @NotNull
     public TokenSet getWhitespaceTokens() {
-        return new TokenSet();
+        return TokenSet.create(TokenType.WHITE_SPACE);
     }
 
     @NotNull
     public TokenSet getCommentTokens() {
-        return new TokenSet();
+        return TokenSet.create(COMMENT);
     }
 
     @NotNull
     public TokenSet getStringLiteralElements() {
-        return new TokenSet();
+        return TokenSet.create(STRING_LITERAL);
     }
 
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode leftAst, ASTNode rightAst) {
         final IElementType left = leftAst.getElementType();
         final IElementType right = rightAst.getElementType();
-
 
         if (left == LEFT_PAREN
                 || right == RIGHT_PAREN
