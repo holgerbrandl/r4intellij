@@ -180,14 +180,11 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase implements RTokenT
 
     @NotNull
     public Lexer getHighlightingLexer() {
-        log.warn("creat new lexer");
-
         return new RLexer();
     }
 
     @NotNull
     public TextAttributesKey[] getTokenHighlights(final IElementType tokenType) {
-//        log.warn("getTokenHighlightslo");
         return pack(attributes.get(tokenType));
     }
 }

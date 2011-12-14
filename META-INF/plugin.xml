@@ -99,6 +99,8 @@
         <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
         <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
 
+        <completion.contributor language="R" implementationClass="com.r4intellij.lang.RCompletionContributor"/>
+
         <!--what does it do?-->
         <!--<cacheBuilder fileType="R" wordsScannerClass="com.intellij.lang.cacheBuilder.SimpleWordsScanner"/>-->
 
