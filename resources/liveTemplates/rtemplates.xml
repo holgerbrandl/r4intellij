@@ -8,7 +8,7 @@
 
 <templateSet group="R">
 
-    <template name="dd" value="ddply($DATA_FRAME$, .($SPLIT_VARS$), $FUN$)" description="ein test template"
+    <template name="dd" value="ddply($DATA_FRAME$, .($SPLIT_VARS$), $FUN$)" description="ddply call"
               toReformat="false" toShortenFQNames="true">
         <variable name="DATA_FRAME" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="SPLIT_VARS" expression="" defaultValue="" alwaysStopAt="true"/>
@@ -18,5 +18,29 @@
             <option name="R" value="true"/>
         </context>
     </template>
+
+    <!--<template name="fun" value="$FUN_NAME$ &lt;- function($FUN_ARGS$){&#10;    $SELECTION$$END$&#10;}" description="function definition"-->
+    <!--toReformat="false" toShortenFQNames="true">-->
+    <!--<variable name="FUN_NAME" expression="" defaultValue="" alwaysStopAt="true"/>-->
+    <!--<variable name="FUN_ARGS" expression="" defaultValue="" alwaysStopAt="true"/>-->
+    <!--&lt;!&ndash;<variable name="FUN_IMPL" expression="" defaultValue="" alwaysStopAt="true"/>&ndash;&gt;-->
+
+    <!--<context>-->
+    <!--<option name="R" value="true"/>-->
+    <!--</context>-->
+    <!--</template>-->
+
+
+    <!--<template name="rea" value="$END$ &lt;- read.table(&quot;$FILENAME$&quot;, header=$HEADER$, sep=&quot;$COL_SEP$&quot;, stringsAsFactors=$STRING_FAC$);" description="read.table" toReformat="false" toShortenFQNames="true">-->
+    <!--<variable name="FILENAME" expression="" defaultValue="" alwaysStopAt="true" />-->
+    <!--<variable name="HEADER" expression="" defaultValue="TRUE" alwaysStopAt="true" />-->
+    <!--<variable name="COL_SEP" expression="" defaultValue="\t" alwaysStopAt="true" />-->
+    <!--<variable name="STRING_FAC" expression="" defaultValue="TRUE" alwaysStopAt="true" />-->
+
+    <!--<context>-->
+    <!--<option name="R" value="true"/>-->
+    <!--</context>-->
+    <!--</template>-->
+
 
 </templateSet>

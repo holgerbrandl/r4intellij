@@ -80,6 +80,22 @@ public class RLexerTest {
                 });
     }
 
+    @Test
+    public void testMultiCharacterString() {
+        testTokenization("install.packages(\"plyr\", \"ggplot2\", type=\"source\")",
+                new IElementType[]{
+                        IDENTIFIER,
+                        LEFT_PAREN,
+                        STRING_LITERAL,
+                        COMMA,
+                        STRING_LITERAL,
+                        COMMA,
+                        IDENTIFIER,
+                        STRING_LITERAL,
+                        RIGHT_PAREN
+                });
+    }
+
 
     @Test
     public void testSimpleFunctionCall() {

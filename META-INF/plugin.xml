@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <name>R4Intellij</name>
     <description>R coding tools for Intellij Idea</description>
-    <version>0.3</version>
+    <version>0.4</version>
     <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
 
@@ -17,6 +17,7 @@
         <li> Advanced syntax highlighting and configuration</li>
         <li> Evaluate the current selection or line in R (MacOS only for now)</li>
         <li> Line un-/commenting, brace matching</li>
+        <li> Basic code completion</li>
         <li> Some (simple) live templates</li>
     </ul>
 
@@ -24,7 +25,7 @@
     <b>Coming soon & Planned</b>
     <ul>
         <li> Code formatter</li>
-        <li> Autocompletion for variables, functions and file paths</li>
+        <li> More context-aware autocompletion for variables, functions and file paths</li>
         <li> Inspections and quickfixes for common problems</li>
         <li> Basic refactorings (rename variables, functions and heredoc markers)</li>
         <li> Advanced navigation (structure view, go to declaration, ...)</li>
@@ -37,24 +38,469 @@
   ]]></description>
 
     <change-notes><![CDATA[
-    <html>
-       <b>Changes in version 0.3:</b>
-       <ul>
-         <li>Evaluate selection of current line in R (MacOS only)</li>
-         <li>Improved code highlighting</li>
-         <li>Added first live-templates</li>
-       </ul>
+        <html>
+        <b>Changes in v0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+        </ul>
 
-       <b>Changes in version 0.2:</b>
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
         Initial release of the plugin. :-)
-       <ul>
-         <li>Syntax highlighting</li>
-         <li>Comment code blocks with usual shortcut ⌘/ </li>
-         <li>Register .R as file type</li>
-       </ul>
-    </html>
-    ]]>
-    </change-notes>
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        s in version 0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+            <li>Added more live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        ]]></change-notes>
 
 
     <application-components>
