@@ -21,8 +21,8 @@ public class LiveTemplateProvider implements DefaultLiveTemplatesProvider {
     private static final
     @NonNls
     String[] DEFAULT_TEMPLATES = new String[]{
-            "/liveTemplates/rtemplates"
-//            "/liveTemplates/surround"
+            "/liveTemplates/rtemplates",
+            "/liveTemplates/surround"
     };
 
     public String[] getDefaultLiveTemplateFiles() {
