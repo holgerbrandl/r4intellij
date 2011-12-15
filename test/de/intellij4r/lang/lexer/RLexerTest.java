@@ -82,7 +82,7 @@ public class RLexerTest {
 
     @Test
     public void testMultiCharacterString() {
-        testTokenization("install.packages(\"plyr\", \"ggplot2\", type=\"source\")",
+        testTokenization("install.packages(\"plyr\",\"ggplot2\",type=\"source\")",
                 new IElementType[]{
                         IDENTIFIER,
                         LEFT_PAREN,
@@ -91,6 +91,7 @@ public class RLexerTest {
                         STRING_LITERAL,
                         COMMA,
                         IDENTIFIER,
+                        ASSIGNMENT,
                         STRING_LITERAL,
                         RIGHT_PAREN
                 });
@@ -133,7 +134,7 @@ public class RLexerTest {
 
     @Test
     public void testComplexTokenization() {
-        String testData = Utils.readFileAsString("misc/find_prion_domains.R");
+        String testData = Utils.readFileAsString("/Users/brandl/find_prion_domains.R");
 //        String testData = Utils.readFileAsString("misc/normality tests.R");
         printTokenization(testData);
     }

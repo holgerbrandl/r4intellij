@@ -56,7 +56,10 @@ FLit2    = \. [0-9]+
 FLit3    = [0-9]+
 DoubleLiteral = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
 
-StringCharacter = [^\r\n]
+//StringCharacter = [^\r\n]
+// picked up from arc.flex :
+EscapeSequence=\\[^\r\n]
+StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 
 //%state STRING
 
@@ -86,7 +89,8 @@ YYINITIAL. */
     "data.frame"                    |
     "times"                      |
     "trap"                       |
-    "type"                       |
+    "typeof"                       |
+    "class"                       |
     "ulimit"                     |
     "umask"                      |
     "unalias"                    |
@@ -121,7 +125,7 @@ YYINITIAL. */
 
     "%/%" | "%*%" | "%o%" | "%x%" | "%in%"  { return ARITH_MISC; }
 
-    "&" | "&&" | "|" | "||" | ("<"|">")[=]* { return LOG_OPERATOR; }
+    "&" | "&&" | "|" | "||" | ("<"|">")[=]? { return LOG_OPERATOR; }
 
     "$" { return LIST_SUBSET; }
 
@@ -142,10 +146,12 @@ YYINITIAL. */
 //    {Identifier} {System.out.print("word:"+yytext());  return IDENTIFIER; }
 
     {Comment} {return COMMENT; }
-    {WhiteSpace} { return com.intellij.psi.TokenType.WHITE_SPACE; }
+//    {WhiteSpace} { return com.intellij.psi.TokenType.WHITE_SPACE; }
+    {WhiteSpace} { /* skip this */ }
 
-    "\"" ({StringCharacter} | "\'")* "\""   { return STRING_LITERAL; }
-    "\'" ({StringCharacter} | "\"")* "\'"   { return STRING_LITERAL; }
+    {StringLiteral}  { return STRING_LITERAL; }
+//    "\"" ({StringCharacter} | "\'" | "}")* "\""   { return STRING_LITERAL; }
+//    "\'" ({StringCharacter} | "\"")* "\'"   { return STRING_LITERAL; }
 
    // "\"\\t\"" {return  STRING_LITERAL; }
 }
