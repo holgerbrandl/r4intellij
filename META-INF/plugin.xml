@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <name>R4Intellij</name>
     <description>R coding tools for Intellij Idea</description>
-    <version>0.4</version>
+    <version>0.4+</version>
     <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
 
@@ -107,8 +107,9 @@
 
         <completion.contributor language="R" implementationClass="com.r4intellij.lang.RCompletionContributor"/>
 
-        <!--what does it do?-->
-        <!--<cacheBuilder fileType="R" wordsScannerClass="com.intellij.lang.cacheBuilder.SimpleWordsScanner"/>-->
+        <applicationConfigurable implementation="com.r4intellij.settings.RConfigurable"/>
+        <applicationService serviceInterface="com.r4intellij.settings.RSettings"
+                            serviceImplementation="com.r4intellij.settings.RSettings"/>
 
     </extensions>
 </idea-plugin>
