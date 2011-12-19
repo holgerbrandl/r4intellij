@@ -33,19 +33,19 @@
 
 
     <template name="rea"
-              value="$END &lt;- read.table(&quot;$FILENAME$&quot;, $2:, header=$HEADER$,  sep=&quot;$COL_SEP$&quot;,  stringsAsFactors = $STRING_FAC$)"
+              value="$END$ &lt;- read.table(&quot;$FILENAME$&quot;, header=$HEADER$, sep=&quot;$COL_SEP$&quot;, stringsAsFactors=$STRING_FAC$)"
               description="read.table" toReformat="false" toShortenFQNames="true">
         <variable name="FILENAME" expression="" defaultValue="" alwaysStopAt="true"/>
-        <variable name="HEADER" expression="" defaultValue="TRUE" alwaysStopAt="false"/>
-        <variable name="COL_SEP" expression="" defaultValue="\t" alwaysStopAt="false"/>
-        <variable name="STRING_FAC" expression="" defaultValue="TRUE" alwaysStopAt="false"/>
+        <variable name="HEADER" expression="" defaultValue="&quot;TRUE&quot;" alwaysStopAt="true"/>
+        <variable name="COL_SEP" expression="" defaultValue="&quot;\\t&quot;" alwaysStopAt="true"/>
+        <variable name="STRING_FAC" expression="" defaultValue="&quot;TRUE&quot;" alwaysStopAt="true"/>
 
         <context>
             <option name="R" value="true"/>
         </context>
     </template>
 
-    <template name="gg" value="ggplot($DATA$, aes($VARMAP$)) + geom_$TYPE$()$END" description="creates a new ggplot"
+    <template name="gg" value="ggplot($DATA$, aes($VARMAP$)) + geom_$TYPE$()$END$" description="creates a new ggplot"
               toReformat="false" toShortenFQNames="true">
         <variable name="DATA" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="VARMAP" expression="" defaultValue="" alwaysStopAt="true"/>

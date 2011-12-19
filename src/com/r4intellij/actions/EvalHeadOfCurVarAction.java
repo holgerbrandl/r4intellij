@@ -25,10 +25,15 @@ public class EvalHeadOfCurVarAction extends AnAction {
             return;
         }
 
-        ed.getSelectionModel().selectWordAtCaret(true);
-        String curWord = ed.getSelectionModel().getSelectedText();
-        if (!StringUtil.isEmptyOrSpaces(curWord)) {
-            RunSelectedTextOrLineAction.push2R("head(" + curWord + "); nrow(" + curWord + ");");
+
+        String selectedText = ed.getSelectionModel().getSelectedText();
+        if (selectedText == null || selectedText.isEmpty()) {
+            ed.getSelectionModel().selectWordAtCaret(true);
+            selectedText = ed.getSelectionModel().getSelectedText();
+        }
+
+        if (!StringUtil.isEmptyOrSpaces(selectedText)) {
+            RunSelectedTextOrLineAction.push2R("head(" + selectedText + "); nrow(" + selectedText + ");");
         }
 
     }
