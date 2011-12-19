@@ -79,9 +79,15 @@
                     description="Evaluates the current line or selection in R">
                 <keyboard-shortcut keymap="$default" first-keystroke="meta alt ENTER"/>
             </action>
-            <action id="HeadSelction" class="com.r4intellij.actions.EvalHeadOfCurVarAction" text="head+nrow"
+
+            <action id="EvalHeadNrow" class="com.r4intellij.actions.HeadNrowEvalAction" text="head+nrow"
                     description="Evaluates head and nrow for the current data.frame object">
                 <keyboard-shortcut keymap="$default" first-keystroke="meta alt H"/>
+            </action>
+
+            <action id="EvalStr" class="com.r4intellij.actions.ShowStructureEvalAction" text="str()"
+                    description="Calls the str for the current word or selection">
+                <keyboard-shortcut keymap="$default" first-keystroke="meta alt S"/>
             </action>
 
             <separator/>

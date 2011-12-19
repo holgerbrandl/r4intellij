@@ -1,10 +1,3 @@
-/*
- * Copyright 2011 Holger Brandl
- *
- * This code is licensed under BSD. For details see
- * http://www.opensource.org/licenses/bsd-license.php
- */
-
 package com.r4intellij.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
@@ -15,9 +8,11 @@ import com.intellij.openapi.util.text.StringUtil;
 
 
 /**
- * Event handler for the "Run Selection" action within an Arc code editor - runs the currently selected text within the current REPL.
+ * DOCUMENT ME!
+ *
+ * @author Holger Brandl
  */
-public class EvalHeadOfCurVarAction extends AnAction {
+public abstract class AbstactEvalTextAction extends AnAction {
 
     public void actionPerformed(AnActionEvent e) {
         Editor ed = e.getData(DataKeys.EDITOR);
@@ -33,8 +28,10 @@ public class EvalHeadOfCurVarAction extends AnAction {
         }
 
         if (!StringUtil.isEmptyOrSpaces(selectedText)) {
-            RunSelectedTextOrLineAction.push2R("head(" + selectedText + "); nrow(" + selectedText + ");");
+            RunSelectedTextOrLineAction.push2R(getEvalCmd(selectedText));
         }
 
     }
+
+    protected abstract String getEvalCmd(String selectedText);
 }
