@@ -57,7 +57,7 @@ attr ::= attr_start attr_value ';'? {pin=1 recoverUntil="attr_recover_until" ext
 private attr_start::=id attr_pattern? '='
 private attr_recover_until::=!('}'|attr_start)
 attr_value ::= (reference_or_token | literal_expression) !'=';
-attr_pattern ::= '(' string2 ')'
+attr_pattern ::= '(' string ')'
 
 choice ::= choice_body { extends="expression" }
 private choice_body ::= sequence choice_tail*
