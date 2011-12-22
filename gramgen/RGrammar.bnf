@@ -53,81 +53,125 @@ NS_GET_INT=":::"
 // onthefly ROXYGEN_COMMENT
 SYMBOL_FORMALS="..."
 // just the = with a function definition, there should be part of a parser rule EQ_FORMALS
-// see example parsing: the name of a named argument in a function call EQ_SUB
-// see example parsing: the = of a named argument in a function call SYMBOL_SUB
+// see example parsing ::= the name of a named argument in a function call EQ_SUB
+// see example parsing ::= the = of a named argument in a function call SYMBOL_SUB
 // SYMBOL_FUNCTION_CALL the name of the function of a function call
 // ?? SYMBOL_PACKAGE
 // ?? COLON_ASSIGN
 SLOT="@"
 
-// // tokens
-// OP_EQ="="
-// OP_IS="::="
-// OP_OR="|"
-// OP_OPT="?"
-// OP_ONEMORE="+"
-// OP_ZEROMORE="*"
-// OP_AND="&"
-// OP_NOT="!"
-// SEMICOLON=";"
-// LEFT_BRACE="{"
-// RIGHT_BRACE="}"
-// LEFT_BRACKET="["
-// RIGHT_BRACKET="]"
-// LEFT_PAREN="("
-// RIGHT_PAREN=")"
-// EXTERNAL_START="<<"
-// EXTERNAL_END=">>"
+// additional tokens because of grammar def
+SEMICOLON=";"
+LEFT_BRACE="{"
+RIGHT_BRACE="}"
+LEFT_BRACKET="["
+RIGHT_BRACKET="]"
+LEFT_PAREN="("
+RIGHT_PAREN=")"
+LINE_BREAK="\n"
 
   named="com.r4intellij.psi.RNamedElement"
-  namedImpl="com.r4intellij.psi.impl.RNamedElementImpl"
-  parenthesized="com.r4intellij.psi.RParenthesized"
+  namedImpl="com.r4intellij.psi.impl.bnfclasses.RNamedElementImpl"
+  parenthesized="com.r4intellij.psi.impl.bnfclasses.RParenthesized"
 }
 
 
-// new R grammar
+// R grammar
+external grammar ::= parseGrammar prog
 
+prog ::= END_OF_INPUT
+    | '\n'
+    | expr_or_assign '\n'
+    | expr_or_assign ';'
+    | error
 
-// old bnf grammar
+expr_or_assign ::= expr | equal_assign
 
-external grammar ::= parseGrammar grammar_element
-private grammar_element ::= attrs | rule {recoverUntil="grammar_element_recover"}
-private grammar_element_recover::=!('{'|rule_start)
+equal_assign ::= expr EQ_ASSIGN expr_or_assign
 
-rule ::= rule_start expression attrs? ';'? {pin=2 extends=namedImpl implements=named}
-private rule_start ::= modifier* id '::='
+expr ::= NUM_CONST
+    | STR_CONST
+    | NULL_CONST
+    | SYMBOL
+    | '{' exprlist '}'
+    | '(' expr_or_assign ')'
+    | '-' expr
+    | '+' expr
+    | '!' expr
+    | '~' expr
+    | '?' expr
+    | expr ':' expr
+    | expr '+' expr
+    | expr '-' expr
+    | expr '*' expr
+    | expr '/' expr
+    | expr '^' expr
+    | expr SPECIAL expr
+    | expr '%' expr
+    | expr '~' expr
+    | expr '?' expr
+    | expr LT expr
+    | expr LE expr
+    | expr EQ expr
+    | expr NE expr
+    | expr GE expr
+    | expr GT expr
+    | expr AND expr
+    | expr OR expr
+    | expr AND2 expr
+    | expr OR2 expr
+    | expr LEFT_ASSIGN expr
+    | expr RIGHT_ASSIGN expr
+    | FUNCTION '(' formlist ')' cr expr_or_assign
+    | expr '(' sublist ')'
+    | IF ifcond expr_or_assign
+    | IF ifcond expr_or_assign ELSE expr_or_assign
+    | FOR forcond expr_or_assign
+    | WHILE cond expr_or_assign
+    | REPEAT expr_or_assign
+    | expr LBB sublist ']' ']'
+    | expr '[' sublist ']'
+    | SYMBOL NS_GET SYMBOL
+    | SYMBOL NS_GET STR_CONST
+    | STR_CONST NS_GET SYMBOL
+    | STR_CONST NS_GET STR_CONST
+    | SYMBOL NS_GET_INT SYMBOL
+    | SYMBOL NS_GET_INT STR_CONST
+    | STR_CONST NS_GET_INT SYMBOL
+    | STR_CONST NS_GET_INT STR_CONST
+    | expr '$' SYMBOL
+    | expr '$' STR_CONST
+    | expr '@' SYMBOL
+    | expr '@' STR_CONST
+    | NEXT
+    | BREAK
 
-expression ::= choice?
+cond ::= '(' expr ')'
 
-modifier ::= 'private' | 'external' | 'meta' | 'inner' | 'left';
+ifcond ::= '(' expr ')'
 
-attrs ::= '{' attr* '}' {pin=1}
+forcond ::= '(' SYMBOL IN expr ')'
 
-attr ::= attr_start attr_value ';'? {pin=1 recoverUntil="attr_recover_until" extends=namedImpl implements=named}
-private attr_start::=id attr_pattern? '='
-private attr_recover_until::=!('}'|attr_start)
-attr_value ::= (reference_or_token | literal_expression) !'=';
-attr_pattern ::= '(' string ')'
+exprlist ::= whitespace
+        | expr_or_assign
+        | exprlist ';' expr_or_assign
+        | exprlist ';'
+        | exprlist '\n' expr_or_assign
+        | exprlist '\n'
 
-choice ::= choice_body { extends="expression" }
-private choice_body ::= sequence choice_tail*
-private choice_tail ::= '|' sequence {pin=1}
+sublist ::= sub | sublist cr ',' sub
 
-sequence ::= option + { extends="expression" recoverUntil="sequence_recover"}
-private sequence_recover ::= !(';'|'|'|'('|')'|'['|']'|'{'|'}') grammar_element_recover
+sub ::= whitespace | expr
+   | SYMBOL EQ_ASSIGN
+   | SYMBOL EQ_ASSIGN expr
+   | STR_CONST EQ_ASSIGN
+   | STR_CONST EQ_ASSIGN expr
+   | NULL_CONST EQ_ASSIGN
+   | NULL_CONST EQ_ASSIGN expr
 
-private option ::= quantified | predicate;
-predicate ::=  predicate_sign  simple { extends="expression" }
-predicate_sign ::= ('&' | '!')
-quantified ::= paren_opt_expression | simple quantifier? {extends="expression" }
-paren_opt_expression ::='[' expression ']' {pin=1 extends="quantified" implements=parenthesized}
-quantifier ::= '?' | '+' | '*'
+formlist ::= whitespace | SYMBOL
+        | SYMBOL EQ_ASSIGN expr
+        | formlist ',' SYMBOL
+        | formlist ',' SYMBOL EQ_ASSIGN expr
 
-private simple ::= !(modifier* id '::=' ) reference_or_token | literal_expression | external_expression | paren_expression
-external_expression ::= '<<' reference_or_token option * '>>' {pin=2 extends="expression"}
-reference_or_token ::= id  { extends="expression" mixin="com.r4intellij.psi.impl.RRefOrTokenImpl"}
-literal_expression ::= string_literal_expression | number { extends="expression" }
-string_literal_expression ::= string { extends="literal_expression" mixin="com.r4intellij.psi.impl.RStringImpl"}
-paren_expression ::= simple_paren_expression | alt_choice_expression { extends="expression" implements=parenthesized}
-private simple_paren_expression ::= '(' expression ')' {pin=1}
-private alt_choice_expression::= '{' !attr_start expression '}' {pin=2}
+cr ::= /* empty */ //todo

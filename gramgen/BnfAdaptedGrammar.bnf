@@ -36,8 +36,8 @@
   EXTERNAL_END=">>"
 
   named="com.r4intellij.psi.RNamedElement"
-  namedImpl="com.r4intellij.psi.impl.RNamedElementImpl"
-  parenthesized="com.r4intellij.psi.RParenthesized"
+  namedImpl="com.r4intellij.psi.impl.bnfclasses.RNamedElementImpl"
+  parenthesized="com.r4intellij.psi.impl.bnfclasses.RParenthesized"
 }
 
 external grammar ::= parseGrammar grammar_element
@@ -75,9 +75,9 @@ quantifier ::= '?' | '+' | '*'
 
 private simple ::= !(modifier* id '::=' ) reference_or_token | literal_expression | external_expression | paren_expression
 external_expression ::= '<<' reference_or_token option * '>>' {pin=2 extends="expression"}
-reference_or_token ::= id  { extends="expression" mixin="com.r4intellij.psi.impl.RRefOrTokenImpl"}
+reference_or_token ::= id  { extends="expression" mixin="com.r4intellij.psi.impl.bnfclasses.RRefOrTokenImpl"}
 literal_expression ::= string_literal_expression | number { extends="expression" }
-string_literal_expression ::= string { extends="literal_expression" mixin="com.r4intellij.psi.impl.RStringImpl"}
+string_literal_expression ::= string { extends="literal_expression" mixin="com.r4intellij.psi.impl.bnfclasses.RStringImpl"}
 paren_expression ::= simple_paren_expression | alt_choice_expression { extends="expression" implements=parenthesized}
 private simple_paren_expression ::= '(' expression ')' {pin=1}
 private alt_choice_expression::= '{' !attr_start expression '}' {pin=2}
