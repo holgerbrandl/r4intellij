@@ -26,43 +26,43 @@ public interface RTokenTypes {
 
     IElementType BAD_CHARACTER = TokenType.BAD_CHARACTER;
 
-    IElementType CONSTANT = new RElementType("Constant");
-    IElementType VARIABLE = new RElementType("variable");
-    IElementType INTERNAL_COMMAND = new RElementType("internal R command");
-    IElementType INTEGER_LITERAL = new RElementType("int literal");
-    IElementType STRING_LITERAL = new RElementType("String");
-    IElementType COMMENT = new RElementType("Comment");
-    IElementType NUMBER = new RElementType("number");
-    IElementType IDENTIFIER = new RElementType("word");
+    IElementType CONSTANT = new RTokenType("Constant");
+    IElementType VARIABLE = new RTokenType("variable");
+    IElementType INTERNAL_COMMAND = new RTokenType("internal R command");
+    IElementType INTEGER_LITERAL = new RTokenType("int literal");
+    IElementType STRING_LITERAL = new RTokenType("String");
+    IElementType COMMENT = new RTokenType("Comment");
+    IElementType NUMBER = new RTokenType("number");
+    IElementType IDENTIFIER = new RTokenType("word");
 
 
     // squares
-    IElementType LEFT_PAREN = new RElementType("(");
-    IElementType RIGHT_PAREN = new RElementType(")");
-    IElementType LEFT_CURLY = new RElementType("{");
-    IElementType RIGHT_CURLY = new RElementType("}");
-    IElementType LEFT_SQUARE = new RElementType("[ (left square)");
-    IElementType RIGHT_SQUARE = new RElementType("] (right square)");
+    IElementType LEFT_PAREN = new RTokenType("(");
+    IElementType RIGHT_PAREN = new RTokenType(")");
+    IElementType LEFT_CURLY = new RTokenType("{");
+    IElementType RIGHT_CURLY = new RTokenType("}");
+    IElementType LEFT_SQUARE = new RTokenType("[ (left square)");
+    IElementType RIGHT_SQUARE = new RTokenType("] (right square)");
 
     // R reserved keywords, in alphabetic order
-    IElementType CASE_KEYWORD = new RElementType("case"); //case
-    IElementType DO_KEYWORD = new RElementType("do"); //do
-    IElementType DONE_KEYWORD = new RElementType("done"); //done
-    IElementType ELIF_KEYWORD = new RElementType("elif");//elif
-    IElementType ELSE_KEYWORD = new RElementType("else");//else
-    IElementType ESAC_KEYWORD = new RElementType("esac"); //esac
-    IElementType FI_KEYWORD = new RElementType("fi");//fi
-    IElementType FOR_KEYWORD = new RElementType("for");//for
-    IElementType FUNCTION_KEYWORD = new RElementType("function");//function
-    IElementType IF_KEYWORD = new RElementType("if");//if
-    IElementType IN_KEYWORD = new RElementType("in");//in
-    IElementType SELECT_KEYWORD = new RElementType("select");//select
-    IElementType THEN_KEYWORD = new RElementType("then");//then
-    IElementType UNTIL_KEYWORD = new RElementType("until");//until
-    IElementType WHILE_KEYWORD = new RElementType("while");//while
-    IElementType TIME_KEYWORD = new RElementType("time");//time
-    IElementType BRACKET_KEYWORD = new RElementType("[[ (left bracket)");//[[
-    IElementType _BRACKET_KEYWORD = new RElementType("]] (right bracket)");//]]
+    IElementType CASE_KEYWORD = new RTokenType("case"); //case
+    IElementType DO_KEYWORD = new RTokenType("do"); //do
+    IElementType DONE_KEYWORD = new RTokenType("done"); //done
+    IElementType ELIF_KEYWORD = new RTokenType("elif");//elif
+    IElementType ELSE_KEYWORD = new RTokenType("else");//else
+    IElementType ESAC_KEYWORD = new RTokenType("esac"); //esac
+    IElementType FI_KEYWORD = new RTokenType("fi");//fi
+    IElementType FOR_KEYWORD = new RTokenType("for");//for
+    IElementType FUNCTION_KEYWORD = new RTokenType("function");//function
+    IElementType IF_KEYWORD = new RTokenType("if");//if
+    IElementType IN_KEYWORD = new RTokenType("in");//in
+    IElementType SELECT_KEYWORD = new RTokenType("select");//select
+    IElementType THEN_KEYWORD = new RTokenType("then");//then
+    IElementType UNTIL_KEYWORD = new RTokenType("until");//until
+    IElementType WHILE_KEYWORD = new RTokenType("while");//while
+    IElementType TIME_KEYWORD = new RTokenType("time");//time
+    IElementType BRACKET_KEYWORD = new RTokenType("[[ (left bracket)");//[[
+    IElementType _BRACKET_KEYWORD = new RTokenType("]] (right bracket)");//]]
 
     TokenSet keywords = TokenSet.create(CASE_KEYWORD, DO_KEYWORD, DONE_KEYWORD,
             ELIF_KEYWORD, ELSE_KEYWORD, ESAC_KEYWORD, FI_KEYWORD, FOR_KEYWORD, FUNCTION_KEYWORD,
@@ -70,24 +70,24 @@ public interface RTokenTypes {
             TIME_KEYWORD, BRACKET_KEYWORD, _BRACKET_KEYWORD);
 
     // single characters
-    IElementType COLON = new RElementType(":");
-    IElementType COMMA = new RElementType(",");
-    IElementType SEMICOLON = new RElementType(";");
-    IElementType DOT = new RElementType(".");
-    IElementType TILDE = new RElementType("~");
+    IElementType COLON = new RTokenType(":");
+    IElementType COMMA = new RTokenType(",");
+    IElementType SEMICOLON = new RTokenType(";");
+    IElementType DOT = new RTokenType(".");
+    IElementType TILDE = new RTokenType("~");
 
-    IElementType ASSIGNMENT = new RElementType("assignment_word");
-    IElementType LOG_OPERATOR = new RElementType("logical operator");
-    IElementType LIST_SUBSET = new RElementType("$");
-    IElementType VARARGS = new RElementType("...");
+    IElementType ASSIGNMENT = new RTokenType("assignment_word");
+    IElementType LOG_OPERATOR = new RTokenType("logical operator");
+    IElementType LIST_SUBSET = new RTokenType("$");
+    IElementType VARARGS = new RTokenType("...");
 
 
-    IElementType ARITH_PLUS = new RElementType("+");//+
-    IElementType ARITH_MINUS = new RElementType("-");//+
-    IElementType NEGATION = new RElementType("!");
-    IElementType ARITH_MULT = new RElementType("*");//*
-    IElementType ARITH_DIV = new RElementType("/");// /
-    IElementType ARITH_MOD = new RElementType("%");//%
-    IElementType ARITH_EXPONENTIAION = new RElementType("^");
-    IElementType ARITH_MISC = new RElementType("%someop%");
+    IElementType ARITH_PLUS = new RTokenType("+");//+
+    IElementType ARITH_MINUS = new RTokenType("-");//+
+    IElementType NEGATION = new RTokenType("!");
+    IElementType ARITH_MULT = new RTokenType("*");//*
+    IElementType ARITH_DIV = new RTokenType("/");// /
+    IElementType ARITH_MOD = new RTokenType("%");//%
+    IElementType ARITH_EXPONENTIAION = new RTokenType("^");
+    IElementType ARITH_MISC = new RTokenType("%someop%");
 }

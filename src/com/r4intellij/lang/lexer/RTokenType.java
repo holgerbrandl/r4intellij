@@ -17,9 +17,9 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Holger Brandl
  */
-public class RElementType extends IElementType {
+public class RTokenType extends IElementType {
 
-    public RElementType(@NotNull String debugName) {
+    public RTokenType(@NotNull String debugName) {
         super(debugName, RFileType.R_LANGUAGE);
     }
 
