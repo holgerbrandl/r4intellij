@@ -22,7 +22,7 @@ import static com.r4intellij.lang.lexer.RTokenTypes.STRING_LITERAL;
  *
  * @author Holger Brandl
  */
-public class RParser implements PsiParser {
+public class RDummyParser implements PsiParser {
 
     private Stack<PsiBuilder.Marker> markers = new Stack<PsiBuilder.Marker>();
     private PsiBuilder builder;

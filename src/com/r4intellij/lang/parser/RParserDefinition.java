@@ -39,7 +39,7 @@ public class RParserDefinition implements ParserDefinition, RTokenTypes {
     }
 
     public PsiParser createParser(Project project) {
-        return new RParser();
+        return new RDummyParser();
     }
 
 
