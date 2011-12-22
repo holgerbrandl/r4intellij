@@ -48,109 +48,112 @@ State 131 conflicts: 27 shift/reduce
 
 Grammar
 
-    0 $accept: prog $end
+$accept: prog $end
 
-    1 prog: END_OF_INPUT
-    2     | '\n'
-    3     | expr_or_assign '\n'
-    4     | expr_or_assign ';'
-    5     | error
+prog: END_OF_INPUT
+    | '\n'
+    | expr_or_assign '\n'
+    | expr_or_assign ';'
+    | error
 
-    6 expr_or_assign: expr
-    7               | equal_assign
+expr_or_assign: expr
+              | equal_assign
 
-    8 equal_assign: expr EQ_ASSIGN expr_or_assign
+equal_assign: expr EQ_ASSIGN expr_or_assign
 
-    9 expr: NUM_CONST
-   10     | STR_CONST
-   11     | NULL_CONST
-   12     | SYMBOL
-   13     | '{' exprlist '}'
-   14     | '(' expr_or_assign ')'
-   15     | '-' expr
-   16     | '+' expr
-   17     | '!' expr
-   18     | '~' expr
-   19     | '?' expr
-   20     | expr ':' expr
-   21     | expr '+' expr
-   22     | expr '-' expr
-   23     | expr '*' expr
-   24     | expr '/' expr
-   25     | expr '^' expr
-   26     | expr SPECIAL expr
-   27     | expr '%' expr
-   28     | expr '~' expr
-   29     | expr '?' expr
-   30     | expr LT expr
-   31     | expr LE expr
-   32     | expr EQ expr
-   33     | expr NE expr
-   34     | expr GE expr
-   35     | expr GT expr
-   36     | expr AND expr
-   37     | expr OR expr
-   38     | expr AND2 expr
-   39     | expr OR2 expr
-   40     | expr LEFT_ASSIGN expr
-   41     | expr RIGHT_ASSIGN expr
-   42     | FUNCTION '(' formlist ')' cr expr_or_assign
-   43     | expr '(' sublist ')'
-   44     | IF ifcond expr_or_assign
-   45     | IF ifcond expr_or_assign ELSE expr_or_assign
-   46     | FOR forcond expr_or_assign
-   47     | WHILE cond expr_or_assign
-   48     | REPEAT expr_or_assign
-   49     | expr LBB sublist ']' ']'
-   50     | expr '[' sublist ']'
-   51     | SYMBOL NS_GET SYMBOL
-   52     | SYMBOL NS_GET STR_CONST
-   53     | STR_CONST NS_GET SYMBOL
-   54     | STR_CONST NS_GET STR_CONST
-   55     | SYMBOL NS_GET_INT SYMBOL
-   56     | SYMBOL NS_GET_INT STR_CONST
-   57     | STR_CONST NS_GET_INT SYMBOL
-   58     | STR_CONST NS_GET_INT STR_CONST
-   59     | expr '$' SYMBOL
-   60     | expr '$' STR_CONST
-   61     | expr '@' SYMBOL
-   62     | expr '@' STR_CONST
-   63     | NEXT
-   64     | BREAK
+expr: NUM_CONST
+    | STR_CONST
+    | NULL_CONST
+    | SYMBOL
+    | '{' exprlist '}'
+    | '(' expr_or_assign ')'
+    | '-' expr
+    | '+' expr
+    | '!' expr
+    | '~' expr
+    | '?' expr
+    | expr ':' expr
+    | expr '+' expr
+    | expr '-' expr
+    | expr '*' expr
+    | expr '/' expr
+    | expr '^' expr
+    | expr SPECIAL expr
+    | expr '%' expr
+    | expr '~' expr
+    | expr '?' expr
+    | expr LT expr
+    | expr LE expr
+    | expr EQ expr
+    | expr NE expr
+    | expr GE expr
+    | expr GT expr
+    | expr AND expr
+    | expr OR expr
+    | expr AND2 expr
+    | expr OR2 expr
+    | expr LEFT_ASSIGN expr
+    | expr RIGHT_ASSIGN expr
+    | FUNCTION '(' formlist ')' cr expr_or_assign
+    | expr '(' sublist ')'
+    | IF ifcond expr_or_assign
+    | IF ifcond expr_or_assign ELSE expr_or_assign
+    | FOR forcond expr_or_assign
+    | WHILE cond expr_or_assign
+    | REPEAT expr_or_assign
+    | expr LBB sublist ']' ']'
+    | expr '[' sublist ']'
+    | SYMBOL NS_GET SYMBOL
+    | SYMBOL NS_GET STR_CONST
+    | STR_CONST NS_GET SYMBOL
+    | STR_CONST NS_GET STR_CONST
+    | SYMBOL NS_GET_INT SYMBOL
+    | SYMBOL NS_GET_INT STR_CONST
+    | STR_CONST NS_GET_INT SYMBOL
+    | STR_CONST NS_GET_INT STR_CONST
+    | expr '$' SYMBOL
+    | expr '$' STR_CONST
+    | expr '@' SYMBOL
+    | expr '@' STR_CONST
+    | NEXT
+    | BREAK
 
-   65 cond: '(' expr ')'
+cond: '(' expr ')'
 
-   66 ifcond: '(' expr ')'
+ifcond: '(' expr ')'
 
-   67 forcond: '(' SYMBOL IN expr ')'
+forcond: '(' SYMBOL IN expr ')'
 
-   68 exprlist: /* empty */
-   69         | expr_or_assign
-   70         | exprlist ';' expr_or_assign
-   71         | exprlist ';'
-   72         | exprlist '\n' expr_or_assign
-   73         | exprlist '\n'
+exprlist: /* empty */
+        | expr_or_assign
+        | exprlist ';' expr_or_assign
+        | exprlist ';'
+        | exprlist '\n' expr_or_assign
+        | exprlist '\n'
 
-   74 sublist: sub
-   75        | sublist cr ',' sub
+sublist: sub
+       | sublist cr ',' sub
 
-   76 sub: /* empty */
-   77    | expr
-   78    | SYMBOL EQ_ASSIGN
-   79    | SYMBOL EQ_ASSIGN expr
-   80    | STR_CONST EQ_ASSIGN
-   81    | STR_CONST EQ_ASSIGN expr
-   82    | NULL_CONST EQ_ASSIGN
-   83    | NULL_CONST EQ_ASSIGN expr
+sub: /* empty */
+   | expr
+   | SYMBOL EQ_ASSIGN
+   | SYMBOL EQ_ASSIGN expr
+   | STR_CONST EQ_ASSIGN
+   | STR_CONST EQ_ASSIGN expr
+   | NULL_CONST EQ_ASSIGN
+   | NULL_CONST EQ_ASSIGN expr
 
-   84 formlist: /* empty */
-   85         | SYMBOL
-   86         | SYMBOL EQ_ASSIGN expr
-   87         | formlist ',' SYMBOL
-   88         | formlist ',' SYMBOL EQ_ASSIGN expr
+formlist: /* empty */
+        | SYMBOL
+        | SYMBOL EQ_ASSIGN expr
+        | formlist ',' SYMBOL
+        | formlist ',' SYMBOL EQ_ASSIGN expr
 
-   89 cr: /* empty */
+cr: /* empty */
 
+
+###################################################################
+###################################################################
 
 Terminals, with rules where they appear
 

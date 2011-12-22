@@ -41,6 +41,46 @@
 %nonassoc	'(' '[' LBB
 /*}}}*/
 
+
+# copied from gram.tab.c
+#define YYENGLISH 8
+	"$undefined",	"input",
+	"END_OF_INPUT",	"end of input",
+	"ERROR",	"input",
+	"STR_CONST",	"string constant",
+	"NUM_CONST",	"numeric constant",
+	"SYMBOL",	"symbol",
+	"LEFT_ASSIGN",	"assignment",
+	"'\\n'",	"end of line",
+	"NULL_CONST",	"'NULL'",
+	"FUNCTION",	"'function'",
+	"EQ_ASSIGN",	"'='",
+	"RIGHT_ASSIGN",	"'->'",
+	"LBB",		"'[['",
+	"FOR",		"'for'",
+	"IN",		"'in'",
+	"IF",		"'if'",
+	"ELSE",		"'else'",
+	"WHILE",	"'while'",
+	"NEXT",		"'next'",
+	"BREAK",	"'break'",
+	"REPEAT",	"'repeat'",
+	"GT",		"'>'",
+	"GE",		"'>='",
+	"LT",		"'<'",
+	"LE",		"'<='",
+	"EQ",		"'=='",
+	"NE",		"'!='",
+	"AND",		"'&'",
+	"OR",		"'|'",
+	"AND2",		"'&&'",
+	"OR2",		"'||'",
+	"NS_GET",	"'::'",
+	"NS_GET_INT",	"':::'",
+	0
+    };
+
+
 /*{{{ rules */
 %%
 
