@@ -39,6 +39,13 @@
 
     <change-notes><![CDATA[
         <html>
+        <b>Changes in v0.5:</b>
+        <ul>
+            <li></li>
+            <li>New shortcut action to call str() for the current word or selection (MacOS only)</li>
+            <li>bug fixes</li>
+        </ul>
+
         <b>Changes in v0.4:</b>
         <ul>
             <li>Basic code completion</li>
