@@ -16,9 +16,9 @@
   elementTypeClass="com.r4intellij.psi.RCompositeElementType"
   tokenTypeClass="com.r4intellij.lang.lexer.RTokenType"
 
+
+
   // tokens as defined in original_r_grammar.y
-// todo END_OF_INPUT
-// todo ERROR
 // onthefly STR_CONST
 // onthefly NUM_CONST
 // onthefly NULL_CONST
@@ -46,7 +46,7 @@ AND="&"
 OR="|"
 AND2="&&"
 OR2="||"
-NS_GET=">"
+NS_GET="::"
 NS_GET_INT=":::"
 // onthefly COMMENT
 // onthefly SPACES
@@ -70,6 +70,24 @@ LEFT_PAREN="("
 RIGHT_PAREN=")"
 LINE_BREAK="\n"
 
+COLON=":"
+COMMA=","
+SEMICOLON=";"
+DOT="."
+TILDE="~"
+
+LIST_SUBSET="$"
+//VARARGS="..."
+ARITH_PLUS="+"
+ARITH_MINUS="-"
+NEGATION="!"
+QUESTION="?"
+ARITH_MULT="*"
+ARITH_DIV="/"
+ARITH_MOD="%"
+ARITH_EXPONENTIAION="^"
+//ARITH_MISC
+
   named="com.r4intellij.psi.RNamedElement"
   namedImpl="com.r4intellij.psi.impl.bnfclasses.RNamedElementImpl"
   parenthesized="com.r4intellij.psi.impl.bnfclasses.RParenthesized"
@@ -83,7 +101,7 @@ prog ::= END_OF_INPUT
     | '\n'
     | expr_or_assign '\n'
     | expr_or_assign ';'
-    | error
+    | COMMENT
 
 expr_or_assign ::= expr | equal_assign
 
@@ -106,7 +124,7 @@ expr ::= NUM_CONST
     | expr '*' expr
     | expr '/' expr
     | expr '^' expr
-    | expr SPECIAL expr
+    | expr ARITH_MISC expr
     | expr '%' expr
     | expr '~' expr
     | expr '?' expr

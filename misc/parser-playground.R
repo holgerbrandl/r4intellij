@@ -11,4 +11,6 @@ p
 pp <- parser("/Users/brandl/projects/rplugin/parser-package/inst/example/f.R")
 pp
 
+a <- "this
+baum"
 

@@ -4,10 +4,7 @@ package com.r4intellij.lang.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
-import static com.r4intellij.psi.RTypes.*;
-import static org.intellij.grammar.BnfParserDefinition.BNF_LINE_COMMENT;
-import static org.intellij.grammar.BnfParserDefinition.BNF_BLOCK_COMMENT;
-
+import static com.r4intellij.lang.lexer.RTokenTypes.*;
 
 import com.intellij.util.containers.Stack;
 
@@ -39,13 +36,13 @@ Lexical Rules Section.
 
 /* A line terminator is a \r (carriage return), \n (line feed), or \r\n. */
 LineTerminator = \r|\n|\r\n
-WHITE_SPACE= {LineTerminator} | [ \t\f]
-COMMENT = "#"[^\r\n]*
+WhiteSpace= {LineTerminator} | [ \t\f]
+Comment = "#"[^\r\n]*
 
 /* A identifier integer is a word beginning a letter between A and Z, a and z,
 or an underscore followed by zero or more letters between A and Z, a and z,
 zero and nine, or an underscore. */
-SYMBOL = [A-Za-z_][A-Za-z_0-9._]*
+Identifier = [A-Za-z_][A-Za-z_0-9._]*
 
 
 /* A literal integer is is a number beginning with a number between one and nine
@@ -62,7 +59,7 @@ DoubleLiteral = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
 //StringCharacter = [^\r\n]
 // picked up from arc.flex :
 EscapeSequence=\\[^\r\n]
-STRING=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
+StringLiteral=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 
 //%state STRING
 
@@ -78,50 +75,26 @@ will be executed when the scanner matches the associated regular expression. */
 expressions will only be matched if the scanner is in the start state
 YYINITIAL. */
 
-%%
-
-<YYINITIAL> {
-  {WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
-  {COMMENT} {yybegin(YYINITIAL); return R_COMMENT; }
-
-  {STRING} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
-  {NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }
-  {SYMBOL} {yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
-
-  ";" {yybegin(YYINITIAL); return RTypes.R_SEMICOLON; }
-
-  "(" {yybegin(YYINITIAL); return RTypes.R_LEFT_PAREN; }
-  ")" {yybegin(YYINITIAL); return RTypes.R_RIGHT_PAREN; }
-  "{" {yybegin(YYINITIAL); return RTypes.R_LEFT_BRACE; }
-  "}" {yybegin(YYINITIAL); return RTypes.R_RIGHT_BRACE; }
-  "[" {yybegin(YYINITIAL); return RTypes.R_LEFT_BRACKET; }
-  "]" {yybegin(YYINITIAL); return RTypes.R_RIGHT_BRACKET; }
-  "<<" {yybegin(YYINITIAL); return RTypes.R_EXTERNAL_START; }
-  ">>" {yybegin(YYINITIAL); return RTypes.R_EXTERNAL_END; }
-
-
-  "::=" {yybegin(YYINITIAL); return RTypes.R_OP_IS; }
-  "=" {yybegin(YYINITIAL); return RTypes.R_OP_EQ; }
-  "+" {yybegin(YYINITIAL); return RTypes.R_OP_ONEMORE; }
-  "*" {yybegin(YYINITIAL); return RTypes.R_OP_ZEROMORE; }
-  "?" {yybegin(YYINITIAL); return RTypes.R_OP_OPT; }
-  "!" {yybegin(YYINITIAL); return RTypes.R_OP_NOT; }
-  "|" {yybegin(YYINITIAL); return RTypes.R_OP_OR; }
-
-
-
-  {BAD_TOKENS} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
-  [^] {yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
-
-}
-
-
 <YYINITIAL> {
 
       /* If an identifier is found print it out , return the token ID that
     represents an identifier and the default value one that is given to all
     identifiers. */
     //{Variable} { System.out.print("word:"+yytext()); return WORD;}
+
+    /* A list of prefdefined keywords in R. */
+    "print"                      |
+    "function"                      |
+    "source"                     |
+    "data.frame"                    |
+    "times"                      |
+    "trap"                       |
+    "typeof"                       |
+    "class"                       |
+    "ulimit"                     |
+    "umask"                      |
+    "unalias"                    |
+    "wait"                       { return INTERNAL_COMMAND; }
 
 
     "FALSE" | "F" | "TRUE" | "T" | "pi" | "NULL" { return CONSTANT; }
@@ -182,3 +155,19 @@ YYINITIAL. */
 
    // "\"\\t\"" {return  STRING_LITERAL; }
 }
+
+//// note: picked up from java.flex
+//<STRING> {
+//  \"                             { yybegin(YYINITIAL); return STRING_LITERAL; /*, string.toString()); */ }
+//  {StringCharacter}+             { string.append( yytext() ); }
+//
+//  \\.                            { throw new RuntimeException("Illegal escape sequence \""+yytext()+"\""); }
+//  {LineTerminator}               { throw new RuntimeException("Unterminated string at end of line"); }
+//}
+
+
+
+/* No token was found for the input so through an error.  Print out an
+'Illegal character' message with the illegal character that was found.*/
+//. { throw new Error("Illegal character <"+yytext()+">");}
+.               { return BAD_CHARACTER; }
