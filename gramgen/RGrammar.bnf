@@ -147,7 +147,7 @@ expr ::= NUM_CONST
     | FOR forcond expr_or_assign
     | WHILE cond expr_or_assign
     | REPEAT expr_or_assign
-    | expr LBB sublist ']' ']'
+    | expr LBB sublist RBB
     | expr '[' sublist ']'
     | SYMBOL NS_GET SYMBOL
     | SYMBOL NS_GET STR_CONST
@@ -191,5 +191,6 @@ formlist ::= whitespace | SYMBOL
         | SYMBOL EQ_ASSIGN expr
         | formlist ',' SYMBOL
         | formlist ',' SYMBOL EQ_ASSIGN expr
+        | SYMBOL_FORMALS
 
 cr ::= /* empty */ //todo

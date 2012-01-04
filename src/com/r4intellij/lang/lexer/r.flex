@@ -52,16 +52,17 @@ SYMBOL = [A-Za-z_][A-Za-z_0-9._]*
 followed by zero or more numbers between zero and nine or just a zero. */
 IntLiteral = 0 | [1-9][0-9]*[L]?
 
-
 Exponent = [eE] [+-]? [0-9]+
 FLit1    = [0-9]+ \. [0-9]*
 FLit2    = \. [0-9]+
 FLit3    = [0-9]+
 DoubleLiteral = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
 
+
 //StringCharacter = [^\r\n]
 // picked up from arc.flex :
 EscapeSequence=\\[^\r\n]
+//todo allow for linebreaks in strings and for single quot quoting
 STRING=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 
 //%state STRING
@@ -84,101 +85,92 @@ YYINITIAL. */
   {WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
   {COMMENT} {yybegin(YYINITIAL); return R_COMMENT; }
 
+  // r keywords
+  "function" { return R_FUNCTION; }
+  "for" { return R_FOR; }
+  "while" { return R_WHILE; }
+  "if" { return R_IF; }
+  "else" { return R_ELSE; }
+  "break" { return R_BREAK; }
+  "next" { return R_NEXT; }
+  "repeat" { return R_REPEAT; }
+
+
   {STRING} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
   {NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }
+
+
   {SYMBOL} {yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
+  {IntLiteral} | {DoubleLiteral}  { return R_NUM_CONST; }
+  "NULL" { return R_NULL_CONST; }
 
+    // separators
   ";" {yybegin(YYINITIAL); return RTypes.R_SEMICOLON; }
-
+  ":" {yybegin(YYINITIAL); return R_COLON; }
+  "," {yybegin(YYINITIAL); return R_COMMA; }
   "(" {yybegin(YYINITIAL); return RTypes.R_LEFT_PAREN; }
   ")" {yybegin(YYINITIAL); return RTypes.R_RIGHT_PAREN; }
   "{" {yybegin(YYINITIAL); return RTypes.R_LEFT_BRACE; }
   "}" {yybegin(YYINITIAL); return RTypes.R_RIGHT_BRACE; }
   "[" {yybegin(YYINITIAL); return RTypes.R_LEFT_BRACKET; }
   "]" {yybegin(YYINITIAL); return RTypes.R_RIGHT_BRACKET; }
-  "<<" {yybegin(YYINITIAL); return RTypes.R_EXTERNAL_START; }
-  ">>" {yybegin(YYINITIAL); return RTypes.R_EXTERNAL_END; }
+  "[[" {yybegin(YYINITIAL); return RTypes.R_LBB; }
+  "]]" {yybegin(YYINITIAL); return RTypes.R_LBB; }
+
+  // logical operators
+  // unary
+  "!" { return R_NEGATION; }
+  // binary
+  "==" { return R_EQ; }
+  ">" { return R_GT; }
+  "<" { return R_LT; }
+  ">=" { return R_GE; }
+  "<=" { return R_LE; }
+  "!=" { return R_NE; }
+  "&" { return R_AND; } // not vectorized
+  "&&" { return R_AND2; } // not vectorized
+  "|" { return R_OR; }
+  "||" { return R_OR2; }
+
+  // operators
+  "-" { return R_ARITH_MINUS; }
+  "+" { return R_ARITH_PLUS; }
+  "~" { return R_TILDE; }
+  "*" { return R_ARITH_MULT; }
+  "%" { return R_ARITH_MOD; }
+  "/" { return R_ARITH_DIV; }
+  "^" { return R_ARITH_EXPONENTIAION; }
+  "%%" { return R_ARITH_MOD; }
+  "%/%" | "%*%" | "%o%" | "%x%" { return R_ARITH_MISC; }
+  "%in%" { return R_IN; }
 
 
-  "::=" {yybegin(YYINITIAL); return RTypes.R_OP_IS; }
-  "=" {yybegin(YYINITIAL); return RTypes.R_OP_EQ; }
-  "+" {yybegin(YYINITIAL); return RTypes.R_OP_ONEMORE; }
-  "*" {yybegin(YYINITIAL); return RTypes.R_OP_ZEROMORE; }
-  "?" {yybegin(YYINITIAL); return RTypes.R_OP_OPT; }
-  "!" {yybegin(YYINITIAL); return RTypes.R_OP_NOT; }
-  "|" {yybegin(YYINITIAL); return RTypes.R_OP_OR; }
+    // misc
+    "=" { return R_EQ_ASSIGN; }
+    "<-" { return R_LEFT_ASSIGN; }
+    "->" { return R_RIGHT_ASSIGN; }
+
+   "$" { return R_LIST_SUBSET; }
+   "@" { return R_SLOT; }
+    "?" { return R_QUESTION; }
+    "::" {yybegin(YYINITIAL); return RTypes.R_NS_GET; }
+    ":::" {yybegin(YYINITIAL); return RTypes.R_NS_GET_INT; }
+    "..." { return R_SYMBOL_FORMALS; }
 
 
+    // todo what is this
+  //"<<" {yybegin(YYINITIAL); return RTypes.R_EXTERNAL_START; }
+  //">>" {yybegin(YYINITIAL); return RTypes.R_EXTERNAL_END; }
 
-  {BAD_TOKENS} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
-  [^] {yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
-
-}
-
-
-<YYINITIAL> {
-
-      /* If an identifier is found print it out , return the token ID that
-    represents an identifier and the default value one that is given to all
-    identifiers. */
+  //{BAD_TOKENS} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
+  //[^] {yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
+//    "FALSE" | "F" | "TRUE" | "T" | "pi" | "NULL" { return CONSTANT; }
     //{Variable} { System.out.print("word:"+yytext()); return WORD;}
 
 
-    "FALSE" | "F" | "TRUE" | "T" | "pi" | "NULL" { return CONSTANT; }
-
-
-    // separators
-    "(" { return LEFT_PAREN; }
-    ")" { return RIGHT_PAREN; }
-    "{" { return LEFT_CURLY; }
-    "}" { return RIGHT_CURLY; }
-    "[" { return LEFT_SQUARE; }
-    "]" { return RIGHT_SQUARE; }
-    ";" { return SEMICOLON; }
-    "," { return COMMA; }
-
-
-    // operators
-    "-" { return ARITH_MINUS; }
-    "+" { return ARITH_PLUS; }
-    "!" { return NEGATION; }
-    "~" { return TILDE; }
-    "?" {}
-    ":" { return COLON; }
-    "*" { return ARITH_MULT; }
-    "/" { return ARITH_DIV; }
-    "^" { return ARITH_EXPONENTIAION; }
-    "%%" { return ARITH_MOD; }
-
-    "%/%" | "%*%" | "%o%" | "%x%" | "%in%"  { return ARITH_MISC; }
-
-    "&" | "&&" | "|" | "||" | ("<"|">")[=]? { return LOG_OPERATOR; }
-
-    "$" { return LIST_SUBSET; }
-
-    // misc
-    "..." { return VARARGS; }
-    "<-" | "=" | "->"  { return ASSIGNMENT; }
-
-
-    // todo refactor these away
-    "." { return DOT; }
-
     // string literal
 //    \" | \' {// yybegin(STRING); string.setLength(0); }
-
-    {IntLiteral} | {DoubleLiteral}  { return NUMBER; }
-
-    {Identifier} { return IDENTIFIER; }
-//    {Identifier} {System.out.print("word:"+yytext());  return IDENTIFIER; }
-
-    {Comment} {return COMMENT; }
-    {WhiteSpace} { return com.intellij.psi.TokenType.WHITE_SPACE; }
-//    {WhiteSpace} { /* skip this */ }
-
-    {StringLiteral}  { return STRING_LITERAL; }
 //    "\"" ({StringCharacter} | "\'" | "}")* "\""   { return STRING_LITERAL; }
 //    "\'" ({StringCharacter} | "\"")* "\'"   { return STRING_LITERAL; }
-
-   // "\"\\t\"" {return  STRING_LITERAL; }
+// "\"\\t\"" {return  STRING_LITERAL; }
 }
