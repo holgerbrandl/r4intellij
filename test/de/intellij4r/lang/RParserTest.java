@@ -20,6 +20,8 @@ import com.intellij.testFramework.LightPlatformTestCase;
 import com.r4intellij.lang.parser.RParserDefinition;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 
 /**
  * Test the parser against some example R-scriptlets.
@@ -48,7 +50,7 @@ public class RParserTest extends LightPlatformTestCase {
     @Test
     public void testImport() {
         ASTNode astNode = parseThis("library(stringr);");
-        System.out.println(astNode.getChildren(new TokenSet()));
+        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
         System.out.println(astNode.getText());
         System.out.println(astNode.toString());
         System.out.println(astNode.getPsi());

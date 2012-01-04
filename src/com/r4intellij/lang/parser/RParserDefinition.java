@@ -40,7 +40,7 @@ public class RParserDefinition implements ParserDefinition, RTypes {
     }
 
     public PsiParser createParser(Project project) {
-        return new RDummyParser();
+        return new RParser();
     }
 
 
