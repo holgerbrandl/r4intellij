@@ -15,7 +15,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.r4intellij.lang.lexer.RTokenTypes.*;
+import static com.r4intellij.psi.RTypes.*;
 
 
 /**
@@ -26,10 +26,10 @@ import static com.r4intellij.lang.lexer.RTokenTypes.*;
 public class RBraceMatcher implements PairedBraceMatcher {
 
     private static final BracePair[] PAIRS = new BracePair[]{
-            new BracePair(LEFT_PAREN, RIGHT_PAREN, false),
-            new BracePair(LEFT_SQUARE, RIGHT_SQUARE, false),
+            new BracePair(R_LEFT_PAREN, R_RIGHT_PAREN, false),
+            new BracePair(R_LEFT_BRACE, R_RIGHT_BRACE, false),
 //            new BracePair(STRING_BEGIN, STRING_END, false),
-            new BracePair(LEFT_CURLY, RIGHT_CURLY, true), //structural
+            new BracePair(R_LEFT_BRACKET, R_RIGHT_BRACKET, true), //structural
     };
 
     public BracePair[] getPairs() {
@@ -40,10 +40,10 @@ public class RBraceMatcher implements PairedBraceMatcher {
         return TokenType.WHITE_SPACE == tokenType
 //                || comments.contains(tokenType)
 //                || tokenType == SEMI
-                || tokenType == COMMA
-                || tokenType == RIGHT_PAREN
-                || tokenType == RIGHT_SQUARE
-                || tokenType == RIGHT_CURLY
+                || tokenType == R_COMMA
+                || tokenType == R_RIGHT_PAREN
+                || tokenType == R_RIGHT_BRACE
+                || tokenType == R_RIGHT_BRACKET
                 || null == tokenType;
     }
 

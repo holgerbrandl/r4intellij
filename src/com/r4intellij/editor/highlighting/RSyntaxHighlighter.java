@@ -18,7 +18,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.ui.SimpleTextAttributes;
 import com.r4intellij.lang.lexer.RLexer;
-import com.r4intellij.lang.lexer.RTokenTypes;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,22 +25,24 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.r4intellij.psi.RTypes.*;
+
 
 /**
  * Defines R token highlighting and formatting.
  *
  * @author Holger Brandl
  */
-public class RSyntaxHighlighter extends SyntaxHighlighterBase implements RTokenTypes {
+public class RSyntaxHighlighter extends SyntaxHighlighterBase {
 
     private static final Logger log = Logger.getInstance("#RPlugin");
 
-    private static final TokenSet lineCommentSet = TokenSet.create(COMMENT);
-    private static final TokenSet parenthesisSet = TokenSet.create(LEFT_PAREN, RIGHT_PAREN);
-    private static final TokenSet curlySet = TokenSet.create(LEFT_CURLY, RIGHT_CURLY);
-    private static final TokenSet bracketSet = TokenSet.create(LEFT_SQUARE, RIGHT_SQUARE);
-    private static final TokenSet string2Set = TokenSet.create(RTokenTypes.STRING_LITERAL);
-    private static final TokenSet numberSet = TokenSet.create(RTokenTypes.NUMBER, INTEGER_LITERAL);
+    private static final TokenSet lineCommentSet = TokenSet.create(R_COMMENT);
+    private static final TokenSet parenthesisSet = TokenSet.create(R_LEFT_PAREN, R_RIGHT_PAREN);
+    private static final TokenSet curlySet = TokenSet.create(R_LEFT_BRACE, R_RIGHT_BRACE);
+    private static final TokenSet bracketSet = TokenSet.create(R_LEFT_BRACKET, R_RIGHT_BRACKET);
+    private static final TokenSet string2Set = TokenSet.create(R_STR_CONST);
+    private static final TokenSet numberSet = TokenSet.create(R_NUM_CONST);
 //    private static final TokenSet internalCommandSet = TokenSet.create(RTokenTypes.INTERNAL_COMMAND);
 //    private static final TokenSet varUseSet = TokenSet.create(RTokenTypes.VARIABLE);
 //    private static final TokenSet badCharacterSet = TokenSet.create(RTokenTypes.BAD_CHARACTER);
@@ -134,6 +135,10 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase implements RTokenT
 
     private static final Map<IElementType, TextAttributesKey> attributes;
 
+
+    static TokenSet keywords = TokenSet.create(R_ELSE, R_FOR, R_FUNCTION,
+            R_IF, R_WHILE);
+
     static {
         //setup default attribute formatting
         SHEBANG_ATTRIB.setFontType(SimpleTextAttributes.STYLE_BOLD);
@@ -177,6 +182,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase implements RTokenT
 //        fillMap(attributes, varUseSet, VAR_USE);
 //        fillMap(attributes, badCharacterSet, BAD_CHARACTER);
     }
+
 
     @NotNull
     public Lexer getHighlightingLexer() {

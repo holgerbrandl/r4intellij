@@ -20,9 +20,10 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.r4intellij.file.RFileType;
 import com.r4intellij.lang.lexer.RLexer;
-import com.r4intellij.lang.lexer.RTokenTypes;
 import com.r4intellij.psi.RFile;
+import com.r4intellij.psi.RTypes;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Holger Brandl
  */
-public class RParserDefinition implements ParserDefinition, RTokenTypes {
+public class RParserDefinition implements ParserDefinition, RTypes {
 
     @NotNull
     public Lexer createLexer(Project project) {
@@ -43,7 +44,10 @@ public class RParserDefinition implements ParserDefinition, RTokenTypes {
     }
 
 
+    IFileElementType FILE = new IFileElementType(RFileType.R_LANGUAGE);
+
     public IFileElementType getFileNodeType() {
+
         return FILE;
     }
 
@@ -54,37 +58,37 @@ public class RParserDefinition implements ParserDefinition, RTokenTypes {
 
     @NotNull
     public TokenSet getCommentTokens() {
-        return TokenSet.create(COMMENT);
+        return TokenSet.create(R_COMMENT);
     }
 
     @NotNull
     public TokenSet getStringLiteralElements() {
-        return TokenSet.create(STRING_LITERAL);
+        return TokenSet.create(R_STR_CONST);
     }
 
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode leftAst, ASTNode rightAst) {
         final IElementType left = leftAst.getElementType();
         final IElementType right = rightAst.getElementType();
 
-        if (left == LEFT_PAREN
-                || right == RIGHT_PAREN
-                || left == RIGHT_PAREN
-                || right == LEFT_PAREN
+        if (left == R_LEFT_PAREN
+                || right == R_RIGHT_PAREN
+                || left == R_RIGHT_PAREN
+                || right == R_LEFT_PAREN
 
-                || left == LEFT_CURLY
-                || right == LEFT_CURLY
-                || left == RIGHT_CURLY
-                || right == RIGHT_CURLY
+                || left == R_LEFT_BRACE
+                || right == R_LEFT_BRACE
+                || left == R_RIGHT_BRACE
+                || right == R_RIGHT_BRACE
 
 //                || (left == WORD && right == PARAM_EXPANSION_OP)
 
-                || left == LEFT_SQUARE
-                || right == RIGHT_SQUARE
-                || left == RIGHT_SQUARE
-                || right == LEFT_SQUARE
+                || left == R_LEFT_BRACKET
+                || right == R_RIGHT_BRACKET
+                || left == R_RIGHT_BRACKET
+                || right == R_LEFT_BRACKET
 
-                || left == VARIABLE
-                || right == VARIABLE) {
+                || left == R_SYMBOL
+                || right == R_SYMBOL) {
 
             return SpaceRequirements.MAY;
         }

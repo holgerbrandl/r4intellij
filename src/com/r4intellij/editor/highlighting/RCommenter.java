@@ -10,7 +10,7 @@ package com.r4intellij.editor.highlighting;
 import com.intellij.lang.CodeDocumentationAwareCommenter;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.tree.IElementType;
-import com.r4intellij.lang.lexer.RTokenTypes;
+import com.r4intellij.psi.RTypes;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Holger Brandl
  */
-public class RCommenter implements CodeDocumentationAwareCommenter, RTokenTypes {
+public class RCommenter implements CodeDocumentationAwareCommenter {
 
     public String getLineCommentPrefix() {
         return "# ";
@@ -43,7 +43,7 @@ public class RCommenter implements CodeDocumentationAwareCommenter, RTokenTypes 
 
     @Nullable
     public IElementType getLineCommentTokenType() {
-        return COMMENT;
+        return RTypes.R_COMMENT;
     }
 
     @Nullable

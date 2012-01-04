@@ -12,9 +12,8 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
+import com.r4intellij.psi.RTypes;
 import org.jetbrains.annotations.NotNull;
-
-import static com.r4intellij.lang.lexer.RTokenTypes.STRING_LITERAL;
 
 
 /**
@@ -40,7 +39,7 @@ public class RDummyParser implements PsiParser {
 
         try {
             while (!builder.eof()) {
-                markAndAdvance(STRING_LITERAL);
+                markAndAdvance(RTypes.R_STR_CONST);
 //                parseNext();
             }
         } catch (EofException e) {
