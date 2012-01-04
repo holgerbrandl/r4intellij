@@ -93,7 +93,7 @@ YYINITIAL. */
   "NULL" { return R_NULL_CONST; }
 
   {STRING} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
-  {SYMBOL} {yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
+  {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
 
   //{NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }
   {IntLiteral} | {DoubleLiteral}  { return R_NUM_CONST; }

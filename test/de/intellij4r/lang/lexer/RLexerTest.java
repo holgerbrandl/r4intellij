@@ -14,35 +14,41 @@ package de.intellij4r.lang.lexer;
  *  governing permissions and limitations under the License..
  */
 
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.r4intellij.Utils;
 import com.r4intellij.lang.lexer.RLexer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static com.r4intellij.lang.lexer.RTokenTypes.*;
+import static com.r4intellij.psi.RTypes.*;
 
 
 public class RLexerTest {
 
-    private static void printTokenization(String code) {
+    private static void printTokenization(String code, boolean consumeWhiteSpaces) {
         RLexer lexer = new RLexer();
         lexer.start(new StringBuffer(code));
+        consumeWhiteSpaces(consumeWhiteSpaces, lexer);
 
         // just print all tokens
         while (lexer.getTokenType() != null) {
             IElementType tokenType = lexer.getTokenType();
             System.out.println(tokenType);
             lexer.advance();
+            consumeWhiteSpaces(consumeWhiteSpaces, lexer);
+
         }
 
     }
 
-    private void testTokenization(String code, IElementType[] expectedTokens) {
-        printTokenization(code);
+    private void testTokenization(String code, IElementType[] expectedTokens, boolean consumeWhiteSpaces) {
+        printTokenization(code, true);
 
         RLexer lexer = new RLexer();
         lexer.start(new StringBuffer(code));
+
+        consumeWhiteSpaces(consumeWhiteSpaces, lexer);
 
         // do the comparison
         lexer.start(new StringBuffer(code));
@@ -50,51 +56,61 @@ public class RLexerTest {
             IElementType tokenType = lexer.getTokenType();
             Assert.assertEquals(expectedToken, tokenType);
             lexer.advance();
+
+            consumeWhiteSpaces(consumeWhiteSpaces, lexer);
         }
 
         Assert.assertNull("surplus tokens in input:" + lexer.getTokenType(), lexer.getTokenType());
+    }
+
+    private static void consumeWhiteSpaces(boolean consumeWhiteSpaces, RLexer lexer) {
+        if (consumeWhiteSpaces) {
+            while (lexer.getTokenType() != null && lexer.getTokenType() == TokenType.WHITE_SPACE) {
+                lexer.advance();
+            }
+        }
     }
 
     @Test
     public void testSimplePrint() {
         testTokenization("-(wait, \"foobar23\") # uhuh",
                 new IElementType[]{
-                        ARITH_MINUS,
-                        LEFT_PAREN,
-                        INTERNAL_COMMAND,
-                        COMMA,
-                        STRING_LITERAL,
-                        RIGHT_PAREN,
-                        COMMENT
-                });
+                        R_ARITH_MINUS,
+                        R_LEFT_PAREN,
+                        R_SYMBOL,
+                        R_COMMA,
+                        R_STR_CONST,
+                        R_RIGHT_PAREN,
+                        R_COMMENT
+                }, true);
     }
 
     @Test
     public void testCtrlCharacterString() {
         testTokenization("print(\"\\t\")",
                 new IElementType[]{
-                        INTERNAL_COMMAND,
-                        LEFT_PAREN,
-                        STRING_LITERAL,
-                        RIGHT_PAREN,
-                });
+                        R_SYMBOL,
+                        R_LEFT_PAREN,
+                        R_STR_CONST,
+                        R_RIGHT_PAREN,
+                }, true);
     }
 
     @Test
     public void testMultiCharacterString() {
         testTokenization("install.packages(\"plyr\",\"ggplot2\",type=\"source\")",
                 new IElementType[]{
-                        IDENTIFIER,
-                        LEFT_PAREN,
-                        STRING_LITERAL,
-                        COMMA,
-                        STRING_LITERAL,
-                        COMMA,
-                        IDENTIFIER,
-                        ASSIGNMENT,
-                        STRING_LITERAL,
-                        RIGHT_PAREN
-                });
+                        R_SYMBOL,
+                        R_LEFT_PAREN,
+                        R_STR_CONST,
+                        R_COMMA,
+                        R_STR_CONST,
+                        R_COMMA,
+                        R_SYMBOL,
+                        R_EQ_ASSIGN,
+                        R_STR_CONST,
+                        R_RIGHT_PAREN
+                }, true);
     }
 
 
@@ -102,19 +118,19 @@ public class RLexerTest {
     public void testSimpleFunctionCall() {
         testTokenization("foo <- bar(tt, par=23); # ddff",
                 new IElementType[]{
-                        IDENTIFIER,
-                        ASSIGNMENT,
-                        IDENTIFIER,
-                        LEFT_PAREN,
-                        IDENTIFIER,
-                        COMMA,
-                        IDENTIFIER,
-                        ASSIGNMENT,
-                        NUMBER,
-                        RIGHT_PAREN,
-                        SEMICOLON,
-                        COMMENT
-                });
+                        R_SYMBOL,
+                        R_LEFT_ASSIGN,
+                        R_SYMBOL,
+                        R_LEFT_PAREN,
+                        R_SYMBOL,
+                        R_COMMA,
+                        R_SYMBOL,
+                        R_EQ_ASSIGN,
+                        R_NUM_CONST,
+                        R_RIGHT_PAREN,
+                        R_SEMICOLON,
+                        R_COMMENT
+                }, true);
     }
 
 
@@ -122,21 +138,21 @@ public class RLexerTest {
     public void testMultiLineBlockCommentTokenization() {
         testTokenization("# This \r\n # a long \r\n # comment (+ 1 2)\r\n 1+1;",
                 new IElementType[]{
-                        COMMENT,
-                        COMMENT,
-                        COMMENT,
-                        NUMBER,
-                        ARITH_PLUS,
-                        NUMBER,
-                        SEMICOLON
-                });
+                        R_COMMENT,
+                        R_COMMENT,
+                        R_COMMENT,
+                        R_NUM_CONST,
+                        R_ARITH_PLUS,
+                        R_NUM_CONST,
+                        R_SEMICOLON
+                }, true);
     }
 
     @Test
     public void testComplexTokenization() {
-        String testData = Utils.readFileAsString("/Users/brandl/find_prion_domains.R");
+        String testData = Utils.readFileAsString("misc/find_prion_domains.R");
 //        String testData = Utils.readFileAsString("misc/normality tests.R");
-        printTokenization(testData);
+        printTokenization(testData, true);
     }
 
 
