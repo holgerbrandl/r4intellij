@@ -43,7 +43,7 @@ COMMENT = "#"[^\r\n]*
 /* A identifier integer is a word beginning a letter between A and Z, a and z,
 or an underscore followed by zero or more letters between A and Z, a and z,
 zero and nine, or an underscore. */
-SYMBOL = [A-Za-z_][A-Za-z_0-9._]*
+SYMBOL = [A-Za-z.][A-Za-z_0-9._]*
 
 
 /* A literal integer is is a number beginning with a number between one and nine
@@ -61,7 +61,8 @@ DoubleLiteral = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
 // picked up from arc.flex :
 EscapeSequence=\\[^\r\n]
 //todo allow for linebreaks in strings and for single quot quoting
-STRING=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
+STRING_DQUOTE=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
+STRING_SQUOTE='([^\\\"]|{EscapeSequence})*('|\\)?
 
 //%state STRING
 
@@ -92,7 +93,8 @@ YYINITIAL. */
   "repeat" { return R_REPEAT; }
   "NULL" { return R_NULL_CONST; }
 
-  {STRING} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
+  {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
+ // {SYMBOL} { yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
   {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
 
   //{NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }

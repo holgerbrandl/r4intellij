@@ -150,7 +150,7 @@ public class RLexerTest {
 
     @Test
     public void testComplexTokenization() {
-        String testData = Utils.readFileAsString("misc/find_prion_domains.R");
+        String testData = Utils.readFileAsString("misc/complex_script.R");
 //        String testData = Utils.readFileAsString("misc/normality tests.R");
         printTokenization(testData, true);
     }
