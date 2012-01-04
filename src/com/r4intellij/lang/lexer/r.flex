@@ -5,8 +5,6 @@ package com.r4intellij.lang.lexer;
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
 import static com.r4intellij.psi.RTypes.*;
-import static org.intellij.grammar.BnfParserDefinition.BNF_LINE_COMMENT;
-import static org.intellij.grammar.BnfParserDefinition.BNF_BLOCK_COMMENT;
 
 
 import com.intellij.util.containers.Stack;
@@ -67,8 +65,6 @@ STRING=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 
 //%state STRING
 
-%%
-
 /* ------------------------Lexical Rules Section---------------------- */
 
 /*
@@ -94,13 +90,12 @@ YYINITIAL. */
   "break" { return R_BREAK; }
   "next" { return R_NEXT; }
   "repeat" { return R_REPEAT; }
-
+  "NULL" { return R_NULL_CONST; }
 
   {STRING} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
-  {NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }
-
-
   {SYMBOL} {yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
+
+  //{NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }
   {IntLiteral} | {DoubleLiteral}  { return R_NUM_CONST; }
   "NULL" { return R_NULL_CONST; }
 
