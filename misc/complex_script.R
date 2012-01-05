@@ -1,4 +1,4 @@
-# ### setup: 
+# ### setup:
 # install.packages(c("ggplot2", "HMM", "zoo", "reshape", "plyr", "foreach", "Kendall", "XML", "stringr"))
 # install.packages('snippets',,'http://www.rforge.net/')
 # source("http://bioconductor.org/biocLite.R")

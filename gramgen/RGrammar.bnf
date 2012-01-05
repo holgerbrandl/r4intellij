@@ -69,7 +69,7 @@ LEFT_BRACKET="["
 RIGHT_BRACKET="]"
 LEFT_PAREN="("
 RIGHT_PAREN=")"
-LINE_BREAK="\n"
+LINE_BREAK="CR"
 
 COLON=":"
 COMMA=","
@@ -98,12 +98,15 @@ ARITH_EXPONENTIAION="^"
 // R grammar
 external grammar ::= parseGrammar prog
 
+// original prog rule
 prog ::=
 //END_OF_INPUT //todo match an empty file --> add unit test
-//    | '\n'
-//  |  expr_or_assign '\n'
-     expr_or_assign ';'
-    | COMMENT
+    LINE_BREAK
+    |  expr_or_assign? LINE_BREAK
+    |  expr_or_assign ';'
+    |  COMMENT
+//prog ::= ( ( expr_or_assign? (LINE_BREAK | ';')? ) | COMMENT )*
+
 
 expr_or_assign ::= equal_assign | expr
 
@@ -196,9 +199,9 @@ forcond ::= '(' SYMBOL IN expr ')'
 //        | expr_or_assign
 //        | exprlist ';' expr_or_assign
 //        | exprlist ';'
-//        | exprlist '\n' expr_or_assign
-//        | exprlist '\n'
-exprlist ::=   (expr_or_assign) (';' expr_or_assign | ';' | '\n' expr_or_assign | '\n')* ;
+//        | exprlist LINE_BREAK expr_or_assign
+//        | exprlist LINE_BREAK
+exprlist ::=   (expr_or_assign) (';' expr_or_assign | ';' | LINE_BREAK expr_or_assign | LINE_BREAK)* ;
 
 sublist ::= sub (cr ',' sub)*
 

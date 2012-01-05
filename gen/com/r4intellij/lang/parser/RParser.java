@@ -835,7 +835,7 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
-    // (expr_or_assign) (';' expr_or_assign | ';' | '\n' expr_or_assign | '\n')*
+    // (expr_or_assign) (';' expr_or_assign | ';' | LINE_BREAK expr_or_assign | LINE_BREAK)*
     public static boolean exprlist(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "exprlist")) return false;
         boolean result_ = false;
@@ -864,7 +864,7 @@ public class RParser implements PsiParser {
         return result_;
     }
 
-    // (';' expr_or_assign | ';' | '\n' expr_or_assign | '\n')*
+    // (';' expr_or_assign | ';' | LINE_BREAK expr_or_assign | LINE_BREAK)*
     private static boolean exprlist_1(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "exprlist_1")) return false;
         int offset_ = builder_.getCurrentOffset();
@@ -880,13 +880,13 @@ public class RParser implements PsiParser {
         return true;
     }
 
-    // (';' expr_or_assign | ';' | '\n' expr_or_assign | '\n')
+    // (';' expr_or_assign | ';' | LINE_BREAK expr_or_assign | LINE_BREAK)
     private static boolean exprlist_1_0(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "exprlist_1_0")) return false;
         return exprlist_1_0_0(builder_, level_ + 1);
     }
 
-    // ';' expr_or_assign | ';' | '\n' expr_or_assign | '\n'
+    // ';' expr_or_assign | ';' | LINE_BREAK expr_or_assign | LINE_BREAK
     private static boolean exprlist_1_0_0(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "exprlist_1_0_0")) return false;
         boolean result_ = false;
@@ -918,7 +918,7 @@ public class RParser implements PsiParser {
         return result_;
     }
 
-    // '\n' expr_or_assign
+    // LINE_BREAK expr_or_assign
     private static boolean exprlist_1_0_0_2(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "exprlist_1_0_0_2")) return false;
         boolean result_ = false;
@@ -1097,13 +1097,17 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
-    // expr_or_assign ';'
-    //     | COMMENT
+    // LINE_BREAK
+    //     |  expr_or_assign? LINE_BREAK
+    //     |  expr_or_assign ';'
+    //     |  COMMENT
     public static boolean prog(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "prog")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
-        result_ = prog_0(builder_, level_ + 1);
+        result_ = consumeToken(builder_, R_LINE_BREAK);
+        if (!result_) result_ = prog_1(builder_, level_ + 1);
+        if (!result_) result_ = prog_2(builder_, level_ + 1);
         if (!result_) result_ = consumeToken(builder_, R_COMMENT);
         if (result_) {
             marker_.done(R_PROG);
@@ -1113,9 +1117,31 @@ public class RParser implements PsiParser {
         return result_;
     }
 
+    // expr_or_assign? LINE_BREAK
+    private static boolean prog_1(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "prog_1")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = prog_1_0(builder_, level_ + 1);
+        result_ = result_ && consumeToken(builder_, R_LINE_BREAK);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
+    }
+
+    // expr_or_assign?
+    private static boolean prog_1_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "prog_1_0")) return false;
+        expr_or_assign(builder_, level_ + 1);
+        return true;
+    }
+
     // expr_or_assign ';'
-    private static boolean prog_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog_0")) return false;
+    private static boolean prog_2(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "prog_2")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = expr_or_assign(builder_, level_ + 1);

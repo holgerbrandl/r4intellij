@@ -56,7 +56,7 @@ public interface RTypes {
     IElementType R_LEFT_BRACE = new RTokenType("{");
     IElementType R_LEFT_BRACKET = new RTokenType("[");
     IElementType R_LEFT_PAREN = new RTokenType("(");
-    IElementType R_LINE_BREAK = new RTokenType("\n");
+    IElementType R_LINE_BREAK = new RTokenType("CR");
     IElementType R_LIST_SUBSET = new RTokenType("$");
     IElementType R_LT = new RTokenType("<");
     IElementType R_NE = new RTokenType("!=");
