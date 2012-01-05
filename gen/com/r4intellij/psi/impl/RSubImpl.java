@@ -6,14 +6,16 @@
  */
 package com.r4intellij.psi.impl;
 
+import java.util.List;
+
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.r4intellij.psi.RExpr;
-import com.r4intellij.psi.RSub;
-import org.jetbrains.annotations.Nullable;
 
-import static com.r4intellij.psi.RTypes.R_WHITESPACE;
+import static com.r4intellij.psi.RTypes.*;
+
+import com.r4intellij.psi.*;
 
 
 public class RSubImpl extends RCompositeElementImpl implements RSub {

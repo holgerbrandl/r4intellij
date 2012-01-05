@@ -7,7 +7,6 @@
 
 package com.r4intellij.lang.parser;
 
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
@@ -144,8 +143,8 @@ public class RParserDefinition implements ParserDefinition, RTypes {
 //        } else if (type == LITERAL) {
 //            return new Literal(node);
 //        }
-
-        return new ASTWrapperPsiElement(node);
+        return RTypes.Factory.createElement(node);
+//        return new ASTWrapperPsiElement(node);
     }
 
     public PsiFile createFile(FileViewProvider viewProvider) {

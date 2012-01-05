@@ -6,9 +6,9 @@
  */
 package com.r4intellij.psi;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.PsiElement;
+import com.intellij.lang.ASTNode;
 import com.r4intellij.lang.lexer.RTokenType;
 import com.r4intellij.psi.impl.*;
 
@@ -70,7 +70,7 @@ public interface RTypes {
     IElementType R_OR = new RTokenType("|");
     IElementType R_OR2 = new RTokenType("||");
     IElementType R_QUESTION = new RTokenType("?");
-    IElementType R_RBB = new RTokenType("RBB");
+    IElementType R_RBB = new RTokenType("]]");
     IElementType R_REPEAT = new RTokenType("REPEAT");
     IElementType R_RIGHT_ASSIGN = new RTokenType("->");
     IElementType R_RIGHT_BRACE = new RTokenType("}");

@@ -28,6 +28,7 @@ LEFT_ASSIGN="<-"
 EQ_ASSIGN="="
 RIGHT_ASSIGN="->"
 LBB="[["
+RBB="]]"
 // onthefly FOR
 // onthefly IN
 // onthefly IF
@@ -97,7 +98,7 @@ ARITH_EXPONENTIAION="^"
 // R grammar
 external grammar ::= parseGrammar prog
 
-prog ::= END_OF_INPUT
+prog ::= END_OF_INPUT //todo can not work
     | '\n'
     | expr_or_assign '\n'
     | expr_or_assign ';'

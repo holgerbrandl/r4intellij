@@ -6,16 +6,19 @@
  */
 package com.r4intellij.lang.parser;
 
-import com.intellij.lang.ASTNode;
+import org.jetbrains.annotations.*;
+import com.intellij.lang.LighterASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
-import com.intellij.lang.PsiParser;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.annotations.NotNull;
 
-import static com.r4intellij.lang.parser.GrammarParserUtil.*;
 import static com.r4intellij.psi.RTypes.*;
+import static com.r4intellij.lang.parser.GrammarParserUtil.*;
+
+import com.intellij.psi.tree.IElementType;
+import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.lang.PsiParser;
 
 
 @SuppressWarnings({"SimplifiableIfStatement", "UnusedAssignment"})
@@ -1250,7 +1253,7 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
-    // END_OF_INPUT
+    // END_OF_INPUT //todo can not work
     //     | '\n'
     //     | expr_or_assign '\n'
     //     | expr_or_assign ';'

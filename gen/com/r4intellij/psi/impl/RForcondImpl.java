@@ -6,11 +6,16 @@
  */
 package com.r4intellij.psi.impl;
 
+import java.util.List;
+
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.r4intellij.psi.RExpr;
-import com.r4intellij.psi.RForcond;
-import org.jetbrains.annotations.NotNull;
+
+import static com.r4intellij.psi.RTypes.*;
+
+import com.r4intellij.psi.*;
 
 
 public class RForcondImpl extends RCompositeElementImpl implements RForcond {
