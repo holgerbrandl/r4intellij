@@ -151,14 +151,16 @@ ifcond ::= '(' expr ')'
 
 forcond ::= '(' SYMBOL IN expr ')'
 
-exprlist ::= whitespace
-        | expr_or_assign
-        | exprlist ';' expr_or_assign
-        | exprlist ';'
-        | exprlist '\n' expr_or_assign
-        | exprlist '\n'
+// old left recursive exprlist
+//exprlist ::= whitespace
+//        | expr_or_assign
+//        | exprlist ';' expr_or_assign
+//        | exprlist ';'
+//        | exprlist '\n' expr_or_assign
+//        | exprlist '\n'
+exprlist ::=   (expr_or_assign) (';' expr_or_assign | ';' | '\n' expr_or_assign | '\n')* ;
 
-sublist ::= sub | sublist cr ',' sub
+sublist ::= sub (cr ',' sub)*
 
 sub ::= whitespace | expr
    | SYMBOL EQ_ASSIGN
@@ -168,10 +170,13 @@ sub ::= whitespace | expr
    | NULL_CONST EQ_ASSIGN
    | NULL_CONST EQ_ASSIGN expr
 
-formlist ::= whitespace | SYMBOL
-        | SYMBOL EQ_ASSIGN expr
-        | formlist ',' SYMBOL
-        | formlist ',' SYMBOL EQ_ASSIGN expr
-        | SYMBOL_FORMALS
+// left recursive formlist
+//formlist ::= whitespace | SYMBOL
+//        | SYMBOL EQ_ASSIGN expr
+//        | formlist ',' SYMBOL
+//        | formlist ',' SYMBOL EQ_ASSIGN expr
+//        | SYMBOL_FORMALS
+formlist ::=   (SYMBOL | SYMBOL ',' expr | SYMBOL_FORMALS) (',' SYMBOL | ',' SYMBOL '=' expr)* ;
+
 
 cr ::= /* empty */ //todo
