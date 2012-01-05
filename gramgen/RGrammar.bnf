@@ -108,39 +108,15 @@ expr_or_assign ::= expr | equal_assign
 
 equal_assign ::= expr EQ_ASSIGN expr_or_assign
 
-expr ::= NUM_CONST
-    | STR_CONST
-    | NULL_CONST
-    | SYMBOL
-    | '{' exprlist '}'
+expr ::= '{' exprlist '}'
     | '(' expr_or_assign ')'
     | '-' expr
     | '+' expr
     | '!' expr
     | '~' expr
     | '?' expr
-    | expr ':' expr
-    | expr '+' expr
-    | expr '-' expr
-    | expr '*' expr
-    | expr '/' expr
-    | expr '^' expr
-    | expr ARITH_MISC expr
-    | expr '%' expr
-    | expr '~' expr
-    | expr '?' expr
-    | expr LT expr
-    | expr LE expr
-    | expr EQ expr
-    | expr NE expr
-    | expr GE expr
-    | expr GT expr
-    | expr AND expr
-    | expr OR expr
-    | expr AND2 expr
-    | expr OR2 expr
-    | expr LEFT_ASSIGN expr
-    | expr RIGHT_ASSIGN expr
+    | expr { ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE |
+     GE | GT | AND | OR | AND2 | OR2 | LEFT_ASSIGN | RIGHT_ASSIGN } expr
     | FUNCTION '(' formlist ')' cr expr_or_assign
     | expr '(' sublist ')'
     | IF ifcond expr_or_assign
@@ -162,6 +138,10 @@ expr ::= NUM_CONST
     | expr '$' STR_CONST
     | expr '@' SYMBOL
     | expr '@' STR_CONST
+    | NUM_CONST
+    | STR_CONST
+    | NULL_CONST
+    | SYMBOL
     | NEXT
     | BREAK
 
