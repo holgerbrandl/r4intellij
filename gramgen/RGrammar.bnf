@@ -98,7 +98,7 @@ ARITH_EXPONENTIAION="^"
 // R grammar
 external grammar ::= parseGrammar prog
 
-prog ::= END_OF_INPUT //todo can not work
+prog ::= END_OF_INPUT //todo match an empty file --> add unit test
     | '\n'
     | expr_or_assign '\n'
     | expr_or_assign ';'
@@ -108,42 +108,82 @@ expr_or_assign ::= expr | equal_assign
 
 equal_assign ::= expr EQ_ASSIGN expr_or_assign
 
-expr ::= '{' exprlist '}'
-    | '(' expr_or_assign ')'
-    | '-' expr
-    | '+' expr
-    | '!' expr
-    | '~' expr
-    | '?' expr
-    | expr { ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE |
-     GE | GT | AND | OR | AND2 | OR2 | LEFT_ASSIGN | RIGHT_ASSIGN } expr
-    | FUNCTION '(' formlist ')' cr expr_or_assign
-    | expr '(' sublist ')'
-    | IF ifcond expr_or_assign
-    | IF ifcond expr_or_assign ELSE expr_or_assign
-    | FOR forcond expr_or_assign
-    | WHILE cond expr_or_assign
-    | REPEAT expr_or_assign
-    | expr LBB sublist RBB
-    | expr '[' sublist ']'
-    | SYMBOL NS_GET SYMBOL
-    | SYMBOL NS_GET STR_CONST
-    | STR_CONST NS_GET SYMBOL
-    | STR_CONST NS_GET STR_CONST
-    | SYMBOL NS_GET_INT SYMBOL
-    | SYMBOL NS_GET_INT STR_CONST
-    | STR_CONST NS_GET_INT SYMBOL
-    | STR_CONST NS_GET_INT STR_CONST
-    | expr '$' SYMBOL
-    | expr '$' STR_CONST
-    | expr '@' SYMBOL
-    | expr '@' STR_CONST
-    | NUM_CONST
-    | STR_CONST
-    | NULL_CONST
-    | SYMBOL
-    | NEXT
-    | BREAK
+//old left recursive expression
+//expr ::= '{' exprlist '}'
+//    | '(' expr_or_assign ')'
+//    | '-' expr
+//    | '+' expr
+//    | '!' expr
+//    | '~' expr
+//    | '?' expr
+//    | expr { ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE |
+//     GE | GT | AND | OR | AND2 | OR2 | LEFT_ASSIGN | RIGHT_ASSIGN } expr
+//    | FUNCTION '(' formlist ')' cr expr_or_assign
+//    | expr '(' sublist ')'
+//    | IF ifcond expr_or_assign
+//    | IF ifcond expr_or_assign ELSE expr_or_assign
+//    | FOR forcond expr_or_assign
+//    | WHILE cond expr_or_assign
+//    | REPEAT expr_or_assign
+//    | expr LBB sublist RBB
+//    | expr '[' sublist ']'
+//    | SYMBOL NS_GET SYMBOL
+//    | SYMBOL NS_GET STR_CONST
+//    | STR_CONST NS_GET SYMBOL
+//    | STR_CONST NS_GET STR_CONST
+//    | SYMBOL NS_GET_INT SYMBOL
+//    | SYMBOL NS_GET_INT STR_CONST
+//    | STR_CONST NS_GET_INT SYMBOL
+//    | STR_CONST NS_GET_INT STR_CONST
+//    | expr '$' SYMBOL
+//    | expr '$' STR_CONST
+//    | expr '@' SYMBOL
+//    | expr '@' STR_CONST
+//    | NUM_CONST
+//    | STR_CONST
+//    | NULL_CONST
+//    | SYMBOL
+//    | NEXT
+//    | BREAK
+
+expr ::=  ('{' exprlist '}' |
+	'(' expr_or_assign ')' |
+	'-' expr |
+	'+' expr |
+	'!' expr |
+	'~' expr |
+	'?' expr |
+	FUNCTION '(' formlist ')' expr_or_assign |
+	IF ifcond expr_or_assign |
+	IF ifcond expr_or_assign ELSE expr_or_assign |
+	FOR forcond expr_or_assign |
+	WHILE cond expr_or_assign |
+	REPEAT expr_or_assign |
+	SYMBOL NS_GET SYMBOL |
+	SYMBOL NS_GET STR_CONST |
+	STR_CONST NS_GET SYMBOL |
+	STR_CONST NS_GET STR_CONST |
+	SYMBOL NS_GET_INT SYMBOL |
+	SYMBOL NS_GET_INT STR_CONST |
+	STR_CONST NS_GET_INT SYMBOL |
+	STR_CONST NS_GET_INT STR_CONST |
+	NUM_CONST |
+	STR_CONST |
+	NULL_CONST |
+	SYMBOL |
+	NEXT |
+	BREAK) // end of first half
+
+    (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
+	'(' sublist ')' |
+	'[[' sublist ']]' |
+	'[' sublist ']' |
+	'$' SYMBOL |
+	'$' STR_CONST |
+	'@' SYMBOL |
+	'@' STR_CONST
+	)* ;
+
 
 cond ::= '(' expr ')'
 
