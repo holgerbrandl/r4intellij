@@ -6,16 +6,13 @@
  */
 package com.r4intellij.psi.impl;
 
-import java.util.List;
-
-import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
-
-import static com.r4intellij.psi.RTypes.*;
-
 import com.r4intellij.psi.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 
 public class RExprImpl extends RCompositeElementImpl implements RExpr {
@@ -31,9 +28,9 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
     }
 
     @Override
-    @Nullable
-    public RCr getCr() {
-        return PsiTreeUtil.getChildOfType(this, RCr.class);
+    @NotNull
+    public List<RExpr> getExprList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, RExpr.class);
     }
 
     @Override
@@ -67,9 +64,9 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
     }
 
     @Override
-    @Nullable
-    public RSublist getSublist() {
-        return PsiTreeUtil.getChildOfType(this, RSublist.class);
+    @NotNull
+    public List<RSublist> getSublistList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, RSublist.class);
     }
 
 }

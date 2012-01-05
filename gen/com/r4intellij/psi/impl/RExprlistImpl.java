@@ -6,16 +6,13 @@
  */
 package com.r4intellij.psi.impl;
 
-import java.util.List;
-
-import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.r4intellij.psi.RExprOrAssign;
+import com.r4intellij.psi.RExprlist;
+import org.jetbrains.annotations.NotNull;
 
-import static com.r4intellij.psi.RTypes.*;
-
-import com.r4intellij.psi.*;
+import java.util.List;
 
 
 public class RExprlistImpl extends RCompositeElementImpl implements RExprlist {
@@ -25,16 +22,9 @@ public class RExprlistImpl extends RCompositeElementImpl implements RExprlist {
     }
 
     @Override
-    @Nullable
-    public RExprOrAssign getExprOrAssign() {
-        return PsiTreeUtil.getChildOfType(this, RExprOrAssign.class);
-    }
-
-    @Override
-    @Nullable
-    public PsiElement getWhitespace() {
-        ASTNode child = getNode().findChildByType(R_WHITESPACE);
-        return child == null ? null : child.getPsi();
+    @NotNull
+    public List<RExprOrAssign> getExprOrAssignList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, RExprOrAssign.class);
     }
 
 }

@@ -6,10 +6,10 @@
  */
 package com.r4intellij.psi;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+import java.util.List;
 
 
 public interface RExpr extends RCompositeElement {
@@ -17,8 +17,8 @@ public interface RExpr extends RCompositeElement {
     @Nullable
     public RCond getCond();
 
-    @Nullable
-    public RCr getCr();
+    @NotNull
+    public List<RExpr> getExprList();
 
     @Nullable
     public RExprOrAssign getExprOrAssign();
@@ -35,7 +35,7 @@ public interface RExpr extends RCompositeElement {
     @Nullable
     public RIfcond getIfcond();
 
-    @Nullable
-    public RSublist getSublist();
+    @NotNull
+    public List<RSublist> getSublistList();
 
 }

@@ -6,10 +6,7 @@
  */
 package com.r4intellij.psi;
 
-import java.util.List;
-
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 
 public interface REqualAssign extends RCompositeElement {

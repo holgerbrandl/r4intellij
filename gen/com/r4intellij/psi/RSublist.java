@@ -7,15 +7,16 @@
 package com.r4intellij.psi;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 
 public interface RSublist extends RCompositeElement {
 
-    @Nullable
-    public RCr getCr();
+    @NotNull
+    public List<RCr> getCrList();
 
     @NotNull
-    public RSub getSub();
+    public List<RSub> getSubList();
 
 }

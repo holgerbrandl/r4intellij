@@ -98,13 +98,14 @@ ARITH_EXPONENTIAION="^"
 // R grammar
 external grammar ::= parseGrammar prog
 
-prog ::= END_OF_INPUT //todo match an empty file --> add unit test
-    | '\n'
-    | expr_or_assign '\n'
-    | expr_or_assign ';'
+prog ::=
+//END_OF_INPUT //todo match an empty file --> add unit test
+//    | '\n'
+//  |  expr_or_assign '\n'
+     expr_or_assign ';'
     | COMMENT
 
-expr_or_assign ::= expr | equal_assign
+expr_or_assign ::= equal_assign | expr
 
 equal_assign ::= expr EQ_ASSIGN expr_or_assign
 
@@ -173,7 +174,6 @@ expr ::=  ('{' exprlist '}' |
 	SYMBOL |
 	NEXT |
 	BREAK) // end of first half
-
     (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
 	'(' sublist ')' |
 	'[[' sublist ']]' |

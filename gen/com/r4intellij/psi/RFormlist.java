@@ -6,18 +6,14 @@
  */
 package com.r4intellij.psi;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import org.jetbrains.annotations.*;
-import com.intellij.psi.PsiElement;
+import java.util.List;
 
 
 public interface RFormlist extends RCompositeElement {
 
-    @Nullable
-    public RExpr getExpr();
-
-    @Nullable
-    public PsiElement getWhitespace();
+    @NotNull
+    public List<RExpr> getExprList();
 
 }

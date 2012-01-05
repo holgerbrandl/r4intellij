@@ -6,9 +6,9 @@
  */
 package com.r4intellij.psi;
 
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.PsiElement;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.r4intellij.lang.lexer.RTokenType;
 import com.r4intellij.psi.impl.*;
 
@@ -42,7 +42,6 @@ public interface RTypes {
     IElementType R_COMMA = new RTokenType(",");
     IElementType R_COMMENT = new RTokenType("COMMENT");
     IElementType R_ELSE = new RTokenType("ELSE");
-    IElementType R_END_OF_INPUT = new RTokenType("END_OF_INPUT");
     IElementType R_EQ = new RTokenType("==");
     IElementType R_EQ_ASSIGN = new RTokenType("=");
     IElementType R_FOR = new RTokenType("FOR");

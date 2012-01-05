@@ -6,16 +6,14 @@
  */
 package com.r4intellij.psi.impl;
 
-import java.util.List;
-
-import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.r4intellij.psi.RCr;
+import com.r4intellij.psi.RSub;
+import com.r4intellij.psi.RSublist;
+import org.jetbrains.annotations.NotNull;
 
-import static com.r4intellij.psi.RTypes.*;
-
-import com.r4intellij.psi.*;
+import java.util.List;
 
 
 public class RSublistImpl extends RCompositeElementImpl implements RSublist {
@@ -25,15 +23,15 @@ public class RSublistImpl extends RCompositeElementImpl implements RSublist {
     }
 
     @Override
-    @Nullable
-    public RCr getCr() {
-        return PsiTreeUtil.getChildOfType(this, RCr.class);
+    @NotNull
+    public List<RCr> getCrList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, RCr.class);
     }
 
     @Override
     @NotNull
-    public RSub getSub() {
-        return PsiTreeUtil.getChildOfType(this, RSub.class);
+    public List<RSub> getSubList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, RSub.class);
     }
 
 }

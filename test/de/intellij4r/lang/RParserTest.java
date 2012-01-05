@@ -49,7 +49,15 @@ public class RParserTest extends LightPlatformTestCase {
 
     @Test
     public void testImport() {
-//        ASTNode astNode = parseThis("library(stringr);");
+        ASTNode astNode = parseThis("library(stringr);");
+        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
+        System.out.println(astNode.getText());
+        System.out.println(astNode.toString());
+        System.out.println(astNode.getPsi());
+    }
+
+    @Test
+    public void testSlotAssignment() {
         ASTNode astNode = parseThis("dfd@sdsd =34;");
         System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
         System.out.println(astNode.getText());
