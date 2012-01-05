@@ -8,18 +8,18 @@ options {
 
 
 tokens {
-  prog;
-  expr_or_assign;
-  equal_assign;
-  expr;
-  exprlist;
-  cond;
-  ifcond;
-  forcond;
-  sublist;
-  sub;
-  formlist;
-  cr;
+  PROG;
+  EXPR_OR_ASSIGN;
+  EQUAL_ASSIGN;
+  EXPR;
+  EXPRLIST;
+  COND;
+  IFCOND;
+  FORCOND;
+  SUBLIST;
+  SUB;
+  FORMLIST;
+  CR;
   COMMENT;
   MODIFIER;
   SYMBOL;
