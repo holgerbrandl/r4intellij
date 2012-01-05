@@ -36,8 +36,9 @@ Lexical Rules Section.
 */
 
 /* A line terminator is a \r (carriage return), \n (line feed), or \r\n. */
-LineTerminator = \r|\n|\r\n
-WHITE_SPACE= {LineTerminator} | [ \t\f]
+LINE_BREAK = \r|\n|\r\n
+//WHITE_SPACE= {LINE_BREAK} | [ \t\f]
+WHITE_SPACE= [ \t\f]
 COMMENT = "#"[^\r\n]*
 
 /* A identifier integer is a word beginning a letter between A and Z, a and z,
@@ -80,6 +81,7 @@ YYINITIAL. */
 
 <YYINITIAL> {
   {WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {LINE_BREAK} {yybegin(YYINITIAL); return R_LINE_BREAK; }
   {COMMENT} {yybegin(YYINITIAL); return R_COMMENT; }
 
   // r keywords
@@ -94,8 +96,8 @@ YYINITIAL. */
   "NULL" { return R_NULL_CONST; }
 
   {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
- // {SYMBOL} { yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
-  {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
+ {SYMBOL} { yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
+ // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
 
   //{NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }
   {IntLiteral} | {DoubleLiteral}  { return R_NUM_CONST; }

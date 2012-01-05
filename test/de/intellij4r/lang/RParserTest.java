@@ -17,6 +17,7 @@ import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.testFramework.IdeaTestCase;
 import com.intellij.testFramework.LightPlatformTestCase;
+import com.r4intellij.Utils;
 import com.r4intellij.lang.parser.RParserDefinition;
 import org.junit.Test;
 
@@ -49,7 +50,25 @@ public class RParserTest extends LightPlatformTestCase {
 
     @Test
     public void testImport() {
-        ASTNode astNode = parseThis("library(stringr);");
+        ASTNode astNode = parseThis("\nlibrary(stringr);");
+        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
+        System.out.println(astNode.getText());
+        System.out.println(astNode.toString());
+        System.out.println(astNode.getPsi());
+
+    }
+
+    @Test
+    public void testSnippet() {
+        ASTNode astNode = parseThis("\n" +
+                "# use another normality test\n" +
+                "library(nortest)\n" +
+                "\n" +
+                "\n" +
+                "somedata <- R$\"counts\";\n" +
+                "\n" +
+                "hist(somedata)\n" +
+                "shapiro.test(somedata);");
         System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
         System.out.println(astNode.getText());
         System.out.println(astNode.toString());
@@ -65,4 +84,22 @@ public class RParserTest extends LightPlatformTestCase {
         System.out.println(astNode.getPsi());
     }
 
+    @Test
+    public void testSlotAcess() {
+        ASTNode astNode = parseThis("somedata <- R$\"Nuclei DAPI - Number of Objects.boxcox\";");
+        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
+//        System.out.println(astNode.);
+        System.out.println(astNode.getText());
+        System.out.println(astNode.toString());
+        System.out.println(astNode.getPsi());
+    }
+
+
+    @Test
+    public void testComplexTokenization() {
+        String testData = Utils.readFileAsString("misc/complex_script.R");
+//        String testData = Utils.readFileAsString("misc/normality tests.R");
+        ASTNode astNode = parseThis(testData);
+        System.out.println(astNode);
+    }
 }

@@ -139,8 +139,11 @@ public class RLexerTest {
         testTokenization("# This \r\n # a long \r\n # comment (+ 1 2)\r\n 1+1;",
                 new IElementType[]{
                         R_COMMENT,
+                        R_LINE_BREAK,
                         R_COMMENT,
+                        R_LINE_BREAK,
                         R_COMMENT,
+                        R_LINE_BREAK,
                         R_NUM_CONST,
                         R_ARITH_PLUS,
                         R_NUM_CONST,

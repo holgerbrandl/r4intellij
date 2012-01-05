@@ -49,32 +49,6 @@ public class GeneratedParserUtilBase {
 
     public static final IElementType DUMMY_BLOCK = new DummyBlockElementType();
 
-
-    // todo remove fake implementations
-    public static boolean consumeToken(PsiBuilder builder_, boolean b, String aPrivate) {
-        return consumeToken(builder_, aPrivate);
-//        return false;  //To change body of created methods use File | Settings | File Templates.
-    }
-
-
-    public static boolean consumeToken(PsiBuilder builder_, boolean b, IElementType bnfLeftBrace) {
-        return consumeToken(builder_, bnfLeftBrace);
-//        return false;  //To change body of created methods use File | Settings | File Templates.
-    }
-
-    public static boolean exitErrorRecording(PsiBuilder builder_, boolean result_, int level_, boolean b) {
-        return exitErrorRecordingSection(builder_, result_, level_, b, _SECTION_GENERAL_, null);
-    }
-
-
-    public static void enterErrorRecording(PsiBuilder builder_, int level_) {
-        exitErrorRecordingSection(builder_, true, level_, true, _SECTION_GENERAL_, null);
-
-        //To change body of created methods use File | Settings | File Templates.
-    }
-    // todo remove fake implementations
-
-
     public interface Parser {
 
         boolean parse(PsiBuilder builder, int level);
