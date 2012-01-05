@@ -70,14 +70,10 @@ forcond :
      '(' SYMBOL 'in' expr ')' ;
 
 exprlist :
-     whitespace | expr_or_assign
-        | exprlist ';' expr_or_assign
-        | exprlist ';'
-        | exprlist '\n' expr_or_assign
-        | exprlist '\n' ;
+     (whitespace | expr_or_assign) (';' expr_or_assign | ';' | '\n' expr_or_assign | '\n')* ;
 
 sublist :
-     sub | sublist cr ',' sub ;
+     (sub) (cr ',' sub)* ;
 
 sub :
      whitespace | expr
@@ -89,11 +85,7 @@ sub :
    | NULL_CONST '=' expr ;
 
 formlist :
-     whitespace | SYMBOL
-        | SYMBOL '=' expr
-        | formlist ',' SYMBOL
-        | formlist ',' SYMBOL '=' expr
-        | '...' ;
+     (whitespace | SYMBOL | SYMBOL '=' expr | '...') (',' SYMBOL | ',' SYMBOL '=' expr)* ;
 
 SYMBOL	:
 	;
