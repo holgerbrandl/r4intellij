@@ -33,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RParserDefinition implements ParserDefinition, RTypes {
 
+    IFileElementType FILE = new IFileElementType(RFileType.R_LANGUAGE);
+
     @NotNull
     public Lexer createLexer(Project project) {
         return new RLexer();
@@ -42,9 +44,6 @@ public class RParserDefinition implements ParserDefinition, RTypes {
         return new RParser();
     }
 
-
-    IFileElementType FILE = new IFileElementType(RFileType.R_LANGUAGE);
-
     public IFileElementType getFileNodeType() {
 
         return FILE;
@@ -52,7 +51,7 @@ public class RParserDefinition implements ParserDefinition, RTypes {
 
     @NotNull
     public TokenSet getWhitespaceTokens() {
-        return TokenSet.create(TokenType.WHITE_SPACE);
+        return TokenSet.create(TokenType.WHITE_SPACE, RTypes.R_LINE_BREAK);
     }
 
     @NotNull
@@ -97,52 +96,6 @@ public class RParserDefinition implements ParserDefinition, RTypes {
 
     @NotNull
     public PsiElement createElement(ASTNode node) {
-//        final IElementType type = node.getElementType();
-//        if (type == FILE) {
-//            return new Root(node);
-//        } else if (type == FUNCTION_DEFINITION) {
-//            return new Def(node);
-//        } else if (type == ANONYMOUS_FUNCTION_DEFINITION) {
-//            return new Fn(node);
-//        } else if (type == SINGLE_ARG_ANONYMOUS_FUNCTION_DEFINITION) {
-//            return new SingleArgFn(node);
-//        } else if (type == MACRO_DEFINITION) {
-//            return new Mac(node);
-//        } else if (type == EXPRESSION) {
-//            return new Expression(node);
-//        } else if (type == VARIABLE_ASSIGNMENT) {
-//            return new VariableAssignment(node);
-//        } else if (type == OPTIONAL_PARAMETER) {
-//            return new OptionalParameter(node);
-//        } else if (type == REST_PARAMETER) {
-//            return new RestParameter(node);
-//        } else if (type == PARAMETER) {
-//            return new Parameter(node);
-//        } else if (type == VARIABLE_DEFINITION) {
-//            return new VariableDefinition(node);
-//        } else if (type == VARIABLE_REFERENCE) {
-//            return new VariableReference(node);
-//        } else if (type == IF_BLOCK) {
-//            return new If(node);
-//        } else if (type == LET_BLOCK) {
-//            return new Let(node);
-//        } else if (type == WITH_BLOCK) {
-//            return new With(node);
-//        } else if (type == PARAMETER_LIST) {
-//            return new ParameterList(node);
-//        } else if (type == DOCSTRING) {
-//            return new Docstring(node);
-//        } else if (type == BACKQUOTED_EXPRESSION) {
-//            return new BackquotedExpression(node);
-//        } else if (type == QUOTED_EXPRESSION) {
-//            return new QuotedExpression(node);
-//        } else if (type == COMMA_AT_EXPRESSION) {
-//            return new CommaAtExpression(node);
-//        } else if (type == COMMA_EXPRESSION) {
-//            return new CommaExpression(node);
-//        } else if (type == LITERAL) {
-//            return new Literal(node);
-//        }
         return RTypes.Factory.createElement(node);
 //        return new ASTWrapperPsiElement(node);
     }
