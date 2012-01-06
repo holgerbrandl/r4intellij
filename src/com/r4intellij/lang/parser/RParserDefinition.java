@@ -78,8 +78,6 @@ public class RParserDefinition implements ParserDefinition, RTypes {
                 || left == R_RIGHT_BRACE
                 || right == R_RIGHT_BRACE
 
-//                || (left == WORD && right == PARAM_EXPANSION_OP)
-
                 || left == R_LEFT_BRACKET
                 || right == R_RIGHT_BRACKET
                 || left == R_RIGHT_BRACKET
