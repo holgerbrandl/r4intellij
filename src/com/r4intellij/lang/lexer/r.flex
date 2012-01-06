@@ -63,7 +63,17 @@ DoubleLiteral = ({FLit1}|{FLit2}|{FLit3}) {Exponent}?
 EscapeSequence=\\[^\r\n]
 //todo allow for linebreaks in strings and for single quot quoting
 STRING_DQUOTE=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
-STRING_SQUOTE='([^\\\"]|{EscapeSequence})*('|\\)?
+STRING_SQUOTE='([^\\\']|{EscapeSequence})*('|\\)?
+
+
+//// define bad characters --> does not work properly because string can last muliple lines
+//DIGIT=[:digit:]
+//HEX={DIGIT} | [aAbBcCdDeEfF]
+//ESC="\\" ( [^] | "u" {HEX}{HEX}{HEX}{HEX} )
+//CHAR={ESC} | [^\r\n\'\"\\]
+//STRING_BAD1=\" ({CHAR} | \') *
+//STRING_BAD2=\' {CHAR} *
+//BAD_TOKENS={STRING_BAD1} | {STRING_BAD2}
 
 //%state STRING
 
@@ -93,6 +103,7 @@ YYINITIAL. */
   "break" { return R_BREAK; }
   "next" { return R_NEXT; }
   "repeat" { return R_REPEAT; }
+  "in" { return R_IN; }
   "NULL" { return R_NULL_CONST; }
 
   {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }

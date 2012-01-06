@@ -14,6 +14,6 @@ import java.util.List;
 public interface RFormlist extends RCompositeElement {
 
     @NotNull
-    public List<RExpr> getExprList();
+    public List<RForm> getFormList();
 
 }

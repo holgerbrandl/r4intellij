@@ -6,16 +6,12 @@
  */
 package com.r4intellij.psi;
 
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 
 public interface RSub extends RCompositeElement {
 
-    @Nullable
+    @NotNull
     public RExpr getExpr();
-
-    @Nullable
-    public PsiElement getWhitespace();
 
 }

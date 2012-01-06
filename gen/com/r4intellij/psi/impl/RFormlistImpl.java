@@ -8,7 +8,7 @@ package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.r4intellij.psi.RExpr;
+import com.r4intellij.psi.RForm;
 import com.r4intellij.psi.RFormlist;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,8 +23,8 @@ public class RFormlistImpl extends RCompositeElementImpl implements RFormlist {
 
     @Override
     @NotNull
-    public List<RExpr> getExprList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, RExpr.class);
+    public List<RForm> getFormList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, RForm.class);
     }
 
 }

@@ -101,11 +101,13 @@ prog ::=
 //END_OF_INPUT //todo match an empty file --> add unit test
     EOL
     |  expr_or_assign? EOL
-    |  expr_or_assign ';'
-    |  COMMENT
+    |  expr_or_assign? ';'
+    |  COMMENT //{recoverUntil="expr_or_assign_recover"}
+private expr_or_assign_recover::=!(EOL|';')
 
 
 expr_or_assign ::= equal_assign | expr
+
 
 equal_assign ::= expr EQ_ASSIGN expr_or_assign
 
@@ -117,8 +119,8 @@ expr ::=  ('{' exprlist '}' |
 	'~' expr |
 	'?' expr |
 	fundef |
-	IF ifcond expr_or_assign |
-	IF ifcond expr_or_assign ELSE expr_or_assign |
+	IF ifcond EOL? expr_or_assign |
+	IF ifcond EOL? expr_or_assign ELSE EOL? expr_or_assign |
 	FOR forcond expr_or_assign |
 	WHILE cond expr_or_assign |
 	REPEAT expr_or_assign |
@@ -139,7 +141,7 @@ expr ::=  ('{' exprlist '}' |
     (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
 	'(' sublist ')' |
 	'[[' sublist ']]' |
-	'[' sublist ']' |
+	'[' ','? sublist ','? ']' |
 	'$' SYMBOL |
 	'$' STR_CONST |
 	'@' SYMBOL |
@@ -152,7 +154,7 @@ cond ::= '(' expr ')'
 
 ifcond ::= '(' expr ')'
 
-forcond ::= '(' SYMBOL IN expr ')'
+    forcond ::= '(' SYMBOL IN expr ')'
 
 // old left recursive exprlist
 //exprlist ::= whitespace
@@ -161,17 +163,18 @@ forcond ::= '(' SYMBOL IN expr ')'
 //        | exprlist ';'
 //        | exprlist EOL expr_or_assign
 //        | exprlist EOL
-exprlist ::= EOL?  (expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)* ;
+exprlist ::= EOL?  (expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)* ;;
 
-sublist ::= sub (EOL ',' sub)*
+sublist ::= sub (EOL? ',' sub)*
 
-sub ::= whitespace | expr
-   | SYMBOL EQ_ASSIGN
-   | SYMBOL EQ_ASSIGN expr
-   | STR_CONST EQ_ASSIGN
-   | STR_CONST EQ_ASSIGN expr
-   | NULL_CONST EQ_ASSIGN
-   | NULL_CONST EQ_ASSIGN expr
+sub ::=
+     SYMBOL '=' expr
+//   | SYMBOL
+   | STR_CONST '=' expr
+//   | STR_CONST
+   | NULL_CONST '=' expr
+//   | NULL_CONST
+   | expr
 
 // left recursive formlist
 //formlist ::= empty | SYMBOL
@@ -180,8 +183,13 @@ sub ::= whitespace | expr
 //        | formlist ',' SYMBOL EQ_ASSIGN expr
 //        | SYMBOL_FORMALS
 // todo avoid that the parser accepts several symbol formals
-formlist ::=   [ ( SYMBOL '=' expr | SYMBOL | SYMBOL_FORMALS)
-                 (',' SYMBOL | ',' SYMBOL '=' expr | SYMBOL_FORMALS)* ];
-
+//formlist ::=   [ ( SYMBOL '=' expr | SYMBOL | SYMBOL_FORMALS)
+//                 (',' SYMBOL | ',' SYMBOL '=' expr | SYMBOL_FORMALS)* ];
+formlist ::= form (EOL? ',' EOL? form)*
+form ::=  SYMBOL '=' expr
+        | SYMBOL
+        | STR_CONST '=' expr
+        | STR_CONST
+        | SYMBOL_FORMALS
 
 //cr ::= /* empty */ //todo

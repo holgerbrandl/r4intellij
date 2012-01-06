@@ -8,6 +8,7 @@
 package de.intellij4r.lang;
 
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.r4intellij.lang.parser.RParserDefinition;
@@ -39,6 +40,13 @@ public class RParserTestNew extends RParsingTestCase {
         try {
             String fileName = "simpleTest2.R";
             String text = loadFile(fileName);
+
+            text = "function(x,...) { x; };";
+            text = "{ x }\n";
+            text = "for(a in dff){ x };";
+
+            text = StringUtil.convertLineSeparators(text);
+
             myFile = createPsiFile(fileName.replace(".R", ".txt"), text);
 //          ensureParsed(myFile);
             assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
@@ -46,7 +54,7 @@ public class RParserTestNew extends RParsingTestCase {
             assertEquals("doc text mismatch", text, myFile.getViewProvider().getDocument().getText());
             assertEquals("psi text mismatch", text, myFile.getText());
 
-            System.out.println(DebugUtil.psiToString(myFile, false, false));
+            System.out.println(DebugUtil.psiToString(myFile, true, false));
 //            if (true) {
 //                checkResult(name + ".txt", myFile);
 //            } else {

@@ -26,6 +26,10 @@ import static com.r4intellij.psi.RTypes.*;
 
 public class RLexerTest {
 
+    public static void main(String[] args) {
+        printTokenization("bxCxNames <- paste(\".boxcox\", sep = \"\");", true);
+    }
+
     private static void printTokenization(String code, boolean consumeWhiteSpaces) {
         RLexer lexer = new RLexer();
         lexer.start(new StringBuffer(code));

@@ -21,6 +21,7 @@ public interface RTypes {
     IElementType R_EXPR_OR_ASSIGN = new RCompositeElementType("R_EXPR_OR_ASSIGN");
     IElementType R_EXPRLIST = new RCompositeElementType("R_EXPRLIST");
     IElementType R_FORCOND = new RCompositeElementType("R_FORCOND");
+    IElementType R_FORM = new RCompositeElementType("R_FORM");
     IElementType R_FORMLIST = new RCompositeElementType("R_FORMLIST");
     IElementType R_FUNDEF = new RCompositeElementType("R_FUNDEF");
     IElementType R_IFCOND = new RCompositeElementType("R_IFCOND");
@@ -82,7 +83,6 @@ public interface RTypes {
     IElementType R_SYMBOL_FORMALS = new RTokenType("...");
     IElementType R_TILDE = new RTokenType("~");
     IElementType R_WHILE = new RTokenType("WHILE");
-    IElementType R_WHITESPACE = new RTokenType("whitespace");
 
     class Factory {
 
@@ -100,6 +100,8 @@ public interface RTypes {
                 return new RExprlistImpl(node);
             } else if (type == R_FORCOND) {
                 return new RForcondImpl(node);
+            } else if (type == R_FORM) {
+                return new RFormImpl(node);
             } else if (type == R_FORMLIST) {
                 return new RFormlistImpl(node);
             } else if (type == R_FUNDEF) {

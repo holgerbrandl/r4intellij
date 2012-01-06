@@ -68,6 +68,8 @@ public class RParserDefinition implements ParserDefinition, RTypes {
         final IElementType left = leftAst.getElementType();
         final IElementType right = rightAst.getElementType();
 
+        if (left == R_NUM_CONST && right == R_SYMBOL) return SpaceRequirements.MUST;
+
         if (left == R_LEFT_PAREN
                 || right == R_RIGHT_PAREN
                 || left == R_RIGHT_PAREN

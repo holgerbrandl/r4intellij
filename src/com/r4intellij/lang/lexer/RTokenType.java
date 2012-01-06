@@ -22,8 +22,4 @@ public class RTokenType extends IElementType {
     public RTokenType(@NotNull String debugName) {
         super(debugName, RFileType.R_LANGUAGE);
     }
-
-    public String toString() {
-        return "[R] " + super.toString();
-    }
 }

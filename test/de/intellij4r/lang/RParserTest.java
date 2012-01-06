@@ -19,6 +19,7 @@ import com.intellij.testFramework.IdeaTestCase;
 import com.intellij.testFramework.LightPlatformTestCase;
 import com.r4intellij.Utils;
 import com.r4intellij.lang.parser.RParserDefinition;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -92,6 +93,33 @@ public class RParserTest extends LightPlatformTestCase {
         System.out.println(astNode.getText());
         System.out.println(astNode.toString());
         System.out.println(astNode.getPsi());
+    }
+
+    @Test
+    public void testInvalidSymbolName() {
+        ASTNode astNode = null;
+        try {
+            astNode = parseThis("22aa <-1");
+            System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
+
+            Assert.fail();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    @Test
+    public void testNestedFunctionCall() {
+        ASTNode astNode = null;
+        astNode = parseThis("foo(bar(23));");
+        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
+    }
+
+    @Test
+    public void testIdFunDef() {
+        ASTNode astNode = null;
+        astNode = parseThis("function(x,...) { x };");
+        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
     }
 
 
