@@ -161,7 +161,7 @@ forcond ::= '(' SYMBOL IN expr ')'
 //        | exprlist ';'
 //        | exprlist EOL expr_or_assign
 //        | exprlist EOL
-exprlist ::=   (expr_or_assign) (';' expr_or_assign | ';' | EOL expr_or_assign | EOL)* ;
+exprlist ::= EOL?  (expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)* ;
 
 sublist ::= sub (EOL ',' sub)*
 

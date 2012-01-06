@@ -4,5 +4,6 @@ hist(somedata)
 shapiro.test(somedata);
 
 aa<-function(myarg="sdfsdf") {
-    return(a);
+
+ return(a);
 }
