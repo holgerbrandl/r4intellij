@@ -51,7 +51,7 @@ public class RParserDefinition implements ParserDefinition, RTypes {
 
     @NotNull
     public TokenSet getWhitespaceTokens() {
-        return TokenSet.create(TokenType.WHITE_SPACE, RTypes.R_LINE_BREAK);
+        return TokenSet.create(TokenType.WHITE_SPACE);
     }
 
     @NotNull
