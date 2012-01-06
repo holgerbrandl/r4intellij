@@ -8,7 +8,6 @@ package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.r4intellij.psi.RCr;
 import com.r4intellij.psi.RSub;
 import com.r4intellij.psi.RSublist;
 import org.jetbrains.annotations.NotNull;
@@ -20,12 +19,6 @@ public class RSublistImpl extends RCompositeElementImpl implements RSublist {
 
     public RSublistImpl(ASTNode node) {
         super(node);
-    }
-
-    @Override
-    @NotNull
-    public List<RCr> getCrList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, RCr.class);
     }
 
     @Override

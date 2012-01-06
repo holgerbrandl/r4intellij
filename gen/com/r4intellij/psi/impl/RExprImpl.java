@@ -53,8 +53,8 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
 
     @Override
     @Nullable
-    public RFormlist getFormlist() {
-        return PsiTreeUtil.getChildOfType(this, RFormlist.class);
+    public RFundef getFundef() {
+        return PsiTreeUtil.getChildOfType(this, RFundef.class);
     }
 
     @Override

@@ -16,13 +16,13 @@ import com.r4intellij.psi.impl.*;
 public interface RTypes {
 
     IElementType R_COND = new RCompositeElementType("R_COND");
-    IElementType R_CR = new RCompositeElementType("R_CR");
     IElementType R_EQUAL_ASSIGN = new RCompositeElementType("R_EQUAL_ASSIGN");
     IElementType R_EXPR = new RCompositeElementType("R_EXPR");
     IElementType R_EXPR_OR_ASSIGN = new RCompositeElementType("R_EXPR_OR_ASSIGN");
     IElementType R_EXPRLIST = new RCompositeElementType("R_EXPRLIST");
     IElementType R_FORCOND = new RCompositeElementType("R_FORCOND");
     IElementType R_FORMLIST = new RCompositeElementType("R_FORMLIST");
+    IElementType R_FUNDEF = new RCompositeElementType("R_FUNDEF");
     IElementType R_IFCOND = new RCompositeElementType("R_IFCOND");
     IElementType R_PROG = new RCompositeElementType("R_PROG");
     IElementType R_SUB = new RCompositeElementType("R_SUB");
@@ -42,6 +42,7 @@ public interface RTypes {
     IElementType R_COMMA = new RTokenType(",");
     IElementType R_COMMENT = new RTokenType("COMMENT");
     IElementType R_ELSE = new RTokenType("ELSE");
+    IElementType R_EOL = new RTokenType("EOL");
     IElementType R_EQ = new RTokenType("==");
     IElementType R_EQ_ASSIGN = new RTokenType("=");
     IElementType R_FOR = new RTokenType("FOR");
@@ -56,7 +57,6 @@ public interface RTypes {
     IElementType R_LEFT_BRACE = new RTokenType("{");
     IElementType R_LEFT_BRACKET = new RTokenType("[");
     IElementType R_LEFT_PAREN = new RTokenType("(");
-    IElementType R_LINE_BREAK = new RTokenType("CR");
     IElementType R_LIST_SUBSET = new RTokenType("$");
     IElementType R_LT = new RTokenType("<");
     IElementType R_NE = new RTokenType("!=");
@@ -90,8 +90,6 @@ public interface RTypes {
             IElementType type = node.getElementType();
             if (type == R_COND) {
                 return new RCondImpl(node);
-            } else if (type == R_CR) {
-                return new RCrImpl(node);
             } else if (type == R_EQUAL_ASSIGN) {
                 return new REqualAssignImpl(node);
             } else if (type == R_EXPR) {
@@ -104,6 +102,8 @@ public interface RTypes {
                 return new RForcondImpl(node);
             } else if (type == R_FORMLIST) {
                 return new RFormlistImpl(node);
+            } else if (type == R_FUNDEF) {
+                return new RFundefImpl(node);
             } else if (type == R_IFCOND) {
                 return new RIfcondImpl(node);
             } else if (type == R_PROG) {

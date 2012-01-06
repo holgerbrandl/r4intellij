@@ -36,8 +36,8 @@ Lexical Rules Section.
 */
 
 /* A line terminator is a \r (carriage return), \n (line feed), or \r\n. */
-LINE_BREAK = \r|\n|\r\n
-//WHITE_SPACE= {LINE_BREAK} | [ \t\f]
+EOL = (\r|\n|\r\n)*
+//WHITE_SPACE= {EOL} | [ \t\f]
 WHITE_SPACE= [ \t\f]
 COMMENT = "#"[^\r\n]*
 
@@ -81,7 +81,7 @@ YYINITIAL. */
 
 <YYINITIAL> {
   {WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
-  {LINE_BREAK} {yybegin(YYINITIAL); return R_LINE_BREAK; }
+  {EOL} {yybegin(YYINITIAL); return R_EOL; }
   {COMMENT} {yybegin(YYINITIAL); return R_COMMENT; }
 
   // r keywords

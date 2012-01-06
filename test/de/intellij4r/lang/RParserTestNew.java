@@ -8,8 +8,8 @@
 package de.intellij4r.lang;
 
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
+import com.intellij.psi.impl.DebugUtil;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.testFramework.ParsingTestCase;
 import com.r4intellij.lang.parser.RParserDefinition;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.io.IOException;
 /**
  * @author gregsh
  */
-public class RParserTestNew extends ParsingTestCase {
+public class RParserTestNew extends RParsingTestCase {
 
     public RParserTestNew() {
         super("parser", "R", new RParserDefinition());
@@ -45,11 +45,13 @@ public class RParserTestNew extends ParsingTestCase {
             assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));
             assertEquals("doc text mismatch", text, myFile.getViewProvider().getDocument().getText());
             assertEquals("psi text mismatch", text, myFile.getText());
-            if (true) {
-                checkResult(name + ".txt", myFile);
-            } else {
-                toParseTreeText(myFile, skipSpaces(), includeRanges());
-            }
+
+            System.out.println(DebugUtil.psiToString(myFile, false, false));
+//            if (true) {
+//                checkResult(name + ".txt", myFile);
+//            } else {
+//                toParseTreeText(myFile, skipSpaces(), includeRanges());
+//            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -30,7 +30,7 @@ public interface RExpr extends RCompositeElement {
     public RForcond getForcond();
 
     @Nullable
-    public RFormlist getFormlist();
+    public RFundef getFundef();
 
     @Nullable
     public RIfcond getIfcond();
