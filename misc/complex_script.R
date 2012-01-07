@@ -478,7 +478,7 @@ domains_all <- transform(domains_all, gene_id=str_match(Query, ".*>(.*)")[,2])
 
 ## load all protoemes and the sets of proteins for each organism that have at least one prion domain
 print(load(".all_species_paths.RData"))
-all_species_proteins_with_pdomain <- read.csv(, file="all_species_proteins_with_pdomain.tsv")
+all_species_proteins_with_pdomain <- read.csv( file="all_species_proteins_with_pdomain.tsv")
 
 
 ## keep just the super families but remove the word superfamiliy from the (short) name
