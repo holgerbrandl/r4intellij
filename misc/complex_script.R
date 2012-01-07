@@ -5,8 +5,6 @@
 # biocLite("Biostrings")
 # biocLite("VennDiagram")
 
-# baseDirectory = "/Volumes/bioinformatics/projects/alberti/"
-
 
 library(snippets)
 library(HMM)
@@ -688,65 +686,9 @@ with(subset(all_species_paths, !duplicated(GeneDesc) & (GeneDesc %in% as.charact
 
 write.tsv(transform(orthologuesEnrSF, orth_index=1:nrow(orthologuesEnrSF)), file="domain_structure_orth_mapping.csv")
 
-
-## Next in geneious
-# 1) import both lists into a sequence list
-# 2) annotate segments from file /Volumes/bioinformatics/projects/alberti/results/predicted_prion_domains_all_species.tsv
-# 3) annoate enriched superfamily domains of interest from /Volumes/bioinformatics/projects/alberti/results/domains_of_interest.csv
-# 4) import the orthologue mapping from domain_structure_orth_mapping.csv using the meta-data importer into both sequence listsdomains_of_interest.csv
-
 subset(orthologuesEnrSF, dpurp_gene_id=="DPU_G0074906")
 
 
-
-
-# ############ 
-# #### extract the data that is necessary to build the pyhlogeny
-# 
-# protsOfInterest <- subset(pDomsWithSupDoms4Pyhlogeney, Short.name %in% c("PKc_like", "RRM"))
-
-# protsOfInterest <- subset(protsOfInterest, select=-c(Segmentation, Query, Hit.type, PSSM.ID, Bitscore))
-# 
-# 
-# # remove duplicates because of multiple predictions of the same domain in a sinlge protein
-# protsOfInterest <- subset(protsOfInterest, !duplicated(paste(species, gene_id, Short.name, domain_seq)))
-# 
-# # even after removing duplicates of prion domains we might have several superfamiliy domains of the same type in a single protein, e.g.
-# arrange(as.data.frame(table(as.character(protsOfInterest$gene_id))), Freq)
-# 
-# subset(protsOfInterest2, gene_id=="DDB_G0274523")
-# 
-# ## chop away the prion domains
-# tail(arrange(as.data.frame(with(protsOfInterest, table(gene_id, From))), Freq))
-# 
-# prionsProtsWithoutPrions <- ddply(protsOfInterest, .(gene_id), function(oneProt){
-# 	# print(paste("chopping gene with id", oneProt$gene_id[1]))
-# 	# oneProt = subset(protsOfInterest, gene_id=="DDB_G0282627")
-# 	protein = oneProt$Sequence[1]
-# 	
-# 	for(prion_domain_seq in oneProt$domain_seq){
-# 		# print(domain)
-# 		protein <- str_replace(protein, prion_domain_seq, "")
-# 	}
-# 	
-# 	return(with(oneProt, data.frame(gene_id=gene_id[1], species=species[1], Short.name=Short.name[1], prionfree_protein=protein)))
-# 	
-# }, .progress="text")
-# 
-# ddply(prionsProtsWithoutPrions, .(gene_id), nrow)
-# 
-# ## write one fasta file per term
-# d_ply(prionsProtsWithoutPrions, .(Short.name), function(df){
-# 	
-# 	with(df, write.fasta(gene_id, prionfree_protein, file=paste(Short.name[1], ".fasta", sep="")))
-# }, .progress="text")
-
-## save the meta data-table to be imported into Geneious
-# write.tsv(subset(prionsProtsWithoutPrions, select=c(, file="prionsProtsWithoutPrions.tsv")
-
-
-##############################
-## Create aligned pictorgrams of dicty proteins and their orthologues
 
 
 #####################################################################
