@@ -99,11 +99,10 @@ external grammar ::= parseGrammar prog
 
 prog ::=
 //END_OF_INPUT //todo match an empty file --> add unit test
-    EOL
-    |  expr_or_assign? EOL
+       expr_or_assign? EOL
     |  expr_or_assign? ';'
-    |  COMMENT //{recoverUntil="expr_or_assign_recover"}
-private expr_or_assign_recover::=!(EOL|';')
+    |  COMMENT {recoverUntil="prog_recover_until"}
+private prog_recover_until::=!(prog)
 
 
 expr_or_assign ::= equal_assign | expr
@@ -148,7 +147,7 @@ expr ::=  ('{' exprlist '}' |
 	'@' STR_CONST
 	)* ;
 
-fundef ::= FUNCTION '(' formlist ')' expr_or_assign;
+fundef ::= FUNCTION '(' formlist ')' EOL? expr_or_assign;
 
 cond ::= '(' expr ')'
 
@@ -163,7 +162,7 @@ ifcond ::= '(' expr ')'
 //        | exprlist ';'
 //        | exprlist EOL expr_or_assign
 //        | exprlist EOL
-exprlist ::= EOL?  (expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)* ;;
+exprlist ::= EOL?  (expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)* ;
 
 sublist ::= sub (EOL? ',' sub)*
 

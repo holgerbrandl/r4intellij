@@ -43,7 +43,8 @@ public class RParserTestNew extends RParsingTestCase {
 
             text = "function(x,...) { x; };";
             text = "{ x }\n";
-            text = "for(a in dff){ x };";
+            text = "for(a in dff){ x };\n # bla bla\n foo <- 232\n";
+            text = ".ls.objects <- function (pos = 1)\n pos\n";
 
             text = StringUtil.convertLineSeparators(text);
 
