@@ -125,7 +125,7 @@ YYINITIAL. */
   "[" {yybegin(YYINITIAL); return RTypes.R_LEFT_BRACKET; }
   "]" {yybegin(YYINITIAL); return RTypes.R_RIGHT_BRACKET; }
   "[[" {yybegin(YYINITIAL); return RTypes.R_LBB; }
-  "]]" {yybegin(YYINITIAL); return RTypes.R_LBB; }
+  "]]" {yybegin(YYINITIAL); return RTypes.R_RBB; }
 
   // logical operators
   // unary
@@ -151,8 +151,7 @@ YYINITIAL. */
   "/" { return R_ARITH_DIV; }
   "^" { return R_ARITH_EXPONENTIAION; }
   "%%" { return R_ARITH_MOD; }
-  "%/%" | "%*%" | "%o%" | "%x%" { return R_ARITH_MISC; }
-  "%in%" { return R_IN; }
+  "%/%" | "%*%" | "%o%" | "%x%" | %in% { return R_ARITH_MISC; }
 
 
     // misc

@@ -41,10 +41,26 @@ public class RParserTestNew extends RParsingTestCase {
             String fileName = "simpleTest2.R";
             String text = loadFile(fileName);
 
-            text = "function(x,...) { x; };";
-            text = "{ x }\n";
-            text = "for(a in dff){ x };\n # bla bla\n foo <- 232\n";
-            text = ".ls.objects <- function (pos = 1)\n pos\n";
+            text = "function(x,...) { \ntt; };";
+//            text = "{ x }\n";
+//            text = "for(a in dff){ x };\n # bla bla\n foo <- 232\n";
+//            text = ".ls.objects <- function (pos = 1)\n pos\n";
+            text = "ggplot()\n";
+            text = "{\n" +
+//                    "# A\n" +
+                    "}\n";
+
+            // RECURSION LEVEL TEST
+            text = "xout_pdomains <- function(df_with_segs_and_seq){\n" +
+                    "\tadply(df_with_segs_and_seq, 1, splat(function(Sequence, Segmentation, ...){\n" +
+                    "\t\treturn(c(prion_xout_sequence=paste(split_sequence)))\n" +
+                    "\t}), .progress=\"text\")\n" +
+                    "}\n";
+            text = "xout_pdomains <-function(df_with_segs_and_seq){\n" +
+                    "\tadply(df_with_segs_and_seq, 1, splat(function(Sequence, Segmentation, ...){\n" +
+                    "\t\treturn(c(prion_xout_sequence=paste(split_sequence)))\n" +
+                    "\t}), .progress=\"text\")\n" +
+                    "}\n";
 
             text = StringUtil.convertLineSeparators(text);
 
