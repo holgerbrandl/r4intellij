@@ -152,7 +152,7 @@ cond ::= '(' expr ')'
 
 ifcond ::= '(' expr ')'
 
-    forcond ::= '(' SYMBOL IN expr ')'
+forcond ::= '(' SYMBOL IN expr ')'
 
 // old left recursive exprlist
 //exprlist ::= whitespace
