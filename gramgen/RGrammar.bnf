@@ -163,16 +163,16 @@ ifcond ::= '(' expr ')'
 //        | exprlist EOL
 exprlist ::= [(expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)*] EOL* ;
 
-sublist ::= EOL? sub? (EOL? ',' sub)*  EOL?
+sublist ::=  sub? (',' sub)*
 
-sub ::=
-     SYMBOL '=' expr
+sub ::= EOL*
+    (SYMBOL '=' expr
 //   | SYMBOL
    | STR_CONST '=' expr
 //   | STR_CONST
    | NULL_CONST '=' expr
 //   | NULL_CONST
-   | expr
+   | expr ) EOL*
 
 // left recursive formlist
 //formlist ::= empty | SYMBOL

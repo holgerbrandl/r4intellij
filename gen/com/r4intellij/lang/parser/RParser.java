@@ -1297,21 +1297,21 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
-    // SYMBOL '=' expr
+    // EOL*
+    //     (SYMBOL '=' expr
     // //   | SYMBOL
     //    | STR_CONST '=' expr
     // //   | STR_CONST
     //    | NULL_CONST '=' expr
     // //   | NULL_CONST
-    //    | expr
+    //    | expr ) EOL*
     public static boolean sub(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sub")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = sub_0(builder_, level_ + 1);
-        if (!result_) result_ = sub_1(builder_, level_ + 1);
-        if (!result_) result_ = sub_2(builder_, level_ + 1);
-        if (!result_) result_ = expr(builder_, level_ + 1);
+        result_ = result_ && sub_1(builder_, level_ + 1);
+        result_ = result_ && sub_2(builder_, level_ + 1);
         if (result_) {
             marker_.done(R_SUB);
         } else {
@@ -1320,9 +1320,60 @@ public class RParser implements PsiParser {
         return result_;
     }
 
-    // SYMBOL '=' expr
+    // EOL*
     private static boolean sub_0(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sub_0")) return false;
+        int offset_ = builder_.getCurrentOffset();
+        while (true) {
+            if (!consumeToken(builder_, R_EOL)) break;
+            int next_offset_ = builder_.getCurrentOffset();
+            if (offset_ == next_offset_) {
+                empty_element_parsed_guard_(builder_, offset_, "sub_0");
+                break;
+            }
+            offset_ = next_offset_;
+        }
+        return true;
+    }
+
+    // (SYMBOL '=' expr
+    // //   | SYMBOL
+    //    | STR_CONST '=' expr
+    // //   | STR_CONST
+    //    | NULL_CONST '=' expr
+    // //   | NULL_CONST
+    //    | expr )
+    private static boolean sub_1(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sub_1")) return false;
+        return sub_1_0(builder_, level_ + 1);
+    }
+
+    // SYMBOL '=' expr
+    // //   | SYMBOL
+    //    | STR_CONST '=' expr
+    // //   | STR_CONST
+    //    | NULL_CONST '=' expr
+    // //   | NULL_CONST
+    //    | expr
+    private static boolean sub_1_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sub_1_0")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = sub_1_0_0(builder_, level_ + 1);
+        if (!result_) result_ = sub_1_0_1(builder_, level_ + 1);
+        if (!result_) result_ = sub_1_0_2(builder_, level_ + 1);
+        if (!result_) result_ = expr(builder_, level_ + 1);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
+    }
+
+    // SYMBOL '=' expr
+    private static boolean sub_1_0_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sub_1_0_0")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = consumeToken(builder_, R_SYMBOL);
@@ -1337,8 +1388,8 @@ public class RParser implements PsiParser {
     }
 
     // STR_CONST '=' expr
-    private static boolean sub_1(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sub_1")) return false;
+    private static boolean sub_1_0_1(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sub_1_0_1")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = consumeToken(builder_, R_STR_CONST);
@@ -1353,8 +1404,8 @@ public class RParser implements PsiParser {
     }
 
     // NULL_CONST '=' expr
-    private static boolean sub_2(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sub_2")) return false;
+    private static boolean sub_1_0_2(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sub_1_0_2")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = consumeToken(builder_, R_NULL_CONST);
@@ -1368,17 +1419,31 @@ public class RParser implements PsiParser {
         return result_;
     }
 
+    // EOL*
+    private static boolean sub_2(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sub_2")) return false;
+        int offset_ = builder_.getCurrentOffset();
+        while (true) {
+            if (!consumeToken(builder_, R_EOL)) break;
+            int next_offset_ = builder_.getCurrentOffset();
+            if (offset_ == next_offset_) {
+                empty_element_parsed_guard_(builder_, offset_, "sub_2");
+                break;
+            }
+            offset_ = next_offset_;
+        }
+        return true;
+    }
+
 
     /* ********************************************************** */
-    // EOL? sub? (EOL? ',' sub)*  EOL?
+    // sub? (',' sub)*
     public static boolean sublist(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sublist")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = sublist_0(builder_, level_ + 1);
         result_ = result_ && sublist_1(builder_, level_ + 1);
-        result_ = result_ && sublist_2(builder_, level_ + 1);
-        result_ = result_ && sublist_3(builder_, level_ + 1);
         if (result_) {
             marker_.done(R_SUBLIST);
         } else {
@@ -1387,29 +1452,22 @@ public class RParser implements PsiParser {
         return result_;
     }
 
-    // EOL?
+    // sub?
     private static boolean sublist_0(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sublist_0")) return false;
-        consumeToken(builder_, R_EOL);
-        return true;
-    }
-
-    // sub?
-    private static boolean sublist_1(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sublist_1")) return false;
         sub(builder_, level_ + 1);
         return true;
     }
 
-    // (EOL? ',' sub)*
-    private static boolean sublist_2(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sublist_2")) return false;
+    // (',' sub)*
+    private static boolean sublist_1(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sublist_1")) return false;
         int offset_ = builder_.getCurrentOffset();
         while (true) {
-            if (!sublist_2_0(builder_, level_ + 1)) break;
+            if (!sublist_1_0(builder_, level_ + 1)) break;
             int next_offset_ = builder_.getCurrentOffset();
             if (offset_ == next_offset_) {
-                empty_element_parsed_guard_(builder_, offset_, "sublist_2");
+                empty_element_parsed_guard_(builder_, offset_, "sublist_1");
                 break;
             }
             offset_ = next_offset_;
@@ -1417,19 +1475,18 @@ public class RParser implements PsiParser {
         return true;
     }
 
-    // (EOL? ',' sub)
-    private static boolean sublist_2_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sublist_2_0")) return false;
-        return sublist_2_0_0(builder_, level_ + 1);
+    // (',' sub)
+    private static boolean sublist_1_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sublist_1_0")) return false;
+        return sublist_1_0_0(builder_, level_ + 1);
     }
 
-    // EOL? ',' sub
-    private static boolean sublist_2_0_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sublist_2_0_0")) return false;
+    // ',' sub
+    private static boolean sublist_1_0_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sublist_1_0_0")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
-        result_ = sublist_2_0_0_0(builder_, level_ + 1);
-        result_ = result_ && consumeToken(builder_, R_COMMA);
+        result_ = consumeToken(builder_, R_COMMA);
         result_ = result_ && sub(builder_, level_ + 1);
         if (!result_) {
             marker_.rollbackTo();
@@ -1437,20 +1494,6 @@ public class RParser implements PsiParser {
             marker_.drop();
         }
         return result_;
-    }
-
-    // EOL?
-    private static boolean sublist_2_0_0_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sublist_2_0_0_0")) return false;
-        consumeToken(builder_, R_EOL);
-        return true;
-    }
-
-    // EOL?
-    private static boolean sublist_3(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sublist_3")) return false;
-        consumeToken(builder_, R_EOL);
-        return true;
     }
 
 
