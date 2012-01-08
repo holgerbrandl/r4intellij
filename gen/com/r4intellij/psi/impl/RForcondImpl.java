@@ -10,6 +10,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RExpr;
 import com.r4intellij.psi.RForcond;
+import com.r4intellij.psi.RVariable;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -23,6 +24,12 @@ public class RForcondImpl extends RCompositeElementImpl implements RForcond {
     @NotNull
     public RExpr getExpr() {
         return PsiTreeUtil.getChildOfType(this, RExpr.class);
+    }
+
+    @Override
+    @NotNull
+    public RVariable getVariable() {
+        return PsiTreeUtil.getChildOfType(this, RVariable.class);
     }
 
 }

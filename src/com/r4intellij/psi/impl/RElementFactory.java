@@ -21,12 +21,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RLanguage;
-import com.r4intellij.psi.RExpression;
-import com.r4intellij.psi.RRule;
 
 
 /**
- * @author gregsh
+ * @author brandl
  */
 public class RElementFactory {
 
@@ -38,17 +36,17 @@ public class RElementFactory {
         return PsiTreeUtil.getDeepestFirst(fileFromText);
     }
 
-    public static RExpression createExpressionFromText(Project project, String text) {
-        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "a ::= " + text);
-        if ((fromText.getFirstChild()) != null) {
-            return ((RRule) fromText.getFirstChild()).getExpression();
-        }
-        return null;
-    }
-
-    public static RRule createRuleFromText(Project project, String text) {
-        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", text);
-        return (RRule) fromText.getFirstChild();
-    }
+//    public static RExpression createExpressionFromText(Project project, String text) {
+//        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "a ::= " + text);
+//        if ((fromText.getFirstChild()) != null) {
+//            return ((RRule) fromText.getFirstChild()).getExpression();
+//        }
+//        return null;
+//    }
+//
+//    public static RRule createRuleFromText(Project project, String text) {
+//        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", text);
+//        return (RRule) fromText.getFirstChild();
+//    }
 
 }

@@ -7,6 +7,7 @@
 featSelection = match(c("par1","par1 - StdDev","par2 - Median"), names(R));
 
 
+featSelection<-332
 
 #load the necessary libraries
 library(car)

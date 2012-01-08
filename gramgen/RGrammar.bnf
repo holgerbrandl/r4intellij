@@ -90,7 +90,7 @@ ARITH_EXPONENTIAION="^"
 //ARITH_MISC
 
   named="com.r4intellij.psi.RNamedElement"
-  namedImpl="com.r4intellij.psi.impl.bnfclasses.RNamedElementImpl"
+  namedImpl="com.r4intellij.psi.impl.RNamedElementImpl"
   parenthesized="com.r4intellij.psi.impl.bnfclasses.RParenthesized"
 }
 
@@ -133,26 +133,28 @@ expr ::=  ('{' exprlist '}' |
 	NUM_CONST |
 	STR_CONST |
 	NULL_CONST |
-	SYMBOL |
+	variable |
 	NEXT |
 	BREAK) // end of first half
     (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
 	'(' sublist? ')' |
 	'[[' sublist ']]' |
 	'[' ','? sublist ','? ']' |
-	'$' SYMBOL |
+	'$' variable |
 	'$' STR_CONST |
-	'@' SYMBOL |
+	'@' variable |
 	'@' STR_CONST
 	)* ;
 
 fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign;
 
+variable ::= SYMBOL {extends=namedImpl implements=named};
+
 cond ::= '(' expr ')'
 
 ifcond ::= '(' expr ')'
 
-forcond ::= '(' SYMBOL IN expr ')'
+forcond ::= '(' variable IN expr ')'
 
 // old left recursive exprlist
 //exprlist ::= whitespace

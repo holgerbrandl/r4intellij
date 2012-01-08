@@ -28,6 +28,7 @@ public interface RTypes {
     IElementType R_PROG = new RCompositeElementType("R_PROG");
     IElementType R_SUB = new RCompositeElementType("R_SUB");
     IElementType R_SUBLIST = new RCompositeElementType("R_SUBLIST");
+    IElementType R_VARIABLE = new RCompositeElementType("R_VARIABLE");
 
     IElementType R_AND = new RTokenType("&");
     IElementType R_AND2 = new RTokenType("&&");
@@ -114,6 +115,8 @@ public interface RTypes {
                 return new RSubImpl(node);
             } else if (type == R_SUBLIST) {
                 return new RSublistImpl(node);
+            } else if (type == R_VARIABLE) {
+                return new RVariableImpl(node);
             }
             throw new AssertionError("Unknown element type: " + type);
         }

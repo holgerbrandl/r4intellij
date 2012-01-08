@@ -19,23 +19,15 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
-import com.intellij.ui.RowIcon;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.PlatformIcons;
-import com.r4intellij.RIcons;
-import com.r4intellij.psi.*;
+import com.r4intellij.psi.RNamedElement;
+import com.r4intellij.psi.RTypes;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
 
-/**
- * Created by IntelliJ IDEA.
- * User: gregory
- * Date: 14.07.11
- * Time: 20:04
- */
 public abstract class RNamedElementImpl extends RCompositeElementImpl implements RNamedElement {
 
     private volatile String myCachedName;
@@ -72,27 +64,28 @@ public abstract class RNamedElementImpl extends RCompositeElementImpl implements
     @NotNull
     @Override
     public SearchScope getUseScope() {
+        // todo change scope to project for function-renamings and local variables
         return new LocalSearchScope(getContainingFile());
     }
 
     @Override
     public Icon getIcon(int flags) {
-        if (this instanceof RRule) {
-            final Icon base = hasModifier((RRule) this, "external") ? RIcons.EXTERNAL_RULE : RIcons.RULE;
-            final Icon visibility = hasModifier((RRule) this, "private") ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON;
-            final RowIcon row = new RowIcon(2);
-            row.setIcon(base, 0);
-            row.setIcon(visibility, 1);
-            return row;
-        } else if (this instanceof RAttr) {
-            return RIcons.ATTRIBUTE;
-        }
+//        if (this instanceof RRule) {
+//            final Icon base = hasModifier((RRule) this, "external") ? RIcons.EXTERNAL_RULE : RIcons.RULE;
+//            final Icon visibility = hasModifier((RRule) this, "private") ? PlatformIcons.PRIVATE_ICON : PlatformIcons.PUBLIC_ICON;
+//            final RowIcon row = new RowIcon(2);
+//            row.setIcon(base, 0);
+//            row.setIcon(visibility, 1);
+//            return row;
+//        } else if (this instanceof RAttr) {
+//            return RIcons.ATTRIBUTE;
+//        }
         return super.getIcon(flags);
     }
 
     @NotNull
     public PsiElement getId() {
-        ASTNode child = getNode().findChildByType(RTypes.BNF_ID);
+        ASTNode child = getNode().findChildByType(RTypes.R_SYMBOL);
         return child == null ? null : child.getPsi();
     }
 
@@ -101,12 +94,12 @@ public abstract class RNamedElementImpl extends RCompositeElementImpl implements
         return getId();
     }
 
-    public static boolean hasModifier(RRule rule, String modifier) {
-        for (RModifier o : rule.getModifierList()) {
-            if (modifier.equals(o.getText())) return true;
-        }
-        return false;
-    }
+//    public static boolean hasModifier(RRule rule, String modifier) {
+//        for (RModifier o : rule.getModifierList()) {
+//            if (modifier.equals(o.getText())) return true;
+//        }
+//        return false;
+//    }
 
     @Override
     public String toString() {

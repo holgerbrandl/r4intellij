@@ -90,7 +90,7 @@ ARITH_EXPONENTIAION="^"
 //ARITH_MISC
 
   named="com.r4intellij.psi.RNamedElement"
-  namedImpl="com.r4intellij.psi.impl.bnfclasses.RNamedElementImpl"
+  namedImpl="com.r4intellij.psi.impl.RNamedElementImpl"
   parenthesized="com.r4intellij.psi.impl.bnfclasses.RParenthesized"
 }
 

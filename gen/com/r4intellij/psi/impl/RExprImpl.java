@@ -69,4 +69,10 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, RSublist.class);
     }
 
+    @Override
+    @NotNull
+    public List<RVariable> getVariableList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, RVariable.class);
+    }
+
 }

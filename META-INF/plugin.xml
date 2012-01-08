@@ -116,6 +116,8 @@
 
         <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
 
+        <lang.findUsagesProvider language="R" implementationClass="com.r4intellij.editor.RFindUsagesProvider"/>
+        <elementDescriptionProvider implementation="com.r4intellij.RElementDescriptionProvider"/>
 
         <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
         <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
