@@ -64,7 +64,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 
-//todo this is a copy of com.intellij.testFramework.ParsingTestCase that changes only line 305 to load files without trimming.
+//note: this is a copy of com.intellij.testFramework.ParsingTestCase that changes only line 305 to load files without trimming.
 public abstract class RParsingTestCase extends PlatformLiteFixture {
 
     protected String myFilePrefix = "";

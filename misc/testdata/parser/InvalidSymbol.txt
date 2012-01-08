@@ -1,0 +1,7 @@
+FILE
+  PsiErrorElement:got '22'
+    PsiElement(NUM_CONST)('22')
+  PsiElement(SYMBOL)('aa')
+  PsiElement(<-)('<-')
+  PsiElement(NUM_CONST)('1')
+  PsiElement(EOL)('\n')

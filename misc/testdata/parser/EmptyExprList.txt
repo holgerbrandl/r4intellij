@@ -1,0 +1,15 @@
+FILE
+  R_PROG
+    R_EXPR_OR_ASSIGN
+      R_EXPR
+        PsiElement({)('{')
+        R_EXPRLIST
+          PsiElement(EOL)('\n')
+          PsiWhiteSpace(' ')
+          PsiWhiteSpace(' ')
+          PsiWhiteSpace(' ')
+          PsiWhiteSpace(' ')
+          PsiComment(COMMENT)('#blabla')
+          PsiElement(EOL)('\n')
+        PsiElement(})('}')
+    PsiElement(EOL)('\n')

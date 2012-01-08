@@ -1,0 +1,52 @@
+FILE
+  R_PROG
+    R_EXPR_OR_ASSIGN
+      PsiElement(EOL)('\n')
+      PsiComment(COMMENT)('# use another normality test')
+      PsiElement(EOL)('\n')
+      R_EXPR
+        PsiElement(SYMBOL)('library')
+        PsiElement(()('(')
+        R_SUBLIST
+          R_SUB
+            R_EXPR
+              PsiElement(SYMBOL)('nortest')
+        PsiElement())(')')
+    PsiElement(EOL)('\n\n\n')
+  R_PROG
+    R_EXPR_OR_ASSIGN
+      R_EXPR
+        PsiElement(SYMBOL)('somedata')
+        PsiWhiteSpace(' ')
+        PsiElement(<-)('<-')
+        PsiWhiteSpace(' ')
+        R_EXPR
+          PsiElement(SYMBOL)('R')
+          PsiElement($)('$')
+          PsiElement(STR_CONST)('"counts"')
+    PsiElement(;)(';')
+  R_PROG
+    R_EXPR_OR_ASSIGN
+      PsiElement(EOL)('\n\n')
+      R_EXPR
+        PsiElement(SYMBOL)('hist')
+        PsiElement(()('(')
+        R_SUBLIST
+          R_SUB
+            R_EXPR
+              PsiElement(SYMBOL)('somedata')
+        PsiElement())(')')
+    PsiElement(EOL)('\n')
+  R_PROG
+    R_EXPR_OR_ASSIGN
+      R_EXPR
+        PsiElement(SYMBOL)('shapiro.test')
+        PsiElement(()('(')
+        R_SUBLIST
+          R_SUB
+            R_EXPR
+              PsiElement(SYMBOL)('somedata')
+        PsiElement())(')')
+    PsiElement(;)(';')
+  R_PROG
+    PsiElement(EOL)('\n')

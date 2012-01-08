@@ -7,127 +7,87 @@
 
 package de.intellij4r.lang;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.lang.PsiParser;
-import com.intellij.lang.impl.PsiBuilderImpl;
-import com.intellij.openapi.command.impl.DummyProject;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.tree.IFileElementType;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.testFramework.IdeaTestCase;
-import com.intellij.testFramework.LightPlatformTestCase;
-import com.r4intellij.Utils;
+import com.intellij.psi.impl.DebugUtil;
 import com.r4intellij.lang.parser.RParserDefinition;
-import org.junit.Assert;
-import org.junit.Test;
 
-import java.util.Arrays;
+import java.io.IOException;
 
 
 /**
- * Test the parser against some example R-scriptlets.
- *
- * @author Holger Brandl
+ * @author brandl
  */
-public class RParserTest extends LightPlatformTestCase {
+public class RParserTest extends RParsingTestCase {
 
-    private static final IFileElementType ROOT = new IFileElementType("ROOT", Language.ANY);
 
+    public void testPrintPsiTree() throws IOException {
+        String fileName = "ComplexScript.R";
+        String text = loadFile(fileName);
+
+//            text = "function(x,...) { \ntt; };";
+////            text = "{ x }\n";
+////            text = "for(a in dff){ x };\n # bla bla\n foo <- 232\n";
+////            text = ".ls.objects <- function (pos = 1)\n pos\n";
+//            text = "ggplot()\n";
+//            text = "{\n" +
+////                    "# A\n" +
+//                    "}\n";
+//
+//            // RECURSION LEVEL TEST
+//            text = "xout_pdomains <- function(df_with_segs_and_seq){\n" +
+//                    "\tadply(df_with_segs_and_seq, 1, splat(function(Sequence, Segmentation, ...){\n" +
+//                    "\t\treturn(c(prion_xout_sequence=paste(split_sequence)))\n" +
+//                    "\t}), .progress=\"text\")\n" +
+//                    "}\n";
+//            text = "xout_pdomains <-function(df_with_segs_and_seq){\n" +
+//                    "\tadply(df_with_segs_and_seq, 1, splat(function(Sequence, Segmentation, ...){\n" +
+//                    "\t\treturn(c(prion_xout_sequence=paste(split_sequence)))\n" +
+//                    "\t}), .progress=\"text\")\n" +
+//                    "}\n";        text = StringUtil.convertLineSeparators(text);
+        myFile = createPsiFile("tmpPsiFile.txt", text);
+        System.out.println(DebugUtil.psiToString(myFile, true, false));
+    }
+
+
+    public void testSimpleTest1() {
+        doTest(true);
+    }
+
+    public void testComplexScript() {
+        doTest(true);
+    }
+
+    public void testEmptyExprList() {
+        doTest(true);
+    }
+
+    public void testFunctionDefinition() {
+        doTest(true);
+    }
+
+    public void testInvalidSymbol() {
+        doTest(true);
+    }
+
+    public void testInvalidAssignment() {
+        doTest(true);
+    }
+
+
+    ////
+    //// Test framework setup functions
+    ////
 
     public RParserTest() {
-        IdeaTestCase.initPlatformPrefix();
+        super("parser", "R", new RParserDefinition());
     }
 
-    private ASTNode parseThis(CharSequence contents) {
-        RParserDefinition parserDefinition = new RParserDefinition();
-        Project project = DummyProject.getInstance();
-        PsiParser parser = parserDefinition.createParser(project);
-
-        PsiBuilderImpl builder = new PsiBuilderImpl(project, null, parserDefinition, parserDefinition.createLexer(project), null, contents, null, null);
-        return parser.parse(ROOT, builder);
-//        return parser.parse(parserDefinition.getFileNodeType(), builder);
+    @Override
+    protected String getTestDataPath() {
+        return "misc/testData";
     }
 
-    @Test
-    public void testImport() {
-        ASTNode astNode = parseThis("\nlibrary(stringr);");
-        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
-        System.out.println(astNode.getText());
-        System.out.println(astNode.toString());
-        System.out.println(astNode.getPsi());
-
-    }
-
-    @Test
-    public void testSnippet() {
-        ASTNode astNode = parseThis("\n" +
-                "# use another normality test\n" +
-                "library(nortest)\n" +
-                "\n" +
-                "\n" +
-                "somedata <- R$\"counts\";\n" +
-                "\n" +
-                "hist(somedata)\n" +
-                "shapiro.test(somedata);");
-        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
-        System.out.println(astNode.getText());
-        System.out.println(astNode.toString());
-        System.out.println(astNode.getPsi());
-    }
-
-    @Test
-    public void testSlotAssignment() {
-        ASTNode astNode = parseThis("dfd@sdsd =34;");
-        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
-        System.out.println(astNode.getText());
-        System.out.println(astNode.toString());
-        System.out.println(astNode.getPsi());
-    }
-
-    @Test
-    public void testSlotAcess() {
-        ASTNode astNode = parseThis("somedata <- R$\"Nuclei DAPI - Number of Objects.boxcox\";");
-        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
-//        System.out.println(astNode.);
-        System.out.println(astNode.getText());
-        System.out.println(astNode.toString());
-        System.out.println(astNode.getPsi());
-    }
-
-    @Test
-    public void testInvalidSymbolName() {
-        ASTNode astNode = null;
-        try {
-            astNode = parseThis("22aa <-1");
-            System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
-
-            Assert.fail();
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
-
-    @Test
-    public void testNestedFunctionCall() {
-        ASTNode astNode = null;
-        astNode = parseThis("foo(bar(23));");
-        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
-    }
-
-    @Test
-    public void testIdFunDef() {
-        ASTNode astNode = null;
-        astNode = parseThis("function(x,...) { x };");
-        System.out.println(Arrays.toString(astNode.getChildren(new TokenSet())));
-    }
-
-
-    @Test
-    public void testComplexTokenization() {
-        String testData = Utils.readFileAsString("misc/complex_script.R");
-//        String testData = Utils.readFileAsString("misc/normality tests.R");
-        ASTNode astNode = parseThis(testData);
-        System.out.println(astNode);
+    @Override
+    protected boolean skipSpaces() {
+        return true;
     }
 }

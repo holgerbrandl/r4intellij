@@ -1,0 +1,21 @@
+FILE
+  R_PROG
+    R_EXPR_OR_ASSIGN
+      R_EXPR
+        PsiElement(NUM_CONST)('22')
+        PsiElement(<-)('<-')
+        R_EXPR
+          PsiElement(SYMBOL)('sin')
+          PsiElement(()('(')
+          R_SUBLIST
+            R_SUB
+              R_EXPR
+                PsiElement(SYMBOL)('cos')
+                PsiElement(()('(')
+                R_SUBLIST
+                  R_SUB
+                    R_EXPR
+                      PsiElement(NUM_CONST)('2')
+                PsiElement())(')')
+          PsiElement())(')')
+    PsiElement(;)(';')
