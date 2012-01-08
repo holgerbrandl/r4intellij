@@ -6,6 +6,12 @@
  */
 package com.r4intellij.psi;
 
-public interface RCr extends RCompositeElement {
+import org.jetbrains.annotations.Nullable;
+
+
+public interface RForm extends RCompositeElement {
+
+    @Nullable
+    public RExpr getExpr();
 
 }

@@ -19,6 +19,7 @@
         <li> Line un-/commenting, brace matching</li>
         <li> Basic code completion</li>
         <li> Some (simple) live templates</li>
+        <li> Function definition folding</li>
     </ul>
 
     <br>
@@ -27,12 +28,10 @@
         <li> Code formatter</li>
         <li> More context-aware autocompletion for variables, functions and file paths</li>
         <li> Inspections and quickfixes for common problems</li>
-        <li> Basic refactorings (rename variables, functions and heredoc markers)</li>
+        <li> Basic refactorings (rename variables and functions)</li>
         <li> Advanced navigation (structure view, go to declaration, ...)</li>
         <li> Ctrl+Q (Quick documentation lookup) for internal commands, external commands and functions</li>
         <li> Highlight usages in file for functions and variables</li>
-        <li> Code folding</li>    
-        <li> R Console within Intellij</li>    
     </ul>
   </html>
   ]]></description>
@@ -115,11 +114,15 @@
         <lang.commenter language="R"
                         implementationClass="com.r4intellij.editor.highlighting.RCommenter"/>
 
+        <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
+
+
         <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
         <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
 
         <completion.contributor language="R" implementationClass="com.r4intellij.lang.RCompletionContributor"/>
 
+        <!-- the settings-->
         <applicationConfigurable implementation="com.r4intellij.settings.RConfigurable"/>
         <applicationService serviceInterface="com.r4intellij.settings.RSettings"
                             serviceImplementation="com.r4intellij.settings.RSettings"/>

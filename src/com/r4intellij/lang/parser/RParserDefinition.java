@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RParserDefinition implements ParserDefinition, RTypes {
 
-    IFileElementType FILE = new IFileElementType(RFileType.R_LANGUAGE);
+    public static IFileElementType FILE = new IFileElementType(RFileType.R_LANGUAGE);
 
     @NotNull
     public Lexer createLexer(Project project) {
