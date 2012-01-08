@@ -641,7 +641,6 @@ asFreqDists <- merge(asFreqDists, asCategories, by="amacid")
 asFreqDists <- ddply(asFreqDists, .(species, as_type, Short.name), transform, norm_frequency=mean(norm_frequency), amacid=as_type)
 ## end of categorization
 
-
 ggplot(asFreqDists, aes(amacid, log2(norm_frequency), fill=species)) + geom_bar(stat="identity", position="dodge") + opts(title="AS frequency bias") + facet_wrap(~Short.name, ncol=3) + opts(axis.text.x=theme_text(angle=90))
 ggsave("as freq bias.png", width=10, height=9)
 
@@ -674,8 +673,7 @@ table(complete.cases(orthologuesEnrSF))
 
 orthologuesEnrSF <- orthologuesEnrSF[complete.cases(orthologuesEnrSF),]
 # export the sequences of both sets into a fasta file
-print(load(
-".all_species_paths.RData"))
+print(load(".all_species_paths.RData"))
 
 
 with(subset(all_species_paths, !duplicated(GeneDesc) & (GeneDesc %in% as.character(orthologuesEnrSF$ddisc_gene_id))), write.fasta(GeneDesc, Sequence, file="domain_orths_ddisc.fasta"))

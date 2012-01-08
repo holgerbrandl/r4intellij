@@ -71,7 +71,7 @@ public class GeneratedParserUtilBase {
     };
 
     public static boolean recursion_guard_(PsiBuilder builder_, int level_, String funcName_) {
-        if (level_ > 100) {
+        if (level_ > 200) {
             builder_.error("Maximum recursion level (" + 100 + ") reached in" + funcName_);
             return false;
         }
@@ -86,7 +86,7 @@ public class GeneratedParserUtilBase {
         ErrorState state = ErrorState.get(builder);
         IElementType tokenType = builder.getTokenType();
         if (!state.suppressErrors) {
-            addVariant(state, builder, getTokenDescription(token));
+//            addVariant(state, builder, getTokenDescription(token));
         }
         if (token == tokenType) {
             builder.advanceLexer();
