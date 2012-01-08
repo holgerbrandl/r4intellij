@@ -105,6 +105,9 @@
 
         <fileTypeFactory implementation="com.r4intellij.file.RFileTypeFactory"/>
 
+        <lang.syntaxHighlighterFactory key="R"
+                                       implementationClass="com.r4intellij.editor.highlighting.RSyntaxHighlighterFactory"/>
+
         <lang.parserDefinition language="R"
                                implementationClass="com.r4intellij.lang.parser.RParserDefinition"/>
 

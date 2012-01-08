@@ -8,11 +8,6 @@
 package com.r4intellij;
 
 import com.intellij.lang.Language;
-import com.intellij.openapi.fileTypes.SingleLazyInstanceSyntaxHighlighterFactory;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
-import com.r4intellij.editor.highlighting.RSyntaxHighlighter;
-import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -26,15 +21,5 @@ public class RLanguage extends Language {
 
     public RLanguage() {
         super("R", "text/R");
-
-        SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new RHighlighterFactory());
-    }
-
-    private static class RHighlighterFactory extends SingleLazyInstanceSyntaxHighlighterFactory {
-
-        @NotNull
-        protected SyntaxHighlighter createHighlighter() {
-            return new RSyntaxHighlighter();
-        }
     }
 }
