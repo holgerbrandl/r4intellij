@@ -5,10 +5,6 @@ FILE
         PsiElement({)('{')
         R_EXPRLIST
           PsiElement(EOL)('\n')
-          PsiWhiteSpace(' ')
-          PsiWhiteSpace(' ')
-          PsiWhiteSpace(' ')
-          PsiWhiteSpace(' ')
           PsiComment(COMMENT)('#blabla')
           PsiElement(EOL)('\n')
         PsiElement(})('}')

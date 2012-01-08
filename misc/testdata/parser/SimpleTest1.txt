@@ -17,9 +17,7 @@ FILE
     R_EXPR_OR_ASSIGN
       R_EXPR
         PsiElement(SYMBOL)('somedata')
-        PsiWhiteSpace(' ')
         PsiElement(<-)('<-')
-        PsiWhiteSpace(' ')
         R_EXPR
           PsiElement(SYMBOL)('R')
           PsiElement($)('$')

@@ -275,6 +275,8 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         try {
             text = text.trim();
             String expectedText = doLoadFile(myFullDataPath, targetDataName);
+            System.out.println("Expected Tree:\n" + expectedText);
+            System.out.println("\n\nObtained Tree:\n" + text);
             assertEquals(targetDataName, expectedText, text);
         } catch (FileNotFoundException e) {
             String fullName = myFullDataPath + File.separatorChar + targetDataName;
