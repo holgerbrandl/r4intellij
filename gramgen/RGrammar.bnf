@@ -131,7 +131,7 @@ expr ::=  ('{' exprlist '}' |
 	STR_CONST NS_GET_INT SYMBOL |
 	STR_CONST NS_GET_INT STR_CONST |
 	NUM_CONST |
-	STR_CONST |
+	string_literal |
 	NULL_CONST |
 	variable |
 	NEXT |
@@ -147,6 +147,8 @@ expr ::=  ('{' exprlist '}' |
 	)* ;
 
 fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign;
+
+string_literal ::= STR_CONST //{extends="" implements=""}
 
 variable ::= SYMBOL {extends=namedImpl implements=named};
 

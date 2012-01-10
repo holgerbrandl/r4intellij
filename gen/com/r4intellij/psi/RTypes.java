@@ -26,6 +26,7 @@ public interface RTypes {
     IElementType R_FUNDEF = new RCompositeElementType("R_FUNDEF");
     IElementType R_IFCOND = new RCompositeElementType("R_IFCOND");
     IElementType R_PROG = new RCompositeElementType("R_PROG");
+    IElementType R_STRING_LITERAL = new RCompositeElementType("R_STRING_LITERAL");
     IElementType R_SUB = new RCompositeElementType("R_SUB");
     IElementType R_SUBLIST = new RCompositeElementType("R_SUBLIST");
     IElementType R_VARIABLE = new RCompositeElementType("R_VARIABLE");
@@ -111,6 +112,8 @@ public interface RTypes {
                 return new RIfcondImpl(node);
             } else if (type == R_PROG) {
                 return new RProgImpl(node);
+            } else if (type == R_STRING_LITERAL) {
+                return new RStringLiteralImpl(node);
             } else if (type == R_SUB) {
                 return new RSubImpl(node);
             } else if (type == R_SUBLIST) {

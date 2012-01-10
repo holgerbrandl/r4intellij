@@ -64,6 +64,12 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
     }
 
     @Override
+    @Nullable
+    public RStringLiteral getStringLiteral() {
+        return PsiTreeUtil.getChildOfType(this, RStringLiteral.class);
+    }
+
+    @Override
     @NotNull
     public List<RSublist> getSublistList() {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, RSublist.class);

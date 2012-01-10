@@ -49,6 +49,8 @@ public class RParser implements PsiParser {
             result_ = ifcond(builder_, level_ + 1);
         } else if (root_ == R_PROG) {
             result_ = prog(builder_, level_ + 1);
+        } else if (root_ == R_STRING_LITERAL) {
+            result_ = string_literal(builder_, level_ + 1);
         } else if (root_ == R_SUB) {
             result_ = sub(builder_, level_ + 1);
         } else if (root_ == R_SUBLIST) {
@@ -124,7 +126,7 @@ public class RParser implements PsiParser {
     // 	STR_CONST NS_GET_INT SYMBOL |
     // 	STR_CONST NS_GET_INT STR_CONST |
     // 	NUM_CONST |
-    // 	STR_CONST |
+    // 	string_literal |
     // 	NULL_CONST |
     // 	variable |
     // 	NEXT |
@@ -173,7 +175,7 @@ public class RParser implements PsiParser {
     // 	STR_CONST NS_GET_INT SYMBOL |
     // 	STR_CONST NS_GET_INT STR_CONST |
     // 	NUM_CONST |
-    // 	STR_CONST |
+    // 	string_literal |
     // 	NULL_CONST |
     // 	variable |
     // 	NEXT |
@@ -204,7 +206,7 @@ public class RParser implements PsiParser {
     // 	STR_CONST NS_GET_INT SYMBOL |
     // 	STR_CONST NS_GET_INT STR_CONST |
     // 	NUM_CONST |
-    // 	STR_CONST |
+    // 	string_literal |
     // 	NULL_CONST |
     // 	variable |
     // 	NEXT |
@@ -234,7 +236,7 @@ public class RParser implements PsiParser {
         if (!result_) result_ = expr_0_0_18(builder_, level_ + 1);
         if (!result_) result_ = expr_0_0_19(builder_, level_ + 1);
         if (!result_) result_ = consumeToken(builder_, R_NUM_CONST);
-        if (!result_) result_ = consumeToken(builder_, R_STR_CONST);
+        if (!result_) result_ = string_literal(builder_, level_ + 1);
         if (!result_) result_ = consumeToken(builder_, R_NULL_CONST);
         if (!result_) result_ = variable(builder_, level_ + 1);
         if (!result_) result_ = consumeToken(builder_, R_NEXT);
@@ -1293,6 +1295,22 @@ public class RParser implements PsiParser {
             marker_.rollbackTo();
         } else {
             marker_.drop();
+        }
+        return result_;
+    }
+
+
+    /* ********************************************************** */
+    // STR_CONST
+    public static boolean string_literal(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "string_literal")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = consumeToken(builder_, R_STR_CONST);
+        if (result_) {
+            marker_.done(R_STRING_LITERAL);
+        } else {
+            marker_.rollbackTo();
         }
         return result_;
     }

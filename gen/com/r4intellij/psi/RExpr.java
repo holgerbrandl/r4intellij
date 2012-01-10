@@ -35,6 +35,9 @@ public interface RExpr extends RCompositeElement {
     @Nullable
     public RIfcond getIfcond();
 
+    @Nullable
+    public RStringLiteral getStringLiteral();
+
     @NotNull
     public List<RSublist> getSublistList();
 
