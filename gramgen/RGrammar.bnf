@@ -87,11 +87,10 @@ ARITH_MULT="*"
 ARITH_DIV="/"
 ARITH_MOD="%"
 ARITH_EXPONENTIAION="^"
-//ARITH_MISC
+//onthefly ARITH_MISC
 
   named="com.r4intellij.psi.RNamedElement"
   namedImpl="com.r4intellij.psi.impl.RNamedElementImpl"
-  parenthesized="com.r4intellij.psi.impl.bnfclasses.RParenthesized"
 }
 
 
@@ -146,7 +145,8 @@ expr ::=  ('{' exprlist '}' |
 	'@' STR_CONST
 	)* ;
 
-fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign;
+exprlist ::= [(expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)*] EOL* ;
+
 
 string_literal ::= STR_CONST //{extends="" implements=""}
 
@@ -158,14 +158,16 @@ ifcond ::= '(' expr ')'
 
 forcond ::= '(' variable IN expr ')'
 
-// old left recursive exprlist
-//exprlist ::= whitespace
-//        | expr_or_assign
-//        | exprlist ';' expr_or_assign
-//        | exprlist ';'
-//        | exprlist EOL expr_or_assign
-//        | exprlist EOL
-exprlist ::= [(expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)*] EOL* ;
+fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign;
+
+// todo avoid that the parser accepts several symbol formals
+formlist ::= form (EOL? ',' EOL? form)*
+
+form ::=  SYMBOL '=' expr
+        | SYMBOL
+        | STR_CONST '=' expr
+        | STR_CONST
+        | SYMBOL_FORMALS
 
 sublist ::=  sub? (',' sub)*
 
@@ -178,20 +180,3 @@ sub ::= EOL*
 //   | NULL_CONST
    | expr ) EOL*
 
-// left recursive formlist
-//formlist ::= empty | SYMBOL
-//        | SYMBOL EQ_ASSIGN expr
-//        | formlist ',' SYMBOL
-//        | formlist ',' SYMBOL EQ_ASSIGN expr
-//        | SYMBOL_FORMALS
-// todo avoid that the parser accepts several symbol formals
-//formlist ::=   [ ( SYMBOL '=' expr | SYMBOL | SYMBOL_FORMALS)
-//                 (',' SYMBOL | ',' SYMBOL '=' expr | SYMBOL_FORMALS)* ];
-formlist ::= form (EOL? ',' EOL? form)*
-form ::=  SYMBOL '=' expr
-        | SYMBOL
-        | STR_CONST '=' expr
-        | STR_CONST
-        | SYMBOL_FORMALS
-
-//cr ::= /* empty */ //todo
