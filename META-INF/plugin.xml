@@ -43,7 +43,8 @@
             <li></li>
             <li>New shortcut action to call str() for the current word or selection (MacOS only)</li>
             <li>Function body folding</li>
-            <li>Finished parser</li>
+            <li>More robust</li>
+            <li>Finished (my first) parser --> allows for growing selection using "Select for word at caret" action</li>
             <li>bug fixes</li>
         </ul>
 
