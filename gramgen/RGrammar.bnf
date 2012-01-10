@@ -143,7 +143,9 @@ expr ::=  ('{' exprlist '}' |
 	'$' STR_CONST |
 	'@' variable |
 	'@' STR_CONST
-	)* ;
+	)*
+//{recoverUntil="expr_recover_until"}
+//private expr_recover_until::=!(';' | 'EOL');
 
 exprlist ::= [(expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)*] EOL* ;
 

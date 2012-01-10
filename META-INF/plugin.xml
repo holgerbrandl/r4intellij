@@ -42,6 +42,8 @@
         <ul>
             <li></li>
             <li>New shortcut action to call str() for the current word or selection (MacOS only)</li>
+            <li>Function body folding</li>
+            <li>Finished parser</li>
             <li>bug fixes</li>
         </ul>
 
