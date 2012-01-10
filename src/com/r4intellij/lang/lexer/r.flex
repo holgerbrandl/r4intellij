@@ -183,3 +183,5 @@ YYINITIAL. */
 //    "\'" ({StringCharacter} | "\"")* "\'"   { return STRING_LITERAL; }
 // "\"\\t\"" {return  STRING_LITERAL; }
 }
+
+.    { return com.intellij.psi.TokenType.BAD_CHARACTER; }
