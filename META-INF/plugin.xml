@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <name>R4Intellij</name>
     <description>R coding tools for Intellij Idea</description>
-    <version>0.4+</version>
+    <version>0.5</version>
     <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
 
@@ -43,7 +43,7 @@
             <li></li>
             <li>New shortcut action to call str() for the current word or selection (MacOS only)</li>
             <li>Function body folding</li>
-            <li>More robust</li>
+            <li>More robust lexer</li>
             <li>Finished (my first) parser --> allows for growing selection using "Select for word at caret" action</li>
             <li>bug fixes</li>
         </ul>
