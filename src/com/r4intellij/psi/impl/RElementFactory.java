@@ -38,7 +38,8 @@ public class RElementFactory {
     }
 
     public static RStringImpl createExpressionFromText(Project project, String text) {
-        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "\"" + text + "\";");
+//        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "\"" + text + "\";");
+        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", text + ";");
         if ((fromText.getFirstChild()) != null) {
             return (RStringImpl) ((RProg) fromText.getFirstChild()).getExprOrAssign().getExpr().getStringLiteral();
         }
