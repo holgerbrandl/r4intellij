@@ -49,13 +49,13 @@
         </java>
     </target>
 
+    <!--<taskdef name="jflex" classname="JFlex.anttask.JFlexTask">-->
+    <!--<classpath location="/Users/brandl/projects/rplugin/idea/tools/lexer/jflex-1.4/lib/JFlex.jar"/>-->
+    <!--</taskdef>-->
 
-    <!--<target name="copy-resources">-->
-    <!--<copy todir="out/production/intellij4R/resources">-->
-    <!--<fileset dir="resources"/>-->
-    <!--</copy>-->
-    <!--<copy todir="out/production/intellij4R/doc">-->
-    <!--<fileset dir="doc"/>-->
-    <!--</copy>-->
+    <!--<target name="create_flex4r_new" description="use intellij ant taks for creation">-->
+    <!--<jflex skeleton="/Users/brandl/projects/rplugin/idea/tools/lexer/idea-flex.skeleton" nobak="true"-->
+    <!--file="${lexer.source}" destdir="src/com/r4intellij/lang/lexer/" charat="true"/>-->
     <!--</target>-->
+
 </project>
