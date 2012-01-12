@@ -41,7 +41,7 @@ public interface RExpr extends RCompositeElement {
     @NotNull
     public List<RSublist> getSublistList();
 
-    @NotNull
-    public List<RVariable> getVariableList();
+    @Nullable
+    public RVariable getVariable();
 
 }

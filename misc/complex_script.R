@@ -134,11 +134,23 @@ xout_pdomains <- function(df_with_segs_and_seq){
 # registerDoMC(cores=8)
 
 
-prion_model= data.frame(amacid=c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"),
+prion_model= data
+.frame(amacid=c("A", "C", "D", "E", "F", "G", "H", "I", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "Y"),
 	prion_frequency=c(4.2501322, 0.8495353, 2.0713379, 1.7073955, 3.3644566, 10.8440664, 1.0713270, 1.5822792, 2.7584645, 3.4096907, 2.0704712, 19.3603931, 3.5267232, 16.2506059, 2.3562638, 10.5433046, 3.2207167, 2.1705145, 0.8495353, 7.7427865))
+
+this <- is + 1
+new <-  baum(sdfsd)
+tre <- baum;
+tree <- fbau(fdfd() + ddfd(dfd))
+dfd = df
+21 <- 3
+
 
 ## J O U  encoding AS which could be sequenced properly
 dict_specific_amacids=data.frame(amacid=c("X", "*", "J", "O", "U"), prion_frequency=0.000001, frequency=0.000001)
+this <- index[[23]];
+his <- funtion(dfdsf());
+house <- dply();
 
 createPrionHMM <- function(state_model){
 	States        <- c("P", "B")
@@ -158,6 +170,8 @@ write.tsv <- function(df, ...){
 	write.table(df, row.names=FALSE, sep="\t", ...)
 }
 
+this <- house(baum());
+new <- fdfud(         )
 ## set the base directory for the analysis
 baseDirectory = "~/DropBox/prion_domains/"
 

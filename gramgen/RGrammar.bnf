@@ -111,41 +111,33 @@ expr_or_assign ::= EOL* (equal_assign | expr |  COMMENT )
 
 equal_assign ::= expr EQ_ASSIGN expr_or_assign
 
-expr ::=  ('{' exprlist '}' |
-	'(' expr_or_assign ')' |
-	'-' expr |
-	'+' expr |
-	'!' expr |
-	'~' expr |
-	'?' expr |
-	fundef |
-	IF ifcond expr_or_assign [ELSE expr_or_assign] |
-	FOR forcond expr_or_assign |
-	WHILE cond expr_or_assign |
-	REPEAT expr_or_assign |
-	SYMBOL NS_GET SYMBOL |
-	SYMBOL NS_GET STR_CONST |
-	STR_CONST NS_GET SYMBOL |
-	STR_CONST NS_GET STR_CONST |
-	SYMBOL NS_GET_INT SYMBOL |
-	SYMBOL NS_GET_INT STR_CONST |
-	STR_CONST NS_GET_INT SYMBOL |
-	STR_CONST NS_GET_INT STR_CONST |
-	NUM_CONST |
-	string_literal |
-	NULL_CONST |
-	variable |
-	NEXT |
-	BREAK) // end of first half
+expr ::=  (
+    NUM_CONST |
+    NULL_CONST |
+//    string_literal (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST) |
+    string_literal | // todo remove this as it is redundant with the last line optionalized with ()?
+    variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)? |
+    '{' exprlist '}' |
+    '(' expr_or_assign ')' |
+    '-' expr |
+    '+' expr |
+    '!' expr |
+    '~' expr |
+    '?' expr |
+    fundef |
+    IF ifcond expr_or_assign [ELSE expr_or_assign] |
+    FOR forcond expr_or_assign |
+    WHILE cond expr_or_assign |
+    REPEAT expr_or_assign |
+    NEXT |
+    BREAK) // end of first half
     (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
-	'(' sublist? ')' |
-	'[[' sublist ']]' |
-	'[' ','? sublist ','? ']' |
-	'$' variable |
-	'$' STR_CONST |
-	'@' variable |
-	'@' STR_CONST
-	)*
+    '(' sublist? ')' |
+    '[[' sublist ']]' |
+    '[' ','? sublist ','? ']' |
+    '$' ( SYMBOL | STR_CONST) |
+    '@' ( SYMBOL | STR_CONST )
+    )*
 //{recoverUntil="expr_recover_until"}
 //private expr_recover_until::=!(';' | 'EOL');
 
