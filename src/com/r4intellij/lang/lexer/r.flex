@@ -65,16 +65,6 @@ EscapeSequence=\\[^\r\n]
 STRING_DQUOTE=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 STRING_SQUOTE='([^\\\']|{EscapeSequence})*('|\\)?
 
-
-//// define bad characters --> does not work properly because string can last muliple lines
-//DIGIT=[:digit:]
-//HEX={DIGIT} | [aAbBcCdDeEfF]
-//ESC="\\" ( [^] | "u" {HEX}{HEX}{HEX}{HEX} )
-//CHAR={ESC} | [^\r\n\'\"\\]
-//STRING_BAD1=\" ({CHAR} | \') *
-//STRING_BAD2=\' {CHAR} *
-//BAD_TOKENS={STRING_BAD1} | {STRING_BAD2}
-
 //%state STRING
 
 /* ------------------------Lexical Rules Section---------------------- */
@@ -105,6 +95,7 @@ YYINITIAL. */
   "repeat" { return R_REPEAT; }
   "in" { return R_IN; }
   "NULL" { return R_NULL_CONST; }
+  "..." {yybegin(YYINITIAL); return R_SYMBOL_FORMALS; }
 
   {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
  {SYMBOL} { yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
@@ -164,24 +155,7 @@ YYINITIAL. */
     "?" { return R_QUESTION; }
     "::" {yybegin(YYINITIAL); return RTypes.R_NS_GET; }
     ":::" {yybegin(YYINITIAL); return RTypes.R_NS_GET_INT; }
-    "..." { return R_SYMBOL_FORMALS; }
-
-
-    // todo what is this
-  //"<<" {yybegin(YYINITIAL); return RTypes.R_EXTERNAL_START; }
-  //">>" {yybegin(YYINITIAL); return RTypes.R_EXTERNAL_END; }
-
-  //{BAD_TOKENS} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
-  //[^] {yybegin(YYINITIAL); return com.intellij.psi.TokenType.BAD_CHARACTER; }
-//    "FALSE" | "F" | "TRUE" | "T" | "pi" | "NULL" { return CONSTANT; }
-    //{Variable} { System.out.print("word:"+yytext()); return WORD;}
-
-
-    // string literal
-//    \" | \' {// yybegin(STRING); string.setLength(0); }
-//    "\"" ({StringCharacter} | "\'" | "}")* "\""   { return STRING_LITERAL; }
-//    "\'" ({StringCharacter} | "\"")* "\'"   { return STRING_LITERAL; }
-// "\"\\t\"" {return  STRING_LITERAL; }
 }
 
 .    { return com.intellij.psi.TokenType.BAD_CHARACTER; }
+<<EOF>>  { return RTypes.R_EOF; }

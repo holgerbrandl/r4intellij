@@ -100,7 +100,7 @@ external grammar ::= parseGrammar prog
 
 prog ::=
 //END_OF_INPUT //todo match an empty file --> add unit test
-       expr_or_assign? EOL
+       expr_or_assign? (EOL | EOF)
     |  expr_or_assign? ';'
      {recoverUntil="prog_recover_until"}
 private prog_recover_until::=!(prog)

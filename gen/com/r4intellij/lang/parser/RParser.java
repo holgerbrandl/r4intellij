@@ -109,7 +109,7 @@ public class RParser implements PsiParser {
     //     NUM_CONST |
     //     NULL_CONST |
     // //    string_literal (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST) |
-    //     string_literal | // todo remove this as it is redundant with ()?
+    //     string_literal | // todo remove this as it is redundant with the last line optionalized with ()?
     //     variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)? |
     //     '{' exprlist '}' |
     //     '(' expr_or_assign ')' |
@@ -150,7 +150,7 @@ public class RParser implements PsiParser {
     //     NUM_CONST |
     //     NULL_CONST |
     // //    string_literal (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST) |
-    //     string_literal | // todo remove this as it is redundant with ()?
+    //     string_literal | // todo remove this as it is redundant with the last line optionalized with ()?
     //     variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)? |
     //     '{' exprlist '}' |
     //     '(' expr_or_assign ')' |
@@ -174,7 +174,7 @@ public class RParser implements PsiParser {
     // NUM_CONST |
     //     NULL_CONST |
     // //    string_literal (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST) |
-    //     string_literal | // todo remove this as it is redundant with ()?
+    //     string_literal | // todo remove this as it is redundant with the last line optionalized with ()?
     //     variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)? |
     //     '{' exprlist '}' |
     //     '(' expr_or_assign ')' |
@@ -1161,7 +1161,7 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
-    // expr_or_assign? EOL
+    // expr_or_assign? (EOL | EOF)
     //     |  expr_or_assign? ';'
     public static boolean prog(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "prog")) return false;
@@ -1179,13 +1179,13 @@ public class RParser implements PsiParser {
         return result_;
     }
 
-    // expr_or_assign? EOL
+    // expr_or_assign? (EOL | EOF)
     private static boolean prog_0(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "prog_0")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = prog_0_0(builder_, level_ + 1);
-        result_ = result_ && consumeToken(builder_, R_EOL);
+        result_ = result_ && prog_0_1(builder_, level_ + 1);
         if (!result_) {
             marker_.rollbackTo();
         } else {
@@ -1199,6 +1199,27 @@ public class RParser implements PsiParser {
         if (!recursion_guard_(builder_, level_, "prog_0_0")) return false;
         expr_or_assign(builder_, level_ + 1);
         return true;
+    }
+
+    // (EOL | EOF)
+    private static boolean prog_0_1(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "prog_0_1")) return false;
+        return prog_0_1_0(builder_, level_ + 1);
+    }
+
+    // EOL | EOF
+    private static boolean prog_0_1_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "prog_0_1_0")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = consumeToken(builder_, R_EOL);
+        if (!result_) result_ = consumeToken(builder_, R_EOF);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
     }
 
     // expr_or_assign? ';'
