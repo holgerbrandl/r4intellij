@@ -91,6 +91,8 @@ ARITH_EXPONENTIAION="^"
 
   named="com.r4intellij.psi.RNamedElement"
   namedImpl="com.r4intellij.psi.impl.RNamedElementImpl"
+  mixin("string_literal")="com.r4intellij.psi.impl.RStringImpl"
+
 }
 
 

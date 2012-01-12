@@ -21,6 +21,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RLanguage;
+import com.r4intellij.psi.RProg;
 
 
 /**
@@ -36,13 +37,13 @@ public class RElementFactory {
         return PsiTreeUtil.getDeepestFirst(fileFromText);
     }
 
-//    public static RExpression createExpressionFromText(Project project, String text) {
-//        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "a ::= " + text);
-//        if ((fromText.getFirstChild()) != null) {
-//            return ((RRule) fromText.getFirstChild()).getExpression();
-//        }
-//        return null;
-//    }
+    public static RStringImpl createExpressionFromText(Project project, String text) {
+        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "\"" + text + "\";");
+        if ((fromText.getFirstChild()) != null) {
+            return (RStringImpl) ((RProg) fromText.getFirstChild()).getExprOrAssign().getExpr().getStringLiteral();
+        }
+        return null;
+    }
 //
 //    public static RRule createRuleFromText(Project project, String text) {
 //        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", text);

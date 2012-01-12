@@ -16,39 +16,59 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.LiteralTextEscaper;
+import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.PsiReference;
-import com.intellij.util.IncorrectOperationException;
-import com.r4intellij.psi.RAttrValue;
-import com.r4intellij.psi.RStringLiteralExpression;
+import com.r4intellij.psi.RStringLiteral;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: gregory
- * Date: 14.07.11
- * Time: 19:17
+ * @author gregsh
+ * @author brandl
  */
-public abstract class RStringImpl extends RExpressionImpl implements RStringLiteralExpression {
+public abstract class RStringImpl extends RCompositeElementImpl implements RStringLiteral, PsiLanguageInjectionHost {
 
     public RStringImpl(ASTNode node) {
         super(node);
     }
 
-    @Override
-    public PsiElement getNumber() {
-        return null;
-    }
 
     @Override
     public PsiReference getReference() {
-        if (!(getParent() instanceof RAttrValue)) return null;
-        return new RReferenceImpl<RStringLiteralExpression>(this, TextRange.from(1, getTextLength() - 2)) {
-            @Override
-            public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-                return getString().replace(RElementFactory.createLeafFromText(getProject(), '\"' + newElementName + '\"'));
-            }
-        };
+        return null;
+        // copied from bnf example
+//      if (!(getParent() instanceof BnfAttrValue)) return null;
+//      return new BnfReferenceImpl<BnfStringLiteralExpression>(this, TextRange.from(1, getTextLength() - 2)) {
+//          @Override
+//          public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+//              return getString().replace(RElementFactory.createLeafFromText(getProject(), '\"' + newElementName + '\"'));
+//          }
+//      };
+    }
+
+    @Override
+    public boolean isValidHost() {
+        return true;
+    }
+
+    @Override
+    public RStringImpl updateText(@NotNull final String text) {
+        final RStringImpl expression = RElementFactory.createExpressionFromText(getProject(), text);
+        assert expression instanceof RStringImpl : text + "-->" + expression;
+        return (RStringImpl) this.replace(expression);
+    }
+
+//  @Override
+//  public RStringImpl updateText(@NotNull final String text) {
+//    final BnfExpression expression = RElementFactory.createExpressionFromText(getProject(), text);
+//    assert expression instanceof RStringImpl : text + "-->" + expression;
+//    return (RStringImpl)this.replace(expression);
+//  }
+
+    @NotNull
+    @Override
+    public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper() {
+        return new RStringLiteralEscaper(this);
     }
 }

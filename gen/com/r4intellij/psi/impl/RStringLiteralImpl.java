@@ -10,7 +10,7 @@ import com.intellij.lang.ASTNode;
 import com.r4intellij.psi.RStringLiteral;
 
 
-public class RStringLiteralImpl extends RCompositeElementImpl implements RStringLiteral {
+public class RStringLiteralImpl extends RStringImpl implements RStringLiteral {
 
     public RStringLiteralImpl(ASTNode node) {
         super(node);
