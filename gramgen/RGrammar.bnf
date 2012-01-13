@@ -100,7 +100,7 @@ external grammar ::= parseGrammar prog
 
 prog ::=
 //END_OF_INPUT //todo match an empty file --> add unit test
-       expr_or_assign? (EOL | EOF)
+       expr_or_assign? (EOL)
     |  expr_or_assign? ';'
      {recoverUntil="prog_recover_until"}
 private prog_recover_until::=!(prog)
@@ -163,7 +163,7 @@ form ::=  SYMBOL '=' expr
         | SYMBOL
         | STR_CONST '=' expr
         | STR_CONST
-        | SYMBOL_FORMALS
+        | SYMBOL_FORMALS ;
 
 sublist ::=  sub? (',' sub)*
 
@@ -174,5 +174,6 @@ sub ::= EOL*
 //   | STR_CONST
    | NULL_CONST '=' expr
 //   | NULL_CONST
-   | expr ) EOL*
+    | SYMBOL_FORMALS
+   | expr ) EOL* ;
 

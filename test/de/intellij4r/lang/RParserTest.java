@@ -21,7 +21,12 @@ public class RParserTest extends RParsingTestCase {
 
     public void testPrintPsiTree() throws IOException {
         String fileName = "ComplexScript.R";
-        String text = loadFile(fileName);
+//        String text = loadFile(fileName);
+        String text = "\n" +
+                "createPyTable <- function(cmd,...){\n" +
+                "\tresult <- read.table(tFile, ...)\n" +
+                "\treturn(result)\n" +
+                "};\n";
 
 //            text = "function(x,...) { \ntt; };";
 ////            text = "{ x }\n";

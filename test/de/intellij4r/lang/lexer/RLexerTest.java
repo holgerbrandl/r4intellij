@@ -27,7 +27,13 @@ import static com.r4intellij.psi.RTypes.*;
 public class RLexerTest {
 
     public static void main(String[] args) {
-        printTokenization("bxCxNames <- paste(\".boxcox\", sep = \"\");", true);
+//        printTokenization("bxCxNames <- paste(\".boxcox\", sep = \"\");", true);
+        printTokenization("\n" +
+                "createPyTable <- function(cmd,...){\n" +
+                "\tresult <- read.table(tFile, ...)\n" +
+                "\tunlink(tFile)\n" +
+                "\treturn(result)\n" +
+                "}", true);
     }
 
     private static void printTokenization(String code, boolean consumeWhiteSpaces) {
@@ -97,6 +103,24 @@ public class RLexerTest {
                         R_LEFT_PAREN,
                         R_STR_CONST,
                         R_RIGHT_PAREN,
+                }, true);
+    }
+
+    @Test
+    public void testFunDef() {
+        testTokenization("tt <- function(a=3,...);",
+                new IElementType[]{
+                        R_SYMBOL,
+                        R_LEFT_ASSIGN,
+                        R_FUNCTION,
+                        R_LEFT_PAREN,
+                        R_SYMBOL,
+                        R_EQ_ASSIGN,
+                        R_NUM_CONST,
+                        R_COMMA,
+                        R_SYMBOL_FORMALS,
+                        R_RIGHT_PAREN,
+                        R_SEMICOLON
                 }, true);
     }
 

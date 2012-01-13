@@ -95,7 +95,7 @@ YYINITIAL. */
   "repeat" { return R_REPEAT; }
   "in" { return R_IN; }
   "NULL" { return R_NULL_CONST; }
-  "..." {yybegin(YYINITIAL); return R_SYMBOL_FORMALS; }
+  "..." { return R_SYMBOL_FORMALS; }
 
   {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
  {SYMBOL} { yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
@@ -158,4 +158,4 @@ YYINITIAL. */
 }
 
 .    { return com.intellij.psi.TokenType.BAD_CHARACTER; }
-<<EOF>>  { return RTypes.R_EOF; }
+//<<EOF>>  { return RTypes.R_EOF; }

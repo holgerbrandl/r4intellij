@@ -156,13 +156,13 @@ createPrionHMM <- function(state_model){
 	States        <- c("P", "B")
 	StartProbs    <- c(0.05,0.95)
 	TransProbs    <- matrix(c(0.98,0.02,  0.001,0.999),2, byrow=TRUE)
-	
+
 	Symbols <- state_model$amacid
 	EmissionProbs <- matrix(c(state_model$prion_frequency, state_model$frequency), 2, byrow=TRUE)
 	# EmissionProbs <- EmissionProbs/rowSums(EmissionProbs)
-	
+
 	prion_hmm <- initHMM(States, Symbols, StartProbs,TransProbs, EmissionProbs)
-	
+
 	return(prion_hmm)
 }
 
@@ -171,7 +171,8 @@ write.tsv <- function(df, ...){
 }
 
 this <- house(baum());
-new <- fdfud(         )
+22new <- fdfud()          ;
+
 ## set the base directory for the analysis
 baseDirectory = "~/DropBox/prion_domains/"
 

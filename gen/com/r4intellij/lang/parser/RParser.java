@@ -1161,7 +1161,7 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
-    // expr_or_assign? (EOL | EOF)
+    // expr_or_assign? (EOL)
     //     |  expr_or_assign? ';'
     public static boolean prog(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "prog")) return false;
@@ -1179,7 +1179,7 @@ public class RParser implements PsiParser {
         return result_;
     }
 
-    // expr_or_assign? (EOL | EOF)
+    // expr_or_assign? (EOL)
     private static boolean prog_0(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "prog_0")) return false;
         boolean result_ = false;
@@ -1201,19 +1201,12 @@ public class RParser implements PsiParser {
         return true;
     }
 
-    // (EOL | EOF)
+    // (EOL)
     private static boolean prog_0_1(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "prog_0_1")) return false;
-        return prog_0_1_0(builder_, level_ + 1);
-    }
-
-    // EOL | EOF
-    private static boolean prog_0_1_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog_0_1_0")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = consumeToken(builder_, R_EOL);
-        if (!result_) result_ = consumeToken(builder_, R_EOF);
         if (!result_) {
             marker_.rollbackTo();
         } else {
@@ -1297,6 +1290,7 @@ public class RParser implements PsiParser {
     // //   | STR_CONST
     //    | NULL_CONST '=' expr
     // //   | NULL_CONST
+    //     | SYMBOL_FORMALS
     //    | expr ) EOL*
     public static boolean sub(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sub")) return false;
@@ -1335,6 +1329,7 @@ public class RParser implements PsiParser {
     // //   | STR_CONST
     //    | NULL_CONST '=' expr
     // //   | NULL_CONST
+    //     | SYMBOL_FORMALS
     //    | expr )
     private static boolean sub_1(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sub_1")) return false;
@@ -1347,6 +1342,7 @@ public class RParser implements PsiParser {
     // //   | STR_CONST
     //    | NULL_CONST '=' expr
     // //   | NULL_CONST
+    //     | SYMBOL_FORMALS
     //    | expr
     private static boolean sub_1_0(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sub_1_0")) return false;
@@ -1355,6 +1351,7 @@ public class RParser implements PsiParser {
         result_ = sub_1_0_0(builder_, level_ + 1);
         if (!result_) result_ = sub_1_0_1(builder_, level_ + 1);
         if (!result_) result_ = sub_1_0_2(builder_, level_ + 1);
+        if (!result_) result_ = consumeToken(builder_, R_SYMBOL_FORMALS);
         if (!result_) result_ = expr(builder_, level_ + 1);
         if (!result_) {
             marker_.rollbackTo();

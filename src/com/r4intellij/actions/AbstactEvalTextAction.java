@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.text.StringUtil;
+import com.r4intellij.misc.connectors.ConnectorUtils;
 
 
 /**
@@ -28,7 +29,7 @@ public abstract class AbstactEvalTextAction extends AnAction {
         }
 
         if (!StringUtil.isEmptyOrSpaces(selectedText)) {
-            RunSelectedTextOrLineAction.push2R(getEvalCmd(selectedText));
+            ConnectorUtils.push2R(getEvalCmd(selectedText));
         }
 
     }

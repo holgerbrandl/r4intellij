@@ -45,7 +45,6 @@ public interface RTypes {
     IElementType R_COMMA = new RTokenType(",");
     IElementType R_COMMENT = new RTokenType("COMMENT");
     IElementType R_ELSE = new RTokenType("ELSE");
-    IElementType R_EOF = new RTokenType("EOF");
     IElementType R_EOL = new RTokenType("EOL");
     IElementType R_EQ = new RTokenType("==");
     IElementType R_EQ_ASSIGN = new RTokenType("=");
