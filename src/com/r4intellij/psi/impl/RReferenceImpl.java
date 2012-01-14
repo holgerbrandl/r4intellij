@@ -22,7 +22,6 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.ResolveCache;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.r4intellij.psi.*;
@@ -81,7 +80,7 @@ public class RReferenceImpl<T extends PsiElement> extends PsiReferenceBase<T> {
                 if (psiElement instanceof RNamedElement) {
                     LookupElementBuilder builder = LookupElementBuilder.create((PsiNamedElement) psiElement).
                             setIcon(psiElement.getIcon(Iconable.ICON_FLAG_OPEN));
-                    list.add(psiElement instanceof RRule ? builder.setBold() : builder);
+                    list.add(psiElement instanceof RVariable ? builder.setBold() : builder);
                 }
                 return true;
             }
@@ -89,25 +88,38 @@ public class RReferenceImpl<T extends PsiElement> extends PsiReferenceBase<T> {
         return list.toArray(new Object[list.size()]);
     }
 
+
     private void processResolveVariants(final Processor<PsiElement> processor) {
         PsiFile file = myElement.getContainingFile();
         if (!(file instanceof RFile)) return;
-        final boolean ruleMode = myElement instanceof RStringLiteralExpression;
 
-        RAttrs attrs = PsiTreeUtil.getParentOfType(myElement, RAttrs.class);
-        if (attrs != null && !ruleMode) {
-            if (!ContainerUtil.process(attrs.getChildren(), processor)) return;
-            final int textOffset = myElement.getTextOffset();
-            // note: disabled for debuggung
-//      ContainerUtil.process(((RFile)file).getAttributes(), new Processor<RAttrs>() {
-//        @Override
-//        public boolean process(RAttrs attrs) {
-//          return attrs.getTextOffset() <= textOffset && ContainerUtil.process(attrs.getAttrList(), processor);
+//        if(myElement instanceof RProg || myElement instanceof RExprOrAssign || myElement instanceof RExprImpl){
+//            if (!ContainerUtil.process(file.getChildren(), processor)) return;
 //        }
-//      });
-        } else {
-//      ContainerUtil.process(((RFile)file).getRules(), processor);
+
+//        // old bnf code
+//        final boolean ruleMode = myElement instanceof BnfStringLiteralExpression;
+//
+//        BnfAttrs attrs = PsiTreeUtil.getParentOfType(myElement, BnfAttrs.class);
+//        if (attrs != null && !ruleMode) {
+//            if (!ContainerUtil.process(attrs.getChildren(), processor)) return;
+//            final int textOffset = myElement.getTextOffset();
+//            ContainerUtil.process(((RFile)file).getAttributes(), new Processor<BnfAttrs>() {
+//                @Override
+//                public boolean process(BnfAttrs attrs) {
+//                    return attrs.getTextOffset() <= textOffset && ContainerUtil.process(attrs.getAttrList(), processor);
+//                }
+//            });
+//        } else {
+        for (RProg rProg : ((RFile) file).getRProgs()) {
+            RExprOrAssign exprOrAssign = rProg.getExprOrAssign();
+
+            if (exprOrAssign != null) {
+                RExpr expr = exprOrAssign.getExpr();
+                if (expr != null) {
+                    if (!ContainerUtil.process(expr.getChildren(), processor)) return;
+                }
+            }
         }
     }
-
 }

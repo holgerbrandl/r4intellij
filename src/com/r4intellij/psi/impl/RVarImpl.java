@@ -20,7 +20,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.util.IncorrectOperationException;
-import com.r4intellij.psi.RReferenceOrToken;
+import com.r4intellij.psi.RVariable;
 
 
 /**
@@ -29,15 +29,15 @@ import com.r4intellij.psi.RReferenceOrToken;
  * Date: 14.07.11
  * Time: 19:17
  */
-public abstract class RRefOrTokenImpl extends RExpressionImpl implements RReferenceOrToken {
+public abstract class RVarImpl extends RNamedElementImpl implements RVariable {
 
-    public RRefOrTokenImpl(ASTNode node) {
+    public RVarImpl(ASTNode node) {
         super(node);
     }
 
     @Override
     public PsiReference getReference() {
-        return new RReferenceImpl<RReferenceOrToken>(this, TextRange.from(0, getTextLength())) {
+        return new RReferenceImpl<RVarImpl>(this, TextRange.from(0, getTextLength())) {
             @Override
             public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
                 myElement.getId().replace(RElementFactory.createLeafFromText(getElement().getProject(), newElementName));

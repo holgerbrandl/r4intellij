@@ -92,6 +92,7 @@ ARITH_EXPONENTIAION="^"
   named="com.r4intellij.psi.RNamedElement"
   namedImpl="com.r4intellij.psi.impl.RNamedElementImpl"
   mixin("string_literal")="com.r4intellij.psi.impl.RStringImpl"
+  mixin("variable")="com.r4intellij.psi.impl.RVarImpl"
 
 }
 
@@ -146,7 +147,7 @@ exprlist ::= [(expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  
 
 string_literal ::= STR_CONST //{extends="" implements=""}
 
-variable ::= SYMBOL {extends=namedImpl implements=named};
+variable ::= SYMBOL // {extends=namedImpl implements=named};
 
 cond ::= '(' expr ')'
 
@@ -154,7 +155,7 @@ ifcond ::= '(' expr ')'
 
 forcond ::= '(' variable IN expr ')'
 
-fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign;
+fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign  {extends="com.r4intellij.psi.impl.AbstractFunDefImpl" implements=named};
 
 // todo avoid that the parser accepts several symbol formals
 formlist ::= form (EOL? ',' EOL? form)*

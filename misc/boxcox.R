@@ -11,8 +11,15 @@ featSelection<-332
 
 #load the necessary libraries
 library(car)
-library(alr3)
+library(alr3);
 
+
+teprint <- function(x){
+    print("test")
+}
+
+teprint("blab")
+teprint(sdf)
 subframe <- R[, featSelection];
 
 # caclulate the optimal lambda for the trafo

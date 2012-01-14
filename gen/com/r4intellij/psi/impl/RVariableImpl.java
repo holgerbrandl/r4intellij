@@ -10,7 +10,7 @@ import com.intellij.lang.ASTNode;
 import com.r4intellij.psi.RVariable;
 
 
-public class RVariableImpl extends RNamedElementImpl implements RVariable {
+public class RVariableImpl extends RVarImpl implements RVariable {
 
     public RVariableImpl(ASTNode node) {
         super(node);

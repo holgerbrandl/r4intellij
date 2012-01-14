@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-public class RFundefImpl extends RCompositeElementImpl implements RFundef {
+public class RFundefImpl extends AbstractFunDefImpl implements RFundef {
 
     public RFundefImpl(ASTNode node) {
         super(node);

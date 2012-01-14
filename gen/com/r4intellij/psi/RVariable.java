@@ -6,6 +6,6 @@
  */
 package com.r4intellij.psi;
 
-public interface RVariable extends RNamedElement {
+public interface RVariable extends RCompositeElement {
 
 }

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-public interface RFundef extends RCompositeElement {
+public interface RFundef extends RNamedElement {
 
     @NotNull
     public RExprOrAssign getExprOrAssign();
