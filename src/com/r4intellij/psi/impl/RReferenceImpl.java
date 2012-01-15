@@ -93,7 +93,7 @@ public class RReferenceImpl<T extends PsiElement> extends PsiReferenceBase<T> {
         PsiFile file = myElement.getContainingFile();
         if (!(file instanceof RFile)) return;
 
-//        if(myElement instanceof RProg || myElement instanceof RExprOrAssign || myElement instanceof RExprImpl){
+//        if(myElement instanceof RCommand || myElement instanceof RExprOrAssign || myElement instanceof RExprImpl){
 //            if (!ContainerUtil.process(file.getChildren(), processor)) return;
 //        }
 
@@ -111,8 +111,8 @@ public class RReferenceImpl<T extends PsiElement> extends PsiReferenceBase<T> {
 //                }
 //            });
 //        } else {
-        for (RProg rProg : ((RFile) file).getRProgs()) {
-            RExprOrAssign exprOrAssign = rProg.getExprOrAssign();
+        for (RCommand rCommand : ((RFile) file).getRProgs()) {
+            RExprOrAssign exprOrAssign = rCommand.getExprOrAssign();
 
             if (exprOrAssign != null) {
                 RExpr expr = exprOrAssign.getExpr();

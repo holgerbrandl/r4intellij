@@ -6,12 +6,6 @@
  */
 package com.r4intellij.psi;
 
-import org.jetbrains.annotations.Nullable;
-
-
-public interface RProg extends RCompositeElement {
-
-    @Nullable
-    public RExprOrAssign getExprOrAssign();
+public interface RSection extends RCompositeElement {
 
 }

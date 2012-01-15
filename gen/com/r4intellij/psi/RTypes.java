@@ -15,6 +15,7 @@ import com.r4intellij.psi.impl.*;
 
 public interface RTypes {
 
+    IElementType R_COMMAND = new RCompositeElementType("R_COMMAND");
     IElementType R_COND = new RCompositeElementType("R_COND");
     IElementType R_EQUAL_ASSIGN = new RCompositeElementType("R_EQUAL_ASSIGN");
     IElementType R_EXPR = new RCompositeElementType("R_EXPR");
@@ -25,7 +26,7 @@ public interface RTypes {
     IElementType R_FORMLIST = new RCompositeElementType("R_FORMLIST");
     IElementType R_FUNDEF = new RCompositeElementType("R_FUNDEF");
     IElementType R_IFCOND = new RCompositeElementType("R_IFCOND");
-    IElementType R_PROG = new RCompositeElementType("R_PROG");
+    IElementType R_SECTION = new RCompositeElementType("R_SECTION");
     IElementType R_STRING_LITERAL = new RCompositeElementType("R_STRING_LITERAL");
     IElementType R_SUB = new RCompositeElementType("R_SUB");
     IElementType R_SUBLIST = new RCompositeElementType("R_SUBLIST");
@@ -78,6 +79,7 @@ public interface RTypes {
     IElementType R_RIGHT_BRACE = new RTokenType("}");
     IElementType R_RIGHT_BRACKET = new RTokenType("]");
     IElementType R_RIGHT_PAREN = new RTokenType(")");
+    IElementType R_SECTION_COMMENT = new RTokenType("SECTION_COMMENT");
     IElementType R_SEMICOLON = new RTokenType(";");
     IElementType R_SLOT = new RTokenType("@");
     IElementType R_STR_CONST = new RTokenType("STR_CONST");
@@ -90,7 +92,9 @@ public interface RTypes {
 
         public static PsiElement createElement(ASTNode node) {
             IElementType type = node.getElementType();
-            if (type == R_COND) {
+            if (type == R_COMMAND) {
+                return new RCommandImpl(node);
+            } else if (type == R_COND) {
                 return new RCondImpl(node);
             } else if (type == R_EQUAL_ASSIGN) {
                 return new REqualAssignImpl(node);
@@ -110,8 +114,8 @@ public interface RTypes {
                 return new RFundefImpl(node);
             } else if (type == R_IFCOND) {
                 return new RIfcondImpl(node);
-            } else if (type == R_PROG) {
-                return new RProgImpl(node);
+            } else if (type == R_SECTION) {
+                return new RSectionImpl(node);
             } else if (type == R_STRING_LITERAL) {
                 return new RStringLiteralImpl(node);
             } else if (type == R_SUB) {

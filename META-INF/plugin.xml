@@ -125,6 +125,8 @@
         <lang.findUsagesProvider language="R" implementationClass="com.r4intellij.editor.RFindUsagesProvider"/>
         <lang.elementManipulator forClass="com.r4intellij.psi.impl.RStringLiteralImpl"
                                  implementationClass="com.r4intellij.psi.impl.RStringManipulator"/>
+        <lang.psiStructureViewFactory language="R"
+                                      implementationClass="com.r4intellij.psi.RScriptStructureViewFactory"/>
 
         <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
         <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>

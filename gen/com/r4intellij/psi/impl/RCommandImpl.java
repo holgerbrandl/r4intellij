@@ -8,14 +8,15 @@ package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.r4intellij.psi.RCommand;
 import com.r4intellij.psi.RExprOrAssign;
-import com.r4intellij.psi.RProg;
+import com.r4intellij.psi.RSection;
 import org.jetbrains.annotations.Nullable;
 
 
-public class RProgImpl extends RCompositeElementImpl implements RProg {
+public class RCommandImpl extends RCompositeElementImpl implements RCommand {
 
-    public RProgImpl(ASTNode node) {
+    public RCommandImpl(ASTNode node) {
         super(node);
     }
 
@@ -23,6 +24,12 @@ public class RProgImpl extends RCompositeElementImpl implements RProg {
     @Nullable
     public RExprOrAssign getExprOrAssign() {
         return PsiTreeUtil.getChildOfType(this, RExprOrAssign.class);
+    }
+
+    @Override
+    @Nullable
+    public RSection getSection() {
+        return PsiTreeUtil.getChildOfType(this, RSection.class);
     }
 
 }

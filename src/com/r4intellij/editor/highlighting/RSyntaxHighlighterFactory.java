@@ -60,7 +60,7 @@ public class RSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
         public TextAttributesKey[] getTokenHighlights(IElementType iElementType) {
             if (iElementType == TokenType.BAD_CHARACTER) {
                 return pack(SyntaxHighlighterColors.INVALID_STRING_ESCAPE);
-            } else if (iElementType == RTypes.R_COMMENT) {
+            } else if (iElementType == RTypes.R_COMMENT || iElementType == RTypes.R_SECTION_COMMENT) {
                 return pack(SyntaxHighlighterColors.LINE_COMMENT);
             } else if (iElementType == RTypes.R_STR_CONST) {
                 return pack(SyntaxHighlighterColors.STRING);

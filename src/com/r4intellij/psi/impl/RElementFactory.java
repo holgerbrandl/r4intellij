@@ -21,7 +21,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RLanguage;
-import com.r4intellij.psi.RProg;
+import com.r4intellij.psi.RCommand;
 
 
 /**
@@ -41,7 +41,7 @@ public class RElementFactory {
 //        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "\"" + text + "\";");
         PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", text + ";");
         if ((fromText.getFirstChild()) != null) {
-            return (RStringImpl) ((RProg) fromText.getFirstChild()).getExprOrAssign().getExpr().getStringLiteral();
+            return (RStringImpl) ((RCommand) fromText.getFirstChild()).getExprOrAssign().getExpr().getStringLiteral();
         }
         return null;
     }

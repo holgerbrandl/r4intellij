@@ -28,9 +28,9 @@ import org.jetbrains.annotations.NotNull;
  * Date: 14.07.11
  * Time: 19:17
  */
-public abstract class AbstractFunDefImpl extends RNamedElementImpl implements RVariable {
+public abstract class AbstractRFundef extends RNamedElementImpl implements RVariable {
 
-    public AbstractFunDefImpl(ASTNode node) {
+    public AbstractRFundef(ASTNode node) {
         super(node);
     }
 

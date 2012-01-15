@@ -97,18 +97,20 @@ ARITH_EXPONENTIAION="^"
 }
 
 
-external grammar ::= parseGrammar prog
+external grammar ::= parseGrammar command
 
-prog ::=
 //END_OF_INPUT //todo match an empty file --> add unit test
-       expr_or_assign? (EOL)
+command ::=
+       section
+    |  expr_or_assign? (EOL)
     |  expr_or_assign? ';'
-     {recoverUntil="prog_recover_until"}
-private prog_recover_until::=!(prog)
+     {recoverUntil="command_recover_until"}
+private command_recover_until::=!(command)
 
 
 expr_or_assign ::= EOL* (equal_assign | expr |  COMMENT )
 
+section ::= SECTION_COMMENT {extends="com.r4intellij.psi.impl.AbstractRSection"}
 
 equal_assign ::= expr EQ_ASSIGN expr_or_assign
 
@@ -155,7 +157,7 @@ ifcond ::= '(' expr ')'
 
 forcond ::= '(' variable IN expr ')'
 
-fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign  {extends="com.r4intellij.psi.impl.AbstractFunDefImpl" implements=named};
+fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign  {extends="com.r4intellij.psi.impl.AbstractRFundef" implements=named};
 
 // todo avoid that the parser accepts several symbol formals
 formlist ::= form (EOL? ',' EOL? form)*

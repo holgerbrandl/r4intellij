@@ -27,7 +27,9 @@ public class RParser implements PsiParser {
     public ASTNode parse(final IElementType root_, final PsiBuilder builder_) {
         int level_ = 0;
         boolean result_;
-        if (root_ == R_COND) {
+        if (root_ == R_COMMAND) {
+            result_ = command(builder_, level_ + 1);
+        } else if (root_ == R_COND) {
             result_ = cond(builder_, level_ + 1);
         } else if (root_ == R_EQUAL_ASSIGN) {
             result_ = equal_assign(builder_, level_ + 1);
@@ -47,8 +49,8 @@ public class RParser implements PsiParser {
             result_ = fundef(builder_, level_ + 1);
         } else if (root_ == R_IFCOND) {
             result_ = ifcond(builder_, level_ + 1);
-        } else if (root_ == R_PROG) {
-            result_ = prog(builder_, level_ + 1);
+        } else if (root_ == R_SECTION) {
+            result_ = section(builder_, level_ + 1);
         } else if (root_ == R_STRING_LITERAL) {
             result_ = string_literal(builder_, level_ + 1);
         } else if (root_ == R_SUB) {
@@ -59,7 +61,7 @@ public class RParser implements PsiParser {
             result_ = variable(builder_, level_ + 1);
         } else {
             Marker marker_ = builder_.mark();
-            result_ = parseGrammar(builder_, level_ + 1, prog_parser_);
+            result_ = parseGrammar(builder_, level_ + 1, command_parser_);
             while (builder_.getTokenType() != null) {
                 builder_.advanceLexer();
             }
@@ -67,6 +69,114 @@ public class RParser implements PsiParser {
         }
         return builder_.getTreeBuilt();
     }
+
+    /* ********************************************************** */
+    // section
+    //     |  expr_or_assign? (EOL)
+    //     |  expr_or_assign? ';'
+    public static boolean command(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "command")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        enterErrorRecordingSection(builder_, level_, _SECTION_RECOVER_);
+        result_ = section(builder_, level_ + 1);
+        if (!result_) result_ = command_1(builder_, level_ + 1);
+        if (!result_) result_ = command_2(builder_, level_ + 1);
+        if (result_) {
+            marker_.done(R_COMMAND);
+        } else {
+            marker_.rollbackTo();
+        }
+        result_ = exitErrorRecordingSection(builder_, result_, level_, false, _SECTION_RECOVER_, command_recover_until_parser_);
+        return result_;
+    }
+
+    // expr_or_assign? (EOL)
+    private static boolean command_1(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "command_1")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = command_1_0(builder_, level_ + 1);
+        result_ = result_ && command_1_1(builder_, level_ + 1);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
+    }
+
+    // expr_or_assign?
+    private static boolean command_1_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "command_1_0")) return false;
+        expr_or_assign(builder_, level_ + 1);
+        return true;
+    }
+
+    // (EOL)
+    private static boolean command_1_1(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "command_1_1")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = consumeToken(builder_, R_EOL);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
+    }
+
+    // expr_or_assign? ';'
+    private static boolean command_2(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "command_2")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = command_2_0(builder_, level_ + 1);
+        result_ = result_ && consumeToken(builder_, R_SEMICOLON);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
+    }
+
+    // expr_or_assign?
+    private static boolean command_2_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "command_2_0")) return false;
+        expr_or_assign(builder_, level_ + 1);
+        return true;
+    }
+
+
+    /* ********************************************************** */
+    // !(command)
+    static boolean command_recover_until(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "command_recover_until")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        enterErrorRecordingSection(builder_, level_, _SECTION_NOT_);
+        result_ = !command_recover_until_0(builder_, level_ + 1);
+        marker_.rollbackTo();
+        result_ = exitErrorRecordingSection(builder_, result_, level_, false, _SECTION_NOT_, null);
+        return result_;
+    }
+
+    // (command)
+    private static boolean command_recover_until_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "command_recover_until_0")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = command(builder_, level_ + 1);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
+    }
+
 
     /* ********************************************************** */
     // '(' expr ')'
@@ -1161,106 +1271,16 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
-    // expr_or_assign? (EOL)
-    //     |  expr_or_assign? ';'
-    public static boolean prog(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog")) return false;
+    // SECTION_COMMENT
+    public static boolean section(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "section")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
-        enterErrorRecordingSection(builder_, level_, _SECTION_RECOVER_);
-        result_ = prog_0(builder_, level_ + 1);
-        if (!result_) result_ = prog_1(builder_, level_ + 1);
+        result_ = consumeToken(builder_, R_SECTION_COMMENT);
         if (result_) {
-            marker_.done(R_PROG);
+            marker_.done(R_SECTION);
         } else {
             marker_.rollbackTo();
-        }
-        result_ = exitErrorRecordingSection(builder_, result_, level_, false, _SECTION_RECOVER_, prog_recover_until_parser_);
-        return result_;
-    }
-
-    // expr_or_assign? (EOL)
-    private static boolean prog_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog_0")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = prog_0_0(builder_, level_ + 1);
-        result_ = result_ && prog_0_1(builder_, level_ + 1);
-        if (!result_) {
-            marker_.rollbackTo();
-        } else {
-            marker_.drop();
-        }
-        return result_;
-    }
-
-    // expr_or_assign?
-    private static boolean prog_0_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog_0_0")) return false;
-        expr_or_assign(builder_, level_ + 1);
-        return true;
-    }
-
-    // (EOL)
-    private static boolean prog_0_1(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog_0_1")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = consumeToken(builder_, R_EOL);
-        if (!result_) {
-            marker_.rollbackTo();
-        } else {
-            marker_.drop();
-        }
-        return result_;
-    }
-
-    // expr_or_assign? ';'
-    private static boolean prog_1(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog_1")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = prog_1_0(builder_, level_ + 1);
-        result_ = result_ && consumeToken(builder_, R_SEMICOLON);
-        if (!result_) {
-            marker_.rollbackTo();
-        } else {
-            marker_.drop();
-        }
-        return result_;
-    }
-
-    // expr_or_assign?
-    private static boolean prog_1_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog_1_0")) return false;
-        expr_or_assign(builder_, level_ + 1);
-        return true;
-    }
-
-
-    /* ********************************************************** */
-    // !(prog)
-    static boolean prog_recover_until(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog_recover_until")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        enterErrorRecordingSection(builder_, level_, _SECTION_NOT_);
-        result_ = !prog_recover_until_0(builder_, level_ + 1);
-        marker_.rollbackTo();
-        result_ = exitErrorRecordingSection(builder_, result_, level_, false, _SECTION_NOT_, null);
-        return result_;
-    }
-
-    // (prog)
-    private static boolean prog_recover_until_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "prog_recover_until_0")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = prog(builder_, level_ + 1);
-        if (!result_) {
-            marker_.rollbackTo();
-        } else {
-            marker_.drop();
         }
         return result_;
     }
@@ -1503,14 +1523,14 @@ public class RParser implements PsiParser {
     }
 
 
-    final static Parser prog_parser_ = new Parser() {
+    final static Parser command_parser_ = new Parser() {
         public boolean parse(PsiBuilder builder_, int level_) {
-            return prog(builder_, level_ + 1);
+            return command(builder_, level_ + 1);
         }
     };
-    final static Parser prog_recover_until_parser_ = new Parser() {
+    final static Parser command_recover_until_parser_ = new Parser() {
         public boolean parse(PsiBuilder builder_, int level_) {
-            return prog_recover_until(builder_, level_ + 1);
+            return command_recover_until(builder_, level_ + 1);
         }
     };
 }

@@ -39,6 +39,7 @@ Lexical Rules Section.
 EOL = (\r|\n|\r\n)*
 //WHITE_SPACE= {EOL} | [ \t\f]
 WHITE_SPACE= [ \t\f]
+SECTION_COMMENT = [#]{5,120}[\r\n]{1} [#]{2,5} [^\r\n]*
 COMMENT = "#"[^\r\n]*
 
 /* A identifier integer is a word beginning a letter between A and Z, a and z,
@@ -82,6 +83,7 @@ YYINITIAL. */
 <YYINITIAL> {
   {WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
   {EOL} {yybegin(YYINITIAL); return R_EOL; }
+  {SECTION_COMMENT} {yybegin(YYINITIAL); return R_SECTION_COMMENT; }
   {COMMENT} {yybegin(YYINITIAL); return R_COMMENT; }
 
   // r keywords

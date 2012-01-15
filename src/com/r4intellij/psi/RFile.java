@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class RFile extends PsiFileBase {
 
-    private CachedValue<List<RProg>> myProgs;
+    private CachedValue<List<RCommand>> myProgs;
 
     public RFile(FileViewProvider viewProvider) {
         super(viewProvider, RFileType.R_LANGUAGE);
@@ -43,11 +43,11 @@ public class RFile extends PsiFileBase {
     }
 
 
-    public List<RProg> getRProgs() {
+    public List<RCommand> getRProgs() {
         if (myProgs == null) {
-            myProgs = CachedValuesManager.getManager(getProject()).createCachedValue(new CachedValueProvider<List<RProg>>() {
+            myProgs = CachedValuesManager.getManager(getProject()).createCachedValue(new CachedValueProvider<List<RCommand>>() {
                 @Override
-                public Result<List<RProg>> compute() {
+                public Result<List<RCommand>> compute() {
                     return Result.create(calcRules(), RFile.this);
                 }
             }, false);
@@ -56,13 +56,13 @@ public class RFile extends PsiFileBase {
     }
 
 
-    private List<RProg> calcRules() {
-        final List<RProg> result = new ArrayList<RProg>();
+    private List<RCommand> calcRules() {
+        final List<RCommand> result = new ArrayList<RCommand>();
         processChildrenDummyAware(this, new Processor<PsiElement>() {
             @Override
             public boolean process(PsiElement psiElement) {
-                if (psiElement instanceof RProg) {
-                    result.add((RProg) psiElement);
+                if (psiElement instanceof RCommand) {
+                    result.add((RCommand) psiElement);
                 }
                 return true;
             }

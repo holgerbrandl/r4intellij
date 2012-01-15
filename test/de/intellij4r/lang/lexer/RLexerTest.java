@@ -28,12 +28,15 @@ public class RLexerTest {
 
     public static void main(String[] args) {
 //        printTokenization("bxCxNames <- paste(\".boxcox\", sep = \"\");", true);
-        printTokenization("\n" +
+        String code = "\n" +
                 "createPyTable <- function(cmd,...){\n" +
                 "\tresult <- read.table(tFile, ...)\n" +
                 "\tunlink(tFile)\n" +
                 "\treturn(result)\n" +
-                "}", true);
+                "}";
+        code = Utils.readFileAsString("misc/Test.R");
+
+        printTokenization(code, true);
     }
 
     private static void printTokenization(String code, boolean consumeWhiteSpaces) {
