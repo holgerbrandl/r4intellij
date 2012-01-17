@@ -53,6 +53,14 @@ public class RParserTest extends RParsingTestCase {
     }
 
 
+    public void testWrappedGgplot() {
+        doTest(true);
+    }
+
+    public void testAnonymousFunDef() {
+        doTest(true);
+    }
+
     public void testSimpleTest1() {
         doTest(true);
     }

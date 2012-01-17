@@ -16,16 +16,10 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFileFactory;
-import org.jetbrains.annotations.NotNull;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: gregory
- * Date: 14.07.11
- * Time: 19:17
+ * @author Holger Brandl
  */
 public abstract class AbstractRSection extends RCompositeElementImpl {
 
@@ -36,44 +30,6 @@ public abstract class AbstractRSection extends RCompositeElementImpl {
     @Override
     public String getName() {
         return getNameInternal();
-    }
-
-    //    @Override
-    @NotNull
-    public PsiElement getId() {
-
-        getNameInternal();
-//
-//        ASTNode child = getNode().findChildByType(RTypes.R_SECTION_COMMENT);
-////        if(child==null){
-//        return PsiFileFactory.getInstance(getProject()).createFileFromText("a.R", "# "+ sectionName+"\n").getFirstChild();
-        return PsiFileFactory.getInstance(getProject()).createFileFromText("a.R", "# test" + "" + "").getFirstChild();
-////
-////        }
-//        return child == null ? this : child.getPsi();
-////        PsiElement firstChildNode = getNode().getFirstChildNode().getPsi();
-////
-////        String sectionName;
-////
-////        if (firstChildNode instanceof RCommand)
-////            sectionName = "Unnamed";
-////        else {
-////            sectionName = firstChildNode.getText().replace("#", "").trim();
-////            sectionName = sectionName.isEmpty() ? " " : sectionName;
-////        }
-////        PsiFile fromText = PsiFileFactory.getInstance(getProject()).createFileFromText("a.R", "\"" + sectionName + "\";");
-////        return fromText.getFirstChild();
-//
-//
-//
-////        PsiElement psi = getNode().getTreeParent().getTreeParent().getPsi();
-////        if (psi instanceof RExpr) {
-////            return ((RExpr) psi).getVariable();
-//////        ASTNode child = getNode().findChildByType(BNF_ID);
-//////        return child == null ? null : child.getPsi();
-////        } else {
-////            return null;
-////        }
     }
 
     private String getNameInternal() {
@@ -87,9 +43,4 @@ public abstract class AbstractRSection extends RCompositeElementImpl {
         }
         return sectionName;
     }
-//
-//    @Override
-//    public int getTextOffset() {
-//        return 0;
-//    }
 }

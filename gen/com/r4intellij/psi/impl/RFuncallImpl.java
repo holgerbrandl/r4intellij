@@ -8,29 +8,29 @@ package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.r4intellij.psi.RExprOrAssign;
 import com.r4intellij.psi.RFormlist;
-import com.r4intellij.psi.RFundef;
+import com.r4intellij.psi.RFuncall;
+import com.r4intellij.psi.RVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-public class RFundefImpl extends RCompositeElementImpl implements RFundef {
+public class RFuncallImpl extends AbstractRFunCall implements RFuncall {
 
-    public RFundefImpl(ASTNode node) {
+    public RFuncallImpl(ASTNode node) {
         super(node);
-    }
-
-    @Override
-    @NotNull
-    public RExprOrAssign getExprOrAssign() {
-        return PsiTreeUtil.getChildOfType(this, RExprOrAssign.class);
     }
 
     @Override
     @Nullable
     public RFormlist getFormlist() {
         return PsiTreeUtil.getChildOfType(this, RFormlist.class);
+    }
+
+    @Override
+    @NotNull
+    public RVariable getVariable() {
+        return PsiTreeUtil.getChildOfType(this, RVariable.class);
     }
 
 }

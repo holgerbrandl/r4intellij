@@ -26,7 +26,6 @@ import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.PlatformIcons;
 import com.r4intellij.psi.impl.RSectionImpl;
 import org.jetbrains.annotations.NotNull;
@@ -159,6 +158,8 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
                             return;
                         }
 
+//                        if(element instanceof RFuncall && ((RFuncall) element).getName()=="getClass")
+
                         element.acceptChildren(this);
                     }
                 });
@@ -166,7 +167,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
             } else {
                 myElement.acceptChildren(new PsiElementVisitor() {
                     public void visitElement(PsiElement element) {
-                        if (element instanceof RSection || (element instanceof RFundef && getSection(element) == null)) {
+                        if (element instanceof RSection || (getFunctionName(element) != null && getSection(element) == null)) {
                             childrenElements.add(element);
                             return;
                         }
@@ -186,13 +187,27 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
             return children;
         }
 
+        public static RVariable getFunctionName(PsiElement element) {
+            if (!(element instanceof RFundef)) {
+                return null;
+            }
+
+            RFundef fundef = (RFundef) element;
+            PsiElement funAssignment = fundef.getNode().getTreeParent().getTreeParent().getPsi();
+            if (funAssignment instanceof RExpr && ((RExpr) funAssignment).getVariable() != null) {
+                return ((RExpr) funAssignment).getVariable();
+            }
+
+            return null;
+        }
+
         @Override
         public String getPresentableText() {
             if (myElement instanceof RFile) {
                 return ((RFile) myElement).getName();
             }
             if (myElement instanceof RFundef) {
-                return ((PsiNamedElement) myElement).getName();
+                return getFunctionName(myElement).getText();
             } else if (myElement instanceof RSection) {
                 return ((RSectionImpl) myElement).getName();
             }
@@ -203,9 +218,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
 //        String suffix = attrList.size() > 1? " & " + attrList.size()+" more..." : " ";
 //        return "Attributes { " + getAttrDisplayName(firstAttr) + suffix+ "}";
 //      }
-            else if (myElement instanceof RFile) {
-                return ((RFile) myElement).getName();
-            }
+
             throw new AssertionError(myElement.getClass().getName());
         }
 

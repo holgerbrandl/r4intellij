@@ -7,11 +7,15 @@
 package com.r4intellij.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 
-public interface RIfcond extends RCompositeElement {
+public interface RFuncall extends RNamedElement {
+
+    @Nullable
+    public RFormlist getFormlist();
 
     @NotNull
-    public RExpr getExpr();
+    public RVariable getVariable();
 
 }

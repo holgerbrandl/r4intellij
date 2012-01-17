@@ -119,6 +119,7 @@ expr ::=  (
     NULL_CONST |
 //    string_literal (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST) |
     string_literal | // todo remove this as it is redundant with the last line optionalized with ()?
+    funcall |
     variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)? |
     '{' exprlist '}' |
     '(' expr_or_assign ')' |
@@ -128,7 +129,7 @@ expr ::=  (
     '~' expr |
     '?' expr |
     fundef |
-    IF ifcond expr_or_assign [ELSE expr_or_assign] |
+    IF cond expr_or_assign [ELSE expr_or_assign] |
     FOR forcond expr_or_assign |
     WHILE cond expr_or_assign |
     REPEAT expr_or_assign |
@@ -153,11 +154,11 @@ variable ::= SYMBOL // {extends=namedImpl implements=named};
 
 cond ::= '(' expr ')'
 
-ifcond ::= '(' expr ')'
-
 forcond ::= '(' variable IN expr ')'
 
-fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign  {extends="com.r4intellij.psi.impl.AbstractRFundef" implements=named};
+fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign;
+
+funcall ::= variable '(' formlist? ')' {extends="com.r4intellij.psi.impl.AbstractRFunCall" implements=named};
 
 // todo avoid that the parser accepts several symbol formals
 formlist ::= form (EOL? ',' EOL? form)*

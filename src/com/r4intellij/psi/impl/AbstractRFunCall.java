@@ -17,7 +17,7 @@ package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.r4intellij.psi.RExpr;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RVariable;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,24 +28,17 @@ import org.jetbrains.annotations.NotNull;
  * Date: 14.07.11
  * Time: 19:17
  */
-public abstract class AbstractRFundef extends RNamedElementImpl implements RVariable {
+public abstract class AbstractRFunCall extends RNamedElementImpl implements RVariable {
 
-    public AbstractRFundef(ASTNode node) {
+    public AbstractRFunCall(ASTNode node) {
         super(node);
     }
 
     @Override
     @NotNull
     public PsiElement getId() {
-        PsiElement psi = getNode().getTreeParent().getTreeParent().getPsi();
-        if (psi instanceof RExpr) {
-            return ((RExpr) psi).getVariable();
-//        ASTNode child = getNode().findChildByType(BNF_ID);
-//        return child == null ? null : child.getPsi();
-        } else {
-            return null;
-        }
+        return PsiTreeUtil.getChildOfType(this, RVariable.class);
+//        ASTNode child = getNode().findChildByType(R_SYMBOL);
+//        return child == null? null : child.getPsi();
     }
-
-
 }

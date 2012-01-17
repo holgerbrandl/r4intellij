@@ -1,50 +1,55 @@
 FILE
-  R_PROG
+  R_COMMAND
     R_EXPR_OR_ASSIGN
       PsiElement(EOL)('\n')
       PsiComment(COMMENT)('# use another normality test')
       PsiElement(EOL)('\n')
       R_EXPR
-        PsiElement(SYMBOL)('library')
-        PsiElement(()('(')
-        R_SUBLIST
-          R_SUB
-            R_EXPR
+        R_FUNCALL:library
+          R_VARIABLE:library
+            PsiElement(SYMBOL)('library')
+          PsiElement(()('(')
+          R_FORMLIST
+            R_FORM
               PsiElement(SYMBOL)('nortest')
-        PsiElement())(')')
+          PsiElement())(')')
     PsiElement(EOL)('\n\n\n')
-  R_PROG
+  R_COMMAND
     R_EXPR_OR_ASSIGN
       R_EXPR
-        PsiElement(SYMBOL)('somedata')
+        R_VARIABLE:somedata
+          PsiElement(SYMBOL)('somedata')
         PsiElement(<-)('<-')
         R_EXPR
-          PsiElement(SYMBOL)('R')
+          R_VARIABLE:R
+            PsiElement(SYMBOL)('R')
           PsiElement($)('$')
           PsiElement(STR_CONST)('"counts"')
     PsiElement(;)(';')
-  R_PROG
+  R_COMMAND
     R_EXPR_OR_ASSIGN
       PsiElement(EOL)('\n\n')
       R_EXPR
-        PsiElement(SYMBOL)('hist')
-        PsiElement(()('(')
-        R_SUBLIST
-          R_SUB
-            R_EXPR
+        R_FUNCALL:hist
+          R_VARIABLE:hist
+            PsiElement(SYMBOL)('hist')
+          PsiElement(()('(')
+          R_FORMLIST
+            R_FORM
               PsiElement(SYMBOL)('somedata')
-        PsiElement())(')')
+          PsiElement())(')')
     PsiElement(EOL)('\n')
-  R_PROG
+  R_COMMAND
     R_EXPR_OR_ASSIGN
       R_EXPR
-        PsiElement(SYMBOL)('shapiro.test')
-        PsiElement(()('(')
-        R_SUBLIST
-          R_SUB
-            R_EXPR
+        R_FUNCALL:shapiro.test
+          R_VARIABLE:shapiro.test
+            PsiElement(SYMBOL)('shapiro.test')
+          PsiElement(()('(')
+          R_FORMLIST
+            R_FORM
               PsiElement(SYMBOL)('somedata')
-        PsiElement())(')')
+          PsiElement())(')')
     PsiElement(;)(';')
-  R_PROG
+  R_COMMAND
     PsiElement(EOL)('\n')

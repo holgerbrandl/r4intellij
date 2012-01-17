@@ -53,14 +53,14 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
 
     @Override
     @Nullable
-    public RFundef getFundef() {
-        return PsiTreeUtil.getChildOfType(this, RFundef.class);
+    public RFuncall getFuncall() {
+        return PsiTreeUtil.getChildOfType(this, RFuncall.class);
     }
 
     @Override
     @Nullable
-    public RIfcond getIfcond() {
-        return PsiTreeUtil.getChildOfType(this, RIfcond.class);
+    public RFundef getFundef() {
+        return PsiTreeUtil.getChildOfType(this, RFundef.class);
     }
 
     @Override

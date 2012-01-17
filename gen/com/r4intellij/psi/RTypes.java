@@ -24,8 +24,8 @@ public interface RTypes {
     IElementType R_FORCOND = new RCompositeElementType("R_FORCOND");
     IElementType R_FORM = new RCompositeElementType("R_FORM");
     IElementType R_FORMLIST = new RCompositeElementType("R_FORMLIST");
+    IElementType R_FUNCALL = new RCompositeElementType("R_FUNCALL");
     IElementType R_FUNDEF = new RCompositeElementType("R_FUNDEF");
-    IElementType R_IFCOND = new RCompositeElementType("R_IFCOND");
     IElementType R_SECTION = new RCompositeElementType("R_SECTION");
     IElementType R_STRING_LITERAL = new RCompositeElementType("R_STRING_LITERAL");
     IElementType R_SUB = new RCompositeElementType("R_SUB");
@@ -110,10 +110,10 @@ public interface RTypes {
                 return new RFormImpl(node);
             } else if (type == R_FORMLIST) {
                 return new RFormlistImpl(node);
+            } else if (type == R_FUNCALL) {
+                return new RFuncallImpl(node);
             } else if (type == R_FUNDEF) {
                 return new RFundefImpl(node);
-            } else if (type == R_IFCOND) {
-                return new RIfcondImpl(node);
             } else if (type == R_SECTION) {
                 return new RSectionImpl(node);
             } else if (type == R_STRING_LITERAL) {

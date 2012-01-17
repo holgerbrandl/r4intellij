@@ -1,6 +1,7 @@
 FILE
-  PsiErrorElement:got '22'
-    PsiElement(NUM_CONST)('22')
+  PsiElement(NUM_CONST)('22')
+  PsiErrorElement:$, '!=', '%', '&&', '&', '(', '*', '+', '-', '->', '/', ':', ';', '<', '<-', '<=', '=', '==', '>', '>=', '?', '@', '[', '[[', '^', '|', '||', '~', ARITH_MISC or EOL expected, got 'aa'
+    <empty list>
   PsiElement(SYMBOL)('aa')
   PsiElement(<-)('<-')
   PsiElement(NUM_CONST)('1')

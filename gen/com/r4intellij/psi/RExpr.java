@@ -30,10 +30,10 @@ public interface RExpr extends RCompositeElement {
     public RForcond getForcond();
 
     @Nullable
-    public RFundef getFundef();
+    public RFuncall getFuncall();
 
     @Nullable
-    public RIfcond getIfcond();
+    public RFundef getFundef();
 
     @Nullable
     public RStringLiteral getStringLiteral();
