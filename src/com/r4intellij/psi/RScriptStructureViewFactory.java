@@ -21,6 +21,7 @@ import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
@@ -134,18 +135,48 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
             return this;
         }
 
+        private static PsiElement getSection(PsiElement element) {
+            while (element != null && !(element instanceof RCommand)) {
+                element = element.getParent();
+            }
+
+            // iterate through the commands to find the section of the element
+            while (element != null && !(element.getFirstChild() instanceof RSection)) {
+                element = element.getPrevSibling();
+            }
+
+            return element == null ? null : element.getFirstChild();
+        }
 
         public StructureViewTreeElement[] getChildren() {
             final List<PsiElement> childrenElements = new ArrayList<PsiElement>();
-            myElement.acceptChildren(new PsiElementVisitor() {
-                public void visitElement(PsiElement element) {
-                    if (element instanceof RFundef || element instanceof RSection) {
-                        childrenElements.add(element);
-                    } else {
+
+            if (myElement instanceof RSection) {
+                myElement.getParent().getParent().acceptChildren(new PsiElementVisitor() {
+                    public void visitElement(PsiElement element) {
+                        if (element instanceof RFundef && myElement.equals(getSection(element))) {
+                            childrenElements.add(element);
+                            return;
+                        }
+
                         element.acceptChildren(this);
                     }
-                }
-            });
+                });
+
+            } else {
+                myElement.acceptChildren(new PsiElementVisitor() {
+                    public void visitElement(PsiElement element) {
+                        if (element instanceof RSection || (element instanceof RFundef && getSection(element) == null)) {
+                            childrenElements.add(element);
+                            return;
+                        }
+
+                        element.acceptChildren(this);
+                    }
+
+
+                });
+            }
 
             StructureViewTreeElement[] children = new StructureViewTreeElement[childrenElements.size()];
             for (int i = 0; i < children.length; i++) {
@@ -187,7 +218,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
         @Override
         public Icon getIcon(boolean open) {
 //      return myElement instanceof RSection ? PlatformIcons.PACKAGE_ICON : myElement.getIcon(0);
-            return myElement instanceof RFundef ? PlatformIcons.METHOD_ICON : PlatformIcons.FILE_ICON;
+            return myElement instanceof RFundef ? PlatformIcons.METHOD_ICON : (open ? IconLoader.getIcon("/nodes/folderOpen.png") : PlatformIcons.FOLDER_ICON);
         }
     }
 }

@@ -128,6 +128,8 @@
         <lang.psiStructureViewFactory language="R"
                                       implementationClass="com.r4intellij.psi.RScriptStructureViewFactory"/>
 
+        <quoteHandler fileType="R" className="com.r4intellij.editor.highlighting.RQuoteHandler"/>
+
         <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
         <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
 
