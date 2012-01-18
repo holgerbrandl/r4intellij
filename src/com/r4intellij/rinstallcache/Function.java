@@ -18,19 +18,29 @@ import org.jetbrains.annotations.NotNull;
 public class Function {
 
     private final String funName;
-    private final String funDef;
+    private final String funDesc;
+    private String funSignature;
 
-    public Function(@NotNull String funName, @NotNull String funDef) {
+
+    public Function(@NotNull String funName, @NotNull String funDesc) {
         this.funName = funName;
-        this.funDef = funDef;
+        this.funDesc = funDesc;
     }
 
     public String getFunName() {
         return funName;
     }
 
-    public String getFunDef() {
-        return funDef;
+    public String getFunDesc() {
+        return funDesc;
+    }
+
+    public void setFunSignature(String funSignature) {
+        this.funSignature = funSignature;
+    }
+
+    public String getFunSignature() {
+        return funSignature;
     }
 
     @Override

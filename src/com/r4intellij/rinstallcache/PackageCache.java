@@ -7,9 +7,11 @@
 
 package com.r4intellij.rinstallcache;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,8 +27,14 @@ public class PackageCache extends HashSet<RPackage> {
 
     public static void main(String[] args) throws IOException, InterruptedException {
 //        System.err.println(getListOfInstalledPackages());
-        HashSet<RPackage> libraryCache = getLibraryCache();
-        System.err.println("cached " + libraryCache.size() + " packages!");
+//        RPackage plyrFuns = buildPackageCache("stats");
+
+//        System.err.println("plyrFuns");
+//        HashSet<RPackage> libraryCache = getLibraryCache();
+//        System.err.println("cached " + libraryCache.size() + " packages!");
+
+        PackageCache libraryCache = getLibraryCache();
+        System.err.println(libraryCache.getPackagesOfFunction("a_ply"));
     }
 
 
@@ -43,7 +51,7 @@ public class PackageCache extends HashSet<RPackage> {
             try {
                 List<String> installedPackages = getListOfInstalledPackages();
                 for (String packageName : installedPackages) {
-                    packageCache.add(rebuildPackageCache(packageName));
+                    packageCache.add(buildPackageCache(packageName));
                 }
             } catch (Throwable e) {
                 throw new RuntimeException(e);
@@ -53,38 +61,6 @@ public class PackageCache extends HashSet<RPackage> {
         return packageCache;
     }
 
-    private static RPackage rebuildPackageCache(String packageName) throws IOException, InterruptedException {
-        List<String> funNames = getPackageAPI(packageName);
-
-//        System.err.println("funlist: " + funNames.toString());
-
-        // get detailed information for all functions
-        String getFunImplsCmd = funNames.toString().replace("[", "").replace("[", "").replace(",", ";");
-//        StreamGobbler outputGobbler = evalRCmd(getFunImplsCmd);
-//        System.out.println("output was \n:"+ outputGobbler.getOutput());
-
-        String output = CachingUtils.evalRCmd(getFunImplsCmd).getOutput();
-        Pattern pattern = Pattern.compile("function.*");
-
-        String[] funDefs = output.split("<environment: namespace:" + packageName + ">");
-        RPackage rPackage = new RPackage(packageName);
-
-        for (int i = 0; i < funDefs.length; i++) {
-            rPackage.addFunction(new Function(funNames.get(i), funDefs[i]));
-        }
-
-        return rPackage;
-    }
-
-    private static List<String> getPackageAPI(String packageName) throws IOException, InterruptedException {
-        String output = CachingUtils.evalRComand("paste(ls('package:" + packageName + "'), collapse=',')");
-        System.err.println("output was " + output);
-
-        Pattern pattern = Pattern.compile(" \"(.*)\"");
-        Matcher matcher = pattern.matcher(output);
-        matcher.find();
-        return Arrays.asList(matcher.group(1).split(","));
-    }
 
     private static List<String> getListOfInstalledPackages() throws IOException, InterruptedException {
         String output = CachingUtils.evalRComand("paste(search(), collapse=', ')");
@@ -101,6 +77,67 @@ public class PackageCache extends HashSet<RPackage> {
 
         return installedPackages;
     }
+
+
+    private static RPackage buildPackageCache(String packageName) throws IOException, InterruptedException {
+        System.err.println("rebuilding cache of " + packageName);
+        String lineBreaker = "&&&&";
+        String output = CachingUtils.evalRComand("pckgDocu <-library(help = " + packageName + "); paste(pckgDocu$info[[2]], collapse=\"" + lineBreaker + "\")");
+//        System.err.println("output was " + output);
+
+        List<Function> api = new ArrayList<Function>();
+
+        String curFun = null, curFunDesc = "";
+        Matcher matcher = Pattern.compile("1] \"(.*)\"").matcher(output);
+        matcher.find();
+        String funDescs = matcher.group(1);
+        for (String docuLine : funDescs.split(lineBreaker)) {
+            if (docuLine.startsWith(" ")) {
+                curFunDesc += " " + docuLine.trim();
+            } else {
+                if (curFun != null) {
+                    api.add(new Function(curFun, curFunDesc));
+                }
+
+                String[] splitLine = docuLine.replaceFirst(" ", "____").split("____");
+                curFun = splitLine[0];
+                curFunDesc = splitLine.length == 2 ? splitLine[1].trim() : "";
+            }
+        }
+
+        RPackage rPackage = new RPackage(packageName);
+        rPackage.addFunctions(api);
+
+        // add function definitions
+        StringBuilder getFunImplsCmd = new StringBuilder();
+        for (Function function : api) {
+            String funName = function.getFunName();
+            getFunImplsCmd.append("print(\"" + funName + "\"); if(is.function(try(" + funName + "))) {" + funName + ";} else{ NULL};\n");
+        }
+
+        File tmpScript = File.createTempFile("rplugin", "R");
+        BufferedWriter out = new BufferedWriter(new FileWriter(tmpScript));
+        out.write(getFunImplsCmd.toString());
+        out.close();
+
+        String funImpls = CachingUtils.evalRScript(tmpScript);
+        tmpScript.delete();
+
+        matcher = Pattern.compile("1] \"(.*)\"\n(function.*)", Pattern.DOTALL).matcher(funImpls);
+//        String[] splitFuns = funImpls.split("\n?\\[1] \"(.*)\"\n?");
+        String[] splitFuns = funImpls.split("> print.*\n.*\n");
+
+        for (int i = 0; i < api.size(); i++) {
+            Function anApi = api.get(i);
+            System.err.println(anApi.getFunName());
+            matcher.find();
+
+            anApi.setFunSignature(splitFuns[i + 1]);
+        }
+
+        return rPackage;
+    }
+
 
     public List<RPackage> getPackagesOfFunction(String funName) {
         List<RPackage> hitList = new ArrayList<RPackage>();

@@ -7,6 +7,7 @@
 
 package com.r4intellij.rinstallcache;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +37,11 @@ public class RPackage {
         functions.add(function);
     }
 
-    public Set<Function> getFunctions() {
+    public void addFunctions(Collection<Function> functions) {
+        functions.addAll(functions);
+    }
+
+    public Set<Function> addFunctions() {
         return Collections.unmodifiableSet(functions);
     }
 

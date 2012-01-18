@@ -7,10 +7,7 @@
 
 package com.r4intellij.rinstallcache;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 
 /**
@@ -21,12 +18,27 @@ import java.io.InputStreamReader;
 public class CachingUtils {
 
 
+    public static String evalRScript(File script) {
+        String[] cmd = new String[]{"R", "--vanilla", "--quiet", "-f", script.getAbsolutePath()};
+        try {
+            return evalRInternal(cmd).getOutput();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     static String evalRComand(String cmd) throws IOException, InterruptedException {
         return evalRCmd(cmd).getOutput();
     }
 
+
     static StreamGobbler evalRCmd(String cmd) throws IOException, InterruptedException {
-        String[] getPckgsCmd = new String[]{"R", "--quiet ", "-e", cmd};
+        String[] getPckgsCmd = new String[]{"R", "--vanilla", "--quiet", "-e", cmd};
+
+        return evalRInternal(getPckgsCmd);
+    }
+
+    private static StreamGobbler evalRInternal(String[] getPckgsCmd) throws IOException, InterruptedException {
 
 //        String osName = System.getProperty("os.name" );
 //        String[] cmd = new String[3];
@@ -36,6 +48,7 @@ public class CachingUtils {
 //            cmd[1] = "/C" ;
 //            cmd[2] = args[0];
 //        }
+
 
         Process proc = Runtime.getRuntime().exec(getPckgsCmd);
 
@@ -54,6 +67,7 @@ public class CachingUtils {
         int exitVal = proc.waitFor();
         return outputGobbler;
     }
+
 }
 
 

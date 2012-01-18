@@ -23,6 +23,8 @@ import com.intellij.util.IncorrectOperationException;
 
 /**
  * @author gregsh
+ * @author brandl
+ *         http://devnet.jetbrains.net/message/5448773#5448773
  */
 public class RStringManipulator extends AbstractElementManipulator<RStringImpl> {
 
