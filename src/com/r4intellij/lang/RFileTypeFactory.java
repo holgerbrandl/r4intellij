@@ -5,7 +5,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 
-package com.r4intellij.file;
+package com.r4intellij.lang;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;

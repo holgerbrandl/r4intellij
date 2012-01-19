@@ -16,7 +16,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.Processor;
 import com.r4intellij.RFileTypeLoader;
-import com.r4intellij.file.RFileType;
+import com.r4intellij.lang.RFileType;
 import com.r4intellij.lang.parser.GeneratedParserUtilBase;
 import org.jetbrains.annotations.NotNull;
 

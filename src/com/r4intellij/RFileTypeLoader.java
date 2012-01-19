@@ -9,7 +9,7 @@ package com.r4intellij;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
-import com.r4intellij.file.RFileType;
+import com.r4intellij.lang.RFileType;
 import org.jetbrains.annotations.NotNull;
 
 

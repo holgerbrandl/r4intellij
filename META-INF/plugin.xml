@@ -1,3 +1,10 @@
+<!--
+  ~ Copyright 2011 Holger Brandl
+  ~
+  ~ This code is licensed under BSD. For details see
+  ~ http://www.opensource.org/licenses/bsd-license.php
+  -->
+
 <idea-plugin version="2">
     <name>R4Intellij</name>
     <description>R coding tools for Intellij Idea</description>
@@ -106,12 +113,12 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
-        <fileTypeFactory implementation="com.r4intellij.file.RFileTypeFactory"/>
+        <fileTypeFactory implementation="com.r4intellij.lang.RFileTypeFactory"/>
 
         <lang.syntaxHighlighterFactory key="R"
                                        implementationClass="com.r4intellij.editor.highlighting.RSyntaxHighlighterFactory"/>
 
-        <annotator language="R" implementationClass="com.r4intellij.quickfixes.FunctionNameAnnotator"/>
+        <!--<annotator language="R" implementationClass="com.r4intellij.inspectionss.FunctionNameAnnotator"/>-->
 
         <lang.parserDefinition language="R"
                                implementationClass="com.r4intellij.lang.parser.RParserDefinition"/>

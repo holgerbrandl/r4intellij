@@ -19,7 +19,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.r4intellij.file.RFileType;
+import com.r4intellij.lang.RFileType;
 import com.r4intellij.lang.lexer.RLexer;
 import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RTypes;

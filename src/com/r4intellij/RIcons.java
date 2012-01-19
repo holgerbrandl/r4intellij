@@ -7,7 +7,7 @@
 
 package com.r4intellij;
 
-import com.r4intellij.file.RFileType;
+import com.r4intellij.lang.RFileType;
 
 import javax.swing.*;
 

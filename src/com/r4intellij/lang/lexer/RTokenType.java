@@ -8,7 +8,7 @@
 package com.r4intellij.lang.lexer;
 
 import com.intellij.psi.tree.IElementType;
-import com.r4intellij.file.RFileType;
+import com.r4intellij.lang.RFileType;
 import org.jetbrains.annotations.NotNull;
 
 

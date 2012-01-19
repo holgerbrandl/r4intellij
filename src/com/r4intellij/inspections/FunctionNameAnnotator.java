@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.r4intellij.quickfixes;
+package com.r4intellij.inspections;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
@@ -32,7 +32,7 @@ import java.util.List;
 
 
 /**
- * @author gregsh
+ * @author brandl
  */
 public class FunctionNameAnnotator implements Annotator {
 
