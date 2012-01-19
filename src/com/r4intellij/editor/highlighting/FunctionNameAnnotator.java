@@ -17,18 +17,8 @@ package com.r4intellij.editor.highlighting;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
-import com.r4intellij.misc.rinstallcache.PackageCache;
-import com.r4intellij.misc.rinstallcache.PackageCacheService;
-import com.r4intellij.misc.rinstallcache.RPackage;
-import com.r4intellij.psi.RFuncall;
-import com.r4intellij.psi.RVariable;
-import com.r4intellij.psi.impl.RPsiUtils;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -38,46 +28,7 @@ public class FunctionNameAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
-        if (psiElement instanceof RFuncall) {
-            RFuncall funcall = (RFuncall) psiElement;
-            RVariable funVar = ((RFuncall) psiElement).getVariable();
 
-            // is is a locally defined function?
-            if (funVar.getReference() != funVar) {
-                PackageCacheService cacheService = ServiceManager.getService(PackageCacheService.class);
-                PackageCache cache = cacheService.getCache();
-                if (cache != null) {
-                    List<RPackage> funPackages = cache.getPackagesOfFunction(funVar.getText());
-                    List<String> funPackageNames = new ArrayList<String>();
-                    for (RPackage funPackage : funPackages) {
-                        funPackageNames.add(funPackage.getName());
-                    }
-
-                    // check if there's an import statement for any of them
-                    List<RFuncall> libraryStatements = RPsiUtils.collectLibraryStatements(psiElement.getContainingFile());
-
-                    // check whether the import list contains any of the packages
-                    boolean isImported = false;
-                    for (RFuncall libraryStatement : libraryStatements) {
-                        String importedPackage = libraryStatement.getFormlist().getFormList().get(0).getText();
-                        if (funPackageNames.contains(importedPackage)) {
-                            isImported = true;
-                            break;
-                        }
-                    }
-
-                    if (isImported)
-                        return;
-
-                    // no overlap --> highlight as error and suggest to import one!
-                    annotationHolder.createErrorAnnotation(funVar, "Unresolved reference");
-
-
-                    // todo why not GrammarUtil.isExternalReference(psiElement)
-                }
-
-            }
-        }
 //
 //    PsiElement parent = psiElement.getParent();
 //    if (parent instanceof BnfRule && ((BnfRule)parent).getId() == psiElement) {

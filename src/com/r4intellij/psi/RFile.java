@@ -32,6 +32,7 @@ import java.util.List;
 public class RFile extends PsiFileBase {
 
     private CachedValue<List<RCommand>> myProgs;
+    private CachedValue<List<RFuncall>> myImports;
 
     public RFile(FileViewProvider viewProvider) {
         super(viewProvider, RFileType.R_LANGUAGE);
@@ -48,7 +49,7 @@ public class RFile extends PsiFileBase {
             myProgs = CachedValuesManager.getManager(getProject()).createCachedValue(new CachedValueProvider<List<RCommand>>() {
                 @Override
                 public Result<List<RCommand>> compute() {
-                    return Result.create(calcRules(), RFile.this);
+                    return Result.create(calcCommands(), RFile.this);
                 }
             }, false);
         }
@@ -56,7 +57,7 @@ public class RFile extends PsiFileBase {
     }
 
 
-    private List<RCommand> calcRules() {
+    private List<RCommand> calcCommands() {
         final List<RCommand> result = new ArrayList<RCommand>();
         processChildrenDummyAware(this, new Processor<PsiElement>() {
             @Override
@@ -64,6 +65,37 @@ public class RFile extends PsiFileBase {
                 if (psiElement instanceof RCommand) {
                     result.add((RCommand) psiElement);
                 }
+                return true;
+            }
+        });
+        return result;
+    }
+
+
+    public List<RFuncall> getImportStatements() {
+        if (myImports == null) {
+            myImports = CachedValuesManager.getManager(getProject()).createCachedValue(new CachedValueProvider<List<RFuncall>>() {
+                @Override
+                public Result<List<RFuncall>> compute() {
+                    return Result.create(calcImports(), RFile.this);
+                }
+            }, false);
+        }
+        return myImports.getValue();
+    }
+
+
+    private List<RFuncall> calcImports() {
+        final List<RFuncall> result = new ArrayList<RFuncall>();
+        processChildrenDummyAware(this, new Processor<PsiElement>() {
+            @Override
+            public boolean process(PsiElement psiElement) {
+                if (psiElement instanceof RFuncall && ((RFuncall) psiElement).getVariable().getText().equals("library")) {
+                    result.add((RFuncall) psiElement);
+                }
+//                this.process(psiElement.getChildren());
+                processChildrenDummyAware(psiElement, this);
+
                 return true;
             }
         });

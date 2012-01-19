@@ -78,7 +78,7 @@ public class CachingUtils {
             ois.close();
 
             return o;
-        } catch (Exception e) {
+        } catch (Throwable e) {
 
         }
 

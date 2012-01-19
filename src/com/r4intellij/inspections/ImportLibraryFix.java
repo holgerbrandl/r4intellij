@@ -20,17 +20,15 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.application.AccessToken;
 import com.intellij.openapi.application.WriteAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.ScrollType;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
-import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.intellij.grammar.psi.BnfRule;
-import org.intellij.grammar.refactor.BnfIntroduceRuleHandler;
+import com.r4intellij.psi.RCommand;
+import com.r4intellij.psi.RFile;
+import com.r4intellij.psi.RFuncall;
+import com.r4intellij.psi.impl.RElementFactory;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 
 /**
@@ -38,16 +36,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ImportLibraryFix implements LocalQuickFix {
 
-    private final String myName;
+    private final String packageName;
 
     public ImportLibraryFix(String name) {
-        myName = name;
+        packageName = name;
     }
 
     @NotNull
     @Override
     public String getName() {
-        return "Create '" + myName + "' rule";
+        return "Import '" + packageName + "'";
     }
 
     @NotNull
@@ -61,18 +59,34 @@ public class ImportLibraryFix implements LocalQuickFix {
         final AccessToken token = WriteAction.start();
         try {
             final PsiElement element = descriptor.getPsiElement();
-            final BnfRule rule = PsiTreeUtil.getParentOfType(element, BnfRule.class);
-            if (rule == null) return;
+//            final BnfRule insertAfter = PsiTreeUtil.getParentOfType(element, BnfRule.class);
+            RFile file = (RFile) element.getContainingFile();
+            List<RFuncall> importStatements = file.getImportStatements();
 
-            final BnfRule addedRule = BnfIntroduceRuleHandler.addNextRule(project, rule, "private " + myName + " ::= ");
-            final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(rule.getContainingFile().getVirtualFile());
-            if (selectedEditor instanceof TextEditor) {
-                final Editor editor = ((TextEditor) selectedEditor).getEditor();
-                editor.getCaretModel().moveToOffset(addedRule.getTextRange().getEndOffset() - (BnfIntroduceRuleHandler.endsWithSemicolon(addedRule) ? 1 : 0));
-                editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
-            }
+            PsiElement insertAfter = importStatements.size() > 0 ? importStatements.get(importStatements.size() - 1).getParent() : element.getContainingFile().getFirstChild();
+            if (insertAfter == null) return;
+
+            addNextRule(project, insertAfter, "library(" + packageName + ");");
+//            final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(insertAfter.getContainingFile().getVirtualFile());
+//            if (selectedEditor instanceof TextEditor) {
+//                final Editor editor = ((TextEditor) selectedEditor).getEditor();
+//                editor.getCaretModel().moveToOffset(addedRule.getTextRange().getEndOffset() - (BnfIntroduceRuleHandler.endsWithSemicolon(addedRule) ? 1 : 0));
+//                editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
+//            }
         } finally {
             token.finish();
         }
+    }
+
+    public static RCommand addNextRule(Project project, PsiElement inserAfter, String newRuleText) {
+        RCommand addedImport = (RCommand) inserAfter.getParent().addAfter(RElementFactory.createFuncallFromText(project, newRuleText), inserAfter);
+        inserAfter.getParent().addBefore(RElementFactory.createLeafFromText(project, "\n"), addedImport);
+//        if (endsWithSemicolon(inserAfter)) {
+//            addedImport.addBefore(BnfElementFactory.createLeafFromText(project, ";"), null);
+//            if (inserAfter.getNextSibling() instanceof PsiWhiteSpace) {
+//                inserAfter.getParent().addAfter(BnfElementFactory.createLeafFromText(project, "\n"), addedImport);
+//            }
+//        }
+        return addedImport;
     }
 }

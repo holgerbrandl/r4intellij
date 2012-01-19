@@ -16,16 +16,22 @@
 
 package com.r4intellij.inspections;
 
-import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.LocalInspectionTool;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.codeInspection.*;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
-import com.intellij.psi.PsiReference;
+import com.r4intellij.misc.rinstallcache.PackageCache;
+import com.r4intellij.misc.rinstallcache.PackageCacheService;
+import com.r4intellij.misc.rinstallcache.RPackage;
+import com.r4intellij.psi.RFile;
+import com.r4intellij.psi.RFuncall;
+import com.r4intellij.psi.RVariable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -66,32 +72,68 @@ public class MissingImportInspection extends LocalInspectionTool {
     }
 
     private static void checkFile(final PsiFile file, final ProblemsHolder problemsHolder) {
-        if (!(file instanceof BnfFileImpl)) return;
+        if (!(file instanceof RFile)) return;
+
         file.accept(new PsiRecursiveElementWalkingVisitor() {
             @Override
-            public void visitElement(PsiElement element) {
-                if (element instanceof BnfRule) {
-                    // do not check external rules
-                    if (ParserGeneratorUtil.Rule.isExternal((BnfRule) element)) return;
-                } else if (element instanceof BnfExternalExpression) {
-                    // do not check external expressions
-                    return;
-                } else if (element instanceof BnfRefOrTokenImpl) {
-                    PsiReference reference = element.getReference();
-                    Object resolve = reference == null ? null : reference.resolve();
-                    final String text = element.getText();
-                    if (resolve == null && isTokenTextSuspicious(text)) {
-                        problemsHolder.registerProblem(element, "'" + text + "' token looks like a reference to a missing rule", new CreateRuleFromTokenFix(text));
+            public void visitElement(PsiElement psiElement) {
+
+                if (psiElement instanceof RFuncall) {
+                    RVariable funVar = ((RFuncall) psiElement).getVariable();
+
+                    // is is a locally defined function?
+                    if (funVar.getReference() != funVar) {
+                        PackageCacheService cacheService = ServiceManager.getService(PackageCacheService.class);
+                        PackageCache cache = cacheService.getCache();
+                        if (cache != null) {
+                            List<String> funPackageNames = getContainingPackages(cache, funVar.getText());
+
+                            // check if there's an import statement for any of them
+                            List<RFuncall> libraryStatements = ((RFile) psiElement.getContainingFile()).getImportStatements(); //RPsiUtils.collectLibraryStatements(psiElement.getContainingFile());
+
+                            // check whether the import list contains any of the packages
+                            boolean isImported = false;
+
+                            if (funPackageNames.size() == 1 && funPackageNames.get(0).equals("base")) {
+                                isImported = true;
+                            } else {
+                                for (RFuncall libraryStatement : libraryStatements) {
+                                    String importedPackage = libraryStatement.getFormlist().getFormList().get(0).getText();
+                                    if (funPackageNames.contains(importedPackage)) {
+                                        isImported = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (isImported)
+                                return;
+
+                            // no overlap --> highlight as error and suggest to import one!
+
+                            List<LocalQuickFix> fixes = new ArrayList<LocalQuickFix>();
+                            for (String funPackageName : funPackageNames) {
+                                fixes.add(new ImportLibraryFix(funPackageName));
+                            }
+
+                            problemsHolder.registerProblem(funVar, "'" + funVar + "' has been detected to belong to a not yet imported package", fixes.toArray(new LocalQuickFix[0]));
+                        }
                     }
                 }
-                super.visitElement(element);
+
+                super.visitElement(psiElement);
             }
         });
     }
 
-    public static boolean isTokenTextSuspicious(String text) {
-        boolean isLowecase = text.equals(text.toLowerCase());
-        boolean isUppercase = !isLowecase && text.equals(text.toUpperCase());
-        return !isLowecase && !isUppercase || isLowecase && text.contains("_");
+    private static List<String> getContainingPackages(PackageCache cache, String funName) {
+        List<RPackage> funPackages = cache.getPackagesOfFunction(funName);
+        List<String> funPackageNames = new ArrayList<String>();
+
+        for (RPackage funPackage : funPackages) {
+            funPackageNames.add(funPackage.getName());
+        }
+
+        return funPackageNames;
     }
 }

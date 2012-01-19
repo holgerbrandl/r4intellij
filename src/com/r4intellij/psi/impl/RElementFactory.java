@@ -45,10 +45,11 @@ public class RElementFactory {
         }
         return null;
     }
-//
-//    public static RRule createRuleFromText(Project project, String text) {
-//        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", text);
-//        return (RRule) fromText.getFirstChild();
-//    }
+
+    //
+    public static RCommand createFuncallFromText(Project project, String text) {
+        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", text);
+        return (RCommand) fromText.getFirstChild();
+    }
 
 }

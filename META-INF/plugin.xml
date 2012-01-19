@@ -144,6 +144,13 @@
 
         <completion.contributor language="R" implementationClass="com.r4intellij.lang.RCompletionContributor"/>
 
+        <!-- Inspections -->
+        <localInspection language="R" shortName="MissingPackageImportInspection" displayName="Missing package import"
+                         groupName="R"
+                         enabledByDefault="true" level="WARNING"
+                         implementationClass="com.r4intellij.inspections.MissingImportInspection"/>
+
+
         <!-- the settings-->
         <applicationConfigurable implementation="com.r4intellij.settings.RConfigurable"/>
         <applicationService serviceInterface="com.r4intellij.settings.RSettings"
