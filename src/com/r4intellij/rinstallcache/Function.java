@@ -9,13 +9,15 @@ package com.r4intellij.rinstallcache;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+
 
 /**
  * DOCUMENT ME!
  *
  * @author Holger Brandl
  */
-public class Function {
+public class Function implements Serializable {
 
     private final String funName;
     private final String funDesc;
@@ -56,5 +58,10 @@ public class Function {
     @Override
     public int hashCode() {
         return funName.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return funName;
     }
 }

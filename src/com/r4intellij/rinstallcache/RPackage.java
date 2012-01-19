@@ -7,9 +7,9 @@
 
 package com.r4intellij.rinstallcache;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -18,32 +18,23 @@ import java.util.Set;
  *
  * @author Holger Brandl
  */
-public class RPackage {
+public class RPackage implements Serializable {
 
-    private String packageName;
+    private final String packageName;
+    private final Set<Function> functions;
+    private final String packageVersion;
 
-    private Set<Function> functions = new HashSet<Function>();
-
-    public RPackage(String packageName) {
+    public RPackage(String packageName, List<Function> functions, String packageVersion) {
 
         this.packageName = packageName;
+        this.functions = new HashSet<Function>(functions);
+        this.packageVersion = packageVersion;
     }
 
     public String getName() {
         return packageName;
     }
 
-    public void addFunction(Function function) {
-        functions.add(function);
-    }
-
-    public void addFunctions(Collection<Function> functions) {
-        functions.addAll(functions);
-    }
-
-    public Set<Function> addFunctions() {
-        return Collections.unmodifiableSet(functions);
-    }
 
     public boolean hasFunction(String funName) {
         for (Function function : functions) {
@@ -53,5 +44,11 @@ public class RPackage {
         }
 
         return false;
+    }
+
+
+    @Override
+    public String toString() {
+        return packageName + " (" + packageVersion + ")";
     }
 }

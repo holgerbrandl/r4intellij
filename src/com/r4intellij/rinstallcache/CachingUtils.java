@@ -8,6 +8,8 @@
 package com.r4intellij.rinstallcache;
 
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -68,6 +70,38 @@ public class CachingUtils {
         return outputGobbler;
     }
 
+    static Object loadObject(File f) {
+        try {
+            FileInputStream fin = new FileInputStream(f);
+            ObjectInputStream ois = new ObjectInputStream(fin);
+            Object o = ois.readObject();
+            ois.close();
+
+            return o;
+        } catch (Exception e) {
+
+        }
+
+        return null;
+    }
+
+    static void saveObject(Object o, File f) {
+        try {
+            FileOutputStream fout = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(fout);
+            oos.writeObject(o);
+            oos.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String getPackageVersion(String packageName) throws IOException, InterruptedException {
+        String packageInfo = evalRComand("pckgDocu <-library(help = " + packageName + "); pckgDocu$info[[1]]");
+        Matcher matcher = Pattern.compile("Version:[ ]*([0-9.]*)").matcher(packageInfo);
+
+        return matcher.find() ? matcher.group(1) : null;
+    }
 }
 
 

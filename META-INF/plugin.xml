@@ -111,7 +111,7 @@
         <lang.syntaxHighlighterFactory key="R"
                                        implementationClass="com.r4intellij.editor.highlighting.RSyntaxHighlighterFactory"/>
 
-        <!--<annotator language="R" implementationClass="com.r4intellij.quickfixes.FunctionNameAnnotator"/>-->
+        <annotator language="R" implementationClass="com.r4intellij.quickfixes.FunctionNameAnnotator"/>
 
         <lang.parserDefinition language="R"
                                implementationClass="com.r4intellij.lang.parser.RParserDefinition"/>
@@ -141,8 +141,8 @@
         <applicationConfigurable implementation="com.r4intellij.settings.RConfigurable"/>
         <applicationService serviceInterface="com.r4intellij.settings.RSettings"
                             serviceImplementation="com.r4intellij.settings.RSettings"/>
-        <!--<applicationService serviceInterface="com.r4intellij.rinstallcache.PackageCacheService"-->
-        <!--serviceImplementation="com.r4intellij.rinstallcache.PackageCacheService"/>-->
+        <applicationService serviceInterface="com.r4intellij.rinstallcache.PackageCacheService"
+                            serviceImplementation="com.r4intellij.rinstallcache.PackageCacheService"/>
 
     </extensions>
 </idea-plugin>

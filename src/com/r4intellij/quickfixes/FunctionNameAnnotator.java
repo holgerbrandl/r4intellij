@@ -42,7 +42,7 @@ public class FunctionNameAnnotator implements Annotator {
             RFuncall funcall = (RFuncall) psiElement;
             RVariable funVar = ((RFuncall) psiElement).getVariable();
 
-            // is a locally defined function
+            // is is a locally defined function?
             if (funVar.getReference() != funVar) {
                 PackageCacheService cacheService = ServiceManager.getService(PackageCacheService.class);
                 PackageCache cache = cacheService.getCache();
@@ -55,8 +55,6 @@ public class FunctionNameAnnotator implements Annotator {
 
                     // check if there's an import statement for any of them
                     List<RFuncall> libraryStatements = RPsiUtils.collectLibraryStatements(psiElement.getContainingFile());
-                    if (libraryStatements.isEmpty())
-                        return;
 
                     // check whether the import list contains any of the packages
                     boolean isImported = false;
@@ -72,7 +70,7 @@ public class FunctionNameAnnotator implements Annotator {
                         return;
 
                     // no overlap --> highlight as error and suggest to import one!
-                    annotationHolder.createErrorAnnotation(psiElement, "Unresolved reference");
+                    annotationHolder.createErrorAnnotation(funVar, "Unresolved reference");
 
 
                     // todo why not GrammarUtil.isExternalReference(psiElement)
