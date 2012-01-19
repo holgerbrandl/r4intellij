@@ -5,7 +5,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 
-package com.r4intellij.rinstallcache;
+package com.r4intellij.misc.rinstallcache;
 
 import java.io.BufferedWriter;
 import java.io.File;

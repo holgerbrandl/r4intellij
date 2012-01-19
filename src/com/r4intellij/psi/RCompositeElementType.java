@@ -16,7 +16,7 @@
 package com.r4intellij.psi;
 
 import com.intellij.psi.tree.IElementType;
-import com.r4intellij.RLanguage;
+import com.r4intellij.lang.RLanguage;
 
 
 /**

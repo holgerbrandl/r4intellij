@@ -19,12 +19,12 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
+import com.r4intellij.misc.rinstallcache.PackageCache;
+import com.r4intellij.misc.rinstallcache.PackageCacheService;
+import com.r4intellij.misc.rinstallcache.RPackage;
 import com.r4intellij.psi.RFuncall;
 import com.r4intellij.psi.RVariable;
 import com.r4intellij.psi.impl.RPsiUtils;
-import com.r4intellij.rinstallcache.PackageCache;
-import com.r4intellij.rinstallcache.PackageCacheService;
-import com.r4intellij.rinstallcache.RPackage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

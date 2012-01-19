@@ -148,8 +148,8 @@
         <applicationConfigurable implementation="com.r4intellij.settings.RConfigurable"/>
         <applicationService serviceInterface="com.r4intellij.settings.RSettings"
                             serviceImplementation="com.r4intellij.settings.RSettings"/>
-        <applicationService serviceInterface="com.r4intellij.rinstallcache.PackageCacheService"
-                            serviceImplementation="com.r4intellij.rinstallcache.PackageCacheService"/>
+        <applicationService serviceInterface="com.r4intellij.misc.rinstallcache.PackageCacheService"
+                            serviceImplementation="com.r4intellij.misc.rinstallcache.PackageCacheService"/>
 
     </extensions>
 </idea-plugin>

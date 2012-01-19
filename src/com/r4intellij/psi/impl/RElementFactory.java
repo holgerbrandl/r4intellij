@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.r4intellij.RLanguage;
+import com.r4intellij.lang.RLanguage;
 import com.r4intellij.psi.RCommand;
 
 

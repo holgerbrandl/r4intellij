@@ -10,7 +10,6 @@ package com.r4intellij.lang;
 import com.intellij.lang.Language;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.util.IconLoader;
-import com.r4intellij.RLanguage;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

@@ -18,8 +18,8 @@ package com.r4intellij.editor;
 import com.intellij.codeInsight.template.FileTypeBasedContextType;
 import com.intellij.lang.Language;
 import com.intellij.psi.PsiFile;
-import com.r4intellij.RLanguage;
 import com.r4intellij.lang.RFileType;
+import com.r4intellij.lang.RLanguage;
 import org.jetbrains.annotations.NotNull;
 
 

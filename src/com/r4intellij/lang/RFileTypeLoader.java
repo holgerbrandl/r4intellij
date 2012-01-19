@@ -5,11 +5,10 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 
-package com.r4intellij;
+package com.r4intellij.lang;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
-import com.r4intellij.lang.RFileType;
 import org.jetbrains.annotations.NotNull;
 
 
