@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  */
 public class PackageCache extends HashSet<RPackage> {
 
-//    private static final long serialVersionUID = -5861760522437813012L;
+    private static final long serialVersionUID = 3817077163528389033L;
 
     public static void main(String[] args) throws IOException, InterruptedException {
 //        System.err.println(getListOfInstalledPackages());
@@ -181,5 +181,29 @@ public class PackageCache extends HashSet<RPackage> {
         }
 
         return hitList;
+    }
+
+    public List<Function> getFunctionByName(String funName) {
+        List<Function> funList = new ArrayList<Function>();
+
+        for (RPackage aPackage : packageCache) {
+            Function function = aPackage.getFunction(funName);
+            if (function != null) {
+                funList.add(function);
+            }
+        }
+
+        return funList;
+    }
+
+
+    public RPackage getByName(String packageName) {
+        for (RPackage aPackage : packageCache) {
+            if (aPackage.getName().equals(packageName)) {
+                return aPackage;
+            }
+        }
+
+        return null;
     }
 }

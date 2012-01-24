@@ -144,6 +144,9 @@
 
         <completion.contributor language="R" implementationClass="com.r4intellij.lang.RCompletionContributor"/>
 
+        <documentationProvider implementation="com.r4intellij.editor.RDocumentationProvider"/>
+
+
         <!-- Inspections -->
         <localInspection language="R" shortName="MissingPackageImportInspection" displayName="Missing package import"
                          groupName="R"

@@ -20,6 +20,8 @@ import java.util.Set;
  */
 public class RPackage implements Serializable {
 
+    private static final long serialVersionUID = -5519927808165098760L;
+
     private final String packageName;
     private final Set<Function> functions;
     private final String packageVersion;
@@ -51,4 +53,15 @@ public class RPackage implements Serializable {
     public String toString() {
         return packageName + " (" + packageVersion + ")";
     }
+
+    public Function getFunction(String funName) {
+        for (Function function : functions) {
+            if (function.getFunName().equals(funName)) {
+                return function;
+            }
+        }
+
+        return null;
+    }
+
 }

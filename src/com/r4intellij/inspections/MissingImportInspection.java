@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.r4intellij.misc.rinstallcache.PackageCache;
 import com.r4intellij.misc.rinstallcache.PackageCacheService;
+import com.r4intellij.misc.rinstallcache.RCacheUtils;
 import com.r4intellij.misc.rinstallcache.RPackage;
 import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RFuncall;
@@ -89,7 +90,7 @@ public class MissingImportInspection extends LocalInspectionTool {
                             List<String> funPackageNames = getContainingPackages(cache, funVar.getText());
 
                             // check if there's an import statement for any of them
-                            List<RFuncall> libraryStatements = ((RFile) psiElement.getContainingFile()).getImportStatements(); //RPsiUtils.collectLibraryStatements(psiElement.getContainingFile());
+                            List<String> importedPackages = RCacheUtils.getImportedPackageNames((RFile) psiElement.getContainingFile());
 
                             // check whether the import list contains any of the packages
                             boolean isImported = false;
@@ -97,8 +98,7 @@ public class MissingImportInspection extends LocalInspectionTool {
                             if (funPackageNames.size() == 1 && funPackageNames.get(0).equals("base")) {
                                 isImported = true;
                             } else {
-                                for (RFuncall libraryStatement : libraryStatements) {
-                                    String importedPackage = libraryStatement.getFormlist().getFormList().get(0).getText();
+                                for (String importedPackage : importedPackages) {
                                     if (funPackageNames.contains(importedPackage)) {
                                         isImported = true;
                                         break;

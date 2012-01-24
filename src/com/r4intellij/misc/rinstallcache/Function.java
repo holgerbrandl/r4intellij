@@ -10,6 +10,8 @@ package com.r4intellij.misc.rinstallcache;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -18,6 +20,8 @@ import java.io.Serializable;
  * @author Holger Brandl
  */
 public class Function implements Serializable {
+
+    private static final long serialVersionUID = -6194025361973531069L;
 
     private final String funName;
     private final String funDesc;
@@ -63,5 +67,17 @@ public class Function implements Serializable {
     @Override
     public String toString() {
         return funName;
+    }
+
+    public String getBasicFunSignature() {
+        if (getFunSignature().contains(") \n{"))
+            return getFunSignature().split("\\) \n\\{")[0] + ")";
+
+        Matcher matcher = Pattern.compile("(.*)\\{", Pattern.DOTALL).matcher(getFunSignature());
+        if (matcher.find())
+            return matcher.group(1);
+
+
+        return getFunSignature();
     }
 }
