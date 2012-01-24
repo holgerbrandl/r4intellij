@@ -26,8 +26,18 @@ public class AppleScriptConnector implements CodeLaunchConnector {
                 Runtime runtime = Runtime.getRuntime();
 
                 String dquotesExpandedText = rCommands.replace("\"", "\\\"");
-                String evalSelection = "tell application \"R64\" to activate\n" +
-                        "tell application \"R64\" to cmd \"" + dquotesExpandedText + "\"";
+                String evalTarget = "R64";
+
+//                //todo remove this hacky thing
+//                File connectorDef = new File(System.getProperty("user.home") + File.separator + "r4j_evaltarget.txt");
+//                if(connectorDef.exists()) {
+//                    evalTarget = Utils.readFileAsString(connectorDef.getAbsolutePath()).replace("\n", "");
+//                }
+
+//                http://stackoverflow.com/questions/1870270/sending-commands-and-strings-to-terminal-app-with-applescript
+
+                String evalSelection = "tell application \"" + evalTarget + "\" to activate\n" +
+                        "tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
 
 
                 String[] args = {"osascript", "-e", evalSelection};
