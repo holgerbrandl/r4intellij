@@ -63,11 +63,28 @@ public class ImportLibraryFix implements LocalQuickFix {
             RFile file = (RFile) element.getContainingFile();
             List<RFuncall> importStatements = file.getImportStatements();
 
-            PsiElement insertAfter = importStatements.size() > 0 ? importStatements.get(importStatements.size() - 1).getParent() : element.getContainingFile().getFirstChild();
-            if (insertAfter == null) return;
+            PsiElement insertAfter = null;
+            if (importStatements.size() > 0)
+                insertAfter = getCommandParent(importStatements.get(importStatements.size() - 1).getParent());
 
-            addNextRule(project, insertAfter, "library(" + packageName + ");");
-//            final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(insertAfter.getContainingFile().getVirtualFile());
+
+            PsiElement importStatement = RElementFactory.createFuncallFromText(project, "library(" + packageName + ");");
+            if (insertAfter != null && insertAfter.getTextOffset() < element.getTextOffset()) {
+                importStatement = insertAfter.getParent().addAfter(importStatement, insertAfter);
+                insertAfter.getParent().addBefore(RElementFactory.createLeafFromText(project, "\n"), importStatement);
+            } else {
+                insertAfter = file.getFirstChild();
+                importStatement = insertAfter.getParent().addBefore(importStatement, insertAfter);
+                insertAfter.getParent().addAfter(RElementFactory.createLeafFromText(project, "\n"), importStatement);
+            }
+
+//        if (endsWithSemicolon(inserAfter)) {
+//            addedImport.addBefore(BnfElementFactory.createLeafFromText(project, ";"), null);
+//            if (inserAfter.getNextSibling() instanceof PsiWhiteSpace) {
+//                inserAfter.getParent().addAfter(BnfElementFactory.createLeafFromText(project, "\n"), addedImport);
+//            }
+//        }
+            //            final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(insertAfter.getContainingFile().getVirtualFile());
 //            if (selectedEditor instanceof TextEditor) {
 //                final Editor editor = ((TextEditor) selectedEditor).getEditor();
 //                editor.getCaretModel().moveToOffset(addedRule.getTextRange().getEndOffset() - (BnfIntroduceRuleHandler.endsWithSemicolon(addedRule) ? 1 : 0));
@@ -78,15 +95,11 @@ public class ImportLibraryFix implements LocalQuickFix {
         }
     }
 
-    public static RCommand addNextRule(Project project, PsiElement inserAfter, String newRuleText) {
-        RCommand addedImport = (RCommand) inserAfter.getParent().addAfter(RElementFactory.createFuncallFromText(project, newRuleText), inserAfter);
-        inserAfter.getParent().addBefore(RElementFactory.createLeafFromText(project, "\n"), addedImport);
-//        if (endsWithSemicolon(inserAfter)) {
-//            addedImport.addBefore(BnfElementFactory.createLeafFromText(project, ";"), null);
-//            if (inserAfter.getNextSibling() instanceof PsiWhiteSpace) {
-//                inserAfter.getParent().addAfter(BnfElementFactory.createLeafFromText(project, "\n"), addedImport);
-//            }
-//        }
-        return addedImport;
+    private PsiElement getCommandParent(PsiElement psiElement) {
+        while (psiElement != null && !(psiElement instanceof RCommand))
+            psiElement = psiElement.getParent();
+
+        return psiElement;
     }
+
 }

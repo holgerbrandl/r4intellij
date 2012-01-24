@@ -193,9 +193,12 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
             }
 
             RFundef fundef = (RFundef) element;
-            PsiElement funAssignment = fundef.getNode().getTreeParent().getTreeParent().getPsi();
-            if (funAssignment instanceof RExpr && ((RExpr) funAssignment).getVariable() != null) {
-                return ((RExpr) funAssignment).getVariable();
+            try {
+                PsiElement funAssignment = fundef.getNode().getTreeParent().getTreeParent().getPsi();
+                if (funAssignment instanceof RExpr && ((RExpr) funAssignment).getVariable() != null) {
+                    return ((RExpr) funAssignment).getVariable();
+                }
+            } catch (NullPointerException ignored) {
             }
 
             return null;
