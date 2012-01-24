@@ -21,11 +21,11 @@ public interface RTypes {
     IElementType R_EXPR = new RCompositeElementType("R_EXPR");
     IElementType R_EXPR_OR_ASSIGN = new RCompositeElementType("R_EXPR_OR_ASSIGN");
     IElementType R_EXPRLIST = new RCompositeElementType("R_EXPRLIST");
+    IElementType R_FD_ARGUMENT = new RCompositeElementType("R_FD_ARGUMENT");
     IElementType R_FORCOND = new RCompositeElementType("R_FORCOND");
-    IElementType R_FORM = new RCompositeElementType("R_FORM");
-    IElementType R_FORMLIST = new RCompositeElementType("R_FORMLIST");
     IElementType R_FUNCALL = new RCompositeElementType("R_FUNCALL");
     IElementType R_FUNDEF = new RCompositeElementType("R_FUNDEF");
+    IElementType R_FUNDEF_ARGS = new RCompositeElementType("R_FUNDEF_ARGS");
     IElementType R_SECTION = new RCompositeElementType("R_SECTION");
     IElementType R_STRING_LITERAL = new RCompositeElementType("R_STRING_LITERAL");
     IElementType R_SUB = new RCompositeElementType("R_SUB");
@@ -104,16 +104,16 @@ public interface RTypes {
                 return new RExprOrAssignImpl(node);
             } else if (type == R_EXPRLIST) {
                 return new RExprlistImpl(node);
+            } else if (type == R_FD_ARGUMENT) {
+                return new RFdArgumentImpl(node);
             } else if (type == R_FORCOND) {
                 return new RForcondImpl(node);
-            } else if (type == R_FORM) {
-                return new RFormImpl(node);
-            } else if (type == R_FORMLIST) {
-                return new RFormlistImpl(node);
             } else if (type == R_FUNCALL) {
                 return new RFuncallImpl(node);
             } else if (type == R_FUNDEF) {
                 return new RFundefImpl(node);
+            } else if (type == R_FUNDEF_ARGS) {
+                return new RFundefArgsImpl(node);
             } else if (type == R_SECTION) {
                 return new RSectionImpl(node);
             } else if (type == R_STRING_LITERAL) {

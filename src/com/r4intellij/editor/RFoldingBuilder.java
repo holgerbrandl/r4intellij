@@ -15,8 +15,8 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.r4intellij.lang.parser.RParserDefinition;
-import com.r4intellij.psi.RFormlist;
 import com.r4intellij.psi.RFundef;
+import com.r4intellij.psi.RFundefArgs;
 import com.r4intellij.psi.RSection;
 import com.r4intellij.psi.impl.RSectionImpl;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +36,7 @@ public class RFoldingBuilder implements FoldingBuilder {
     public String getPlaceholderText(@NotNull ASTNode node) {
         if (node.getElementType() == R_FUNDEF) {
             RFundef def = (RFundef) node.getPsi();
-            RFormlist funargs = def.getFormlist();
+            RFundefArgs funargs = def.getFundefArgs();
             if (funargs != null) {
                 return "function(" + funargs.getText() + ")...";
             } else {

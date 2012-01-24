@@ -9,13 +9,13 @@ package com.r4intellij.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RExpr;
-import com.r4intellij.psi.RForm;
+import com.r4intellij.psi.RFdArgument;
 import org.jetbrains.annotations.Nullable;
 
 
-public class RFormImpl extends RCompositeElementImpl implements RForm {
+public class RFdArgumentImpl extends RCompositeElementImpl implements RFdArgument {
 
-    public RFormImpl(ASTNode node) {
+    public RFdArgumentImpl(ASTNode node) {
         super(node);
     }
 

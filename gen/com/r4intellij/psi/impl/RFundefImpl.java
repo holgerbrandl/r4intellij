@@ -9,8 +9,8 @@ package com.r4intellij.psi.impl;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RExprOrAssign;
-import com.r4intellij.psi.RFormlist;
 import com.r4intellij.psi.RFundef;
+import com.r4intellij.psi.RFundefArgs;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,8 +29,8 @@ public class RFundefImpl extends RCompositeElementImpl implements RFundef {
 
     @Override
     @Nullable
-    public RFormlist getFormlist() {
-        return PsiTreeUtil.getChildOfType(this, RFormlist.class);
+    public RFundefArgs getFundefArgs() {
+        return PsiTreeUtil.getChildOfType(this, RFundefArgs.class);
     }
 
 }

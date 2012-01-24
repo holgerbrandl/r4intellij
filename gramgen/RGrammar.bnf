@@ -156,28 +156,28 @@ cond ::= '(' expr ')'
 
 forcond ::= '(' variable IN expr ')'
 
-fundef ::= FUNCTION '(' formlist? ')'  expr_or_assign;
-
-funcall ::= variable '(' formlist? ')' {extends="com.r4intellij.psi.impl.AbstractRFunCall" implements=named};
+fundef ::= FUNCTION '(' fundef_args? ')'  expr_or_assign;
 
 // todo avoid that the parser accepts several symbol formals
-formlist ::= form (EOL? ',' EOL? form)*
+// called formlist in th r grammar definition
+fundef_args ::= fd_argument (EOL? ',' EOL? fd_argument)*
 
-form ::=  SYMBOL '=' expr
+// called form in th r grammar definition
+fd_argument ::=  SYMBOL '=' expr
         | SYMBOL
         | STR_CONST '=' expr
         | STR_CONST
         | SYMBOL_FORMALS ;
 
-sublist ::=  sub? (',' sub)*
+funcall ::= variable '(' sublist? ')' {extends="com.r4intellij.psi.impl.AbstractRFunCall" implements=named};
+
+
+sublist ::=  sub (EOL? ',' EOL? sub)*
 
 sub ::= EOL*
     (SYMBOL '=' expr
-//   | SYMBOL
-   | STR_CONST '=' expr
-//   | STR_CONST
-   | NULL_CONST '=' expr
-//   | NULL_CONST
+//   | STR_CONST '=' expr
+//   | NULL_CONST '=' expr
     | SYMBOL_FORMALS
    | expr ) EOL* ;
 

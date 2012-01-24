@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public interface RFuncall extends RNamedElement {
 
     @Nullable
-    public RFormlist getFormlist();
+    public RSublist getSublist();
 
     @NotNull
     public RVariable getVariable();

@@ -8,23 +8,23 @@ package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.r4intellij.psi.RForm;
-import com.r4intellij.psi.RFormlist;
+import com.r4intellij.psi.RFdArgument;
+import com.r4intellij.psi.RFundefArgs;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 
-public class RFormlistImpl extends RCompositeElementImpl implements RFormlist {
+public class RFundefArgsImpl extends RCompositeElementImpl implements RFundefArgs {
 
-    public RFormlistImpl(ASTNode node) {
+    public RFundefArgsImpl(ASTNode node) {
         super(node);
     }
 
     @Override
     @NotNull
-    public List<RForm> getFormList() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, RForm.class);
+    public List<RFdArgument> getFdArgumentList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, RFdArgument.class);
     }
 
 }

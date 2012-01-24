@@ -39,16 +39,16 @@ public class RParser implements PsiParser {
             result_ = expr_or_assign(builder_, level_ + 1);
         } else if (root_ == R_EXPRLIST) {
             result_ = exprlist(builder_, level_ + 1);
+        } else if (root_ == R_FD_ARGUMENT) {
+            result_ = fd_argument(builder_, level_ + 1);
         } else if (root_ == R_FORCOND) {
             result_ = forcond(builder_, level_ + 1);
-        } else if (root_ == R_FORM) {
-            result_ = form(builder_, level_ + 1);
-        } else if (root_ == R_FORMLIST) {
-            result_ = formlist(builder_, level_ + 1);
         } else if (root_ == R_FUNCALL) {
             result_ = funcall(builder_, level_ + 1);
         } else if (root_ == R_FUNDEF) {
             result_ = fundef(builder_, level_ + 1);
+        } else if (root_ == R_FUNDEF_ARGS) {
+            result_ = fundef_args(builder_, level_ + 1);
         } else if (root_ == R_SECTION) {
             result_ = section(builder_, level_ + 1);
         } else if (root_ == R_STRING_LITERAL) {
@@ -1101,6 +1101,62 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
+    // SYMBOL '=' expr
+    //         | SYMBOL
+    //         | STR_CONST '=' expr
+    //         | STR_CONST
+    //         | SYMBOL_FORMALS
+    public static boolean fd_argument(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "fd_argument")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = fd_argument_0(builder_, level_ + 1);
+        if (!result_) result_ = consumeToken(builder_, R_SYMBOL);
+        if (!result_) result_ = fd_argument_2(builder_, level_ + 1);
+        if (!result_) result_ = consumeToken(builder_, R_STR_CONST);
+        if (!result_) result_ = consumeToken(builder_, R_SYMBOL_FORMALS);
+        if (result_) {
+            marker_.done(R_FD_ARGUMENT);
+        } else {
+            marker_.rollbackTo();
+        }
+        return result_;
+    }
+
+    // SYMBOL '=' expr
+    private static boolean fd_argument_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "fd_argument_0")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = consumeToken(builder_, R_SYMBOL);
+        result_ = result_ && consumeToken(builder_, R_EQ_ASSIGN);
+        result_ = result_ && expr(builder_, level_ + 1);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
+    }
+
+    // STR_CONST '=' expr
+    private static boolean fd_argument_2(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "fd_argument_2")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = consumeToken(builder_, R_STR_CONST);
+        result_ = result_ && consumeToken(builder_, R_EQ_ASSIGN);
+        result_ = result_ && expr(builder_, level_ + 1);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
+    }
+
+
+    /* ********************************************************** */
     // '(' variable IN expr ')'
     public static boolean forcond(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "forcond")) return false;
@@ -1121,133 +1177,7 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
-    // SYMBOL '=' expr
-    //         | SYMBOL
-    //         | STR_CONST '=' expr
-    //         | STR_CONST
-    //         | SYMBOL_FORMALS
-    public static boolean form(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "form")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = form_0(builder_, level_ + 1);
-        if (!result_) result_ = consumeToken(builder_, R_SYMBOL);
-        if (!result_) result_ = form_2(builder_, level_ + 1);
-        if (!result_) result_ = consumeToken(builder_, R_STR_CONST);
-        if (!result_) result_ = consumeToken(builder_, R_SYMBOL_FORMALS);
-        if (result_) {
-            marker_.done(R_FORM);
-        } else {
-            marker_.rollbackTo();
-        }
-        return result_;
-    }
-
-    // SYMBOL '=' expr
-    private static boolean form_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "form_0")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = consumeToken(builder_, R_SYMBOL);
-        result_ = result_ && consumeToken(builder_, R_EQ_ASSIGN);
-        result_ = result_ && expr(builder_, level_ + 1);
-        if (!result_) {
-            marker_.rollbackTo();
-        } else {
-            marker_.drop();
-        }
-        return result_;
-    }
-
-    // STR_CONST '=' expr
-    private static boolean form_2(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "form_2")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = consumeToken(builder_, R_STR_CONST);
-        result_ = result_ && consumeToken(builder_, R_EQ_ASSIGN);
-        result_ = result_ && expr(builder_, level_ + 1);
-        if (!result_) {
-            marker_.rollbackTo();
-        } else {
-            marker_.drop();
-        }
-        return result_;
-    }
-
-
-    /* ********************************************************** */
-    // form (EOL? ',' EOL? form)*
-    public static boolean formlist(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "formlist")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = form(builder_, level_ + 1);
-        result_ = result_ && formlist_1(builder_, level_ + 1);
-        if (result_) {
-            marker_.done(R_FORMLIST);
-        } else {
-            marker_.rollbackTo();
-        }
-        return result_;
-    }
-
-    // (EOL? ',' EOL? form)*
-    private static boolean formlist_1(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "formlist_1")) return false;
-        int offset_ = builder_.getCurrentOffset();
-        while (true) {
-            if (!formlist_1_0(builder_, level_ + 1)) break;
-            int next_offset_ = builder_.getCurrentOffset();
-            if (offset_ == next_offset_) {
-                empty_element_parsed_guard_(builder_, offset_, "formlist_1");
-                break;
-            }
-            offset_ = next_offset_;
-        }
-        return true;
-    }
-
-    // (EOL? ',' EOL? form)
-    private static boolean formlist_1_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "formlist_1_0")) return false;
-        return formlist_1_0_0(builder_, level_ + 1);
-    }
-
-    // EOL? ',' EOL? form
-    private static boolean formlist_1_0_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "formlist_1_0_0")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = formlist_1_0_0_0(builder_, level_ + 1);
-        result_ = result_ && consumeToken(builder_, R_COMMA);
-        result_ = result_ && formlist_1_0_0_2(builder_, level_ + 1);
-        result_ = result_ && form(builder_, level_ + 1);
-        if (!result_) {
-            marker_.rollbackTo();
-        } else {
-            marker_.drop();
-        }
-        return result_;
-    }
-
-    // EOL?
-    private static boolean formlist_1_0_0_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "formlist_1_0_0_0")) return false;
-        consumeToken(builder_, R_EOL);
-        return true;
-    }
-
-    // EOL?
-    private static boolean formlist_1_0_0_2(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "formlist_1_0_0_2")) return false;
-        consumeToken(builder_, R_EOL);
-        return true;
-    }
-
-
-    /* ********************************************************** */
-    // variable '(' formlist? ')'
+    // variable '(' sublist? ')'
     public static boolean funcall(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "funcall")) return false;
         boolean result_ = false;
@@ -1264,16 +1194,16 @@ public class RParser implements PsiParser {
         return result_;
     }
 
-    // formlist?
+    // sublist?
     private static boolean funcall_2(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "funcall_2")) return false;
-        formlist(builder_, level_ + 1);
+        sublist(builder_, level_ + 1);
         return true;
     }
 
 
     /* ********************************************************** */
-    // FUNCTION '(' formlist? ')'  expr_or_assign
+    // FUNCTION '(' fundef_args? ')'  expr_or_assign
     public static boolean fundef(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "fundef")) return false;
         boolean result_ = false;
@@ -1291,10 +1221,80 @@ public class RParser implements PsiParser {
         return result_;
     }
 
-    // formlist?
+    // fundef_args?
     private static boolean fundef_2(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "fundef_2")) return false;
-        formlist(builder_, level_ + 1);
+        fundef_args(builder_, level_ + 1);
+        return true;
+    }
+
+
+    /* ********************************************************** */
+    // fd_argument (EOL? ',' EOL? fd_argument)*
+    public static boolean fundef_args(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "fundef_args")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = fd_argument(builder_, level_ + 1);
+        result_ = result_ && fundef_args_1(builder_, level_ + 1);
+        if (result_) {
+            marker_.done(R_FUNDEF_ARGS);
+        } else {
+            marker_.rollbackTo();
+        }
+        return result_;
+    }
+
+    // (EOL? ',' EOL? fd_argument)*
+    private static boolean fundef_args_1(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "fundef_args_1")) return false;
+        int offset_ = builder_.getCurrentOffset();
+        while (true) {
+            if (!fundef_args_1_0(builder_, level_ + 1)) break;
+            int next_offset_ = builder_.getCurrentOffset();
+            if (offset_ == next_offset_) {
+                empty_element_parsed_guard_(builder_, offset_, "fundef_args_1");
+                break;
+            }
+            offset_ = next_offset_;
+        }
+        return true;
+    }
+
+    // (EOL? ',' EOL? fd_argument)
+    private static boolean fundef_args_1_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "fundef_args_1_0")) return false;
+        return fundef_args_1_0_0(builder_, level_ + 1);
+    }
+
+    // EOL? ',' EOL? fd_argument
+    private static boolean fundef_args_1_0_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "fundef_args_1_0_0")) return false;
+        boolean result_ = false;
+        final Marker marker_ = builder_.mark();
+        result_ = fundef_args_1_0_0_0(builder_, level_ + 1);
+        result_ = result_ && consumeToken(builder_, R_COMMA);
+        result_ = result_ && fundef_args_1_0_0_2(builder_, level_ + 1);
+        result_ = result_ && fd_argument(builder_, level_ + 1);
+        if (!result_) {
+            marker_.rollbackTo();
+        } else {
+            marker_.drop();
+        }
+        return result_;
+    }
+
+    // EOL?
+    private static boolean fundef_args_1_0_0_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "fundef_args_1_0_0_0")) return false;
+        consumeToken(builder_, R_EOL);
+        return true;
+    }
+
+    // EOL?
+    private static boolean fundef_args_1_0_0_2(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "fundef_args_1_0_0_2")) return false;
+        consumeToken(builder_, R_EOL);
         return true;
     }
 
@@ -1334,11 +1334,8 @@ public class RParser implements PsiParser {
     /* ********************************************************** */
     // EOL*
     //     (SYMBOL '=' expr
-    // //   | SYMBOL
-    //    | STR_CONST '=' expr
-    // //   | STR_CONST
-    //    | NULL_CONST '=' expr
-    // //   | NULL_CONST
+    // //   | STR_CONST '=' expr
+    // //   | NULL_CONST '=' expr
     //     | SYMBOL_FORMALS
     //    | expr ) EOL*
     public static boolean sub(PsiBuilder builder_, int level_) {
@@ -1373,11 +1370,8 @@ public class RParser implements PsiParser {
     }
 
     // (SYMBOL '=' expr
-    // //   | SYMBOL
-    //    | STR_CONST '=' expr
-    // //   | STR_CONST
-    //    | NULL_CONST '=' expr
-    // //   | NULL_CONST
+    // //   | STR_CONST '=' expr
+    // //   | NULL_CONST '=' expr
     //     | SYMBOL_FORMALS
     //    | expr )
     private static boolean sub_1(PsiBuilder builder_, int level_) {
@@ -1386,11 +1380,8 @@ public class RParser implements PsiParser {
     }
 
     // SYMBOL '=' expr
-    // //   | SYMBOL
-    //    | STR_CONST '=' expr
-    // //   | STR_CONST
-    //    | NULL_CONST '=' expr
-    // //   | NULL_CONST
+    // //   | STR_CONST '=' expr
+    // //   | NULL_CONST '=' expr
     //     | SYMBOL_FORMALS
     //    | expr
     private static boolean sub_1_0(PsiBuilder builder_, int level_) {
@@ -1398,8 +1389,6 @@ public class RParser implements PsiParser {
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = sub_1_0_0(builder_, level_ + 1);
-        if (!result_) result_ = sub_1_0_1(builder_, level_ + 1);
-        if (!result_) result_ = sub_1_0_2(builder_, level_ + 1);
         if (!result_) result_ = consumeToken(builder_, R_SYMBOL_FORMALS);
         if (!result_) result_ = expr(builder_, level_ + 1);
         if (!result_) {
@@ -1416,38 +1405,6 @@ public class RParser implements PsiParser {
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
         result_ = consumeToken(builder_, R_SYMBOL);
-        result_ = result_ && consumeToken(builder_, R_EQ_ASSIGN);
-        result_ = result_ && expr(builder_, level_ + 1);
-        if (!result_) {
-            marker_.rollbackTo();
-        } else {
-            marker_.drop();
-        }
-        return result_;
-    }
-
-    // STR_CONST '=' expr
-    private static boolean sub_1_0_1(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sub_1_0_1")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = consumeToken(builder_, R_STR_CONST);
-        result_ = result_ && consumeToken(builder_, R_EQ_ASSIGN);
-        result_ = result_ && expr(builder_, level_ + 1);
-        if (!result_) {
-            marker_.rollbackTo();
-        } else {
-            marker_.drop();
-        }
-        return result_;
-    }
-
-    // NULL_CONST '=' expr
-    private static boolean sub_1_0_2(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sub_1_0_2")) return false;
-        boolean result_ = false;
-        final Marker marker_ = builder_.mark();
-        result_ = consumeToken(builder_, R_NULL_CONST);
         result_ = result_ && consumeToken(builder_, R_EQ_ASSIGN);
         result_ = result_ && expr(builder_, level_ + 1);
         if (!result_) {
@@ -1476,12 +1433,12 @@ public class RParser implements PsiParser {
 
 
     /* ********************************************************** */
-    // sub? (',' sub)*
+    // sub (EOL? ',' EOL? sub)*
     public static boolean sublist(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sublist")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
-        result_ = sublist_0(builder_, level_ + 1);
+        result_ = sub(builder_, level_ + 1);
         result_ = result_ && sublist_1(builder_, level_ + 1);
         if (result_) {
             marker_.done(R_SUBLIST);
@@ -1491,14 +1448,7 @@ public class RParser implements PsiParser {
         return result_;
     }
 
-    // sub?
-    private static boolean sublist_0(PsiBuilder builder_, int level_) {
-        if (!recursion_guard_(builder_, level_, "sublist_0")) return false;
-        sub(builder_, level_ + 1);
-        return true;
-    }
-
-    // (',' sub)*
+    // (EOL? ',' EOL? sub)*
     private static boolean sublist_1(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sublist_1")) return false;
         int offset_ = builder_.getCurrentOffset();
@@ -1514,18 +1464,20 @@ public class RParser implements PsiParser {
         return true;
     }
 
-    // (',' sub)
+    // (EOL? ',' EOL? sub)
     private static boolean sublist_1_0(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sublist_1_0")) return false;
         return sublist_1_0_0(builder_, level_ + 1);
     }
 
-    // ',' sub
+    // EOL? ',' EOL? sub
     private static boolean sublist_1_0_0(PsiBuilder builder_, int level_) {
         if (!recursion_guard_(builder_, level_, "sublist_1_0_0")) return false;
         boolean result_ = false;
         final Marker marker_ = builder_.mark();
-        result_ = consumeToken(builder_, R_COMMA);
+        result_ = sublist_1_0_0_0(builder_, level_ + 1);
+        result_ = result_ && consumeToken(builder_, R_COMMA);
+        result_ = result_ && sublist_1_0_0_2(builder_, level_ + 1);
         result_ = result_ && sub(builder_, level_ + 1);
         if (!result_) {
             marker_.rollbackTo();
@@ -1533,6 +1485,20 @@ public class RParser implements PsiParser {
             marker_.drop();
         }
         return result_;
+    }
+
+    // EOL?
+    private static boolean sublist_1_0_0_0(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sublist_1_0_0_0")) return false;
+        consumeToken(builder_, R_EOL);
+        return true;
+    }
+
+    // EOL?
+    private static boolean sublist_1_0_0_2(PsiBuilder builder_, int level_) {
+        if (!recursion_guard_(builder_, level_, "sublist_1_0_0_2")) return false;
+        consumeToken(builder_, R_EOL);
+        return true;
     }
 
 

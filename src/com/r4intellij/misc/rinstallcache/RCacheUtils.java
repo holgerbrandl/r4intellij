@@ -50,7 +50,7 @@ public class RCacheUtils {
 
         for (RFuncall libraryStatement : file.getImportStatements()) {
             //todo be more precie here and support library better
-            String importedPackage = libraryStatement.getFormlist().getFormList().get(0).getText();
+            String importedPackage = libraryStatement.getSublist().getSubList().get(0).getText();
 
             impPckgs.add(importedPackage);
 

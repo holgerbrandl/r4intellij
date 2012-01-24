@@ -8,8 +8,8 @@ package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.r4intellij.psi.RFormlist;
 import com.r4intellij.psi.RFuncall;
+import com.r4intellij.psi.RSublist;
 import com.r4intellij.psi.RVariable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,8 +23,8 @@ public class RFuncallImpl extends AbstractRFunCall implements RFuncall {
 
     @Override
     @Nullable
-    public RFormlist getFormlist() {
-        return PsiTreeUtil.getChildOfType(this, RFormlist.class);
+    public RSublist getSublist() {
+        return PsiTreeUtil.getChildOfType(this, RSublist.class);
     }
 
     @Override

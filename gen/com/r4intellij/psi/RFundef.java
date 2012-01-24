@@ -16,6 +16,6 @@ public interface RFundef extends RCompositeElement {
     public RExprOrAssign getExprOrAssign();
 
     @Nullable
-    public RFormlist getFormlist();
+    public RFundefArgs getFundefArgs();
 
 }
