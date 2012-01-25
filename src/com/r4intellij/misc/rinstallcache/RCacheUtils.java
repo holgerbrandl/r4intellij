@@ -80,9 +80,10 @@ public class RCacheUtils {
 
         //add all base packages
         List<RPackage> basePackages = new ArrayList<RPackage>();
-        String[] basePckgs = {"stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base"};
-        for (String basePckgName : basePckgs) {
-            basePackages.add(packageIndex.getByName(basePckgName));
+        for (String basePckgName : getBasePckgs()) {
+            RPackage basePckg = packageIndex.getByName(basePckgName);
+            if (basePckg != null)
+                basePackages.add(basePckg);
         }
 
         importedPackages.addAll(basePackages);
@@ -97,5 +98,17 @@ public class RCacheUtils {
     public static PackageCache getPackageIndex() {
         PackageCacheService cacheService = ServiceManager.getService(PackageCacheService.class);
         return cacheService.getCache();
+    }
+
+
+    public static List<String> getBasePckgs() {
+        return Arrays.asList("stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base");
+    }
+
+
+    public static boolean containsBasePckg(List<String> funPackageNames) {
+        Set<String> intersection = new HashSet<String>(getBasePckgs());
+        intersection.retainAll(funPackageNames);
+        return !intersection.isEmpty();
     }
 }

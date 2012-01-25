@@ -95,7 +95,7 @@ public class MissingImportInspection extends LocalInspectionTool {
                             // check whether the import list contains any of the packages
                             boolean isImported = false;
 
-                            if (funPackageNames.size() == 1 && funPackageNames.contains("base")) {
+                            if (RCacheUtils.containsBasePckg(funPackageNames)) {
                                 isImported = true;
                             } else {
                                 for (String importedPackage : importedPackages) {
