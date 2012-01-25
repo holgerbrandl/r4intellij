@@ -71,7 +71,7 @@ public class Function implements Serializable {
 
     public String getBasicFunSignature() {
         if (getFunSignature().contains(") \n{"))
-            return getFunSignature().split("\\) \n\\{")[0] + ")";
+            return getFunSignature().split("\\) \n\\{")[0].replace("function", getFunName()) + ")";
 
         Matcher matcher = Pattern.compile("(.*)\\{", Pattern.DOTALL).matcher(getFunSignature());
         if (matcher.find())

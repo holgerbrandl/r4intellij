@@ -26,6 +26,7 @@ import com.r4intellij.misc.rinstallcache.PackageCacheService;
 import com.r4intellij.misc.rinstallcache.RCacheUtils;
 import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RFuncall;
+import com.r4intellij.psi.RVariable;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -37,7 +38,9 @@ import java.util.List;
 public class RDocumentationProvider implements DocumentationProvider {
 
     @Nullable
-    public String getQuickNavigateInfo(final PsiElement element, PsiElement originalElement) {
+    public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
+        element = element instanceof RVariable && element.getParent() instanceof RFuncall ? element.getParent() : element;
+
         if (element instanceof RFuncall) {
             Function function = getFunction(((RFuncall) element).getVariable());
             return "<h1>" + function.getFunName() + "</h1>" + function.getFunDesc() + "<br><i>" + function.getBasicFunSignature() + "</i>";

@@ -12,10 +12,7 @@ import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RFuncall;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -26,9 +23,13 @@ import java.util.List;
 public class RCacheUtils {
 
     public static List<Function> getFunctionByName(String funName, @Nullable Collection<RPackage> importedPackages) {
+
         PackageCache packageIndex = getPackageIndex();
         if (packageIndex == null)
             return Collections.emptyList();
+
+        importedPackages = addImportDependencies(importedPackages, packageIndex);
+
 
         if (importedPackages == null) {
             importedPackages = packageIndex;
@@ -42,6 +43,17 @@ public class RCacheUtils {
         }
 
         return funs;
+    }
+
+    private static Collection<RPackage> addImportDependencies(Collection<RPackage> importedPackages, PackageCache packageIndex) {
+        Collection<RPackage> imPckgsWithDeps = new HashSet<RPackage>();
+
+        for (RPackage importedPackage : importedPackages) {
+            imPckgsWithDeps.add(importedPackage);
+            imPckgsWithDeps.addAll(importedPackage.getDependencies(packageIndex));
+        }
+
+        return imPckgsWithDeps;
     }
 
 

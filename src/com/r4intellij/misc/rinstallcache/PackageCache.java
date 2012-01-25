@@ -7,6 +7,8 @@
 
 package com.r4intellij.misc.rinstallcache;
 
+import com.intellij.openapi.diagnostic.Logger;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -23,18 +25,20 @@ import java.util.regex.Pattern;
  */
 public class PackageCache extends HashSet<RPackage> {
 
+    private static final Logger log = Logger.getInstance("#bash.FunctionPsiCommentSource");
+
     private static final long serialVersionUID = 3817077163528389033L;
 
     public static void main(String[] args) throws IOException, InterruptedException {
 //        System.err.println(getListOfInstalledPackages());
-//        RPackage plyrFuns = buildPackageCache("tikzDevice");
+        RPackage plyrPckg = buildPackageCache("ggplot2");
 
-//        System.err.println("plyrFuns");
+//        System.err.println(" plyrPckg");
 //        HashSet<RPackage> libraryCache = getLibraryCache();
 //        System.err.println("cached " + libraryCache.size() + " packages!");
 
-        PackageCache libraryCache = getLibraryCache();
-        System.err.println(libraryCache.getPackagesOfFunction("a_ply"));
+//        PackageCache libraryCache = getLibraryCache();
+//        System.err.println(libraryCache.getPackagesOfFunction("a_ply"));
 
 //        File cacheFile = new File(System.getProperty("user.home") + File.separator + "r4i_libcache.dat");
 //        CachingUtils.saveObject(libraryCache, cacheFile);
@@ -66,7 +70,7 @@ public class PackageCache extends HashSet<RPackage> {
                         RPackage rPackage = buildPackageCache(packageName);
                         packageCache.add(rPackage);
                     } catch (Throwable t) {
-                        System.err.println("Indexing of package '" + packageName + "'  failed");
+                        log.error("Indexing of package '" + packageName + "'  failed");
                     }
                 }
             } catch (Throwable e) {
@@ -97,7 +101,7 @@ public class PackageCache extends HashSet<RPackage> {
 
 
     private static RPackage buildPackageCache(String packageName) throws IOException, InterruptedException {
-        System.err.println("rebuilding cache of " + packageName);
+        log.info("rebuilding cache of " + packageName);
         String lineBreaker = "&&&&";
 
         String funNameOutput = CachingUtils.evalRComand("library(" + packageName + "); paste(ls(\"package:" + packageName + "\"), collapse=';')");
@@ -135,9 +139,24 @@ public class PackageCache extends HashSet<RPackage> {
             }
         }
 
+        // compile dependency list
+        String rawDeps = CachingUtils.evalRComand("library(tools); paste(pkgDepends(\"" + packageName + "\")$Depends, collapse=\",\")");
+        matcher = Pattern.compile("1] \"(.*)\"", Pattern.DOTALL).matcher(rawDeps);
+        List<String> cleanedDeps = new ArrayList<String>();
+        if (matcher.find()) {
+            String depCsvList = matcher.group(1);
+            if (!depCsvList.isEmpty()) {
+
+                String[] deps = depCsvList.split(",");
+                for (String dep : deps) {
+                    cleanedDeps.add(dep.contains(" ") ? dep.split(" ")[0] : dep);
+                }
+            }
+        }
+
 
         String packageVersion = CachingUtils.getPackageVersion(packageName);
-        RPackage rPackage = new RPackage(packageName, api, packageVersion);
+        RPackage rPackage = new RPackage(packageName, api, packageVersion, cleanedDeps);
 
         // add function definitions
         StringBuilder getFunImplsCmd = new StringBuilder("library(" + packageName + ");\n");
@@ -166,6 +185,7 @@ public class PackageCache extends HashSet<RPackage> {
 
             anApi.setFunSignature(splitFuns[i + 1]);
         }
+
 
         return rPackage;
     }

@@ -8,6 +8,7 @@
 package com.r4intellij.misc.rinstallcache;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,17 +21,19 @@ import java.util.Set;
  */
 public class RPackage implements Serializable {
 
-    private static final long serialVersionUID = -5519927808165098760L;
+    private static final long serialVersionUID = -551992788165098760L;
 
     private final String packageName;
     private final Set<Function> functions;
     private final String packageVersion;
+    private final Collection<String> dependencies;
 
-    public RPackage(String packageName, List<Function> functions, String packageVersion) {
+    public RPackage(String packageName, List<Function> functions, String packageVersion, List<String> dependencies) {
 
         this.packageName = packageName;
         this.functions = new HashSet<Function>(functions);
         this.packageVersion = packageVersion;
+        this.dependencies = dependencies;
     }
 
     public String getName() {
@@ -64,4 +67,22 @@ public class RPackage implements Serializable {
         return null;
     }
 
+    public Collection<String> getDependencyNames() {
+        return dependencies;
+    }
+
+
+    public Collection<RPackage> getDependencies(PackageCache packageIndex) {
+        Collection<RPackage> deps = new HashSet<RPackage>();
+
+        for (String dep : getDependencyNames()) {
+            RPackage depPckg = packageIndex.getByName(dep);
+            if (depPckg == null)
+                continue;
+
+            deps.add(depPckg);
+        }
+
+        return deps;
+    }
 }
