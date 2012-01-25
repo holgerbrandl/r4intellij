@@ -21,7 +21,7 @@ import java.util.Set;
  */
 public class RPackage implements Serializable {
 
-    private static final long serialVersionUID = -551992788165098760L;
+    private static final long serialVersionUID = -55199278816509760L;
 
     private final String packageName;
     private final Set<Function> functions;

@@ -70,12 +70,22 @@ public class RCacheUtils {
         return impPckgs;
     }
 
-    public static List<RPackage> getImportedPackages(RFile file) {
-        List<RPackage> importedPackages = new ArrayList<RPackage>();
+    public static Collection<RPackage> getImportedPackages(RFile file) {
+        HashSet<RPackage> importedPackages = new HashSet<RPackage>();
 
         PackageCache packageIndex = getPackageIndex();
         if (packageIndex == null) // not yet loaded
             return importedPackages;
+
+
+        //add all base packages
+        List<RPackage> basePackages = new ArrayList<RPackage>();
+        String[] basePckgs = {"stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base"};
+        for (String basePckgName : basePckgs) {
+            basePackages.add(packageIndex.getByName(basePckgName));
+        }
+
+        importedPackages.addAll(basePackages);
 
         for (String packageName : getImportedPackageNames(file)) {
             importedPackages.add(packageIndex.getByName(packageName));
