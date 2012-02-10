@@ -20,6 +20,7 @@ teprint <- function(x){
     print("test")
 }
 
+rename()
 teprint("blab")
 teprint(sdf)
 subframe <- R[, featSelection];
