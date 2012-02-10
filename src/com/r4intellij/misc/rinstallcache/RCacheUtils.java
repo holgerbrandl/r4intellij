@@ -28,11 +28,11 @@ public class RCacheUtils {
         if (packageIndex == null)
             return Collections.emptyList();
 
-        importedPackages = addImportDependencies(importedPackages, packageIndex);
-
-
+        // if the user didn't import anything do a global search todo: does this make sense???
         if (importedPackages == null) {
             importedPackages = packageIndex;
+        } else {
+            importedPackages = addImportDependencies(importedPackages, packageIndex);
         }
 
         List<Function> funs = new ArrayList<Function>();
@@ -44,6 +44,7 @@ public class RCacheUtils {
 
         return funs;
     }
+
 
     private static Collection<RPackage> addImportDependencies(Collection<RPackage> importedPackages, PackageCache packageIndex) {
         Collection<RPackage> imPckgsWithDeps = new HashSet<RPackage>();
@@ -70,6 +71,7 @@ public class RCacheUtils {
         return impPckgs;
     }
 
+
     public static Collection<RPackage> getImportedPackages(RFile file) {
         HashSet<RPackage> importedPackages = new HashSet<RPackage>();
 
@@ -94,6 +96,7 @@ public class RCacheUtils {
 
         return importedPackages;
     }
+
 
     public static PackageCache getPackageIndex() {
         PackageCacheService cacheService = ServiceManager.getService(PackageCacheService.class);
