@@ -29,19 +29,22 @@ public class CachingUtils {
         }
     }
 
-    static String evalRComand(String cmd) throws IOException, InterruptedException {
+
+    static String evalRComand(String cmd) {
         return evalRCmd(cmd).getOutput();
     }
 
 
-    static StreamGobbler evalRCmd(String cmd) throws IOException, InterruptedException {
+    static StreamGobbler evalRCmd(String cmd) {
         String[] getPckgsCmd = new String[]{"R", "--vanilla", "--quiet", "-e", cmd};
 
         return evalRInternal(getPckgsCmd);
     }
 
-    private static StreamGobbler evalRInternal(String[] getPckgsCmd) throws IOException, InterruptedException {
 
+    private static StreamGobbler evalRInternal(String[] getPckgsCmd) {
+
+        try {
 //        String osName = System.getProperty("os.name" );
 //        String[] cmd = new String[3];
 //        if( osName.equals( "Windows NT" ) )
@@ -52,23 +55,27 @@ public class CachingUtils {
 //        }
 
 
-        Process proc = Runtime.getRuntime().exec(getPckgsCmd);
+            Process proc = Runtime.getRuntime().exec(getPckgsCmd);
 
-        StreamGobbler errorGobbler = new
-                StreamGobbler(proc.getErrorStream(), "ERROR");
+            StreamGobbler errorGobbler = new
+                    StreamGobbler(proc.getErrorStream(), "ERROR");
 
-        // any output?
-        StreamGobbler outputGobbler = new
-                StreamGobbler(proc.getInputStream(), "OUTPUT");
+            // any output?
+            StreamGobbler outputGobbler = new
+                    StreamGobbler(proc.getInputStream(), "OUTPUT");
 
-        // kick them off
-        errorGobbler.start();
-        outputGobbler.start();
+            // kick them off
+            errorGobbler.start();
+            outputGobbler.start();
 
-        // any error???
-        int exitVal = proc.waitFor();
-        return outputGobbler;
+            // any error???
+            int exitVal = proc.waitFor();
+            return outputGobbler;
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
+
 
     static Object loadObject(File f) {
         try {
@@ -85,6 +92,7 @@ public class CachingUtils {
         return null;
     }
 
+
     static void saveObject(Object o, File f) {
         try {
             FileOutputStream fout = new FileOutputStream(f);
@@ -96,7 +104,8 @@ public class CachingUtils {
         }
     }
 
-    static String getPackageVersion(String packageName) throws IOException, InterruptedException {
+
+    static String getPackageVersion(String packageName) {
         String packageInfo = evalRComand("pckgDocu <-library(help = " + packageName + "); pckgDocu$info[[1]]");
         Matcher matcher = Pattern.compile("Version:[ ]*([0-9.]*)").matcher(packageInfo);
 
@@ -111,10 +120,12 @@ class StreamGobbler extends Thread {
     String type;
     StringBuilder sb = new StringBuilder();
 
+
     StreamGobbler(InputStream is, String type) {
         this.is = is;
         this.type = type;
     }
+
 
     public void run() {
         try {
@@ -129,6 +140,7 @@ class StreamGobbler extends Thread {
             ioe.printStackTrace();
         }
     }
+
 
     public String getOutput() {
         return sb.toString();

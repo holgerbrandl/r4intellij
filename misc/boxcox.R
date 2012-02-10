@@ -12,6 +12,7 @@ featSelection<-332
 #load the necessary libraries
 library(car)
 library(alr3);
+library(ggplot2);
 iris
 ########
 ### dfdf
@@ -19,6 +20,8 @@ iris
 teprint <- function(x){
     print("test")
 }
+
+ggplot()
 
 rename()
 teprint("blab")

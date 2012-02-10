@@ -91,7 +91,9 @@ public class RCacheUtils {
         importedPackages.addAll(basePackages);
 
         for (String packageName : getImportedPackageNames(file)) {
-            importedPackages.add(packageIndex.getByName(packageName));
+            RPackage pckgByName = packageIndex.getByName(packageName);
+            if (pckgByName != null)
+                importedPackages.add(pckgByName);
         }
 
         return importedPackages;

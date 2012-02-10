@@ -28,6 +28,7 @@ public class RPackage implements Serializable {
     private final String packageVersion;
     private final Collection<String> dependencies;
 
+
     public RPackage(String packageName, List<Function> functions, String packageVersion, List<String> dependencies) {
 
         this.packageName = packageName;
@@ -36,8 +37,14 @@ public class RPackage implements Serializable {
         this.dependencies = dependencies;
     }
 
+
     public String getName() {
         return packageName;
+    }
+
+
+    public String getVersion() {
+        return packageVersion;
     }
 
 
@@ -57,6 +64,7 @@ public class RPackage implements Serializable {
         return packageName + " (" + packageVersion + ")";
     }
 
+
     public Function getFunction(String funName) {
         for (Function function : functions) {
             if (function.getFunName().equals(funName)) {
@@ -66,6 +74,7 @@ public class RPackage implements Serializable {
 
         return null;
     }
+
 
     public Collection<String> getDependencyNames() {
         return dependencies;

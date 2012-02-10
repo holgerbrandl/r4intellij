@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 
 /**
- * DOCUMENT ME!
+ * An index of the user's R installation
  *
  * @author Holger Brandl
  */
@@ -29,6 +29,7 @@ public class PackageCache extends HashSet<RPackage> {
     private static final Logger log = Logger.getInstance("#PackageCache");
 
     private static final long serialVersionUID = 3817077163528389033L;
+
 
     public static void main(String[] args) throws IOException, InterruptedException {
 //        System.err.println(getListOfInstalledPackages());
@@ -46,7 +47,9 @@ public class PackageCache extends HashSet<RPackage> {
 //        PackageCache cache = (PackageCache) CachingUtils.loadObject(cacheFile);
     }
 
+
     private static PackageCache packageCache;
+
 
     private PackageCache() {
 
@@ -57,35 +60,55 @@ public class PackageCache extends HashSet<RPackage> {
         if (packageCache == null) {
 
             // try to load the index from the cache
-            File cacheFile = new File(System.getProperty("user.home") + File.separator + "r4i_libcache.dat");
-            packageCache = (PackageCache) CachingUtils.loadObject(cacheFile);
-            if (packageCache != null) return packageCache;
-
-            // rebuild the cache
-            packageCache = new PackageCache();
-
-            try {
-                List<String> installedPackages = getListOfInstalledPackages();
-                for (String packageName : installedPackages) {
-                    try {
-                        RPackage rPackage = buildPackageCache(packageName);
-                        packageCache.add(rPackage);
-                    } catch (Throwable t) {
-                        log.warn("Indexing of package '" + packageName + "'  failed");
-                    }
-                }
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
+            packageCache = (PackageCache) CachingUtils.loadObject(getCacheFile());
+            if (packageCache == null) {
+                packageCache = new PackageCache();
             }
 
-            CachingUtils.saveObject(packageCache, cacheFile);
+            updateCache(packageCache);
         }
 
         return packageCache;
     }
 
 
-    private static List<String> getListOfInstalledPackages() throws IOException, InterruptedException {
+    private static void updateCache(PackageCache packageCache) {
+        boolean hasChanged = false;
+
+        for (String pckgName : getListOfInstalledPackages()) {
+            RPackage rPackage = packageCache.getByName(pckgName);
+            if (rPackage == null || !CachingUtils.getPackageVersion(pckgName).equals(rPackage.getVersion())) {
+                indexPackage(pckgName);
+                hasChanged = true;
+            }
+        }
+
+        if (hasChanged) {
+            CachingUtils.saveObject(PackageCache.packageCache, getCacheFile());
+        }
+    }
+
+
+    private static void indexPackage(String packageName) {
+        try {
+            RPackage rPackage = buildPackageCache(packageName);
+            packageCache.add(rPackage);
+
+        } catch (Throwable t) {
+            log.warn("Indexing of package '" + packageName + "'  failed. Adding dummy package...");
+            String packageVersion = CachingUtils.getPackageVersion(packageName);
+            RPackage rPackage = new RPackage(packageName, new ArrayList<Function>(), packageVersion, new ArrayList<String>());
+            packageCache.add(rPackage);
+        }
+    }
+
+
+    private static File getCacheFile() {
+        return new File(System.getProperty("user.home") + File.separator + "r4i_libcache.dat");
+    }
+
+
+    private static List<String> getListOfInstalledPackages() {
         String output = CachingUtils.evalRComand("library()$results[,1]");
 //        System.err.println("output was " + output.getOutput());
 
@@ -101,10 +124,9 @@ public class PackageCache extends HashSet<RPackage> {
     }
 
 
-    private static RPackage buildPackageCache(String packageName) throws IOException, InterruptedException {
+    private static RPackage buildPackageCache(String packageName) {
         log.info("rebuilding cache of " + packageName);
         System.err.println("rebuilding cache of " + packageName);
-        String lineBreaker = "&&&&";
 
         HashMap<String, Function> api = new HashMap<String, Function>();
 
@@ -224,7 +246,8 @@ public class PackageCache extends HashSet<RPackage> {
         return rPackage;
     }
 
-    private static List<String> getDependencies(String packageName) throws IOException, InterruptedException {
+
+    private static List<String> getDependencies(String packageName) {
         Matcher matcher;
         String rawDeps = CachingUtils.evalRComand("library(tools); paste(pkgDepends(\"" + packageName + "\")$Depends, collapse=\",\")");
         matcher = Pattern.compile("1] \"(.*)\"", Pattern.DOTALL).matcher(rawDeps);
@@ -254,6 +277,7 @@ public class PackageCache extends HashSet<RPackage> {
 
         return hitList;
     }
+
 
     public List<Function> getFunctionByName(String funName) {
         List<Function> funList = new ArrayList<Function>();
