@@ -32,5 +32,8 @@ public class ConfigurableEvalAction extends AbstactEvalTextAction {
         return codeTemplate.replaceAll("[$]snippet[$]", selectedText);
     }
 
-
+    @Override
+    public boolean isDumbAware() {
+        return true;
+    }
 }
