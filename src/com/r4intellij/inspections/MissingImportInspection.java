@@ -116,7 +116,7 @@ public class MissingImportInspection extends LocalInspectionTool {
                                 fixes.add(new ImportLibraryFix(funPackageName));
                             }
 
-                            problemsHolder.registerProblem(funVar, "'" + funVar + "' has been detected to belong to a not yet imported package", fixes.toArray(new LocalQuickFix[0]));
+                            problemsHolder.registerProblem(funVar, "'" + funVar.getText() + "' has been detected to belong to a not yet imported package", fixes.toArray(new LocalQuickFix[0]));
                         }
                     }
                 }
