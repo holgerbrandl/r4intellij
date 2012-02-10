@@ -8,6 +8,7 @@
 package com.r4intellij.misc.connectors;
 
 import com.r4intellij.Utils;
+import com.r4intellij.settings.RSettings;
 
 import java.io.IOException;
 
@@ -26,7 +27,7 @@ public class AppleScriptConnector implements CodeLaunchConnector {
                 Runtime runtime = Runtime.getRuntime();
 
                 String dquotesExpandedText = rCommands.replace("\"", "\\\"");
-                String evalTarget = "R64";
+                String evalTarget = RSettings.getInstance().codeSnippetEvalTarget;
 
 //                //todo remove this hacky thing
 //                File connectorDef = new File(System.getProperty("user.home") + File.separator + "r4j_evaltarget.txt");
@@ -36,9 +37,15 @@ public class AppleScriptConnector implements CodeLaunchConnector {
 
 //                http://stackoverflow.com/questions/1870270/sending-commands-and-strings-to-terminal-app-with-applescript
 
-                String evalSelection = "tell application \"" + evalTarget + "\" to activate\n" +
-                        "tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
+                String evalSelection;
+                if (evalTarget.equals("Terminal")) {
+                    evalSelection = "tell application \"" + "Terminal" + "\" to activate\n" +
+                            "tell application \"" + "Terminal" + "\" to do script \"" + dquotesExpandedText + "\" in window 0";
 
+                } else {
+                    evalSelection = "tell application \"" + evalTarget + "\" to activate\n" +
+                            "tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
+                }
 
                 String[] args = {"osascript", "-e", evalSelection};
 

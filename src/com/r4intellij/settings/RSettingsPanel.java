@@ -7,6 +7,7 @@
 
 package com.r4intellij.settings;
 
+import com.r4intellij.Utils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -25,6 +26,7 @@ public class RSettingsPanel {
     private JTextField evalCode3;
     private JTextField evalTitle4;
     private JTextField evalCode4;
+    private JComboBox codeEvalTarget;
 
 
     public JComponent getPanel() {
@@ -55,6 +57,8 @@ public class RSettingsPanel {
                     break;
             }
         }
+
+        codeEvalTarget.setSelectedItem(settings.codeSnippetEvalTarget == null ? getEvalTargetOptions()[0] : settings.codeSnippetEvalTarget);
     }
 
     public boolean isModified(@NotNull RSettings settings) {
@@ -71,5 +75,16 @@ public class RSettingsPanel {
                 new EvalActionPref(evalTitle3.getText(), evalCode3.getText(), RSettings.SNIPACTION_3_DEF_SHORTCUT),
                 new EvalActionPref(evalTitle4.getText(), evalCode4.getText(), RSettings.SNIPACTION_4_DEF_SHORTCUT)
         );
+
+        settings.codeSnippetEvalTarget = codeEvalTarget.getSelectedItem().toString();
+    }
+
+    private void createUIComponents() {
+        String[] evalTargetOptions = getEvalTargetOptions();
+        codeEvalTarget = new JComboBox(new DefaultComboBoxModel(evalTargetOptions));
+    }
+
+    private String[] getEvalTargetOptions() {
+        return Utils.isMacOSX() ? new String[]{"R", "R64", "Terminal"} : Utils.isWindowsPlatform() ? new String[]{"R"} : new String[]{""};
     }
 }

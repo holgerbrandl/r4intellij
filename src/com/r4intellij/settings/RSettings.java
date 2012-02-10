@@ -42,12 +42,16 @@ public class RSettings implements PersistentStateComponent<RSettings>, RoamingTy
     public static final String SNIPACTION_3_DEF_SHORTCUT = "meta alt T";
     public static final String SNIPACTION_4_DEF_SHORTCUT = "meta alt T";
 
+
     {
         evalActionPrefs.add(new EvalActionPref("head+nrow", "head($snippet$); nrow($snippet$);", SNIPACTION_1_DEF_SHORTCUT));
         evalActionPrefs.add(new EvalActionPref("structure", "str($snippet$);", SNIPACTION_2_DEF_SHORTCUT));
         evalActionPrefs.add(new EvalActionPref("head+tail", "head($snippet$); tail($snippet$);", SNIPACTION_3_DEF_SHORTCUT));
         evalActionPrefs.add(new EvalActionPref("summarize", "summarize($snippet$);", SNIPACTION_4_DEF_SHORTCUT));
     }
+
+    public String codeSnippetEvalTarget;
+
 
     public RSettings getState() {
         return this;
@@ -56,6 +60,7 @@ public class RSettings implements PersistentStateComponent<RSettings>, RoamingTy
     public void loadState(RSettings that) {
         this.addCompletionTerms = that.addCompletionTerms;
         this.evalActionPrefs = that.getEvalActionPrefs();
+        this.codeSnippetEvalTarget = that.codeSnippetEvalTarget;
     }
 
     public static RSettings getInstance() {
