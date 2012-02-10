@@ -37,11 +37,16 @@ public class RSettings implements PersistentStateComponent<RSettings>, RoamingTy
     // custom eval actions
     public List<EvalActionPref> evalActionPrefs = new ArrayList<EvalActionPref>();
 
+    public static final String SNIPACTION_1_DEF_SHORTCUT = "meta alt H";
+    public static final String SNIPACTION_2_DEF_SHORTCUT = "meta alt S";
+    public static final String SNIPACTION_3_DEF_SHORTCUT = "meta alt T";
+    public static final String SNIPACTION_4_DEF_SHORTCUT = "meta alt T";
+
     {
-        evalActionPrefs.add(new EvalActionPref("head+nrow", "head($snippet$); nrow($snippet$);", "meta alt H"));
-        evalActionPrefs.add(new EvalActionPref("structure", "str($snippet$);", "meta alt S"));
-        evalActionPrefs.add(new EvalActionPref("head+tail", "head($snippet$); tail($snippet$);", "meta alt T"));
-        evalActionPrefs.add(new EvalActionPref("summarize", "summarize($snippet$);", "meta alt T"));
+        evalActionPrefs.add(new EvalActionPref("head+nrow", "head($snippet$); nrow($snippet$);", SNIPACTION_1_DEF_SHORTCUT));
+        evalActionPrefs.add(new EvalActionPref("structure", "str($snippet$);", SNIPACTION_2_DEF_SHORTCUT));
+        evalActionPrefs.add(new EvalActionPref("head+tail", "head($snippet$); tail($snippet$);", SNIPACTION_3_DEF_SHORTCUT));
+        evalActionPrefs.add(new EvalActionPref("summarize", "summarize($snippet$);", SNIPACTION_4_DEF_SHORTCUT));
     }
 
     public RSettings getState() {

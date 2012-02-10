@@ -66,11 +66,10 @@ public class RSettingsPanel {
         settings.addCompletionTerms = addComplTerms.getText();
 
         settings.evalActionPrefs = Arrays.asList(
-                new EvalActionPref(evalTitle1.getText(), evalCode1.getText(), "control shift S"),
-                new EvalActionPref(evalTitle2.getText(), evalCode2.getText(), "control shift H"),
-                new EvalActionPref(evalTitle3.getText(), evalCode3.getText(), "control shift T"),
-                new EvalActionPref(evalTitle4.getText(), evalCode4.getText(), "meta alt T")
+                new EvalActionPref(evalTitle1.getText(), evalCode1.getText(), RSettings.SNIPACTION_1_DEF_SHORTCUT),
+                new EvalActionPref(evalTitle2.getText(), evalCode2.getText(), RSettings.SNIPACTION_2_DEF_SHORTCUT),
+                new EvalActionPref(evalTitle3.getText(), evalCode3.getText(), RSettings.SNIPACTION_3_DEF_SHORTCUT),
+                new EvalActionPref(evalTitle4.getText(), evalCode4.getText(), RSettings.SNIPACTION_4_DEF_SHORTCUT)
         );
-
     }
 }
