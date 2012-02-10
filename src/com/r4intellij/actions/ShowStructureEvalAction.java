@@ -7,6 +7,9 @@
 
 package com.r4intellij.actions;
 
+import com.intellij.openapi.actionSystem.CustomShortcutSet;
+
+
 /**
  * A shortcut to figure out the structure of a document in R
  *
@@ -14,6 +17,10 @@ package com.r4intellij.actions;
  */
 public class ShowStructureEvalAction extends AbstactEvalTextAction {
 
+
+    public ShowStructureEvalAction(String name, String description, CustomShortcutSet shortcuts) {
+        super(name, description, shortcuts);
+    }
 
     @Override
     protected String getEvalCmd(String selectedText) {

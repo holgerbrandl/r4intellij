@@ -17,4 +17,9 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
  */
 public class RActionGroup extends DefaultActionGroup {
 
+
+    public RActionGroup() {
+        super("R Code Evaluation", true);
+    }
+
 }

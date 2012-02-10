@@ -11,10 +11,7 @@
 
 package com.r4intellij.misc.connectors;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 
 
@@ -25,7 +22,8 @@ public class RGWLauncher implements CodeLaunchConnector {
     private String fExecutable;
 
     public static void main(String[] args) {
-        new RGWLauncher().submitCode("print('test')", true);
+//        new RGWLauncher().submitCode("print('test')", true);
+        System.err.println(new RGWLauncher().getLauncher());
     }
 
     public RGWLauncher() {
@@ -35,17 +33,34 @@ public class RGWLauncher implements CodeLaunchConnector {
         try {
 //            final String local = FileLocator.toFileURL(dir).getPath();
             getLauncher();
-        } catch (final IOException e) {
+        } catch (final Throwable e) {
             throw new RuntimeException("Error Loading R-GUI-Windows-Connector:", e);
         }
     }
 
-    private static String getLauncher() throws IOException {
-        // todo fixme
-        final File file = new File("D:\\RGWConnector.exe");
-        if (!file.exists())
-            throw new IOException("Missing File '" + file.getAbsolutePath() + "'.");
-        return file.getAbsolutePath();
+    private static String getLauncher() {
+        File rgwExe = new File(System.getProperty("user.home") + File.separator + "RGWConnector.exe");
+        if (!rgwExe.isFile()) {
+            copyStream2File(rgwExe);
+        }
+
+        if (!rgwExe.exists())
+            throw new RuntimeException("Missing connector exe  '" + rgwExe.getAbsolutePath() + "'.");
+        return rgwExe.getAbsolutePath();
+    }
+
+    private static void copyStream2File(File rgwExe) {
+        try {
+            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("/connectors/RGWConnector.exe");
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(rgwExe));
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                out.write(buffer, 0, len);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private enum SubmitType {DONOTHING, SUBMITINPUT, PASTECLIPBOARD}

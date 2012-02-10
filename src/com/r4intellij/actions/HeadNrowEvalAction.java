@@ -7,10 +7,18 @@
 
 package com.r4intellij.actions;
 
+import com.intellij.openapi.actionSystem.CustomShortcutSet;
+
+
 /**
  * Event handler for the "Run Selection" action within an Arc code editor - runs the currently selected text within the current REPL.
  */
 public class HeadNrowEvalAction extends AbstactEvalTextAction {
+
+
+    public HeadNrowEvalAction(String name, String description, CustomShortcutSet shortcuts) {
+        super(name, description, shortcuts);
+    }
 
     @Override
     protected String getEvalCmd(String selectedText) {

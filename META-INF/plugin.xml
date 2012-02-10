@@ -84,11 +84,14 @@
     </application-components>
 
     <project-components>
-        <!-- Add your project components here -->
+        <component>
+            <implementation-class>com.r4intellij.actions.CodeEvalActionRegistry</implementation-class>
+            <skipForDefaultProject/>
+        </component>
     </project-components>
 
     <actions>
-        <group class="com.r4intellij.actions.RActionGroup" text="R Actions" id="ArcEditorActionGroup">
+        <group class="com.r4intellij.actions.RActionGroup" id="RCodeSnippetActionMenu">
 
             <separator/>
             <action id="EvalSelction" class="com.r4intellij.actions.RunSelectedTextOrLineAction" text="Evaluate"
@@ -96,15 +99,15 @@
                 <keyboard-shortcut keymap="$default" first-keystroke="meta alt ENTER"/>
             </action>
 
-            <action id="EvalHeadNrow" class="com.r4intellij.actions.HeadNrowEvalAction" text="head+nrow"
-                    description="Evaluates head and nrow for the current data.frame object">
-                <keyboard-shortcut keymap="$default" first-keystroke="meta alt H"/>
-            </action>
+            <!--<action id="EvalHeadNrow" class="com.r4intellij.actions.HeadNrowEvalAction" text="head+nrow"-->
+            <!--description="Evaluates head and nrow for the current data.frame object">-->
+            <!--<keyboard-shortcut keymap="$default" first-keystroke="meta alt H"/>-->
+            <!--</action>-->
 
-            <action id="EvalStr" class="com.r4intellij.actions.ShowStructureEvalAction" text="str()"
-                    description="Calls the str for the current word or selection">
-                <keyboard-shortcut keymap="$default" first-keystroke="meta alt S"/>
-            </action>
+            <!--<action id="EvalStr" class="com.r4intellij.actions.ShowStructureEvalAction" text="str()"-->
+            <!--description="Calls the str for the current word or selection">-->
+            <!--<keyboard-shortcut keymap="$default" first-keystroke="meta alt S"/>-->
+            <!--</action>-->
 
             <separator/>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
