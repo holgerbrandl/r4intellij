@@ -23,7 +23,6 @@ public class ConfigurableEvalAction extends AbstactEvalTextAction {
     public ConfigurableEvalAction(String name, String codeTemplate, CustomShortcutSet shortcuts) {
         super(name, codeTemplate, shortcuts);
 
-//        getTemplatePresentation().setText();
         this.codeTemplate = codeTemplate;
     }
 

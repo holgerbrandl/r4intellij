@@ -55,10 +55,6 @@ public class CodeEvalActionRegistry extends AbstractProjectComponent {
                 ActionManager.getInstance().registerAction("customRAction" + instance.getEvalActionPrefs().indexOf(actionPref), action);
             }
         }
-
-
-        // register keyboard shortcut
-
     }
 
     @NonNls
