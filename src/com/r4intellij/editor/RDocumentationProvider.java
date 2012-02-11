@@ -21,9 +21,9 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiManager;
 import com.r4intellij.misc.rinstallcache.Function;
-import com.r4intellij.misc.rinstallcache.PackageCache;
+import com.r4intellij.misc.rinstallcache.IndexUtils;
+import com.r4intellij.misc.rinstallcache.LibIndex;
 import com.r4intellij.misc.rinstallcache.PackageCacheService;
-import com.r4intellij.misc.rinstallcache.RCacheUtils;
 import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RFuncall;
 import com.r4intellij.psi.RVariable;
@@ -48,20 +48,21 @@ public class RDocumentationProvider implements DocumentationProvider {
         return null;
     }
 
+
     private Function getFunction(PsiElement element) {
         PackageCacheService cacheService = ServiceManager.getService(PackageCacheService.class);
-        PackageCache cache = cacheService.getCache();
+        LibIndex cache = cacheService.getCache();
         if (cache == null)
             return null;
 
 
         RFile file = (RFile) element.getContainingFile();
 
-        List<Function> functions = RCacheUtils.getFunctionByName(element.getText(), RCacheUtils.getImportedPackages(file));
+        List<Function> functions = IndexUtils.getFunctionByName(element.getText(), IndexUtils.getImportedPackages(file));
 
 
         if (functions.isEmpty()) // seach the complete index if the function is not yet imported
-            functions = RCacheUtils.getFunctionByName(element.getText(), null);
+            functions = IndexUtils.getFunctionByName(element.getText(), null);
 
         if (functions.isEmpty())
             return null;
@@ -70,10 +71,12 @@ public class RDocumentationProvider implements DocumentationProvider {
         return functions.get(0);
     }
 
+
     @Nullable
     public List<String> getUrlFor(final PsiElement element, final PsiElement originalElement) {
         return null;
     }
+
 
     @Nullable
     public String generateDoc(final PsiElement element, final PsiElement originalElement) {
@@ -98,10 +101,12 @@ public class RDocumentationProvider implements DocumentationProvider {
 //        return null;
     }
 
+
     @Nullable
     public PsiElement getDocumentationElementForLookupItem(final PsiManager psiManager, final Object object, final PsiElement element) {
         return null;
     }
+
 
     @Nullable
     public PsiElement getDocumentationElementForLink(final PsiManager psiManager, final String link, final PsiElement context) {

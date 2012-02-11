@@ -20,11 +20,11 @@ import java.util.*;
  *
  * @author Holger Brandl
  */
-public class RCacheUtils {
+public class IndexUtils {
 
     public static List<Function> getFunctionByName(String funName, @Nullable Collection<RPackage> importedPackages) {
 
-        PackageCache packageIndex = getPackageIndex();
+        LibIndex packageIndex = getPackageIndex();
         if (packageIndex == null)
             return Collections.emptyList();
 
@@ -46,7 +46,7 @@ public class RCacheUtils {
     }
 
 
-    private static Collection<RPackage> addImportDependencies(Collection<RPackage> importedPackages, PackageCache packageIndex) {
+    private static Collection<RPackage> addImportDependencies(Collection<RPackage> importedPackages, LibIndex packageIndex) {
         Collection<RPackage> imPckgsWithDeps = new HashSet<RPackage>();
 
         for (RPackage importedPackage : importedPackages) {
@@ -75,7 +75,7 @@ public class RCacheUtils {
     public static Collection<RPackage> getImportedPackages(RFile file) {
         HashSet<RPackage> importedPackages = new HashSet<RPackage>();
 
-        PackageCache packageIndex = getPackageIndex();
+        LibIndex packageIndex = getPackageIndex();
         if (packageIndex == null) // not yet loaded
             return importedPackages;
 
@@ -100,7 +100,7 @@ public class RCacheUtils {
     }
 
 
-    public static PackageCache getPackageIndex() {
+    public static LibIndex getPackageIndex() {
         PackageCacheService cacheService = ServiceManager.getService(PackageCacheService.class);
         return cacheService.getCache();
     }
@@ -116,4 +116,6 @@ public class RCacheUtils {
         intersection.retainAll(funPackageNames);
         return !intersection.isEmpty();
     }
+
+
 }

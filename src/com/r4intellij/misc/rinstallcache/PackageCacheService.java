@@ -23,7 +23,7 @@ public class PackageCacheService {
 
     public static Logger logger = Logger.getInstance("RPackageCache");
 
-    private PackageCache pcache;
+    private LibIndex pcache;
 
 
     public PackageCacheService() {
@@ -35,7 +35,7 @@ public class PackageCacheService {
             public void run() {
                 super.run();    //To change body of overridden methods use File | Settings | File Templates.
 
-                pcache = PackageCache.getLibraryCache();
+                pcache = LibraryIndexFactory.getLibraryCache();
 
                 restartInspections();
             }
@@ -58,7 +58,7 @@ public class PackageCacheService {
     }
 
 
-    public PackageCache getCache() {
+    public LibIndex getCache() {
         return pcache;
     }
 }

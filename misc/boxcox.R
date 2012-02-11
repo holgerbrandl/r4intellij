@@ -28,7 +28,10 @@ teprint("blab")
 teprint(sdf)
 subframe <- R[, featSelection];
 subframe <- R[, featSelection];
+subframe <- R[, featSelection];
+subfr33ame <- R[, featSelection];
 
+subfr
 # caclulate the optimal lambda for the trafo
 powers <- box.cox.powers(as.matrix(subframe));
 normValues <- powtran(subframe, powers$lambda, family="box.cox")

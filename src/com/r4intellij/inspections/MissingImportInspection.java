@@ -21,9 +21,9 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
-import com.r4intellij.misc.rinstallcache.PackageCache;
+import com.r4intellij.misc.rinstallcache.IndexUtils;
+import com.r4intellij.misc.rinstallcache.LibIndex;
 import com.r4intellij.misc.rinstallcache.PackageCacheService;
-import com.r4intellij.misc.rinstallcache.RCacheUtils;
 import com.r4intellij.misc.rinstallcache.RPackage;
 import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RFuncall;
@@ -47,6 +47,7 @@ public class MissingImportInspection extends LocalInspectionTool {
         return "R";
     }
 
+
     @Nls
     @NotNull
     @Override
@@ -54,16 +55,19 @@ public class MissingImportInspection extends LocalInspectionTool {
         return "Missing package import";
     }
 
+
     @NotNull
     @Override
     public String getShortName() {
         return "MissingPackageImportInspection";
     }
 
+
     @Override
     public boolean isEnabledByDefault() {
         return true;
     }
+
 
     @Override
     public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
@@ -71,6 +75,7 @@ public class MissingImportInspection extends LocalInspectionTool {
         checkFile(file, problemsHolder);
         return problemsHolder.getResultsArray();
     }
+
 
     private static void checkFile(final PsiFile file, final ProblemsHolder problemsHolder) {
         if (!(file instanceof RFile)) return;
@@ -85,17 +90,17 @@ public class MissingImportInspection extends LocalInspectionTool {
                     // is is a locally defined function?
                     if (funVar.getReference() != funVar) {
                         PackageCacheService cacheService = ServiceManager.getService(PackageCacheService.class);
-                        PackageCache cache = cacheService.getCache();
+                        LibIndex cache = cacheService.getCache();
                         if (cache != null) {
                             List<String> funPackageNames = getContainingPackages(cache, funVar.getText());
 
                             // check if there's an import statement for any of them
-                            List<String> importedPackages = RCacheUtils.getImportedPackageNames((RFile) psiElement.getContainingFile());
+                            List<String> importedPackages = IndexUtils.getImportedPackageNames((RFile) psiElement.getContainingFile());
 
                             // check whether the import list contains any of the packages
                             boolean isImported = false;
 
-                            if (RCacheUtils.containsBasePckg(funPackageNames)) {
+                            if (IndexUtils.containsBasePckg(funPackageNames)) {
                                 isImported = true;
                             } else {
                                 for (String importedPackage : importedPackages) {
@@ -132,7 +137,8 @@ public class MissingImportInspection extends LocalInspectionTool {
         });
     }
 
-    private static List<String> getContainingPackages(PackageCache cache, String funName) {
+
+    private static List<String> getContainingPackages(LibIndex cache, String funName) {
         List<RPackage> funPackages = cache.getPackagesOfFunction(funName);
         List<String> funPackageNames = new ArrayList<String>();
 

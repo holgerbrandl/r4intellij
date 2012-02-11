@@ -59,12 +59,6 @@ public class RPackage implements Serializable {
     }
 
 
-    @Override
-    public String toString() {
-        return packageName + " (" + packageVersion + ")";
-    }
-
-
     public Function getFunction(String funName) {
         for (Function function : functions) {
             if (function.getFunName().equals(funName)) {
@@ -81,7 +75,7 @@ public class RPackage implements Serializable {
     }
 
 
-    public Collection<RPackage> getDependencies(PackageCache packageIndex) {
+    public Collection<RPackage> getDependencies(LibIndex packageIndex) {
         Collection<RPackage> deps = new HashSet<RPackage>();
 
         for (String dep : getDependencyNames()) {
@@ -94,4 +88,36 @@ public class RPackage implements Serializable {
 
         return deps;
     }
+
+
+    public boolean isDummy() {
+        return functions.isEmpty();
+    }
+
+
+    @Override
+    public String toString() {
+        return packageName + " (" + packageVersion + ")";
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RPackage rPackage = (RPackage) o;
+
+        if (!packageName.equals(rPackage.packageName)) return false;
+
+        return true;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return packageName.hashCode();
+    }
+
+
 }

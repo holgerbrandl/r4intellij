@@ -8,8 +8,7 @@
 package com.r4intellij.misc.rinstallcache;
 
 import java.io.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Arrays;
 
 
 /**
@@ -105,11 +104,8 @@ public class CachingUtils {
     }
 
 
-    static String getPackageVersion(String packageName) {
-        String packageInfo = evalRComand("pckgDocu <-library(help = " + packageName + "); pckgDocu$info[[1]]");
-        Matcher matcher = Pattern.compile("Version:[ ]*([0-9.]*)").matcher(packageInfo);
-
-        return matcher.find() ? matcher.group(1) : null;
+    public static void main(String[] args) {
+        LibraryIndexFactory.getPackageVersions(Arrays.asList("plyr", "ggplot2", "Biostrings"));
     }
 }
 

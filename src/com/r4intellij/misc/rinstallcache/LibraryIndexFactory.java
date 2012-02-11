@@ -11,32 +11,29 @@ import com.intellij.openapi.diagnostic.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
 /**
- * An index of the user's R installation
+ * Allows to index a user's R installation to make functions and packages available for code completion, inspections, etc.
  *
  * @author Holger Brandl
  */
-public class PackageCache extends HashSet<RPackage> {
+public class LibraryIndexFactory {
 
     private static final Logger log = Logger.getInstance("#PackageCache");
 
-    private static final long serialVersionUID = 3817077163528389033L;
+    private static LibIndex LIB_INDEX;
 
 
     public static void main(String[] args) throws IOException, InterruptedException {
 //        System.err.println(getListOfInstalledPackages());
-        RPackage plyrPckg = buildPackageCache("base");
-
+//        RPackage plyrPckg = LibraryIndexFactory.buildPackageCache("base");
+//
 //        System.err.println(" plyrPckg");
-        HashSet<RPackage> libraryCache = getLibraryCache();
+        HashSet<RPackage> libraryCache = LibraryIndexFactory.getLibraryCache();
         System.err.println("cached " + libraryCache.size() + " packages!");
 
 //        PackageCache libraryCache = getLibraryCache();
@@ -48,43 +45,44 @@ public class PackageCache extends HashSet<RPackage> {
     }
 
 
-    private static PackageCache packageCache;
-
-
-    private PackageCache() {
-
-    }
-
-
-    public static PackageCache getLibraryCache() {
-        if (packageCache == null) {
+    public static LibIndex getLibraryCache() {
+        if (LIB_INDEX == null) {
 
             // try to load the index from the cache
-            packageCache = (PackageCache) CachingUtils.loadObject(getCacheFile());
-            if (packageCache == null) {
-                packageCache = new PackageCache();
+            LIB_INDEX = (LibIndex) CachingUtils.loadObject(getCacheFile());
+            if (LIB_INDEX == null) {
+                LIB_INDEX = new LibIndex();
             }
 
-            updateCache(packageCache);
+            updateIndex(LIB_INDEX);
         }
 
-        return packageCache;
+        return LIB_INDEX;
     }
 
 
-    private static void updateCache(PackageCache packageCache) {
+    private static void updateIndex(LibIndex LibIndex) {
         boolean hasChanged = false;
 
-        for (String pckgName : getListOfInstalledPackages()) {
-            RPackage rPackage = packageCache.getByName(pckgName);
-            if (rPackage == null || !CachingUtils.getPackageVersion(pckgName).equals(rPackage.getVersion())) {
-                indexPackage(pckgName);
-                hasChanged = true;
+        List<String> installedPackages = getListOfInstalledPackages();
+        Map<String, String> pckgsWithVersions = getPackageVersions(installedPackages);
+
+        for (String pckgName : installedPackages) {
+            RPackage indexedPckg = LibIndex.getByName(pckgName);
+            String pckgVersion = pckgsWithVersions.get(pckgName);
+
+            if (indexedPckg != null && (indexedPckg.isDummy() || pckgVersion.equals(indexedPckg.getVersion()))) {
+                continue;
             }
+
+            indexPackage(pckgName);
+            hasChanged = true;
+
+
         }
 
         if (hasChanged) {
-            CachingUtils.saveObject(PackageCache.packageCache, getCacheFile());
+            CachingUtils.saveObject(LIB_INDEX, getCacheFile());
         }
     }
 
@@ -92,13 +90,13 @@ public class PackageCache extends HashSet<RPackage> {
     private static void indexPackage(String packageName) {
         try {
             RPackage rPackage = buildPackageCache(packageName);
-            packageCache.add(rPackage);
+            LIB_INDEX.add(rPackage);
 
         } catch (Throwable t) {
             log.warn("Indexing of package '" + packageName + "'  failed. Adding dummy package...");
-            String packageVersion = CachingUtils.getPackageVersion(packageName);
+            String packageVersion = getPackageVersion(packageName);
             RPackage rPackage = new RPackage(packageName, new ArrayList<Function>(), packageVersion, new ArrayList<String>());
-            packageCache.add(rPackage);
+            LIB_INDEX.add(rPackage);
         }
     }
 
@@ -108,23 +106,7 @@ public class PackageCache extends HashSet<RPackage> {
     }
 
 
-    private static List<String> getListOfInstalledPackages() {
-        String output = CachingUtils.evalRComand("library()$results[,1]");
-//        System.err.println("output was " + output.getOutput());
-
-        Pattern pattern = Pattern.compile("\"([A-z0-9]*)\"");
-        Matcher matcher = pattern.matcher(output);
-
-        List<String> installedPackages = new ArrayList<String>();
-        while (matcher.find()) {
-            installedPackages.add(matcher.group(1));
-        }
-
-        return installedPackages;
-    }
-
-
-    private static RPackage buildPackageCache(String packageName) {
+    static RPackage buildPackageCache(String packageName) {
         log.info("rebuilding cache of " + packageName);
         System.err.println("rebuilding cache of " + packageName);
 
@@ -211,7 +193,7 @@ public class PackageCache extends HashSet<RPackage> {
         List<String> cleanedDeps = getDependencies(packageName);
 
 
-        String packageVersion = CachingUtils.getPackageVersion(packageName);
+        String packageVersion = getPackageVersion(packageName);
         RPackage rPackage = new RPackage(packageName, new ArrayList<Function>(api.values()), packageVersion, cleanedDeps);
 
 //        // add function definitions
@@ -266,40 +248,48 @@ public class PackageCache extends HashSet<RPackage> {
     }
 
 
-    public List<RPackage> getPackagesOfFunction(String funName) {
-        List<RPackage> hitList = new ArrayList<RPackage>();
+    public static Map<String, String> getPackageVersions(List<String> packageNames) {
+        StringBuilder sb = new StringBuilder();
 
-        for (RPackage aPackage : packageCache) {
-            if (aPackage.hasFunction(funName)) {
-                hitList.add(aPackage);
-            }
+        for (String packageName : packageNames) {
+            sb.append("pckgDocu <-library(help = " + packageName + ")$info[[1]]; paste(pckgDocu[grep(\"Version|Package:\", pckgDocu)], collapse='__');");
         }
 
-        return hitList;
+
+        String packageInfo = CachingUtils.evalRComand(sb.toString());
+
+        Matcher matcher = Pattern.compile("Package:[ ]*([A-z0-9]*)__Version:[ ]*([0-9.-]*)[\"]", Pattern.DOTALL).matcher(packageInfo);
+        Map<String, String> pckgVersions = new TreeMap<String, String>();
+        while (matcher.find()) {
+            pckgVersions.put(matcher.group(1), matcher.group(2));
+        }
+
+        return pckgVersions;
+//        return matcher.find() ? matcher.group(1) : null;
+
     }
 
 
-    public List<Function> getFunctionByName(String funName) {
-        List<Function> funList = new ArrayList<Function>();
+    static String getPackageVersion(String packageName) {
+        String packageInfo = CachingUtils.evalRComand("pckgDocu <-library(help = " + packageName + "); pckgDocu$info[[1]]");
+        Matcher matcher = Pattern.compile("Version:[ ]*([0-9.-]*)").matcher(packageInfo);
 
-        for (RPackage aPackage : packageCache) {
-            Function function = aPackage.getFunction(funName);
-            if (function != null) {
-                funList.add(function);
-            }
-        }
-
-        return funList;
+        return matcher.find() ? matcher.group(1) : null;
     }
 
 
-    public RPackage getByName(String packageName) {
-        for (RPackage aPackage : packageCache) {
-            if (aPackage.getName().equals(packageName)) {
-                return aPackage;
-            }
+    static List<String> getListOfInstalledPackages() {
+        String output = CachingUtils.evalRComand("library()$results[,1]");
+//        System.err.println("output was " + output.getOutput());
+
+        Pattern pattern = Pattern.compile("\"([A-z0-9]*)\"");
+        Matcher matcher = pattern.matcher(output);
+
+        List<String> installedPackages = new ArrayList<String>();
+        while (matcher.find()) {
+            installedPackages.add(matcher.group(1));
         }
 
-        return null;
+        return installedPackages;
     }
 }
