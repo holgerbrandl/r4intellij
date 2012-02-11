@@ -47,5 +47,14 @@ normValues <- powtran(subframe, powers$lambda, family="box.cox")
 bxCxNames <- paste(names(subframe), '.boxcox', sep = "");
 names(normValues) <- bxCxNames;
 
+
+########
+### another section
+
+
+########
+### anothsdsdfer section
+
+
 # bind both dataframes together
 R <- cbind(R, normValues);

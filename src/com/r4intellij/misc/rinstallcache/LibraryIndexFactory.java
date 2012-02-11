@@ -7,7 +7,13 @@
 
 package com.r4intellij.misc.rinstallcache;
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.spellchecker.SpellCheckerManager;
+import com.intellij.spellchecker.dictionary.EditableDictionary;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,12 +85,29 @@ public class LibraryIndexFactory {
             libIndex.remove(libIndex.getByName(pckgName));
             libIndex.add(indexedPackage);
             hasChanged = true;
-
-
         }
 
         if (hasChanged) {
             CachingUtils.saveObject(LIB_INDEX, getCacheFile());
+
+            ApplicationManager.getApplication().invokeLater(new Runnable() {
+                public void run() {
+                    Project[] projects = ProjectManager.getInstance().getOpenProjects();
+                    for (Project project : projects) {
+                        if (project.isInitialized() && project.isOpen() && !project.isDefault()) {
+                            SpellCheckerManager spellCheckerManager = SpellCheckerManager.getInstance(project);
+                            EditableDictionary dictionary = spellCheckerManager.getUserDictionary();
+
+                            for (RPackage rPackage : LIB_INDEX) {
+                                dictionary.addToDictionary(rPackage.getName());
+                                dictionary.addToDictionary(IndexUtils.getFunctionNames(rPackage));
+                            }
+
+                            DaemonCodeAnalyzer.getInstance(project).restart();
+                        }
+                    }
+                }
+            });
         }
     }
 

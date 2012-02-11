@@ -15,6 +15,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.r4intellij.lang.parser.RParserDefinition;
+import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RFundef;
 import com.r4intellij.psi.RFundefArgs;
 import com.r4intellij.psi.RSection;
@@ -62,9 +63,11 @@ public class RFoldingBuilder implements FoldingBuilder {
         return null;
     }
 
+
     public boolean isCollapsedByDefault(ASTNode node) {
         return false;
     }
+
 
     public FoldingDescriptor[] buildFoldRegions(ASTNode node, Document document) {
         touchTree(node);
@@ -72,6 +75,7 @@ public class RFoldingBuilder implements FoldingBuilder {
         appendDescriptors(node, descriptors);
         return descriptors.toArray(new FoldingDescriptor[descriptors.size()]);
     }
+
 
     /**
      * We have to touch the PSI tree to get the folding to show up when we first open a file
@@ -82,15 +86,21 @@ public class RFoldingBuilder implements FoldingBuilder {
         }
     }
 
+
     private void appendDescriptors(final ASTNode node, final List<FoldingDescriptor> descriptors) {
         if (node.getElementType() == R_FUNDEF) {
             descriptors.add(new FoldingDescriptor(node, node.getTextRange()));
         } else if (node.getElementType() == R_SECTION) {
 //            descriptors.add(new FoldingDescriptor(node, node.getTextRange()));
 
-            PsiElement sectionElement = node.getPsi().getParent().getNextSibling();
-            while (sectionElement != null && sectionElement.getFirstChild() != null & !(sectionElement.getFirstChild() instanceof RSection)) {
-                sectionElement = sectionElement.getNextSibling();
+//            PsiElement sectionElement = node.getPsi().getParent().getNextSibling();
+            PsiElement sectionElement = null;
+            List<RSection> rSections = ((RFile) node.getPsi().getContainingFile()).calcSections();
+            for (RSection rSection : rSections) {
+                if (rSection.getTextOffset() > node.getPsi().getTextOffset()) {
+                    sectionElement = rSection;
+                    break;
+                }
             }
 
             int end = sectionElement != null ? sectionElement.getTextOffset() - 1 : node.getPsi().getContainingFile().getTextRange().getEndOffset();
@@ -103,6 +113,7 @@ public class RFoldingBuilder implements FoldingBuilder {
             child = child.getTreeNext();
         }
     }
+
 
     private boolean isFoldableNode(ASTNode node) {
         return (node.getElementType() == R_FUNDEF

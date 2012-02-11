@@ -21,6 +21,8 @@ import com.r4intellij.lang.parser.GeneratedParserUtilBase;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -34,9 +36,11 @@ public class RFile extends PsiFileBase {
     private CachedValue<List<RCommand>> myProgs;
     private CachedValue<List<RFuncall>> myImports;
 
+
     public RFile(FileViewProvider viewProvider) {
         super(viewProvider, RFileType.R_LANGUAGE);
     }
+
 
     @NotNull
     public FileType getFileType() {
@@ -82,6 +86,33 @@ public class RFile extends PsiFileBase {
             }, false);
         }
         return myImports.getValue();
+    }
+
+
+    public List<RSection> calcSections() {
+        final List<RSection> result = new ArrayList<RSection>();
+        processChildrenDummyAware(this, new Processor<PsiElement>() {
+            @Override
+            public boolean process(PsiElement psiElement) {
+                if (psiElement instanceof RSection) {
+                    result.add((RSection) psiElement);
+                }
+//                this.process(psiElement.getChildren());
+                processChildrenDummyAware(psiElement, this);
+
+                return true;
+            }
+        });
+
+        //sort the sections
+        Collections.sort(result, new Comparator<RSection>() {
+            @Override
+            public int compare(RSection rSection, RSection rSection1) {
+                return rSection.getTextOffset() < rSection1.getTextOffset() ? -1 : 1;
+            }
+        });
+
+        return result;
     }
 
 

@@ -118,4 +118,12 @@ public class IndexUtils {
     }
 
 
+    public static List<String> getFunctionNames(RPackage rPackage) {
+        List<String> funNames = new ArrayList<String>();
+        for (Function function : rPackage.getFunctions()) {
+            funNames.add(function.getFunName());
+        }
+
+        return funNames;
+    }
 }

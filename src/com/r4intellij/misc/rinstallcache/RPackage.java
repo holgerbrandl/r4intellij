@@ -8,10 +8,7 @@
 package com.r4intellij.misc.rinstallcache;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -45,6 +42,11 @@ public class RPackage implements Serializable {
 
     public String getVersion() {
         return packageVersion;
+    }
+
+
+    public Collection<Function> getFunctions() {
+        return Collections.unmodifiableCollection(functions);
     }
 
 
@@ -118,6 +120,4 @@ public class RPackage implements Serializable {
     public int hashCode() {
         return packageName.hashCode();
     }
-
-
 }
