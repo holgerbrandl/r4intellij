@@ -61,21 +61,23 @@ public class LibraryIndexFactory {
     }
 
 
-    private static void updateIndex(LibIndex LibIndex) {
+    private static void updateIndex(LibIndex libIndex) {
         boolean hasChanged = false;
 
         List<String> installedPackages = getListOfInstalledPackages();
         Map<String, String> pckgsWithVersions = getPackageVersions(installedPackages);
 
         for (String pckgName : installedPackages) {
-            RPackage indexedPckg = LibIndex.getByName(pckgName);
+            RPackage indexedPckg = libIndex.getByName(pckgName);
             String pckgVersion = pckgsWithVersions.get(pckgName);
 
             if (indexedPckg != null && (indexedPckg.isDummy() || pckgVersion.equals(indexedPckg.getVersion()))) {
                 continue;
             }
 
-            indexPackage(pckgName);
+            RPackage indexedPackage = indexPackage(pckgName);
+            libIndex.remove(libIndex.getByName(pckgName));
+            libIndex.add(indexedPackage);
             hasChanged = true;
 
 
@@ -87,17 +89,18 @@ public class LibraryIndexFactory {
     }
 
 
-    private static void indexPackage(String packageName) {
+    private static RPackage indexPackage(String packageName) {
+        RPackage indexedPackage;
         try {
-            RPackage rPackage = buildPackageCache(packageName);
-            LIB_INDEX.add(rPackage);
+            indexedPackage = buildPackageCache(packageName);
 
         } catch (Throwable t) {
             log.warn("Indexing of package '" + packageName + "'  failed. Adding dummy package...");
             String packageVersion = getPackageVersion(packageName);
-            RPackage rPackage = new RPackage(packageName, new ArrayList<Function>(), packageVersion, new ArrayList<String>());
-            LIB_INDEX.add(rPackage);
+            indexedPackage = new RPackage(packageName, new ArrayList<Function>(), packageVersion, new ArrayList<String>());
         }
+
+        return indexedPackage;
     }
 
 
