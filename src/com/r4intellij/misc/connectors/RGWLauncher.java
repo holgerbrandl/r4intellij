@@ -39,7 +39,7 @@ public class RGWLauncher implements CodeLaunchConnector {
     }
 
     private static String getLauncher() {
-        File rgwExe = new File(System.getProperty("user.home") + File.separator + "RGWConnector.exe");
+        File rgwExe = new File(System.getenv("ProgramFiles") + File.separator + "RGWConnector.exe");
         if (!rgwExe.isFile()) {
             copyStream2File(rgwExe);
         }
