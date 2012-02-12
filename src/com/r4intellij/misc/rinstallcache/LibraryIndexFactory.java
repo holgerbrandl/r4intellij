@@ -90,24 +90,25 @@ public class LibraryIndexFactory {
         if (hasChanged) {
             CachingUtils.saveObject(LIB_INDEX, getCacheFile());
 
-            ApplicationManager.getApplication().invokeLater(new Runnable() {
-                public void run() {
-                    Project[] projects = ProjectManager.getInstance().getOpenProjects();
-                    for (Project project : projects) {
-                        if (project.isInitialized() && project.isOpen() && !project.isDefault()) {
-                            SpellCheckerManager spellCheckerManager = SpellCheckerManager.getInstance(project);
-                            EditableDictionary dictionary = spellCheckerManager.getUserDictionary();
+            if (ApplicationManager.getApplication() != null)
+                ApplicationManager.getApplication().invokeLater(new Runnable() {
+                    public void run() {
+                        Project[] projects = ProjectManager.getInstance().getOpenProjects();
+                        for (Project project : projects) {
+                            if (project.isInitialized() && project.isOpen() && !project.isDefault()) {
+                                SpellCheckerManager spellCheckerManager = SpellCheckerManager.getInstance(project);
+                                EditableDictionary dictionary = spellCheckerManager.getUserDictionary();
 
-                            for (RPackage rPackage : LIB_INDEX) {
-                                dictionary.addToDictionary(rPackage.getName());
-                                dictionary.addToDictionary(IndexUtils.getFunctionNames(rPackage));
+                                for (RPackage rPackage : LIB_INDEX) {
+                                    dictionary.addToDictionary(rPackage.getName());
+                                    dictionary.addToDictionary(IndexUtils.getFunctionNames(rPackage));
+                                }
+
+                                DaemonCodeAnalyzer.getInstance(project).restart();
                             }
-
-                            DaemonCodeAnalyzer.getInstance(project).restart();
                         }
                     }
-                }
-            });
+                });
         }
     }
 
@@ -139,7 +140,7 @@ public class LibraryIndexFactory {
         HashMap<String, Function> api = new HashMap<String, Function>();
 
 
-        String rawFunSigs = CachingUtils.evalRComand("library(" + packageName + "); print(\"----\");  lsf.str(\"package:" + packageName + "\")");
+        String rawFunSigs = CachingUtils.evalRComand("library(" + packageName + "); print('----');  lsf.str('package:" + packageName + "')");
         String[] splitFunSignatures = rawFunSigs.split("----\"\n")[1].replace("\n  ", "").split("\n");
         List<String> funSigs = new ArrayList<String>();
         for (int i = 1; i < splitFunSignatures.length - 2; i++) {
@@ -257,7 +258,7 @@ public class LibraryIndexFactory {
 
     private static List<String> getDependencies(String packageName) {
         Matcher matcher;
-        String rawDeps = CachingUtils.evalRComand("library(tools); paste(pkgDepends(\"" + packageName + "\")$Depends, collapse=\",\")");
+        String rawDeps = CachingUtils.evalRComand("library(tools); paste(pkgDepends('" + packageName + "')$Depends, collapse=',')");
         matcher = Pattern.compile("1] \"(.*)\"", Pattern.DOTALL).matcher(rawDeps);
         List<String> cleanedDeps = new ArrayList<String>();
         if (matcher.find()) {
@@ -278,7 +279,7 @@ public class LibraryIndexFactory {
         StringBuilder sb = new StringBuilder();
 
         for (String packageName : packageNames) {
-            sb.append("pckgDocu <-library(help = " + packageName + ")$info[[1]]; paste(pckgDocu[grep(\"Version|Package:\", pckgDocu)], collapse='__');");
+            sb.append("pckgDocu <-library(help = " + packageName + ")$info[[1]]; paste(pckgDocu[grep('Version|Package:', pckgDocu)], collapse='__');");
         }
 
 

@@ -7,8 +7,15 @@
 
 package com.r4intellij.misc.rinstallcache;
 
+import com.r4intellij.Utils;
+
 import java.io.*;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -20,12 +27,46 @@ public class CachingUtils {
 
 
     public static String evalRScript(File script) {
-        String[] cmd = new String[]{"R", "--vanilla", "--quiet", "-f", script.getAbsolutePath()};
+        String[] cmd = new String[]{getRExecutable(), "--vanilla", "--quiet", "-f", script.getAbsolutePath()};
         try {
             return evalRInternal(cmd).getOutput();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String getRExecutable() {
+        if (!Utils.isWindowsPlatform())
+            return "R";
+
+        File rHome = new File(System.getenv("R_HOME"));
+        if (rHome == null) {
+            rHome = new File(System.getenv("ProgramFiles") + File.separatorChar + "R");
+        }
+        if (rHome.isDirectory()) {
+            List<File> rInstallations = Arrays.asList(rHome.listFiles(new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String name) {
+                    Matcher matcher = Pattern.compile("R-([0-9.]*)").matcher(name);
+                    matcher.find();
+                    return matcher.matches();
+                }
+            }));
+
+            File latestR = Collections.max(rInstallations, new Comparator<File>() {
+                @Override
+                public int compare(File o1, File o2) {
+                    int v1 = Integer.parseInt(o1.getName().replace("R-", "").replaceAll("[.]", ""));
+                    int v2 = Integer.parseInt(o2.getName().replace("R-", "").replaceAll("[.]", ""));
+
+                    return v1 - v2;  //To change body of implemented methods use File | Settings | File Templates.
+                }
+            });
+
+            return latestR.getAbsolutePath() + File.separatorChar + "bin" + File.separatorChar + "R.exe";
+        }
+
+        return null;
     }
 
 
@@ -35,7 +76,8 @@ public class CachingUtils {
 
 
     static StreamGobbler evalRCmd(String cmd) {
-        String[] getPckgsCmd = new String[]{"R", "--vanilla", "--quiet", "-e", cmd};
+//        cmd = Utils.isWindowsPlatform() ? cmd.replaceAll("[$]", "\\$") : cmd;
+        String[] getPckgsCmd = new String[]{getRExecutable(), "--vanilla", "--quiet", "-e", cmd};
 
         return evalRInternal(getPckgsCmd);
     }
@@ -105,7 +147,10 @@ public class CachingUtils {
 
 
     public static void main(String[] args) {
-        LibraryIndexFactory.getPackageVersions(Arrays.asList("plyr", "ggplot2", "Biostrings"));
+
+//        System.err.println((evalRCmd("iris$Sepal.Length").getOutput()));
+        System.err.println((evalRCmd("tt <-library(help=base); tt$info[[1]]").getOutput()));
+        System.err.println(LibraryIndexFactory.getPackageVersions(Arrays.asList("base")));
     }
 }
 

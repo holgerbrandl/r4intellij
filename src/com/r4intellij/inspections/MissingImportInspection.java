@@ -114,6 +114,9 @@ public class MissingImportInspection extends LocalInspectionTool {
                             if (isImported)
                                 return;
 
+                            if (funPackageNames.isEmpty())
+                                return;
+
                             // no overlap --> highlight as error and suggest to import one!
 
                             List<LocalQuickFix> fixes = new ArrayList<LocalQuickFix>();
