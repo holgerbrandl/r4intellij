@@ -50,12 +50,17 @@ public class CodeEvalActionRegistry extends AbstractProjectComponent {
         RSettings instance = RSettings.getInstance();
         if (instance != null) {
             for (EvalActionPref actionPref : instance.getEvalActionPrefs()) {
+                String actionID = "customRAction" + instance.getEvalActionPrefs().indexOf(actionPref);
+                if (ActionManager.getInstance().getAction(actionID) != null)
+                    continue;
+
                 AnAction action = new ConfigurableEvalAction(actionPref.getName(), actionPref.getCode(), CustomShortcutSet.fromString(actionPref.getDefShortCut()));
                 actionMenu.add(action, new Constraints(Anchor.LAST, "after"));
-                ActionManager.getInstance().registerAction("customRAction" + instance.getEvalActionPrefs().indexOf(actionPref), action);
+                ActionManager.getInstance().registerAction(actionID, action);
             }
         }
     }
+
 
     @NonNls
     @NotNull

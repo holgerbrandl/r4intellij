@@ -13,6 +13,7 @@ featSelection<-332
 library(car)
 library(alr3);
 library(ggplot2);
+library(plyr);
 iris
 ########
 ### dfdf
@@ -32,7 +33,7 @@ subframe <- R[, featSelection];
 subfr33ame <- R[, featSelection];
 
 subfr
-# caclulate the optimal lambda for the trafo
+# calculate the optimal lambda for the trafo
 powers <- box.cox.powers(as.matrix(subframe));
 normValues <- powtran(subframe, powers$lambda, family="box.cox")
 
