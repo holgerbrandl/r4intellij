@@ -8,43 +8,52 @@
 <idea-plugin version="2">
     <name>R4Intellij</name>
     <description>R coding tools for Intellij Idea</description>
-    <version>0.5+</version>
+    <version>0.6</version>
     <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
 
     <description><![CDATA[
-  <html>
-    <h3>R support for IntelliJ</h3>
+        <html>
+        <h3>R support for IntelliJ</h3>
 
-    This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features
-    or to point out bugs at our <a href="https://code.google.com/p/r4intellij/">project homepage.</a>
-    <br>
-    <b>Features:</b><br>
-    <ul>
-        <li> Advanced syntax highlighting and configuration</li>
-        <li> Evaluate the current selection or line in R (MacOS only for now)</li>
-        <li> Line un-/commenting, brace matching</li>
-        <li> Basic code completion</li>
-        <li> Some (simple) live templates</li>
-        <li> Function definition folding</li>
-    </ul>
+        R4Intllij is an integration of R, which is a language for statistical computing and graphcis, into Intellij
+        IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever.
+        <p/>
+        By implementing a fault-tolerant parser for R, the plugin allows for syntax highlighting, intelligent code
+        folding and completion, refactorings, and more.
+        <p/>
 
-    <br>
-    <b>Coming soon & Planned</b>
-    <ul>
-        <li> Code formatter</li>
-        <li> More context-aware autocompletion for variables, functions and file paths</li>
-        <li> Inspections and quickfixes for common problems</li>
-        <li> Basic refactorings (rename variables and functions)</li>
-        <li> Advanced navigation (structure view, go to declaration, ...)</li>
-        <li> Ctrl+Q (Quick documentation lookup) for internal commands, external commands and functions</li>
-        <li> Highlight usages in file for functions and variables</li>
-    </ul>
-  </html>
-  ]]></description>
+        This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features or
+        to point out bugs at our <a href="https://code.google.com/p/r4intellij/">project homepage.</a>
+        <br>
+        <b>Features:</b><br>
+        <ul>
+            <li> Syntax highlighting</li>
+            <li> Line un-/commenting, brace matching</li>
+            <li> Basic code completion</li>
+            <li> Function definition and code section folding</li>
+            <li> Evaluate the current selection or line in R (MacOS, Windows)</li>
+            <li> Usages highlighting of functions and variables</li>
+            <li> Auto-import of packages</li>
+            <li> Some (simple) live templates</li>
+        </ul>
+        <p/>
+        Read more about the features at https://code.google.com/p/r4intellij/
+        </html>
+        ]]></description>
 
     <change-notes><![CDATA[
         <html>
+        <b>Changes in v0.6:</b>
+        <ul>
+            <li>Highlight usages of functions and variables in file</li>
+            <li>Advanced navigation (structure view, go to declaration)</li>
+            <li>Code section folding</li>
+            <li>Code evaluation connectors for Windows (Rgui) and MacOS (R, R64 and Terminal)</li>
+            <li>Customizable code evaluation snippets</li>
+            <li>Auto-import of functions</li>
+            <li>Simple function help</li>
+        </ul>
         <b>Changes in v0.5:</b>
         <ul>
             <li></li>
