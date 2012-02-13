@@ -11,6 +11,8 @@
 
 package com.r4intellij.misc.connectors;
 
+import com.r4intellij.Utils;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 
@@ -23,7 +25,10 @@ public class RGWLauncher implements CodeLaunchConnector {
 
     public static void main(String[] args) {
 //        new RGWLauncher().submitCode("print('test')", true);
-        System.err.println(new RGWLauncher().getLauncher());
+//        System.err.println(new RGWLauncher().getLauncher());
+        new RGWLauncher().submitCode("ls()", false);
+
+        System.err.println();
     }
 
     public RGWLauncher() {
@@ -32,14 +37,14 @@ public class RGWLauncher implements CodeLaunchConnector {
 //        final URL dir = WinRGuiConnectorPlugin.getDefault().getBundle().getEntry("/win32/RGWConnector.exe"); //$NON-NLS-1$
         try {
 //            final String local = FileLocator.toFileURL(dir).getPath();
-            getLauncher();
+            fExecutable = getLauncher();
         } catch (final Throwable e) {
             throw new RuntimeException("Error Loading R-GUI-Windows-Connector:", e);
         }
     }
 
     private static String getLauncher() {
-        File rgwExe = new File(System.getenv("ProgramFiles") + File.separator + "RGWConnector.exe");
+        File rgwExe = new File(System.getProperty("user.home") + File.separator + "RGWConnector.exe");
         if (!rgwExe.isFile()) {
             copyStream2File(rgwExe);
         }
@@ -51,13 +56,18 @@ public class RGWLauncher implements CodeLaunchConnector {
 
     private static void copyStream2File(File rgwExe) {
         try {
-            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("/connectors/RGWConnector.exe");
+//            InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("/connectors/RGWConnector.exe");
+            InputStream in = Utils.class.getResourceAsStream("/connectors/RGWConnector.exe");
             OutputStream out = new BufferedOutputStream(new FileOutputStream(rgwExe));
             byte[] buffer = new byte[1024];
             int len;
             while ((len = in.read(buffer)) != -1) {
                 out.write(buffer, 0, len);
             }
+
+            out.flush();
+            out.close();
+            in.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
