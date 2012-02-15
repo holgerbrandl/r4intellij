@@ -1,19 +1,19 @@
-#!/bin/bash
-# declare STRING variable
-STRING="Hello World"
-#print variable on a screen
-echo $STRING
+#!/bin/sh
+# This is a comment
+echo "List of files:"
 
+ls -lA
 
+FILE_LIST="`ls *.html`"
+echo FILE_LIST: ${FILE_LIST}
 
-some R section
+RESULT=""
+for file in ${FILE_LIST}
+do
+    FIRST_LINE=`head -2 ${file}`
+    RESULT=${RESULT}${FIRST_LINE}
+done
 
-# normalize by range and shift by 10 to get something shapiro can work with
+echo ${RESULT} | cat >FILE_HEADS
 
-datarange <- range(somedata)
-normdata <- 5 + (somedata-mean(somedata))/(datarange[2] - datarange[1])
-
-# use another normality test
-library(nortest)
-
-help(package=nortest)
+echo "'$RESULT' written Script done. "

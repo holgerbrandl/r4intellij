@@ -44,11 +44,12 @@ public class RSettings implements PersistentStateComponent<RSettings>, RoamingTy
 
 
     {
-        evalActionPrefs.add(new EvalActionPref("head+nrow", "head($snippet$); nrow($snippet$);", SNIPACTION_1_DEF_SHORTCUT));
-        evalActionPrefs.add(new EvalActionPref("structure", "str($snippet$);", SNIPACTION_2_DEF_SHORTCUT));
-        evalActionPrefs.add(new EvalActionPref("head+tail", "head($snippet$); tail($snippet$);", SNIPACTION_3_DEF_SHORTCUT));
-        evalActionPrefs.add(new EvalActionPref("summarize", "summarize($snippet$);", SNIPACTION_4_DEF_SHORTCUT));
+        evalActionPrefs.add(new EvalActionPref("head+nrow", "head(%snippet%); nrow(%snippet%);", SNIPACTION_1_DEF_SHORTCUT));
+        evalActionPrefs.add(new EvalActionPref("structure", "str(%snippet%);", SNIPACTION_2_DEF_SHORTCUT));
+        evalActionPrefs.add(new EvalActionPref("head+tail", "head(%snippet%); tail(%snippet%);", SNIPACTION_3_DEF_SHORTCUT));
+        evalActionPrefs.add(new EvalActionPref("summarize", "summarize(%snippet%);", SNIPACTION_4_DEF_SHORTCUT));
     }
+
 
     public String codeSnippetEvalTarget;
 
@@ -57,21 +58,25 @@ public class RSettings implements PersistentStateComponent<RSettings>, RoamingTy
         return this;
     }
 
+
     public void loadState(RSettings that) {
         this.addCompletionTerms = that.addCompletionTerms;
         this.evalActionPrefs = that.getEvalActionPrefs();
         this.codeSnippetEvalTarget = that.codeSnippetEvalTarget;
     }
 
+
     public static RSettings getInstance() {
         return ServiceManager.getService(RSettings.class);
     }
+
 
     @Tag("evalActionPrefs")
     @AbstractCollection(surroundWithTag = false)
     public List<EvalActionPref> getEvalActionPrefs() {
         return evalActionPrefs;
     }
+
 
     public void setEvalActionPrefs(List<EvalActionPref> evalActionPrefs) {
         this.evalActionPrefs = evalActionPrefs;

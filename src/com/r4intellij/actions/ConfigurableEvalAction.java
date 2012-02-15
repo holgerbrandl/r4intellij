@@ -20,16 +20,19 @@ public class ConfigurableEvalAction extends AbstactEvalTextAction {
 
     private String codeTemplate;
 
+
     public ConfigurableEvalAction(String name, String codeTemplate, CustomShortcutSet shortcuts) {
         super(name, codeTemplate, shortcuts);
 
         this.codeTemplate = codeTemplate;
     }
 
+
     @Override
     protected String getEvalCmd(String selectedText) {
-        return codeTemplate.replaceAll("[$]snippet[$]", selectedText);
+        return codeTemplate.replaceAll("%snippet%", selectedText);
     }
+
 
     @Override
     public boolean isDumbAware() {
