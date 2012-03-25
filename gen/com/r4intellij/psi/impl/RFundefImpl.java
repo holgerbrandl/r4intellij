@@ -7,7 +7,6 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RExprOrAssign;
 import com.r4intellij.psi.RFundef;
 import com.r4intellij.psi.RFundefArgs;
@@ -21,16 +20,18 @@ public class RFundefImpl extends RCompositeElementImpl implements RFundef {
         super(node);
     }
 
+
     @Override
     @NotNull
     public RExprOrAssign getExprOrAssign() {
-        return PsiTreeUtil.getChildOfType(this, RExprOrAssign.class);
+        return findNotNullChildByClass(RExprOrAssign.class);
     }
+
 
     @Override
     @Nullable
     public RFundefArgs getFundefArgs() {
-        return PsiTreeUtil.getChildOfType(this, RFundefArgs.class);
+        return findChildByClass(RFundefArgs.class);
     }
 
 }

@@ -7,7 +7,6 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RCond;
 import com.r4intellij.psi.RExpr;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +18,11 @@ public class RCondImpl extends RCompositeElementImpl implements RCond {
         super(node);
     }
 
+
     @Override
     @NotNull
     public RExpr getExpr() {
-        return PsiTreeUtil.getChildOfType(this, RExpr.class);
+        return findNotNullChildByClass(RExpr.class);
     }
 
 }

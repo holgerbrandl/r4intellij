@@ -21,11 +21,13 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
         super(node);
     }
 
+
     @Override
     @Nullable
     public RCond getCond() {
-        return PsiTreeUtil.getChildOfType(this, RCond.class);
+        return findChildByClass(RCond.class);
     }
+
 
     @Override
     @NotNull
@@ -33,41 +35,48 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, RExpr.class);
     }
 
+
     @Override
     @Nullable
     public RExprOrAssign getExprOrAssign() {
-        return PsiTreeUtil.getChildOfType(this, RExprOrAssign.class);
+        return findChildByClass(RExprOrAssign.class);
     }
+
 
     @Override
     @Nullable
     public RExprlist getExprlist() {
-        return PsiTreeUtil.getChildOfType(this, RExprlist.class);
+        return findChildByClass(RExprlist.class);
     }
+
 
     @Override
     @Nullable
     public RForcond getForcond() {
-        return PsiTreeUtil.getChildOfType(this, RForcond.class);
+        return findChildByClass(RForcond.class);
     }
+
 
     @Override
     @Nullable
     public RFuncall getFuncall() {
-        return PsiTreeUtil.getChildOfType(this, RFuncall.class);
+        return findChildByClass(RFuncall.class);
     }
+
 
     @Override
     @Nullable
     public RFundef getFundef() {
-        return PsiTreeUtil.getChildOfType(this, RFundef.class);
+        return findChildByClass(RFundef.class);
     }
+
 
     @Override
     @Nullable
     public RStringLiteral getStringLiteral() {
-        return PsiTreeUtil.getChildOfType(this, RStringLiteral.class);
+        return findChildByClass(RStringLiteral.class);
     }
+
 
     @Override
     @NotNull
@@ -75,10 +84,11 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, RSublist.class);
     }
 
+
     @Override
     @Nullable
     public RVariable getVariable() {
-        return PsiTreeUtil.getChildOfType(this, RVariable.class);
+        return findChildByClass(RVariable.class);
     }
 
 }

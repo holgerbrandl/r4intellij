@@ -7,7 +7,6 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RCommand;
 import com.r4intellij.psi.RExprOrAssign;
 import com.r4intellij.psi.RSection;
@@ -20,16 +19,18 @@ public class RCommandImpl extends RCompositeElementImpl implements RCommand {
         super(node);
     }
 
+
     @Override
     @Nullable
     public RExprOrAssign getExprOrAssign() {
-        return PsiTreeUtil.getChildOfType(this, RExprOrAssign.class);
+        return findChildByClass(RExprOrAssign.class);
     }
+
 
     @Override
     @Nullable
     public RSection getSection() {
-        return PsiTreeUtil.getChildOfType(this, RSection.class);
+        return findChildByClass(RSection.class);
     }
 
 }

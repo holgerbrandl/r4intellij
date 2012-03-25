@@ -7,7 +7,6 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RExpr;
 import com.r4intellij.psi.RForcond;
 import com.r4intellij.psi.RVariable;
@@ -20,16 +19,18 @@ public class RForcondImpl extends RCompositeElementImpl implements RForcond {
         super(node);
     }
 
+
     @Override
     @NotNull
     public RExpr getExpr() {
-        return PsiTreeUtil.getChildOfType(this, RExpr.class);
+        return findNotNullChildByClass(RExpr.class);
     }
+
 
     @Override
     @NotNull
     public RVariable getVariable() {
-        return PsiTreeUtil.getChildOfType(this, RVariable.class);
+        return findNotNullChildByClass(RVariable.class);
     }
 
 }

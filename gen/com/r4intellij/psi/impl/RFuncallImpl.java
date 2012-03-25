@@ -7,7 +7,6 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RFuncall;
 import com.r4intellij.psi.RSublist;
 import com.r4intellij.psi.RVariable;
@@ -21,16 +20,18 @@ public class RFuncallImpl extends AbstractRFunCall implements RFuncall {
         super(node);
     }
 
+
     @Override
     @Nullable
     public RSublist getSublist() {
-        return PsiTreeUtil.getChildOfType(this, RSublist.class);
+        return findChildByClass(RSublist.class);
     }
+
 
     @Override
     @NotNull
     public RVariable getVariable() {
-        return PsiTreeUtil.getChildOfType(this, RVariable.class);
+        return findNotNullChildByClass(RVariable.class);
     }
 
 }

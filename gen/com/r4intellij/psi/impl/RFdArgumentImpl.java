@@ -7,7 +7,6 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RExpr;
 import com.r4intellij.psi.RFdArgument;
 import org.jetbrains.annotations.Nullable;
@@ -19,10 +18,11 @@ public class RFdArgumentImpl extends RCompositeElementImpl implements RFdArgumen
         super(node);
     }
 
+
     @Override
     @Nullable
     public RExpr getExpr() {
-        return PsiTreeUtil.getChildOfType(this, RExpr.class);
+        return findChildByClass(RExpr.class);
     }
 
 }

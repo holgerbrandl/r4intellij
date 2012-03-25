@@ -7,7 +7,6 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.REqualAssign;
 import com.r4intellij.psi.RExpr;
 import com.r4intellij.psi.RExprOrAssign;
@@ -20,16 +19,18 @@ public class REqualAssignImpl extends RCompositeElementImpl implements REqualAss
         super(node);
     }
 
+
     @Override
     @NotNull
     public RExpr getExpr() {
-        return PsiTreeUtil.getChildOfType(this, RExpr.class);
+        return findNotNullChildByClass(RExpr.class);
     }
+
 
     @Override
     @NotNull
     public RExprOrAssign getExprOrAssign() {
-        return PsiTreeUtil.getChildOfType(this, RExprOrAssign.class);
+        return findNotNullChildByClass(RExprOrAssign.class);
     }
 
 }
