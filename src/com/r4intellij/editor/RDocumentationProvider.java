@@ -43,7 +43,8 @@ public class RDocumentationProvider implements DocumentationProvider {
 
         if (element instanceof RFuncall) {
             Function function = getFunction(((RFuncall) element).getVariable());
-            return "<h1>" + function.getFunName() + "</h1>" + function.getShortDesc() + "<p><i>" + function.getFunSignature() + "</i>";
+            if (function != null)
+                return "<h1>" + function.getFunName() + "</h1>" + function.getShortDesc() + "<p><i>" + function.getFunSignature() + "</i>";
         }
         return null;
     }
