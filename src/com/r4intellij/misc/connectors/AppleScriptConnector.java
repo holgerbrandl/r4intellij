@@ -26,8 +26,12 @@ public class AppleScriptConnector implements CodeLaunchConnector {
             if (Utils.isMacOSX()) {
                 Runtime runtime = Runtime.getRuntime();
 
-                String dquotesExpandedText = rCommands.replace("\"", "\\\"");
+                String dquotesExpandedText = rCommands.replace("\\", "\\\\");
+                dquotesExpandedText = dquotesExpandedText.replace("\"", "\\\"");
+
+
                 String evalTarget = RSettings.getInstance().codeSnippetEvalTarget;
+//                String evalTarget = "R64";
 
 //                //todo remove this hacky thing
 //                File connectorDef = new File(System.getProperty("user.home") + File.separator + "r4j_evaltarget.txt");
@@ -54,5 +58,10 @@ public class AppleScriptConnector implements CodeLaunchConnector {
         } catch (IOException e1) {
             ConnectorUtils.log.error(e1);
         }
+    }
+
+
+    public static void main(String[] args) {
+        new AppleScriptConnector().submitCode("write.table(head(iris), file=\"~/Desktop/iris.txt\", sep=\"\\t\")\n", true);
     }
 }
