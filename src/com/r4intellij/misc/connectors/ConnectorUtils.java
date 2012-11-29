@@ -9,6 +9,7 @@ package com.r4intellij.misc.connectors;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.r4intellij.Utils;
+import com.r4intellij.settings.RSettings;
 
 
 /**
@@ -37,7 +38,7 @@ public class ConnectorUtils {
     public static void push2R(String text) {
         CodeLaunchConnector codeLaunchConnector = getPlatformConnector();
         if (codeLaunchConnector != null) {
-            codeLaunchConnector.submitCode(text, true);
+            codeLaunchConnector.submitCode(text, !RSettings.getInstance().keepFocusInEditor);
         }
     }
 }

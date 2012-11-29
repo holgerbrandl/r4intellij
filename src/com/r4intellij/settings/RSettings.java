@@ -52,6 +52,7 @@ public class RSettings implements PersistentStateComponent<RSettings>, RoamingTy
 
 
     public String codeSnippetEvalTarget;
+    public boolean keepFocusInEditor;
 
 
     public RSettings getState() {
@@ -63,6 +64,7 @@ public class RSettings implements PersistentStateComponent<RSettings>, RoamingTy
         this.addCompletionTerms = that.addCompletionTerms;
         this.evalActionPrefs = that.getEvalActionPrefs();
         this.codeSnippetEvalTarget = that.codeSnippetEvalTarget;
+        this.keepFocusInEditor = that.keepFocusInEditor;
     }
 
 

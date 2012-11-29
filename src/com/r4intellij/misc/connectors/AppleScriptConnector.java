@@ -23,6 +23,7 @@ public class AppleScriptConnector implements CodeLaunchConnector {
     @Override
     public void submitCode(String rCommands, boolean switchFocus2R) {
         try {
+
             if (Utils.isMacOSX()) {
                 Runtime runtime = Runtime.getRuntime();
 
@@ -43,12 +44,20 @@ public class AppleScriptConnector implements CodeLaunchConnector {
 
                 String evalSelection;
                 if (evalTarget.equals("Terminal")) {
-                    evalSelection = "tell application \"" + "Terminal" + "\" to activate\n" +
-                            "tell application \"" + "Terminal" + "\" to do script \"" + dquotesExpandedText + "\" in window 0";
+                    if (switchFocus2R) {
+                        evalSelection = "tell application \"" + "Terminal" + "\" to activate\n" +
+                                "tell application \"" + "Terminal" + "\" to do script \"" + dquotesExpandedText + "\" in window 0";
+                    } else {
+                        evalSelection = "tell application \"" + "Terminal" + "\" to do script \"" + dquotesExpandedText + "\" in window 0";
+                    }
 
                 } else {
-                    evalSelection = "tell application \"" + evalTarget + "\" to activate\n" +
-                            "tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
+                    if (switchFocus2R) {
+                        evalSelection = "tell application \"" + evalTarget + "\" to activate\n" +
+                                "tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
+                    } else {
+                        evalSelection = "tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
+                    }
                 }
 
                 String[] args = {"osascript", "-e", evalSelection};

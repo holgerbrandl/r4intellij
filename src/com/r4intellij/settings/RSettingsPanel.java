@@ -27,6 +27,7 @@ public class RSettingsPanel {
     private JTextField evalTitle4;
     private JTextField evalCode4;
     private JComboBox codeEvalTarget;
+    private JCheckBox keepFocusInEditorCheckBox;
 
 
     public JComponent getPanel() {
@@ -60,6 +61,7 @@ public class RSettingsPanel {
         }
 
         codeEvalTarget.setSelectedItem(settings.codeSnippetEvalTarget == null ? getEvalTargetOptions()[0] : settings.codeSnippetEvalTarget);
+        keepFocusInEditorCheckBox.setSelected(settings.keepFocusInEditor);
     }
 
 
@@ -80,6 +82,7 @@ public class RSettingsPanel {
         );
 
         settings.codeSnippetEvalTarget = codeEvalTarget.getSelectedItem().toString();
+        settings.keepFocusInEditor = keepFocusInEditorCheckBox.isSelected();
     }
 
 
