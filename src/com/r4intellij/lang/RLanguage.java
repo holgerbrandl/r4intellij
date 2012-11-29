@@ -19,6 +19,7 @@ public class RLanguage extends Language {
 
     public static final RLanguage INSTANCE = new RLanguage();
 
+
     public RLanguage() {
         super("R", "text/R");
     }

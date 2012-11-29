@@ -23,7 +23,8 @@ import java.util.regex.Pattern;
 
 
 /**
- * Allows to index a user's R installation to make functions and packages available for code completion, inspections, etc.
+ * Allows to index a user's R installation to make functions and packages available for code completion, inspections,
+ * etc.
  *
  * @author Holger Brandl
  */

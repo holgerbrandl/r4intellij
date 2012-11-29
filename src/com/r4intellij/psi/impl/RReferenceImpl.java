@@ -43,14 +43,17 @@ public class RReferenceImpl<T extends PsiElement> extends PsiReferenceBase<T> {
                 }
             };
 
+
     public RReferenceImpl(@NotNull T element, TextRange range) {
         super(element, range);
     }
+
 
     @Override
     public PsiElement resolve() {
         return ResolveCache.getInstance(myElement.getProject()).resolveWithCaching(this, MY_RESOLVER, true, false);
     }
+
 
     private PsiElement resolveInner() {
         final Ref<PsiElement> result = Ref.create(null);
@@ -69,6 +72,7 @@ public class RReferenceImpl<T extends PsiElement> extends PsiReferenceBase<T> {
         });
         return result.get();
     }
+
 
     @NotNull
     @Override

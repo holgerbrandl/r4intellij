@@ -30,24 +30,29 @@ public class RFileType extends LanguageFileType {
      */
     public static final String DEFAULT_EXTENSION = "R";
 
+
     public RFileType() {
         super(RLanguage.INSTANCE);
     }
+
 
     @NotNull
     public String getName() {
         return "R";
     }
 
+
     @NotNull
     public String getDescription() {
         return "R scripts";
     }
 
+
     @NotNull
     public String getDefaultExtension() {
         return DEFAULT_EXTENSION;
     }
+
 
     public Icon getIcon() {
         return IconLoader.findIcon("/icons/r16_icon.png");

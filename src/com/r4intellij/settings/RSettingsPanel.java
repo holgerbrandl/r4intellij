@@ -33,6 +33,7 @@ public class RSettingsPanel {
         return rootPanel;
     }
 
+
     public void load(@NotNull RSettings settings) {
         addComplTerms.setText(settings.addCompletionTerms);
 
@@ -61,10 +62,12 @@ public class RSettingsPanel {
         codeEvalTarget.setSelectedItem(settings.codeSnippetEvalTarget == null ? getEvalTargetOptions()[0] : settings.codeSnippetEvalTarget);
     }
 
+
     public boolean isModified(@NotNull RSettings settings) {
         return !settings.addCompletionTerms.equals(settings.addCompletionTerms) || true;
 //                || !settings.arcInitializationFile.equals(arcInitializationFileField.getText());
     }
+
 
     public void save(@NotNull RSettings settings) {
         settings.addCompletionTerms = addComplTerms.getText();
@@ -79,10 +82,12 @@ public class RSettingsPanel {
         settings.codeSnippetEvalTarget = codeEvalTarget.getSelectedItem().toString();
     }
 
+
     private void createUIComponents() {
         String[] evalTargetOptions = getEvalTargetOptions();
         codeEvalTarget = new JComboBox(new DefaultComboBoxModel(evalTargetOptions));
     }
+
 
     private String[] getEvalTargetOptions() {
         return Utils.isMacOSX() ? new String[]{"R", "R64", "Terminal"} : Utils.isWindowsPlatform() ? new String[]{"R"} : new String[]{""};

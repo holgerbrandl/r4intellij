@@ -33,6 +33,7 @@ public class Function implements Serializable {
         this.funSignature = funSignature;
     }
 
+
     public String getFunName() {
         return funName;
     }
@@ -47,9 +48,11 @@ public class Function implements Serializable {
         this.shortDesc = fundDesc;
     }
 
+
     public String getShortDesc() {
         return shortDesc;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -61,10 +64,12 @@ public class Function implements Serializable {
         return funName.equals(function.funName);
     }
 
+
     @Override
     public int hashCode() {
         return funName.hashCode();
     }
+
 
     @Override
     public String toString() {

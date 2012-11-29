@@ -29,10 +29,12 @@ public class RContextType extends FileTypeBasedContextType {
         super("R", "&R", RFileType.R_FILE_TYPE);
     }
 
+
     @Override
     public boolean isInContext(@NotNull PsiFile file, int offset) {
         return isMyLanguage(file.getLanguage());
     }
+
 
     static boolean isMyLanguage(Language language) {
         return language.isKindOf(RLanguage.INSTANCE) || language.isKindOf(RLanguage.INSTANCE);

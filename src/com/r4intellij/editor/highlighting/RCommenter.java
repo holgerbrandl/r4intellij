@@ -25,51 +25,62 @@ public class RCommenter implements CodeDocumentationAwareCommenter {
         return "#";
     }
 
+
     public String getBlockCommentPrefix() {
         return null;
     }
+
 
     public String getBlockCommentSuffix() {
         return null;
     }
 
+
     public String getCommentedBlockCommentPrefix() {
         return null;
     }
 
+
     public String getCommentedBlockCommentSuffix() {
         return null;
     }
+
 
     @Nullable
     public IElementType getLineCommentTokenType() {
         return RTypes.R_COMMENT;
     }
 
+
     @Nullable
     public IElementType getBlockCommentTokenType() {
         return null;
     }
+
 
     @Nullable
     public IElementType getDocumentationCommentTokenType() {
         return null;
     }
 
+
     @Nullable
     public String getDocumentationCommentPrefix() {
         return null;
     }
+
 
     @Nullable
     public String getDocumentationCommentLinePrefix() {
         return null;
     }
 
+
     @Nullable
     public String getDocumentationCommentSuffix() {
         return null;
     }
+
 
     public boolean isDocumentationComment(PsiComment element) {
         return false;

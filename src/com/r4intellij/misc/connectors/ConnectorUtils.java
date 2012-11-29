@@ -20,6 +20,7 @@ public class ConnectorUtils {
 
     static final Logger log = Logger.getInstance("#ConnectorUtils");
 
+
     public static CodeLaunchConnector getPlatformConnector() {
         if (Utils.isMacOSX()) {
             return new AppleScriptConnector();

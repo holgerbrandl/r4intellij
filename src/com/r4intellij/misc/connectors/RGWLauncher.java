@@ -23,6 +23,7 @@ public class RGWLauncher implements CodeLaunchConnector {
     private boolean fSubmitDirectly;
     private String fExecutable;
 
+
     public static void main(String[] args) {
 //        new RGWLauncher().submitCode("print('test')", true);
 //        System.err.println(new RGWLauncher().getLauncher());
@@ -30,6 +31,7 @@ public class RGWLauncher implements CodeLaunchConnector {
 
         System.err.println();
     }
+
 
     public RGWLauncher() {
 
@@ -43,6 +45,7 @@ public class RGWLauncher implements CodeLaunchConnector {
         }
     }
 
+
     private static String getLauncher() {
         File rgwExe = new File(System.getProperty("user.home") + File.separator + "RGWConnector.exe");
         if (!rgwExe.isFile()) {
@@ -53,6 +56,7 @@ public class RGWLauncher implements CodeLaunchConnector {
             throw new RuntimeException("Missing connector exe  '" + rgwExe.getAbsolutePath() + "'.");
         return rgwExe.getAbsolutePath();
     }
+
 
     private static void copyStream2File(File rgwExe) {
         try {
@@ -72,6 +76,7 @@ public class RGWLauncher implements CodeLaunchConnector {
             throw new RuntimeException(e);
         }
     }
+
 
     private enum SubmitType {DONOTHING, SUBMITINPUT, PASTECLIPBOARD}
 
@@ -113,6 +118,7 @@ public class RGWLauncher implements CodeLaunchConnector {
                 }
         }
     }
+
 
     private boolean copyToClipboard(final String[] text) {
 //		final StringBuilder builder = new StringBuilder();

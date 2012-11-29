@@ -28,9 +28,11 @@ public class Strings {
     @NonNls
     private static final String BUNDLE = "com.r4intellij.misc.R";
 
+
     public static String message(@PropertyKey(resourceBundle = BUNDLE) String key, Object... params) {
         return CommonBundle.message(getBundle(), key, params);
     }
+
 
     private static ResourceBundle getBundle() {
         ResourceBundle bundle = null;

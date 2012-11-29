@@ -16,6 +16,7 @@ public class RFileTypeLoader extends FileTypeFactory {
 
     public static final RFileType R_FILE_TYPE = new RFileType();
 
+
     public void createFileTypes(@NotNull FileTypeConsumer consumer) {
         consumer.consume(R_FILE_TYPE, RFileType.DEFAULT_EXTENSION);
     }

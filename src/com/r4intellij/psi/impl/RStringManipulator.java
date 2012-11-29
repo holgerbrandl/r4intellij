@@ -23,8 +23,7 @@ import com.intellij.util.IncorrectOperationException;
 
 /**
  * @author gregsh
- * @author brandl
- *         http://devnet.jetbrains.net/message/5448773#5448773
+ * @author brandl http://devnet.jetbrains.net/message/5448773#5448773
  */
 public class RStringManipulator extends AbstractElementManipulator<RStringImpl> {
 
@@ -35,10 +34,12 @@ public class RStringManipulator extends AbstractElementManipulator<RStringImpl> 
         return psi.updateText(newText);
     }
 
+
     @Override
     public TextRange getRangeInElement(final RStringImpl element) {
         return getStringTokenRange(element);
     }
+
 
     public static TextRange getStringTokenRange(final RStringImpl element) {
         return TextRange.from(1, element.getTextLength() - 2);

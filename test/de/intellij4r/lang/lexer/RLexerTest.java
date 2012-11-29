@@ -1,18 +1,11 @@
-package de.intellij4r.lang.lexer;
-
 /*
- * Copyright (c) Kurt Christensen, 2009
+ * Copyright 2011 Holger Brandl
  *
- *  Licensed under the Artistic License, Version 2.0 (the "License"); you may not use this
- *  file except in compliance with the License. You may obtain a copy of the License at:
- *
- *  http://www.opensource.org/licenses/artistic-license-2.0.php
- *
- *  Unless required by applicable law or agreed to in writing, software distributed under
- *  the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
- *  OF ANY KIND, either express or implied. See the License for the specific language
- *  governing permissions and limitations under the License..
+ * This code is licensed under BSD. For details see
+ * http://www.opensource.org/licenses/bsd-license.php
  */
+
+package de.intellij4r.lang.lexer;
 
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
@@ -39,6 +32,7 @@ public class RLexerTest {
         printTokenization(code, true);
     }
 
+
     private static void printTokenization(String code, boolean consumeWhiteSpaces) {
         RLexer lexer = new RLexer();
         lexer.start(new StringBuffer(code));
@@ -54,6 +48,7 @@ public class RLexerTest {
         }
 
     }
+
 
     private void testTokenization(String code, IElementType[] expectedTokens, boolean consumeWhiteSpaces) {
         printTokenization(code, true);
@@ -76,6 +71,7 @@ public class RLexerTest {
         Assert.assertNull("surplus tokens in input:" + lexer.getTokenType(), lexer.getTokenType());
     }
 
+
     private static void consumeWhiteSpaces(boolean consumeWhiteSpaces, RLexer lexer) {
         if (consumeWhiteSpaces) {
             while (lexer.getTokenType() != null && lexer.getTokenType() == TokenType.WHITE_SPACE) {
@@ -83,6 +79,7 @@ public class RLexerTest {
             }
         }
     }
+
 
     @Test
     public void testSimplePrint() {
@@ -98,6 +95,7 @@ public class RLexerTest {
                 }, true);
     }
 
+
     @Test
     public void testCtrlCharacterString() {
         testTokenization("print(\"\\t\")",
@@ -108,6 +106,7 @@ public class RLexerTest {
                         R_RIGHT_PAREN,
                 }, true);
     }
+
 
     @Test
     public void testFunDef() {
@@ -126,6 +125,7 @@ public class RLexerTest {
                         R_SEMICOLON
                 }, true);
     }
+
 
     @Test
     public void testMultiCharacterString() {
@@ -181,6 +181,7 @@ public class RLexerTest {
                         R_SEMICOLON
                 }, true);
     }
+
 
     @Test
     public void testComplexTokenization() {

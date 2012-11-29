@@ -38,9 +38,11 @@ public class ImportLibraryFix implements LocalQuickFix {
 
     private final String packageName;
 
+
     public ImportLibraryFix(String name) {
         packageName = name;
     }
+
 
     @NotNull
     @Override
@@ -48,11 +50,13 @@ public class ImportLibraryFix implements LocalQuickFix {
         return "Import '" + packageName + "'";
     }
 
+
     @NotNull
     @Override
     public String getFamilyName() {
         return "Create rule from usage";
     }
+
 
     @Override
     public void applyFix(final @NotNull Project project, @NotNull ProblemDescriptor descriptor) {
@@ -94,6 +98,7 @@ public class ImportLibraryFix implements LocalQuickFix {
             token.finish();
         }
     }
+
 
     private PsiElement getCommandParent(PsiElement psiElement) {
         while (psiElement != null && !(psiElement instanceof RCommand))

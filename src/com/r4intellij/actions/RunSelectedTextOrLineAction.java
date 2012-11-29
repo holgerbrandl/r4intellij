@@ -16,7 +16,8 @@ import com.r4intellij.misc.connectors.ConnectorUtils;
 
 
 /**
- * Event handler for the "Run Selection" action within an Arc code editor - runs the currently selected text within the current REPL.
+ * Event handler for the "Run Selection" action within an Arc code editor - runs the currently selected text within the
+ * current REPL.
  */
 public class RunSelectedTextOrLineAction extends AnAction {
 

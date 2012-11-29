@@ -47,12 +47,14 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
                 return new RStructureViewModel(psiFile);
             }
 
+
             @Override
             public boolean isRootNodeShown() {
                 return false;
             }
         };
     }
+
 
     public class RStructureViewModel extends TextEditorBasedStructureViewModel {
 
@@ -64,10 +66,12 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
         private Filter[] filters = new Filter[]{};
         private Grouper[] groupers = new Grouper[]{};
 
+
         public RStructureViewModel(final PsiFile file) {
             super(file);
             myFile = file;
         }
+
 
         @NotNull
         public StructureViewTreeElement getRoot() {
@@ -80,20 +84,24 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
             return groupers;
         }
 
+
         @NotNull
         public Sorter[] getSorters() {
             // TODO - Enable sorting based on defs, macs, fns, []s, etc...
             return new Sorter[]{Sorter.ALPHA_SORTER};
         }
 
+
         @NotNull
         public Filter[] getFilters() {
             return filters;
         }
 
+
         protected PsiFile getPsiFile() {
             return myFile;
         }
+
 
         @NotNull
         protected Class[] getSuitableClasses() {
@@ -101,38 +109,46 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
         }
     }
 
+
     public static class RStructureViewElement implements StructureViewTreeElement, ItemPresentation {
 
         private final PsiElement myElement;
 
+
         public RStructureViewElement(PsiElement element) {
             this.myElement = element;
         }
+
 
         @Override
         public Object getValue() {
             return myElement;
         }
 
+
         @Override
         public void navigate(boolean requestFocus) {
             ((Navigatable) myElement).navigate(requestFocus);
         }
+
 
         @Override
         public boolean canNavigate() {
             return ((Navigatable) myElement).canNavigate();
         }
 
+
         @Override
         public boolean canNavigateToSource() {
             return ((Navigatable) myElement).canNavigateToSource();
         }
 
+
         @Override
         public ItemPresentation getPresentation() {
             return this;
         }
+
 
         private static PsiElement getSection(PsiElement element) {
             while (element != null && !(element instanceof RCommand)) {
@@ -146,6 +162,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
 
             return element == null ? null : element.getFirstChild();
         }
+
 
         public StructureViewTreeElement[] getChildren() {
             final List<PsiElement> childrenElements = new ArrayList<PsiElement>();
@@ -187,6 +204,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
             return children;
         }
 
+
         public static RVariable getFunctionName(PsiElement element) {
             if (!(element instanceof RFundef)) {
                 return null;
@@ -203,6 +221,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
 
             return null;
         }
+
 
         @Override
         public String getPresentableText() {
@@ -230,6 +249,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
         public String getLocationString() {
             return null;
         }
+
 
         @Override
         public Icon getIcon(boolean open) {

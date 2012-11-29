@@ -25,6 +25,7 @@ public class RActionGroup extends DefaultActionGroup {
         super("R Code Evaluation", true);
     }
 
+
     @Override
     public void update(AnActionEvent e) {
         VirtualFile[] data = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);

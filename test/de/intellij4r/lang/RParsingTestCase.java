@@ -78,11 +78,13 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
     @NotNull
     private final ParserDefinition[] myDefinitions;
 
+
     public RParsingTestCase(@NonNls @NotNull String dataPath, @NotNull String fileExt, @NotNull ParserDefinition... definitions) {
         myDefinitions = definitions;
         myFullDataPath = getTestDataPath() + "/" + dataPath;
         myFileExt = fileExt;
     }
+
 
     @Override
     protected void setUp() throws Exception {
@@ -95,6 +97,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
                 public Object getComponentInstance(PicoContainer container) throws PicoInitializationException, PicoIntrospectionException {
                     return new ProgressManagerImpl(getApplication());
                 }
+
 
                 @Override
                 public void verify(PicoContainer container) throws PicoIntrospectionException {
@@ -132,6 +135,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         }
     }
 
+
     protected <T> void addExplicitExtension(final LanguageExtension<T> instance, final Language language, final T object) {
         instance.addExplicitExtension(language, object);
         Disposer.register(myProject, new Disposable() {
@@ -141,6 +145,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
             }
         });
     }
+
 
     @Override
     protected <T> void registerExtensionPoint(final ExtensionPointName<T> extensionPointName, Class<T> aClass) {
@@ -153,6 +158,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         });
     }
 
+
     protected <T> void registerApplicationService(final Class<T> aClass, T object) {
         getApplication().registerService(aClass, object);
         Disposer.register(myProject, new Disposable() {
@@ -163,13 +169,16 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         });
     }
 
+
     public MockProjectEx getProject() {
         return myProject;
     }
 
+
     public MockPsiManager getPsiManager() {
         return myPsiManager;
     }
+
 
     @Override
     protected void tearDown() throws Exception {
@@ -179,21 +188,26 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         myPsiManager = null;
     }
 
+
     protected String getTestDataPath() {
         return PathManagerEx.getTestDataPath();
     }
+
 
     protected boolean includeRanges() {
         return false;
     }
 
+
     protected boolean skipSpaces() {
         return false;
     }
 
+
     protected boolean checkAllPsiRoots() {
         return true;
     }
+
 
     protected void doTest(boolean checkResult) {
         String name = getTestName(false);
@@ -215,6 +229,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         }
     }
 
+
     protected void doTest(String suffix) throws IOException {
         String name = getTestName(false);
         String text = loadFile(name + "." + myFileExt);
@@ -224,6 +239,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         checkResult(name + suffix + ".txt", myFile);
     }
 
+
     protected void doCodeTest(String code) throws IOException {
         String name = getTestName(false);
         myFile = createPsiFile("a", code);
@@ -232,9 +248,11 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         checkResult(myFilePrefix + name + ".txt", myFile);
     }
 
+
     protected PsiFile createPsiFile(String name, String text) {
         return createFile(name + "." + myFileExt, text);
     }
+
 
     protected PsiFile createFile(@NonNls String name, String text) {
         LightVirtualFile virtualFile = new LightVirtualFile(name, myLanguage, text);
@@ -242,13 +260,16 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         return createFile(virtualFile);
     }
 
+
     protected PsiFile createFile(LightVirtualFile virtualFile) {
         return myFileFactory.trySetupPsiForFile(virtualFile, myLanguage, true, false);
     }
 
+
     protected void checkResult(@NonNls @TestDataFile String targetDataName, final PsiFile file) throws IOException {
         doCheckResult(myFullDataPath, file, checkAllPsiRoots(), targetDataName, skipSpaces(), includeRanges());
     }
+
 
     public static void doCheckResult(String myFullDataPath,
                                      PsiFile file,
@@ -267,9 +288,11 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         }
     }
 
+
     protected void checkResult(@TestDataFile @NonNls String targetDataName, final String text) throws IOException {
         doCheckResult(myFullDataPath, targetDataName, text);
     }
+
 
     private static void doCheckResult(String myFullDataPath, String targetDataName, String text) throws IOException {
         try {
@@ -290,13 +313,16 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         }
     }
 
+
     protected static String toParseTreeText(final PsiElement file, boolean skipSpaces, boolean printRanges) {
         return DebugUtil.psiToString(file, skipSpaces, printRanges);
     }
 
+
     protected String loadFile(@NonNls @TestDataFile String name) throws IOException {
         return doLoadFile(myFullDataPath, name);
     }
+
 
     private static String doLoadFile(String myFullDataPath, String name) throws IOException {
         String fullName = myFullDataPath + File.separatorChar + name;
@@ -304,6 +330,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         text = StringUtil.convertLineSeparators(text);
         return text;
     }
+
 
     private static void ensureParsed(PsiFile file) {
         file.accept(new PsiElementVisitor() {

@@ -47,10 +47,12 @@ public abstract class RStringImpl extends RCompositeElementImpl implements RStri
 //      };
     }
 
+
     @Override
     public boolean isValidHost() {
         return true;
     }
+
 
     @Override
     public RStringImpl updateText(@NotNull final String text) {
@@ -65,6 +67,7 @@ public abstract class RStringImpl extends RCompositeElementImpl implements RStri
 //    assert expression instanceof RStringImpl : text + "-->" + expression;
 //    return (RStringImpl)this.replace(expression);
 //  }
+
 
     @NotNull
     @Override

@@ -93,6 +93,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
     private static final TextAttributes STRING_ATTRIB = SyntaxHighlighterColors.STRING.getDefaultAttributes().clone();
     private static final TextAttributes STRING2_ATTRIB = SyntaxHighlighterColors.STRING.getDefaultAttributes().clone();
 
+
     static {
         //register
         TextAttributesKey.createTextAttributesKey(LINE_COMMENT_ID, SyntaxHighlighterColors.LINE_COMMENT.getDefaultAttributes());
@@ -113,6 +114,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
         TextAttributesKey.createTextAttributesKey(VAR_DEF_ID, VAR_DEF_ATTRIB);
         TextAttributesKey.createTextAttributesKey(VAR_USE_BUILTIN_ID, VAR_USE_INTERNAL_ATTRIB);
     }
+
 
     public static final TextAttributesKey LINE_COMMENT = TextAttributesKey.createTextAttributesKey(LINE_COMMENT_ID);
     public static final TextAttributesKey KEYWORD = TextAttributesKey.createTextAttributesKey(KEYWORD_ID);
@@ -138,6 +140,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
 
     static TokenSet keywords = TokenSet.create(R_ELSE, R_FOR, R_FUNCTION,
             R_IF, R_WHILE);
+
 
     static {
         //setup default attribute formatting
@@ -188,6 +191,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
     public Lexer getHighlightingLexer() {
         return new RLexer();
     }
+
 
     @NotNull
     public TextAttributesKey[] getTokenHighlights(final IElementType tokenType) {

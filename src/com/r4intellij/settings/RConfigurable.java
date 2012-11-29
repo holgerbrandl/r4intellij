@@ -20,9 +20,11 @@ public class RConfigurable implements Configurable {
 
     private RSettingsPanel panel;
 
+
     public String getDisplayName() {
         return Strings.message("plugin.name");
     }
+
 
     @Nullable
     public Icon getIcon() {
@@ -30,10 +32,12 @@ public class RConfigurable implements Configurable {
 //        return ArcIcons.ARC_CONFIG_ICON;
     }
 
+
     @Nullable
     public String getHelpTopic() {
         return null;
     }
+
 
     public JComponent createComponent() {
         panel = new RSettingsPanel();
@@ -41,17 +45,21 @@ public class RConfigurable implements Configurable {
         return panel.getPanel();
     }
 
+
     public boolean isModified() {
         return panel.isModified(RSettings.getInstance());
     }
+
 
     public void apply() throws ConfigurationException {
         panel.save(RSettings.getInstance());
     }
 
+
     public void reset() {
         panel.load(RSettings.getInstance());
     }
+
 
     public void disposeUIResources() {
         // Anything???

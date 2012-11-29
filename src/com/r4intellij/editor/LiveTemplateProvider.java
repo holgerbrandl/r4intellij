@@ -25,9 +25,11 @@ public class LiveTemplateProvider implements DefaultLiveTemplatesProvider {
             "/liveTemplates/surround"
     };
 
+
     public String[] getDefaultLiveTemplateFiles() {
         return DEFAULT_TEMPLATES;
     }
+
 
     @Override
     public String[] getHiddenLiveTemplateFiles() {

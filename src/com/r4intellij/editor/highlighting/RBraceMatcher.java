@@ -32,9 +32,11 @@ public class RBraceMatcher implements PairedBraceMatcher {
             new BracePair(R_LEFT_BRACKET, R_RIGHT_BRACKET, true), //structural
     };
 
+
     public BracePair[] getPairs() {
         return PAIRS;
     }
+
 
     public boolean isPairedBracesAllowedBeforeType(@NotNull final IElementType lbraceType, @Nullable final IElementType tokenType) {
         return TokenType.WHITE_SPACE == tokenType
@@ -46,6 +48,7 @@ public class RBraceMatcher implements PairedBraceMatcher {
                 || tokenType == R_RIGHT_BRACKET
                 || null == tokenType;
     }
+
 
     public int getCodeConstructStart(final PsiFile file, int openingBraceOffset) {
         return openingBraceOffset;

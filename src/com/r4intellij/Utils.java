@@ -20,7 +20,8 @@ import java.io.IOException;
 public class Utils {
 
     /**
-     * @param filePath the name of the file to open. Not sure if it can accept URLs or just filenames. Path handling could be better, and buffer sizes are hardcoded
+     * @param filePath the name of the file to open. Not sure if it can accept URLs or just filenames. Path handling
+     *                 could be better, and buffer sizes are hardcoded
      */
     public static String readFileAsString(String filePath) {
         try {

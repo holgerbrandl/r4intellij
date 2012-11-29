@@ -22,8 +22,10 @@ public class EvalActionPref {
     private String code;
     private String defShortCut;
 
+
     public EvalActionPref() {
     }
+
 
     public EvalActionPref(String name, String code, String defShortCut) {
 
@@ -32,25 +34,31 @@ public class EvalActionPref {
         this.defShortCut = defShortCut;
     }
 
+
     public String getName() {
         return name;
     }
+
 
     public String getCode() {
         return code;
     }
 
+
     public String getDefShortCut() {
         return defShortCut;
     }
+
 
     public void setName(String name) {
         this.name = name;
     }
 
+
     public void setCode(String code) {
         this.code = code;
     }
+
 
     public void setDefShortCut(String defShortCut) {
         this.defShortCut = defShortCut;

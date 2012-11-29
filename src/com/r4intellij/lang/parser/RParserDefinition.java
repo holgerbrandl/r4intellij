@@ -35,34 +35,41 @@ public class RParserDefinition implements ParserDefinition, RTypes {
 
     public static IFileElementType FILE = new IFileElementType(RFileType.R_LANGUAGE);
 
+
     @NotNull
     public Lexer createLexer(Project project) {
         return new RLexer();
     }
 
+
     public PsiParser createParser(Project project) {
         return new RParser();
     }
+
 
     public IFileElementType getFileNodeType() {
 
         return FILE;
     }
 
+
     @NotNull
     public TokenSet getWhitespaceTokens() {
         return TokenSet.create(TokenType.WHITE_SPACE);
     }
+
 
     @NotNull
     public TokenSet getCommentTokens() {
         return TokenSet.create(R_COMMENT);
     }
 
+
     @NotNull
     public TokenSet getStringLiteralElements() {
         return TokenSet.create(R_STR_CONST);
     }
+
 
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode leftAst, ASTNode rightAst) {
         final IElementType left = leftAst.getElementType();
@@ -94,11 +101,13 @@ public class RParserDefinition implements ParserDefinition, RTypes {
         return SpaceRequirements.MUST;
     }
 
+
     @NotNull
     public PsiElement createElement(ASTNode node) {
         return RTypes.Factory.createElement(node);
 //        return new ASTWrapperPsiElement(node);
     }
+
 
     public PsiFile createFile(FileViewProvider viewProvider) {
         return new RFile(viewProvider);

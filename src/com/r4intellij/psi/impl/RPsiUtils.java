@@ -29,6 +29,7 @@ public class RPsiUtils {
         return PsiFileFactory.getInstance(project).createFileFromText("a.R", text).getFirstChild();
     }
 
+
     public static List<RFuncall> collectLibraryStatements(PsiFile containingFile) {
         final List<RFuncall> libStatements = new ArrayList<RFuncall>();
 

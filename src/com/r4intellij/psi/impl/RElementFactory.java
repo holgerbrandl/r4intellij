@@ -32,10 +32,12 @@ public class RElementFactory {
     private RElementFactory() {
     }
 
+
     public static PsiElement createLeafFromText(Project project, String text) {
         PsiFile fileFromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.INSTANCE, text);
         return PsiTreeUtil.getDeepestFirst(fileFromText);
     }
+
 
     public static RStringImpl createExpressionFromText(Project project, String text) {
 //        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "\"" + text + "\";");
@@ -45,6 +47,7 @@ public class RElementFactory {
         }
         return null;
     }
+
 
     //
     public static RCommand createFuncallFromText(Project project, String text) {
