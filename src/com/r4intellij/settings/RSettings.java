@@ -11,7 +11,6 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.util.RoamingTypeDisabled;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.Tag;
 
@@ -30,7 +29,7 @@ import java.util.List;
                         file = "$APP_CONFIG$/R-settings.xml"
                 )}
 )
-public class RSettings implements PersistentStateComponent<RSettings>, RoamingTypeDisabled {
+public class RSettings implements PersistentStateComponent<RSettings> {
 
     public String addCompletionTerms = "subset;summary;library;install.packages;head;tail";
 

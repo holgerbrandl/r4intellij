@@ -16,7 +16,7 @@
 package com.r4intellij.editor.highlighting;
 
 import com.intellij.lexer.Lexer;
-import com.intellij.openapi.editor.SyntaxHighlighterColors;
+import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
 import com.intellij.openapi.fileTypes.SyntaxHighlighterBase;
@@ -44,7 +44,9 @@ public class RSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
         return new MyHighlighter();
     }
 
+
     static TokenSet keywords = TokenSet.create(R_ELSE, R_FOR, R_FUNCTION, R_IF, R_WHILE, R_BREAK, R_REPEAT, R_IN);
+
 
     private class MyHighlighter extends SyntaxHighlighterBase {
 
@@ -59,15 +61,15 @@ public class RSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
         @Override
         public TextAttributesKey[] getTokenHighlights(IElementType iElementType) {
             if (iElementType == TokenType.BAD_CHARACTER) {
-                return pack(SyntaxHighlighterColors.INVALID_STRING_ESCAPE);
+                return pack(DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
             } else if (iElementType == RTypes.R_COMMENT || iElementType == RTypes.R_SECTION_COMMENT) {
-                return pack(SyntaxHighlighterColors.LINE_COMMENT);
+                return pack(DefaultLanguageHighlighterColors.LINE_COMMENT);
             } else if (iElementType == RTypes.R_STR_CONST) {
-                return pack(SyntaxHighlighterColors.STRING);
+                return pack(DefaultLanguageHighlighterColors.STRING);
             } else if (iElementType == RTypes.R_NUM_CONST) {
-                return pack(SyntaxHighlighterColors.NUMBER);
+                return pack(DefaultLanguageHighlighterColors.NUMBER);
             } else if (keywords.contains(iElementType)) {
-                return pack(SyntaxHighlighterColors.KEYWORD);
+                return pack(DefaultLanguageHighlighterColors.KEYWORD);
             }
 
             return EMPTY;

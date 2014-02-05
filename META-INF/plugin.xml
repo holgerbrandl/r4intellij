@@ -8,7 +8,7 @@
 <idea-plugin version="2">
     <name>R4Intellij</name>
     <description>R coding tools for Intellij Idea</description>
-    <version>0.8</version>
+    <version>0.8.1</version>
     <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
 
@@ -44,9 +44,13 @@
 
     <change-notes><![CDATA[
         <html>
+        <b>Changes in v0.8.1:</b>
+        <ul>
+            <li>Improved compatibility to Intellij IDEA 13</li>
+        </ul>
         <b>Changes in v0.8:</b>
         <ul>
-            <li>Added option to keep focus in editor after submitting code to R</li>
+        <li>Added option to keep focus in editor after submitting code to R</li>
         </ul>
         <b>Changes in v0.7:</b>
         <ul>

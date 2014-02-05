@@ -21,6 +21,7 @@ import com.intellij.ide.util.treeView.smartTree.Grouper;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import com.intellij.lang.PsiStructureViewFactory;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.PsiElement;
@@ -29,6 +30,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.PlatformIcons;
 import com.r4intellij.psi.impl.RSectionImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -42,8 +44,10 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
 
     public StructureViewBuilder getStructureViewBuilder(final PsiFile psiFile) {
         return new TreeBasedStructureViewBuilder() {
+
             @NotNull
-            public StructureViewModel createStructureViewModel() {
+            @Override
+            public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
                 return new RStructureViewModel(psiFile);
             }
 

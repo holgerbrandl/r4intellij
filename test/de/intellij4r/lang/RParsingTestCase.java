@@ -277,7 +277,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
                                      String targetDataName,
                                      boolean skipSpaces,
                                      boolean printRanges) throws IOException {
-        final PsiElement[] psiRoots = checkAllPsiRoots ? file.getPsiRoots() : PsiElement.EMPTY_ARRAY;
+        final PsiElement[] psiRoots = checkAllPsiRoots ? file.getViewProvider().getAllFiles().toArray(new PsiElement[0]) : PsiElement.EMPTY_ARRAY;
         if (psiRoots.length > 1) {
             for (int i = 0; i < psiRoots.length; i++) {
                 final PsiElement psiRoot = psiRoots[i];

@@ -17,7 +17,6 @@ package com.r4intellij.psi.impl;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.openapi.util.Iconable;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
@@ -82,9 +81,8 @@ public class RReferenceImpl<T extends PsiElement> extends PsiReferenceBase<T> {
             @Override
             public boolean process(PsiElement psiElement) {
                 if (psiElement instanceof RNamedElement) {
-                    LookupElementBuilder builder = LookupElementBuilder.create((PsiNamedElement) psiElement).
-                            setIcon(psiElement.getIcon(Iconable.ICON_FLAG_OPEN));
-                    list.add(psiElement instanceof RVariable ? builder.setBold() : builder);
+                    LookupElementBuilder builder = LookupElementBuilder.create((PsiNamedElement) psiElement);
+                    list.add(psiElement instanceof RVariable ? builder.bold() : builder);
                 }
                 return true;
             }

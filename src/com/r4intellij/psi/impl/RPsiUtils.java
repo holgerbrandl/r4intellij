@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.r4intellij.lang.RFileType;
 import com.r4intellij.psi.RFuncall;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.List;
 public class RPsiUtils {
 
     public static PsiElement getPsiFromText(String text, Project project) {
-        return PsiFileFactory.getInstance(project).createFileFromText("a.R", text).getFirstChild();
+        return PsiFileFactory.getInstance(project).createFileFromText("a.R", RFileType.R_FILE_TYPE, text).getFirstChild();
     }
 
 
