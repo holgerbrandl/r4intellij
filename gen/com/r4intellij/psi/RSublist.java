@@ -14,6 +14,6 @@ import java.util.List;
 public interface RSublist extends RCompositeElement {
 
     @NotNull
-    public List<RSub> getSubList();
+    List<RSub> getSubList();
 
 }

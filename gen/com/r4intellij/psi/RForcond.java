@@ -12,9 +12,9 @@ import org.jetbrains.annotations.NotNull;
 public interface RForcond extends RCompositeElement {
 
     @NotNull
-    public RExpr getExpr();
+    RExpr getExpr();
 
     @NotNull
-    public RVariable getVariable();
+    RVariable getVariable();
 
 }

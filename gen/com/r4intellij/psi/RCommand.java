@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
 public interface RCommand extends RCompositeElement {
 
     @Nullable
-    public RExprOrAssign getExprOrAssign();
+    RExprOrAssign getExprOrAssign();
 
     @Nullable
-    public RSection getSection();
+    RSection getSection();
 
 }

@@ -12,6 +12,6 @@ import org.jetbrains.annotations.Nullable;
 public interface RSub extends RCompositeElement {
 
     @Nullable
-    public RExpr getExpr();
+    RExpr getExpr();
 
 }

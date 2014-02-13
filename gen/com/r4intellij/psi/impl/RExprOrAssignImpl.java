@@ -7,8 +7,11 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElementVisitor;
 import com.r4intellij.psi.RExpr;
 import com.r4intellij.psi.RExprOrAssign;
+import com.r4intellij.psi.RVisitor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -16,6 +19,12 @@ public class RExprOrAssignImpl extends RCompositeElementImpl implements RExprOrA
 
     public RExprOrAssignImpl(ASTNode node) {
         super(node);
+    }
+
+
+    public void accept(@NotNull PsiElementVisitor visitor) {
+        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitExprOrAssign(this);
+        else super.accept(visitor);
     }
 
 

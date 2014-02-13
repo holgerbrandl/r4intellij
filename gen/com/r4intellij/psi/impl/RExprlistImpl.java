@@ -7,9 +7,11 @@
 package com.r4intellij.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.RExprOrAssign;
 import com.r4intellij.psi.RExprlist;
+import com.r4intellij.psi.RVisitor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -19,6 +21,12 @@ public class RExprlistImpl extends RCompositeElementImpl implements RExprlist {
 
     public RExprlistImpl(ASTNode node) {
         super(node);
+    }
+
+
+    public void accept(@NotNull PsiElementVisitor visitor) {
+        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitExprlist(this);
+        else super.accept(visitor);
     }
 
 

@@ -16,6 +16,7 @@
 package com.r4intellij.lang.parser;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.parser.GeneratedParserUtilBase;
 
 
 /**

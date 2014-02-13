@@ -8,6 +8,7 @@
 package com.r4intellij.psi;
 
 import com.intellij.extapi.psi.PsiFileBase;
+import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
@@ -17,7 +18,6 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.Processor;
 import com.r4intellij.lang.RFileType;
 import com.r4intellij.lang.RFileTypeLoader;
-import com.r4intellij.lang.parser.GeneratedParserUtilBase;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

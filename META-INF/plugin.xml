@@ -48,9 +48,13 @@
         <ul>
             <li>Improved compatibility to Intellij IDEA 13</li>
         </ul>
+        <b>Changes in v0.8.2:</b>
+        <ul>
+            <li>Added support for more operators (like %+% or <<-</li>
+        </ul>
         <b>Changes in v0.8:</b>
         <ul>
-        <li>Added option to keep focus in editor after submitting code to R</li>
+            <li>Added option to keep focus in editor after submitting code to R</li>
         </ul>
         <b>Changes in v0.7:</b>
         <ul>

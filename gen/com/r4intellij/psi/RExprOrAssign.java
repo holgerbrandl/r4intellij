@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
 public interface RExprOrAssign extends RCompositeElement {
 
     @Nullable
-    public RExpr getExpr();
+    RExpr getExpr();
 
     @Nullable
-    public RExprOrAssign getExprOrAssign();
+    RExprOrAssign getExprOrAssign();
 
 }

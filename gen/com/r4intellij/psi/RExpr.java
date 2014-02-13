@@ -15,33 +15,33 @@ import java.util.List;
 public interface RExpr extends RCompositeElement {
 
     @Nullable
-    public RCond getCond();
+    RCond getCond();
 
     @NotNull
-    public List<RExpr> getExprList();
+    List<RExpr> getExprList();
 
     @Nullable
-    public RExprOrAssign getExprOrAssign();
+    RExprOrAssign getExprOrAssign();
 
     @Nullable
-    public RExprlist getExprlist();
+    RExprlist getExprlist();
 
     @Nullable
-    public RForcond getForcond();
+    RForcond getForcond();
 
     @Nullable
-    public RFuncall getFuncall();
+    RFuncall getFuncall();
 
     @Nullable
-    public RFundef getFundef();
+    RFundef getFundef();
 
     @Nullable
-    public RStringLiteral getStringLiteral();
+    RStringLiteral getStringLiteral();
 
     @NotNull
-    public List<RSublist> getSublistList();
+    List<RSublist> getSublistList();
 
     @Nullable
-    public RVariable getVariable();
+    RVariable getVariable();
 
 }

@@ -14,6 +14,6 @@ import java.util.List;
 public interface RFundefArgs extends RCompositeElement {
 
     @NotNull
-    public List<RFdArgument> getFdArgumentList();
+    List<RFdArgument> getFdArgumentList();
 
 }

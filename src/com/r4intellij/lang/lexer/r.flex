@@ -144,13 +144,15 @@ YYINITIAL. */
   "/" { return R_ARITH_DIV; }
   "^" { return R_ARITH_EXPONENTIAION; }
   "%%" { return R_ARITH_MOD; }
-  "%/%" | "%*%" | "%o%" | "%x%" | %in% { return R_ARITH_MISC; }
+  "%/%" | "%*%" | "%o%" | "%x%" |"%+%" | %in% { return R_ARITH_MISC; }
 
 
     // misc
     "=" { return R_EQ_ASSIGN; }
     "<-" { return R_LEFT_ASSIGN; }
     "->" { return R_RIGHT_ASSIGN; }
+    "->>" { return R_GLOBAL_RIGHT_ASSIGN; }
+    "<<-" { return R_GLOBAL_LEFT_ASSIGN; }
 
    "$" { return R_LIST_SUBSET; }
    "@" { return R_SLOT; }

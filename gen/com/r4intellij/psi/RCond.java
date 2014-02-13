@@ -12,6 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public interface RCond extends RCompositeElement {
 
     @NotNull
-    public RExpr getExpr();
+    RExpr getExpr();
 
 }

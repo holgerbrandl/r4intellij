@@ -13,9 +13,9 @@ import org.jetbrains.annotations.Nullable;
 public interface RFundef extends RCompositeElement {
 
     @NotNull
-    public RExprOrAssign getExprOrAssign();
+    RExprOrAssign getExprOrAssign();
 
     @Nullable
-    public RFundefArgs getFundefArgs();
+    RFundefArgs getFundefArgs();
 
 }

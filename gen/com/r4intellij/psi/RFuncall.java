@@ -9,13 +9,12 @@ package com.r4intellij.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 public interface RFuncall extends RNamedElement {
 
     @Nullable
-    public RSublist getSublist();
+    RSublist getSublist();
 
     @NotNull
-    public RVariable getVariable();
+    RVariable getVariable();
 
 }

@@ -14,6 +14,6 @@ import java.util.List;
 public interface RExprlist extends RCompositeElement {
 
     @NotNull
-    public List<RExprOrAssign> getExprOrAssignList();
+    List<RExprOrAssign> getExprOrAssignList();
 
 }
