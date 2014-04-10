@@ -8,9 +8,12 @@
 <idea-plugin version="2">
     <name>R4Intellij</name>
     <description>R coding tools for Intellij Idea</description>
-    <version>0.8.1</version>
+    <version>0.8.2</version>
     <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
+
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.platform</depends>
 
     <description><![CDATA[
         <html>
@@ -24,7 +27,7 @@
         <p/>
 
         This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features or
-        to point out bugs at our <a href="https://code.google.com/p/r4intellij/">project homepage.</a>
+        report bugs in our <a href="https://code.google.com/p/r4intellij/">issue tracker</a>.
         <br>
         <b>Features:</b><br>
         <ul>
@@ -38,12 +41,16 @@
             <li> Some (simple) live templates</li>
         </ul>
         <p/>
-        Read more about the features at https://code.google.com/p/r4intellij/
+        Read more about the features at <a href="https://code.google.com/p/r4intellij">project page</a>
         </html>
         ]]></description>
 
     <change-notes><![CDATA[
         <html>
+        <b>Changes in v0.8.2:</b>
+        <ul>
+            <li>Changed plugin definition to support also other Jetbrains products like PhpStorm, PyCharm, etc.</li>
+        </ul>
         <b>Changes in v0.8.1:</b>
         <ul>
             <li>Improved compatibility to Intellij IDEA 13</li>
