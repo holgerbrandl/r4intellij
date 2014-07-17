@@ -1,0 +1,168 @@
+<!--
+  ~ Copyright 2011 Holger Brandl
+  ~
+  ~ This code is licensed under BSD. For details see
+  ~ http://www.opensource.org/licenses/bsd-license.php
+  -->
+
+<idea-plugin version="2">
+    <name>R4Intellij</name>
+    <description>R coding tools for Intellij Idea</description>
+    <version>0.5+</version>
+    <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
+    <idea-version since-build="8000"/>
+
+    <description><![CDATA[
+  <html>
+    <h3>R support for IntelliJ</h3>
+
+    This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features
+    or to point out bugs at our <a href="https://code.google.com/p/r4intellij/">project homepage.</a>
+    <br>
+    <b>Features:</b><br>
+    <ul>
+        <li> Advanced syntax highlighting and configuration</li>
+        <li> Evaluate the current selection or line in R (MacOS only for now)</li>
+        <li> Line un-/commenting, brace matching</li>
+        <li> Basic code completion</li>
+        <li> Some (simple) live templates</li>
+        <li> Function definition folding</li>
+    </ul>
+
+    <br>
+    <b>Coming soon & Planned</b>
+    <ul>
+        <li> Code formatter</li>
+        <li> More context-aware autocompletion for variables, functions and file paths</li>
+        <li> Inspections and quickfixes for common problems</li>
+        <li> Basic refactorings (rename variables and functions)</li>
+        <li> Advanced navigation (structure view, go to declaration, ...)</li>
+        <li> Ctrl+Q (Quick documentation lookup) for internal commands, external commands and functions</li>
+        <li> Highlight usages in file for functions and variables</li>
+    </ul>
+  </html>
+  ]]></description>
+
+    <change-notes><![CDATA[
+        <html>
+        <b>Changes in v0.5:</b>
+        <ul>
+            <li></li>
+            <li>New shortcut action to call str() for the current word or selection (MacOS only)</li>
+            <li>Function body folding</li>
+            <li>More robust lexer</li>
+            <li>Finished (my first) parser --> allows for growing selection using "Select for word at caret" action</li>
+            <li>bug fixes</li>
+        </ul>
+
+        <b>Changes in v0.4:</b>
+        <ul>
+            <li>Basic code completion</li>
+            <li>Better shortcuts for code evaluation (MacOS only)</li>
+        </ul>
+
+        <b>Changes in version 0.3:</b>
+        <ul>
+            <li>Evaluate selection of current line in R (MacOS only)</li>
+            <li>Improved code highlighting</li>
+            <li>Added first live-templates</li>
+        </ul>
+
+        <b>Changes in version 0.2:</b>
+        Initial release of the plugin. :-)
+        <ul>
+            <li>Syntax highlighting</li>
+            <li>Comment code blocks with usual shortcut ⌘/</li>
+            <li>Register .R as file type</li>
+        </ul>
+        </html>
+        ]]></change-notes>
+
+
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
+
+    <project-components>
+        <component>
+            <implementation-class>com.r4intellij.actions.CodeEvalActionRegistry</implementation-class>
+            <skipForDefaultProject/>
+        </component>
+    </project-components>
+
+    <actions>
+        <group class="com.r4intellij.actions.RActionGroup" id="RCodeSnippetActionMenu">
+
+            <separator/>
+            <action id="EvalSelction" class="com.r4intellij.actions.RunSelectedTextOrLineAction" text="Evaluate"
+                    description="Evaluates the current line or selection in R">
+                <keyboard-shortcut keymap="$default" first-keystroke="meta alt ENTER"/>
+            </action>
+
+            <!--<action id="EvalHeadNrow" class="com.r4intellij.actions.HeadNrowEvalAction" text="head+nrow"-->
+            <!--description="Evaluates head and nrow for the current data.frame object">-->
+            <!--<keyboard-shortcut keymap="$default" first-keystroke="meta alt H"/>-->
+            <!--</action>-->
+
+            <!--<action id="EvalStr" class="com.r4intellij.actions.ShowStructureEvalAction" text="str()"-->
+            <!--description="Calls the str for the current word or selection">-->
+            <!--<keyboard-shortcut keymap="$default" first-keystroke="meta alt S"/>-->
+            <!--</action>-->
+
+            <separator/>
+            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+        </group>
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <fileTypeFactory implementation="com.r4intellij.lang.RFileTypeFactory"/>
+
+        <lang.syntaxHighlighterFactory key="R"
+                                       implementationClass="com.r4intellij.editor.highlighting.RSyntaxHighlighterFactory"/>
+
+        <!--<annotator language="R" implementationClass="com.r4intellij.inspectionss.FunctionNameAnnotator"/>-->
+
+        <lang.parserDefinition language="R"
+                               implementationClass="com.r4intellij.lang.parser.RParserDefinition"/>
+
+        <lang.braceMatcher language="R"
+                           implementationClass="com.r4intellij.editor.highlighting.RBraceMatcher"/>
+
+        <lang.commenter language="R"
+                        implementationClass="com.r4intellij.editor.highlighting.RCommenter"/>
+
+        <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
+
+        <lang.findUsagesProvider language="R" implementationClass="com.r4intellij.editor.RFindUsagesProvider"/>
+        <lang.elementManipulator forClass="com.r4intellij.psi.impl.RStringLiteralImpl"
+                                 implementationClass="com.r4intellij.psi.impl.RStringManipulator"/>
+        <lang.psiStructureViewFactory language="R"
+                                      implementationClass="com.r4intellij.psi.RScriptStructureViewFactory"/>
+
+        <quoteHandler fileType="R" className="com.r4intellij.editor.highlighting.RQuoteHandler"/>
+
+        <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
+        <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
+
+        <completion.contributor language="R" implementationClass="com.r4intellij.lang.RCompletionContributor"/>
+
+        <documentationProvider implementation="com.r4intellij.editor.RDocumentationProvider"/>
+
+
+        <!-- Inspections -->
+        <localInspection language="R" shortName="MissingPackageImportInspection" displayName="Missing package import"
+                         groupName="R"
+                         enabledByDefault="true" level="WARNING"
+                         implementationClass="com.r4intellij.inspections.MissingImportInspection"/>
+
+
+        <!-- the settings-->
+        <applicationConfigurable implementation="com.r4intellij.settings.RConfigurable"/>
+        <applicationService serviceInterface="com.r4intellij.settings.RSettings"
+                            serviceImplementation="com.r4intellij.settings.RSettings"/>
+        <applicationService serviceInterface="com.r4intellij.misc.rinstallcache.PackageCacheService"
+                            serviceImplementation="com.r4intellij.misc.rinstallcache.PackageCacheService"/>
+
+    </extensions>
+</idea-plugin>
