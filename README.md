@@ -9,7 +9,8 @@ By implementing a parser for R, the plugin allows for syntax highlighting, intel
 Installation
 ----
 
-1.  Get Intellij IDEA, which is available as pro and and as free open-source community edition from&nbsp;[JetBrains](http://jetbrains.com).2.  To install the plugin, just open the plugin manager in Intellij Idea, search for "R4Intellij" , and finally click&nbsp;install.
+1.  Get Intellij IDEA, which is available as pro and and as free open-source community edition from&nbsp;[JetBrains](http://jetbrains.com).
+2.  To install the plugin, just open the plugin manager in Intellij Idea, search for "R4Intellij" , and finally click&nbsp;install.
 
 Support
 ----
@@ -17,12 +18,12 @@ Support
 
 Feel welcome to ask questions in the plugins [discussion&nbsp;forum](http://devnet.jetbrains.net/community/idea/plugins) of Intellij. Don't forget to tag your posts with the tag r4intellij (otherwise we might not read it). 
 
-Before you asked questions, you should consider to read our [FAQ](/p/r4intellij/wiki/FAQ). 
+Before you asked questions, you should consider to read our [FAQ](/docs/faq.md). 
 
 Basic Usage
 ----
 
-Just drag an R-file into idea and start hacking.&nbsp; 
+Just drag an R-file into idea and start hacking.
 
 You can also create a new project (the type does not matter) and organize your work into modules with different&nbsp;content roots. Read the Intellij [documentation](http://www.jetbrains.com/idea/webhelp/intellij-idea.html) for more&nbsp;details about to do this. 
 
@@ -57,12 +58,12 @@ To build the index of all packages installed in your R instance, R4Intellij need
 
 The following completion modes are available: 
 
-*   Basic word completion for variables and local functions*   Coming soon: Package name completion in library statements*   Coming soon: setwd() aware path completion*   Coming soon: completion of package names in library statements&nbsp; 
+*   Basic word completion for variables and local functions*   Coming soon: Package name completion in library statements*   Coming soon: setwd() aware path completion*   Coming soon: completion of package names in library statements
 
 Refactoring
 ----
 
-All refactorings can be accessed via the "Refactor" menu&nbsp; 
+All refactorings can be accessed via the "Refactor" menu
 
 *   Renaming of symbols and functions
 
@@ -73,7 +74,7 @@ Intentions are on-the-fly checks of your R scripts, that highlight problems and 
 
 *   Auto-import of packages given a function name
 
-![](/docs/before_autoimport.png?raw=true) ![](/docs/after_autoimport.png)&nbsp; 
+![](/docs/before_autoimport.png?raw=true) ![](/docs/after_autoimport.png)
 
 Planned &amp; Coming soon
 ----
@@ -96,5 +97,6 @@ Feel welcome to report problems or suggest new features by adding an issue to ou
 
 # Other projects of the author[](#Other_projects_of_the_author)
 
-*   [Movito](http://www.movito.info/) - An awesome movie collection manager for files, BlueRays and DVDs. It supports movies and TV-series and provides a slick interface to explore and filter your movie collection*   [OpenCards](http://opencards.info/) - A free flashcard learning software for ppt-files
+*   [Movito](http://www.movito.info/) - An awesome movie collection manager for files, BlueRays and DVDs. It supports movies and TV-series and provides a slick interface to explore and filter your movie collection
+*   [OpenCards](http://opencards.info/) - A free flashcard learning software for ppt-files
  </td>
