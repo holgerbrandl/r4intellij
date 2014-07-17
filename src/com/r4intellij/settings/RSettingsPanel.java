@@ -93,6 +93,6 @@ public class RSettingsPanel {
 
 
     private String[] getEvalTargetOptions() {
-        return Utils.isMacOSX() ? new String[]{"R", "R64", "Terminal"} : Utils.isWindowsPlatform() ? new String[]{"R"} : new String[]{""};
+        return Utils.isMacOSX() ? new String[]{"R", "Terminal", "iTerm"} : Utils.isWindowsPlatform() ? new String[]{"R"} : new String[]{""};
     }
 }
