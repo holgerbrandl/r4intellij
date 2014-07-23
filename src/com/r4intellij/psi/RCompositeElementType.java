@@ -17,6 +17,9 @@ package com.r4intellij.psi;
 
 import com.intellij.psi.tree.IElementType;
 import com.r4intellij.lang.RLanguage;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+
 
 
 /**
@@ -24,7 +27,7 @@ import com.r4intellij.lang.RLanguage;
  */
 public class RCompositeElementType extends IElementType {
 
-    public RCompositeElementType(String debug) {
+    public RCompositeElementType(@NotNull @NonNls String debug) {
         super(debug, RLanguage.INSTANCE);
     }
 }

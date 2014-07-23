@@ -9,6 +9,7 @@ package com.r4intellij.lang.lexer;
 
 import com.intellij.psi.tree.IElementType;
 import com.r4intellij.lang.RFileType;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -19,7 +20,12 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RTokenType extends IElementType {
 
-    public RTokenType(@NotNull String debugName) {
+    public RTokenType(@NotNull @NonNls String debugName) {
         super(debugName, RFileType.R_LANGUAGE);
     }
+
+	@Override
+	public String toString() {
+		return "RTokenType." + super.toString();
+	}
 }

@@ -50,9 +50,9 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
 
     static TokenSet keywords = TokenSet.create(R_ELSE, R_FOR, R_FUNCTION, R_IF, R_WHILE, R_IN, R_BREAK, R_LEFT_ASSIGN, R_EQ_ASSIGN);
 
-	static TokenSet variable = TokenSet.create(R_SYMBOL);
+	static TokenSet variable = TokenSet.create(R_VARIABLE);
 
-	static TokenSet funcall = TokenSet.create(R_FUNCALL);
+	static TokenSet funcall = TokenSet.andSet(parenthesisSet, TokenSet.create(R_SYMBOL));
 
     static {
         //setup default attribute formatting
