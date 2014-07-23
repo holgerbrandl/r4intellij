@@ -6,16 +6,16 @@
  */
 package com.r4intellij.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import java.util.List;
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
 
 public interface RFundef extends RCompositeElement {
 
-    @NotNull
-    RExprOrAssign getExprOrAssign();
+  @NotNull
+  RExprOrAssign getExprOrAssign();
 
-    @Nullable
-    RFundefArgs getFundefArgs();
+  @Nullable
+  RFundefArgs getFundefArgs();
 
 }

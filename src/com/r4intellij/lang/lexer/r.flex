@@ -66,6 +66,12 @@ EscapeSequence=\\[^\r\n]
 STRING_DQUOTE=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 STRING_SQUOTE='([^\\\']|{EscapeSequence})*('|\\)?
 
+EOF = "%eof" | "%eofval"
+
+FunctionChar=[:letter:] | [:digit:] | "." | "-" | "_"
+FunctionName=([:letter:] | "_") {FunctionChar}*
+FUNCTIONCALL={FunctionName}\([\w\s]*\)
+
 //%state STRING
 
 /* ------------------------Lexical Rules Section---------------------- */
@@ -82,7 +88,9 @@ YYINITIAL. */
 
 <YYINITIAL> {
   {WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
-  {EOL} {yybegin(YYINITIAL); return R_EOL; }
+  {EOL} { yybegin(YYINITIAL); return R_EOL; }
+  {EOF} { yybegin(YYINITIAL); return R_EOF; }
+
   {SECTION_COMMENT} {yybegin(YYINITIAL); return R_SECTION_COMMENT; }
   {COMMENT} {yybegin(YYINITIAL); return R_COMMENT; }
 
@@ -100,7 +108,8 @@ YYINITIAL. */
   "..." { return R_SYMBOL_FORMALS; }
 
   {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
- {SYMBOL} { yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
+  {FUNCTIONCALL} { yybegin(YYINITIAL); return RTypes.R_FUNCALL; }
+  {SYMBOL} { yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
  // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
 
   //{NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }
@@ -162,4 +171,3 @@ YYINITIAL. */
 }
 
 .    { return com.intellij.psi.TokenType.BAD_CHARACTER; }
-//<<EOF>>  { return RTypes.R_EOF; }

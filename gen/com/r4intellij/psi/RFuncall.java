@@ -6,15 +6,16 @@
  */
 package com.r4intellij.psi;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.List;
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
 
 public interface RFuncall extends RNamedElement {
 
-    @Nullable
-    RSublist getSublist();
+  @Nullable
+  RSublist getSublist();
 
-    @NotNull
-    RVariable getVariable();
+  @NotNull
+  RVariable getVariable();
 
 }

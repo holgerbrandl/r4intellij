@@ -6,40 +6,36 @@
  */
 package com.r4intellij.psi.impl;
 
+import java.util.List;
+import org.jetbrains.annotations.*;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
-import com.r4intellij.psi.RCommand;
-import com.r4intellij.psi.RExprOrAssign;
-import com.r4intellij.psi.RSection;
-import com.r4intellij.psi.RVisitor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import com.intellij.psi.util.PsiTreeUtil;
+import static com.r4intellij.psi.RTypes.*;
+import com.r4intellij.psi.*;
 
 public class RCommandImpl extends RCompositeElementImpl implements RCommand {
 
-    public RCommandImpl(ASTNode node) {
-        super(node);
-    }
+  public RCommandImpl(ASTNode node) {
+    super(node);
+  }
 
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitCommand(this);
+    else super.accept(visitor);
+  }
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitCommand(this);
-        else super.accept(visitor);
-    }
+  @Override
+  @Nullable
+  public RExprOrAssign getExprOrAssign() {
+    return findChildByClass(RExprOrAssign.class);
+  }
 
-
-    @Override
-    @Nullable
-    public RExprOrAssign getExprOrAssign() {
-        return findChildByClass(RExprOrAssign.class);
-    }
-
-
-    @Override
-    @Nullable
-    public RSection getSection() {
-        return findChildByClass(RSection.class);
-    }
+  @Override
+  @Nullable
+  public RSection getSection() {
+    return findChildByClass(RSection.class);
+  }
 
 }

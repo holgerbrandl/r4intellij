@@ -39,4 +39,14 @@
             <option name="FOREGROUND" value="6897BB" />
         </value>
     </option>
+    <option name="R.VARIABLE">
+        <value>
+            <option name="FOREGROUND" value="6897BB" />
+        </value>
+    </option>
+    <option name="R.FUNCALL">
+        <value>
+            <option name="FOREGROUND" value="6897BB" />
+        </value>
+    </option>
 </list>

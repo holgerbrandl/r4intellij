@@ -31,4 +31,10 @@ public class RHighlighterColors {
 	/** Default style for string */
 	public static final TextAttributesKey STRING_ATTR_KEY = TextAttributesKey.createTextAttributesKey("R.STRING", DefaultLanguageHighlighterColors.STRING);
 
+	/** Default style for variable */
+	public static final TextAttributesKey VARIABLE_ATTR_KEY = TextAttributesKey.createTextAttributesKey("R.VARIABLE", DefaultLanguageHighlighterColors.LOCAL_VARIABLE);
+
+	/** Default style for funcall */
+	public static final TextAttributesKey FUNCALL_ATTR_KEY = TextAttributesKey.createTextAttributesKey("R.FUNCALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
+
 }

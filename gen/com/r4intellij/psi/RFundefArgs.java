@@ -6,14 +6,13 @@
  */
 package com.r4intellij.psi;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
 
 public interface RFundefArgs extends RCompositeElement {
 
-    @NotNull
-    List<RFdArgument> getFdArgumentList();
+  @NotNull
+  List<RFdArgument> getFdArgumentList();
 
 }

@@ -41,6 +41,8 @@ public class RColorSettingsPage implements ColorSettingsPage {
 			new AttributesDescriptor(RBundle.message("highlighter.brackets"), RHighlighterColors.BRACKETS_ATTR_KEY),
 			new AttributesDescriptor(RBundle.message("highlighter.number"), RHighlighterColors.NUMBER_ATTR_KEY),
 			new AttributesDescriptor(RBundle.message("highlighter.string"), RHighlighterColors.STRING_ATTR_KEY),
+			new AttributesDescriptor(RBundle.message("highlighter.variable"), RHighlighterColors.VARIABLE_ATTR_KEY),
+			new AttributesDescriptor(RBundle.message("highlighter.funcall"), RHighlighterColors.FUNCALL_ATTR_KEY),
 	};
 
 	@Nullable

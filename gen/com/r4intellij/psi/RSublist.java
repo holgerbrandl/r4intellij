@@ -6,14 +6,13 @@
  */
 package com.r4intellij.psi;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
+import org.jetbrains.annotations.*;
+import com.intellij.psi.PsiElement;
 
 public interface RSublist extends RCompositeElement {
 
-    @NotNull
-    List<RSub> getSubList();
+  @NotNull
+  List<RSub> getSubList();
 
 }

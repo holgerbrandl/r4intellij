@@ -1,0 +1,2 @@
+#!/bin/bash
+/Library/Java/JavaVirtualMachines/1.6.0_65-b14-462.jdk/Contents/Home/bin/java -Xmx512m -Dfile.encoding=UTF-8 -classpath /Users/moon/Projects/git-projects/r4intellij/lib/JFlex.jar JFlex.Main -sliceandcharat -skel /Users/moon/Projects/git-projects/r4intellij/lib/idea-flex.skeleton -d /Users/moon/Projects/git-projects/r4intellij/src/com/r4intellij/lang/lexer /Users/moon/Projects/git-projects/r4intellij/src/com/r4intellij/lang/lexer/r.flex
