@@ -11,9 +11,10 @@
     <description>R coding tools for Intellij IDEA</description>
     <version>0.8.5</version>
     <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
-    <idea-version since-build="131"/>
+    <idea-version since-build="8000"/>
 
     <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.platform</depends>
 
     <description><![CDATA[
         <html>
