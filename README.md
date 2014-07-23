@@ -47,7 +47,7 @@ Most of these functions use the default shortcuts of the Intellij platform. Cust
 Integration with R session
 ----
 
-R4Intellij supports the evaluation of the current selection or line on Windows (RGui) and MacOS (Terminal, R, [R64](/p/r4intellij/source/detail?r=64)). Furthermore, the user can define up to 4 custom code action which allow to wrap the current selection into some function before sending it to R. For instance, a custom **head of a data.frame** action would be defined as _head(%snippet%);_. These custom code actions can be defined in the preferences and can get keyboard shortcuts assigned to them. ![](/docs/code_snippet_evaluation.png) ![](/docs/code_snippet_evaluation_result.png) ![](/docs/code_snippet_action_config.png) 
+R4Intellij supports the evaluation of the current selection or line on Windows (RGui) and MacOS (R GUI, Terminal, [iTerm2](http://www.iterm2.com/)). Furthermore, the user can define up to 4 custom code action which allow to wrap the current selection into some function before sending it to R. For instance, a custom **head of a data.frame** action would be defined as _head(%snippet%);_. These custom code actions can be defined in the preferences and can get keyboard shortcuts assigned to them. ![](/docs/code_snippet_evaluation.png) ![](/docs/code_snippet_evaluation_result.png) ![](/docs/code_snippet_action_config.png) 
 
 Code completion
 -----

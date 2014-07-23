@@ -44,11 +44,16 @@ public class AppleScriptConnector implements CodeLaunchConnector {
 
                 String evalSelection;
                 if (evalTarget.equals("Terminal")) {
+                    evalSelection = "tell application \"" + "Terminal" + "\" to do script \"" + dquotesExpandedText + "\" in window 0";
+
                     if (switchFocus2R) {
-                        evalSelection = "tell application \"" + "Terminal" + "\" to activate\n" +
-                                "tell application \"" + "Terminal" + "\" to do script \"" + dquotesExpandedText + "\" in window 0";
-                    } else {
-                        evalSelection = "tell application \"" + "Terminal" + "\" to do script \"" + dquotesExpandedText + "\" in window 0";
+                        evalSelection = "tell application \"Terminal\" to activate\n" + evalSelection;
+                    }
+
+                } else if (evalTarget.equals("iTerm")) {
+                    evalSelection = "tell application \"iTerm\" to tell current session of current terminal  to write text  \"" + dquotesExpandedText + "\"";
+                    if (switchFocus2R) {
+                        evalSelection = "tell application \"iTerm\" to activate\n" + evalSelection;
                     }
 
                 } else {

@@ -6,14 +6,14 @@
   -->
 
 <idea-plugin version="2">
+    <id>com.r4intellij</id>
     <name>R4Intellij</name>
     <description>R coding tools for Intellij IDEA</description>
-    <version>0.8.2</version>
+    <version>0.8.5</version>
     <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
-    <idea-version since-build="8000"/>
+    <idea-version since-build="131"/>
 
     <depends>com.intellij.modules.lang</depends>
-    <depends>com.intellij.modules.platform</depends>
 
     <description><![CDATA[
         <html>
@@ -47,6 +47,18 @@
 
     <change-notes><![CDATA[
         <html>
+        <b>Changes in v0.8.5:</b>
+        <ul>
+            <li>Added R color setting page</li>
+        </ul>
+        <b>Changes in v0.8.4:</b>
+        <ul>
+            <li>Added iTerm support for HongKee</li>
+        </ul>
+        <b>Changes in v0.8.3:</b>
+        <ul>
+            <li>Added support for pipe operator from magrittr package</li>
+        </ul>
         <b>Changes in v0.8.2:</b>
         <ul>
             <li>Changed plugin definition to support also other Jetbrains products like PhpStorm, PyCharm, etc.</li>
@@ -148,6 +160,16 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
+
+        <additionalTextAttributes
+                file="colorSchemes/RDefault.xml"
+                scheme="Default" />
+        <additionalTextAttributes
+                file="colorSchemes/RDarcula.xml"
+                scheme="Darcula" />
+
+        <colorSettingsPage
+                implementation="com.r4intellij.editor.highlighting.RColorSettingsPage" />
 
         <fileTypeFactory implementation="com.r4intellij.lang.RFileTypeFactory"/>
 

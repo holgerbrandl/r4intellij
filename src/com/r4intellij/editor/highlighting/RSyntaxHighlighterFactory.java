@@ -29,6 +29,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.r4intellij.lang.lexer.RLexer;
 import com.r4intellij.psi.RTypes;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.r4intellij.psi.RTypes.*;
 
@@ -40,8 +41,8 @@ public class RSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
 
     @NotNull
     @Override
-    public SyntaxHighlighter getSyntaxHighlighter(Project project, VirtualFile virtualFile) {
-        return new MyHighlighter();
+    public SyntaxHighlighter getSyntaxHighlighter(@Nullable Project project, @Nullable VirtualFile virtualFile) {
+        return new RSyntaxHighlighter(project, virtualFile);
     }
 
 
@@ -51,14 +52,12 @@ public class RSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
     private class MyHighlighter extends SyntaxHighlighterBase {
 
         @NotNull
-        @Override
         public Lexer getHighlightingLexer() {
             return new RLexer();
         }
 
 
         @NotNull
-        @Override
         public TextAttributesKey[] getTokenHighlights(IElementType iElementType) {
             if (iElementType == TokenType.BAD_CHARACTER) {
                 return pack(DefaultLanguageHighlighterColors.INVALID_STRING_ESCAPE);
