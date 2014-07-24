@@ -35,9 +35,11 @@ Lexical Rules Section.
 */
 
 /* A line terminator is a \r (carriage return), \n (line feed), or \r\n. */
-EOL = (\r|\n|\r\n)*
+EOL = "\r"|"\n"|"\r\n"
 //WHITE_SPACE= {EOL} | [ \t\f]
-WHITE_SPACE= [ \t\f]
+LINE_WS=[\ \t\f]
+WHITE_SPACE=({LINE_WS}|{EOL})+
+
 SECTION_COMMENT = [#]{5,120}[\r\n]{1} [#]{2,5} [^\r\n]*
 COMMENT = "#"[^\r\n]*
 
@@ -45,6 +47,7 @@ COMMENT = "#"[^\r\n]*
 or an underscore followed by zero or more letters between A and Z, a and z,
 zero and nine, or an underscore. */
 SYMBOL = [A-Za-z.][A-Za-z_0-9._]*
+FUNCTION = {SYMBOL}{WHITE_SPACE}*\(
 
 
 /* A literal integer is is a number beginning with a number between one and nine
@@ -64,8 +67,6 @@ EscapeSequence=\\[^\r\n]
 //todo allow for linebreaks in strings and for single quot quoting
 STRING_DQUOTE=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 STRING_SQUOTE='([^\\\']|{EscapeSequence})*('|\\)?
-
-FUNCTIONCALL=(\w+)\(
 
 //%state STRING
 
@@ -106,7 +107,10 @@ YYINITIAL. */
   "..." { return R_SYMBOL_FORMALS; }
 
   {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return R_STR_CONST; }
-  {FUNCTIONCALL} { yybegin(YYINITIAL); return R_FUNCALL; }
+  //{FUNCTION}           { yybegin(YYINITIAL); return R_FUNCTION; }
+
+
+  {FUNCALL}           { yybegin(YYINITIAL); return R_FUNCTION; }
   {SYMBOL} { yybegin(YYINITIAL); return R_SYMBOL; }
   // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
   // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }

@@ -72,8 +72,6 @@
 			RIGHT_BRACKET="]"
 			LEFT_PAREN="("
 			RIGHT_PAREN=")"
-			EOL="EOL"
-			EOF="EOF"
 
 			COLON=":"
 			COMMA=","
@@ -94,6 +92,9 @@
 			//onthefly ARITH_MISC
 
 			id="regexp:\w+"
+			string="regexp:('([^'\\]|\\.)*'|\"([^\"\\]|\\\"|\\\'|\\)*\")"
+			number="regexp:\d+"
+			comment="regexp:#.*"
 			function="regexp:\.+\("
 		]
 
@@ -104,67 +105,109 @@
 
 }
 
+external grammar ::= parseGrammar prog
 
-external grammar ::= parseGrammar command
 
-//END_OF_INPUT //todo match an empty file --> add unit test
+prog	::=
+		(command)*
+		EOF
+		;
+
 command ::=
-		(section |  expr_or_assign? (EOL | ';'))
-//    	|  expr_or_assign? ';'
-     	{recoverUntil="command_recover_until"}
-private command_recover_until::=!(command)
+		( section
+		| expr_or_assign (';'| NL)
+		| NL
+		)
+		;
 
-
-expr_or_assign ::= EOL* ( expr [EQ_ASSIGN expr_or_assign] |  COMMENT )
+expr_or_assign
+    ::= expr
+    |   equal_assign
+    ;
 
 section ::= SECTION_COMMENT {extends="com.r4intellij.psi.impl.AbstractRSection"}
 
+equal_assign
+	::= expr EQ_ASSIGN expr_or_assign
 
-expr ::= EOL* (
-    NUM_CONST |
-    NULL_CONST |
-//    string_literal (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST) |
-    string_literal | // todo remove this as it is redundant with the last line optionalized with ()?
-    funcall |
-    variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)? |
-    '{' exprlist '}' |
-    '(' expr_or_assign ')' |
-    '-' expr |
-    '+' expr |
-    '!' expr |
-    '~' expr |
-    '?' expr |
-    fundef |
-    IF cond expr_or_assign [ELSE expr_or_assign] |
-    FOR forcond expr_or_assign |
-    WHILE cond expr_or_assign |
-    REPEAT expr_or_assign |
-    NEXT |
-    BREAK) // end of first half
-    (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | GLOBAL_LEFT_ASSIGN | GLOBAL_RIGHT_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
-    '(' sublist? ')' |
-    '[[' sublist ']]' |
-    '[' ','? sublist ','? ']' |
-    '$' ( SYMBOL | STR_CONST) |
-    '@' ( SYMBOL | STR_CONST )
-    )*
-//{recoverUntil="expr_recover_until"}
-//private expr_recover_until::=!(';' | 'EOL');
-
-exprlist ::= [(expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)*] EOL* ;
-
-string_literal ::= STR_CONST //{extends="" implements=""}
+expr
+	::= NUM_CONST
+	| STR_CONST
+	| NULL_CONST
+	| string_literal
+	| funcall
+	| variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)?
+	| '{' exprlist '}'
+	| '(' expr_or_assign ')'
+	| '-' expr
+	| '+' expr
+	| '!' expr
+	| '~' expr
+	| '?' expr
+	| fundef
+	| expr ':' expr
+	| expr '+' expr
+	| expr '-' expr
+	| expr '*' expr
+	| expr '/' expr
+	| expr '^' expr
+	| expr SPECIAL expr
+	| expr '%' expr
+	| expr '~' expr
+	| expr '?' expr
+	| expr LT expr
+	| expr LE expr
+	| expr EQ expr
+	| expr NE expr
+	| expr GE expr
+	| expr GT expr
+	| expr AND expr
+	| expr OR expr
+	| expr AND2 expr
+	| expr OR2 expr
+	| expr LEFT_ASSIGN expr
+	| expr RIGHT_ASSIGN expr
+	| FUNCTION '(' formlist ')' cr expr_or_assign
+	| expr '(' sublist ')'
+	| IF ifcond expr_or_assign
+	| IF ifcond expr_or_assign ELSE expr_or_assign
+	| FOR forcond expr_or_assign
+	| WHILE cond expr_or_assign
+	| REPEAT expr_or_assign
+	| expr LBB sublist ']' ']'
+	| expr '[' sublist ']'
+	| SYMBOL NS_GET SYMBOL
+	| SYMBOL NS_GET STR_CONST
+	| STR_CONST NS_GET SYMBOL
+	| STR_CONST NS_GET STR_CONST
+	| SYMBOL NS_GET_INT SYMBOL
+	| SYMBOL NS_GET_INT STR_CONST
+	| STR_CONST NS_GET_INT SYMBOL
+	| STR_CONST NS_GET_INT STR_CONST
+	| expr '$' SYMBOL
+	| expr '$' STR_CONST
+	| expr '@' SYMBOL
+	| expr '@' STR_CONST
+	| NEXT
+	| BREAK
+    ;
 
 variable ::= SYMBOL // {extends=namedImpl implements=named};
 
-cond ::= '(' expr ')'
+cond
+	::= '(' expr ')'
+	;
 
-forcond ::= '(' variable IN expr ')'
+ifcond
+	::='(' expr ')'
+	;
+
+forcond
+	::= '(' SYMBOL IN expr ')'
+	;
 
 fundef ::= FUNCTION '(' fundef_args? ')'  expr_or_assign;
 
-// todo avoid that the parser accepts several symbol formals
-// called formlist in th r grammar definition
 fundef_args ::= fd_argument (EOL? ',' EOL? fd_argument)*
 
 // called form in th r grammar definition
@@ -172,16 +215,50 @@ fd_argument ::=  SYMBOL '=' expr
         | SYMBOL
         | STR_CONST '=' expr
         | STR_CONST
-        | SYMBOL_FORMALS ;
+        | SYMBOL_FORMALS
+        ;
+
+exprlist
+	::= /* empty */
+	| expr_or_assign
+	| exprlist ';' expr_or_assign
+	| exprlist ';'
+	| exprlist '\n' expr_or_assign
+	| exprlist '\n'
+	;
+
+string_literal ::= STR_CONST //{extends="" implements=""}
+
+variable ::= SYMBOL
 
 funcall ::= variable '(' sublist? ')' {extends="com.r4intellij.psi.impl.AbstractRFunCall" implements="com.r4intellij.psi.RNamedElement"};
 
-sublist ::=  sub (EOL? ',' EOL? sub)*
+sublist
+	::= sub
+	| sublist cr ',' sub
+	;
 
-sub ::= EOL*
-    (SYMBOL '=' expr
-//   | STR_CONST '=' expr
-//   | NULL_CONST '=' expr
-    | SYMBOL_FORMALS
-   | expr ) EOL* ;
+sub
+	::= /* empty */
+	| expr
+	| SYMBOL EQ_ASSIGN
+	| SYMBOL EQ_ASSIGN expr
+	| STR_CONST EQ_ASSIGN
+	| STR_CONST EQ_ASSIGN expr
+	| NULL_CONST EQ_ASSIGN
+	| NULL_CONST EQ_ASSIGN expr
+	;
 
+formlist
+	::= /* empty */
+	| SYMBOL
+	| SYMBOL EQ_ASSIGN expr
+	| formlist ',' SYMBOL
+	| formlist ',' SYMBOL EQ_ASSIGN expr
+	;
+
+NL      ::=   '\r'? '\n' ;
+
+cr
+	::= /* empty */
+	;

@@ -50,9 +50,9 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
 
     static TokenSet keywords = TokenSet.create(R_ELSE, R_FOR, R_FUNCTION, R_IF, R_WHILE, R_IN, R_BREAK, R_LEFT_ASSIGN, R_EQ_ASSIGN);
 
-	//static TokenSet variable = TokenSet.create(R_VARIABLE);
+	static TokenSet variable = TokenSet.create(R_SYMBOL);
 
-	//static TokenSet funcall = TokenSet.andSet(parenthesisSet, TokenSet.create(R_SYMBOL));
+	static TokenSet funcall = TokenSet.create(R_FUNCTION);
 
     static {
         //setup default attribute formatting
@@ -66,8 +66,8 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
         fillMap(attributes, bracketSet, RHighlighterColors.BRACKETS_ATTR_KEY);
         fillMap(attributes, string2Set, RHighlighterColors.STRING_ATTR_KEY);
         fillMap(attributes, numberSet, RHighlighterColors.NUMBER_ATTR_KEY);
-		//fillMap(attributes, variable, RHighlighterColors.VARIABLE_ATTR_KEY);
-		//fillMap(attributes, funcall, RHighlighterColors.FUNCALL_ATTR_KEY);
+		fillMap(attributes, variable, RHighlighterColors.VARIABLE_ATTR_KEY);
+		fillMap(attributes, funcall, RHighlighterColors.FUNCALL_ATTR_KEY);
     }
 
 	private final Project project;
