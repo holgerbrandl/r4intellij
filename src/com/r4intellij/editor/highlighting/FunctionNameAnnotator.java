@@ -38,7 +38,8 @@ public class FunctionNameAnnotator implements Annotator {
       }
 	  else if(psiElement instanceof RVariable)
 	  {
-		annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(RHighlighterColors.VARIABLE_ATTR_KEY);
+		  if(psiElement.getParent() == null || !(psiElement.getParent() instanceof RFuncall))
+			annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(RHighlighterColors.VARIABLE_ATTR_KEY);
 	  }
 
 
