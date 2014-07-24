@@ -17,7 +17,6 @@ import com.intellij.util.containers.Stack;
 %unicode
 %public
 %char
-
 %function advance
 %type IElementType
 
@@ -66,6 +65,8 @@ EscapeSequence=\\[^\r\n]
 STRING_DQUOTE=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 STRING_SQUOTE='([^\\\']|{EscapeSequence})*('|\\)?
 
+FUNCTIONCALL=(\w+)\(
+
 //%state STRING
 
 /* ------------------------Lexical Rules Section---------------------- */
@@ -78,11 +79,16 @@ will be executed when the scanner matches the associated regular expression. */
 expressions will only be matched if the scanner is in the start state
 YYINITIAL. */
 
+//%state FUNCTION_CALL
+
 %%
+
+//<YYINITIAL>  <<EOF>>    { return R_EOF; }
 
 <YYINITIAL> {
   {WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
-  {EOL} {yybegin(YYINITIAL); return R_EOL; }
+  {EOL} { yybegin(YYINITIAL); return R_EOL; }
+
   {SECTION_COMMENT} {yybegin(YYINITIAL); return R_SECTION_COMMENT; }
   {COMMENT} {yybegin(YYINITIAL); return R_COMMENT; }
 
@@ -99,26 +105,28 @@ YYINITIAL. */
   "NULL" { return R_NULL_CONST; }
   "..." { return R_SYMBOL_FORMALS; }
 
-  {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return RTypes.R_STR_CONST; }
- {SYMBOL} { yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
- // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
+  {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return R_STR_CONST; }
+  {FUNCTIONCALL} { yybegin(YYINITIAL); return R_FUNCALL; }
+  {SYMBOL} { yybegin(YYINITIAL); return R_SYMBOL; }
+  // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
+  // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
 
   //{NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }
   {IntLiteral} | {DoubleLiteral}  { return R_NUM_CONST; }
   "NULL" { return R_NULL_CONST; }
 
-    // separators
-  ";" {yybegin(YYINITIAL); return RTypes.R_SEMICOLON; }
+  // separators
+  ";" {yybegin(YYINITIAL); return R_SEMICOLON; }
   ":" {yybegin(YYINITIAL); return R_COLON; }
   "," {yybegin(YYINITIAL); return R_COMMA; }
-  "(" {yybegin(YYINITIAL); return RTypes.R_LEFT_PAREN; }
-  ")" {yybegin(YYINITIAL); return RTypes.R_RIGHT_PAREN; }
-  "{" {yybegin(YYINITIAL); return RTypes.R_LEFT_BRACE; }
-  "}" {yybegin(YYINITIAL); return RTypes.R_RIGHT_BRACE; }
-  "[" {yybegin(YYINITIAL); return RTypes.R_LEFT_BRACKET; }
-  "]" {yybegin(YYINITIAL); return RTypes.R_RIGHT_BRACKET; }
-  "[[" {yybegin(YYINITIAL); return RTypes.R_LBB; }
-  "]]" {yybegin(YYINITIAL); return RTypes.R_RBB; }
+  "(" {yybegin(YYINITIAL); return R_LEFT_PAREN; }
+  ")" {yybegin(YYINITIAL); return R_RIGHT_PAREN; }
+  "{" {yybegin(YYINITIAL); return R_LEFT_BRACE; }
+  "}" {yybegin(YYINITIAL); return R_RIGHT_BRACE; }
+  "[" {yybegin(YYINITIAL); return R_LEFT_BRACKET; }
+  "]" {yybegin(YYINITIAL); return R_RIGHT_BRACKET; }
+  "[[" {yybegin(YYINITIAL); return R_LBB; }
+  "]]" {yybegin(YYINITIAL); return R_RBB; }
 
   // logical operators
   // unary
@@ -157,9 +165,9 @@ YYINITIAL. */
    "$" { return R_LIST_SUBSET; }
    "@" { return R_SLOT; }
     "?" { return R_QUESTION; }
-    "::" {yybegin(YYINITIAL); return RTypes.R_NS_GET; }
-    ":::" {yybegin(YYINITIAL); return RTypes.R_NS_GET_INT; }
+    "::" {yybegin(YYINITIAL); return R_NS_GET; }
+    ":::" {yybegin(YYINITIAL); return R_NS_GET_INT; }
 }
 
+
 .    { return com.intellij.psi.TokenType.BAD_CHARACTER; }
-//<<EOF>>  { return RTypes.R_EOF; }
