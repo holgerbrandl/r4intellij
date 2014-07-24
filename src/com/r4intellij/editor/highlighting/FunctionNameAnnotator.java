@@ -18,16 +18,30 @@ package com.r4intellij.editor.highlighting;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
+import com.r4intellij.psi.RFuncall;
+import com.r4intellij.psi.RVariable;
 import org.jetbrains.annotations.NotNull;
 
 
 /**
  * @author brandl
+ * @author moon
  */
 public class FunctionNameAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
+
+      if (psiElement instanceof RFuncall)
+	  {
+		annotationHolder.createInfoAnnotation(psiElement.getFirstChild(), null).setTextAttributes(RHighlighterColors.FUNCALL_ATTR_KEY);
+      }
+	  else if(psiElement instanceof RVariable)
+	  {
+		  if(psiElement.getParent() == null || !(psiElement.getParent() instanceof RFuncall))
+			annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(RHighlighterColors.VARIABLE_ATTR_KEY);
+	  }
+
 
 //
 //    PsiElement parent = psiElement.getParent();

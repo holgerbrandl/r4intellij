@@ -8,6 +8,7 @@
 package com.r4intellij.lang.parser;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.Language;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
 import com.intellij.lexer.Lexer;
@@ -20,6 +21,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.r4intellij.lang.RFileType;
+import com.r4intellij.lang.RLanguage;
 import com.r4intellij.lang.lexer.RLexer;
 import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RTypes;
@@ -33,14 +35,32 @@ import org.jetbrains.annotations.NotNull;
  */
 public class RParserDefinition implements ParserDefinition, RTypes {
 
-    public static IFileElementType FILE = new IFileElementType(RFileType.R_LANGUAGE);
+	public static final TokenSet WHITE_SPACES = TokenSet.create(TokenType.WHITE_SPACE);
+	public static final TokenSet COMMENTS = TokenSet.create(R_COMMENT);
+	public static final TokenSet STRING_LITERAL = TokenSet.create(R_COMMENT);
 
+	public static final IFileElementType FILE = new IFileElementType(Language.<RLanguage>findInstance(RLanguage.class));
 
     @NotNull
+	@Override
     public Lexer createLexer(Project project) {
         return new RLexer();
     }
 
+	@NotNull
+	public TokenSet getWhitespaceTokens() {
+		return WHITE_SPACES;
+	}
+
+	@NotNull
+	public TokenSet getCommentTokens() {
+		return COMMENTS;
+	}
+
+	@NotNull
+	public TokenSet getStringLiteralElements() {
+		return STRING_LITERAL;
+	}
 
     public PsiParser createParser(Project project) {
         return new RParser();
@@ -51,25 +71,6 @@ public class RParserDefinition implements ParserDefinition, RTypes {
 
         return FILE;
     }
-
-
-    @NotNull
-    public TokenSet getWhitespaceTokens() {
-        return TokenSet.create(TokenType.WHITE_SPACE);
-    }
-
-
-    @NotNull
-    public TokenSet getCommentTokens() {
-        return TokenSet.create(R_COMMENT);
-    }
-
-
-    @NotNull
-    public TokenSet getStringLiteralElements() {
-        return TokenSet.create(R_STR_CONST);
-    }
-
 
     public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode leftAst, ASTNode rightAst) {
         final IElementType left = leftAst.getElementType();
@@ -105,7 +106,6 @@ public class RParserDefinition implements ParserDefinition, RTypes {
     @NotNull
     public PsiElement createElement(ASTNode node) {
         return RTypes.Factory.createElement(node);
-//        return new ASTWrapperPsiElement(node);
     }
 
 
