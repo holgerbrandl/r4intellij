@@ -52,7 +52,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
 
 	static TokenSet variable = TokenSet.create(R_SYMBOL);
 
-	static TokenSet funcall = TokenSet.create(R_FUNCTION);
+	static TokenSet funcall = TokenSet.create(R_FUNCALL);
 
     static {
         //setup default attribute formatting
@@ -88,6 +88,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
     @NotNull
 	@Override
     public TextAttributesKey[] getTokenHighlights(final IElementType tokenType) {
+		System.out.println(tokenType.getClass().toString() + tokenType.toString());
         return pack(attributes.get(tokenType));
     }
 }

@@ -35,10 +35,12 @@ Lexical Rules Section.
 */
 
 /* A line terminator is a \r (carriage return), \n (line feed), or \r\n. */
-EOL = "\r"|"\n"|"\r\n"
-//WHITE_SPACE= {EOL} | [ \t\f]
-LINE_WS=[\ \t\f]
-WHITE_SPACE=({LINE_WS}|{EOL})+
+EOL = (\r|\n|\r\n)*
+//EOL = ("\r"|"\n"|"\r\n")*
+EOF = <<eof>>
+LINE_WS=[ \t\f]
+WHITE_SPACE= {LINE_WS}
+//WHITE_SPACE=({LINE_WS}|{EOL})+
 
 SECTION_COMMENT = [#]{5,120}[\r\n]{1} [#]{2,5} [^\r\n]*
 COMMENT = "#"[^\r\n]*
@@ -47,9 +49,7 @@ COMMENT = "#"[^\r\n]*
 or an underscore followed by zero or more letters between A and Z, a and z,
 zero and nine, or an underscore. */
 SYMBOL = [A-Za-z.][A-Za-z_0-9._]*
-FUNCTION = {SYMBOL}{WHITE_SPACE}*\(
-
-
+FUNCALL = {SYMBOL}\(\.*\)
 /* A literal integer is is a number beginning with a number between one and nine
 followed by zero or more numbers between zero and nine or just a zero. */
 IntLiteral = 0 | [1-9][0-9]*[L]?
@@ -80,13 +80,14 @@ will be executed when the scanner matches the associated regular expression. */
 expressions will only be matched if the scanner is in the start state
 YYINITIAL. */
 
-//%state FUNCTION_CALL
+%state FUNCTION_CALL
 
 %%
 
 //<YYINITIAL>  <<EOF>>    { return R_EOF; }
 
 <YYINITIAL> {
+  {EOF} { yybegin(YYINITIAL); return R_EOF; }
   {WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
   {EOL} { yybegin(YYINITIAL); return R_EOL; }
 
@@ -107,11 +108,9 @@ YYINITIAL. */
   "..." { return R_SYMBOL_FORMALS; }
 
   {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return R_STR_CONST; }
-  //{FUNCTION}           { yybegin(YYINITIAL); return R_FUNCTION; }
+//  {FUNCALL}           { yybegin(YYINITIAL); return R_FUNCALL; }
 
-
-  {FUNCALL}           { yybegin(YYINITIAL); return R_FUNCTION; }
-  {SYMBOL} { yybegin(YYINITIAL); return R_SYMBOL; }
+  {SYMBOL} 				{ yybegin(YYINITIAL); return R_SYMBOL; }
   // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
   // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
 
@@ -172,6 +171,18 @@ YYINITIAL. */
     "::" {yybegin(YYINITIAL); return R_NS_GET; }
     ":::" {yybegin(YYINITIAL); return R_NS_GET_INT; }
 }
+
+<FUNCTION_CALL> {
+  {EOL} 			{ yybegin(YYINITIAL); return R_EOL; }
+  {WHITE_SPACE} 	{ yybegin(FUNCTION_CALL); return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {SYMBOL} 			{ yybegin(FUNCTION_CALL); return R_SYMBOL; }
+  "," 				{ yybegin(FUNCTION_CALL); return R_COMMA; }
+  ")" 				{ yybegin(YYINITIAL); return R_RIGHT_PAREN; }
+}
+
+{EOF} { yybegin(YYINITIAL); return R_EOF; }
+{WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
+{EOL} { yybegin(YYINITIAL); return R_EOL; }
 
 
 .    { return com.intellij.psi.TokenType.BAD_CHARACTER; }

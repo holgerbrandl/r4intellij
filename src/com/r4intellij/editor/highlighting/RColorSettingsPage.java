@@ -60,7 +60,19 @@ public class RColorSettingsPage implements ColorSettingsPage {
 	@NotNull
 	@Override
 	public String getDemoText() {
-		return SAMPLE_R;
+		//return SAMPLE_R;
+		return "\nfor (i in names(list)) {\n" +
+				"    if(true)\n" +
+				"    {\n" +
+				"        #line comment\n" +
+				"        names[,i] = 0\n" +
+				"        names[,'added'] = \"string\"\n" +
+				"    }\n" +
+				"\n" +
+				"    a = 1\n" +
+				"    head(names)\n" +
+				"}\n" +
+				"head(a)";
 	}
 
 	@Nullable
