@@ -4,9 +4,12 @@
 *.class
 
 MANIFEST.MF
+*.iml
+.idea/
 
 # Mobile Tools for Java (J2ME)
 out/
+
 
 # Package Files #
 *.jar
