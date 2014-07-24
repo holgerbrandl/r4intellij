@@ -7,43 +7,38 @@
     </option>
     <option name="R.KEYWORD">
         <value>
-            <option name="FOREGROUND" value="0000FF" />
+            <option name="FOREGROUND" value="000080" />
             <option name="FONT_TYPE" value="1" />
         </value>
     </option>
     <option name="R.PAREN">
         <value>
-            <option name="FOREGROUND" value="8C1111" />
         </value>
     </option>
     <option name="R.BRACES">
         <value>
-            <option name="FOREGROUND" value="8C1111" />
         </value>
     </option>
     <option name="R.BRACKETS">
         <value>
-            <option name="FOREGROUND" value="8C1111" />
         </value>
     </option>
     <option name="R.NUMBER">
         <value>
-            <option name="FOREGROUND" value="CC7832" />
+            <option name="FOREGROUND" value="0000FF" />
         </value>
     </option>
     <option name="R.STRING">
         <value>
-            <option name="FOREGROUND" value="CC0000" />
+            <option name="FOREGROUND" value="008000" />
         </value>
     </option>
     <option name="R.VARIABLE">
         <value>
-            <option name="FOREGROUND" value="003366" />
         </value>
     </option>
     <option name="R.FUNCALL">
         <value>
-            <option name="FOREGROUND" value="6897BB" />
         </value>
     </option>
 
