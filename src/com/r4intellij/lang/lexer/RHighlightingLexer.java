@@ -10,7 +10,7 @@ import static com.r4intellij.psi.RTypes.*;
 public class RHighlightingLexer extends LayeredLexer {
 	public RHighlightingLexer()
 	{
-		super(new RLexer());
+		super(new RLangLexer());
 //		registerSelfStoppingLayer(new StringLiteralLexer('\"', JavaTokenType.STRING_LITERAL),
 //				new IElementType[]{JavaTokenType.STRING_LITERAL}, IElementType.EMPTY_ARRAY);
 //
