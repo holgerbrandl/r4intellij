@@ -88,7 +88,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
     @NotNull
 	@Override
     public TextAttributesKey[] getTokenHighlights(final IElementType tokenType) {
-		System.out.println(tokenType.getClass().toString() + tokenType.toString());
+		//System.out.println(tokenType.getClass().toString() + tokenType.toString());
         return pack(attributes.get(tokenType));
     }
 }

@@ -22,16 +22,6 @@ import java.util.Map;
  * @author HongKee Moon
  */
 public class RColorSettingsPage implements ColorSettingsPage {
-	/** The path to the sample .R file */
-	@NonNls
-	protected static final String SAMPLE_R_PATH = "/sample.R";
-
-	/**
-	 * The sample .R document shown in the colors settings dialog
-	 *
-	 * @see #loadSampleR()
-	 */
-	protected static final String SAMPLE_R = loadSampleR();
 
 	private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
 			new AttributesDescriptor(RBundle.message("highlighter.comment"), RHighlighterColors.COMMENT_ATTR_KEY),
@@ -97,17 +87,5 @@ public class RColorSettingsPage implements ColorSettingsPage {
 	@Override
 	public String getDisplayName() {
 		return RLanguage.NAME;
-	}
-
-	/**
-	 * Loads sample .R file
-	 *
-	 * @return the text loaded from {@link #SAMPLE_R_PATH}
-	 * @see #getDemoText()
-	 * @see #SAMPLE_R_PATH
-	 * @see #SAMPLE_R
-	 */
-	protected static String loadSampleR() {
-		return Resources.getResourceContent(SAMPLE_R_PATH);
 	}
 }

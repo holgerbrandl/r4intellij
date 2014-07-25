@@ -20,7 +20,6 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.r4intellij.lang.RFileType;
 import com.r4intellij.lang.RLanguage;
 import com.r4intellij.lang.lexer.RLexer;
 import com.r4intellij.psi.RFile;
@@ -63,7 +62,7 @@ public class RParserDefinition implements ParserDefinition, RTypes {
 	}
 
     public PsiParser createParser(Project project) {
-        return new RParser();
+        return new RLangParser();
     }
 
 
