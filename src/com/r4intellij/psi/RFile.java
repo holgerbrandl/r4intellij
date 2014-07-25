@@ -138,13 +138,15 @@ public class RFile extends PsiFileBase {
         return new Processor<PsiElement>() {
             @Override
             public boolean process(PsiElement psiElement) {
-                for (PsiElement child = psiElement.getFirstChild(); child != null; child = child.getNextSibling()) {
-                    if (child instanceof GeneratedParserUtilBase.DummyBlock) {
-                        if (!process(child)) return false;
-                    } else if (!processor.process(child)) return false;
-                }
-                return true;
-            }
+				for (PsiElement child1 = psiElement.getFirstChild(); child1 != null; child1 = child1.getNextSibling()) {
+					for (PsiElement child = child1.getFirstChild(); child != null; child = child.getNextSibling()) {
+						if (child instanceof GeneratedParserUtilBase.DummyBlock) {
+							if (!process(child)) return false;
+						} else if (!processor.process(child)) return false;
+					}
+				}
+				return true;
+			}
         }.process(element);
     }
 }
