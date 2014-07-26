@@ -26,6 +26,6 @@ public class RTokenType extends IElementType {
 
 	@Override
 	public String toString() {
-		return "RTokenType." + super.toString();
+		return ".R_" + super.toString();
 	}
 }

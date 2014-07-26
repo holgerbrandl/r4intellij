@@ -22,7 +22,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.r4intellij.lang.RLanguage;
-import com.r4intellij.lang.lexer.RLexer;
 import com.r4intellij.lang.lexer._RLexer;
 import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RTypes;

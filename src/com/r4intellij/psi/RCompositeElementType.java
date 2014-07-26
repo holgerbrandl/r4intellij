@@ -30,4 +30,9 @@ public class RCompositeElementType extends IElementType {
     public RCompositeElementType(@NotNull @NonNls String debug) {
         super(debug, RLanguage.INSTANCE);
     }
+
+	@Override
+	public String toString() {
+		return "." + super.toString();
+	}
 }

@@ -17,7 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.ui.SimpleTextAttributes;
-import com.r4intellij.lang.lexer.RLexer;
+import com.r4intellij.lang.lexer.RLangLexer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,7 +81,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
 	@NotNull
 	@Override
     public Lexer getHighlightingLexer() {
-        return new RLexer();
+        return new RLangLexer();
     }
 
 
