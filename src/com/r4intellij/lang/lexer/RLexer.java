@@ -14,7 +14,7 @@ import java.io.Reader;
 
 public class RLexer extends FlexAdapter {
 
-    public RLexer() {
-        super(new _RLexer((Reader) null));
-    }
+	public RLexer() {
+		super(new _RLexer((Reader) null));
+	}
 }

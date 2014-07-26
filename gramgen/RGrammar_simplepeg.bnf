@@ -1,7 +1,7 @@
 {
   classHeader="header.txt"
   parserClass="com.r4intellij.lang.parser.RParser"
-  stubParserClass="com.r4intellij.lang.parser.GrammarParserUtil"
+  stubParserClass="com.r4intellij.lang.parser.RParserUtilBase"
 
   implements="com.r4intellij.psi.RCompositeElement"
   extends="com.r4intellij.psi.impl.RCompositeElementImpl"

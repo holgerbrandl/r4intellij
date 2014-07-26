@@ -10,6 +10,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface RVariable extends RCompositeElement {
+public interface RDocument extends RCompositeElement {
+
+  @NotNull
+  List<RCommand> getCommandList();
 
 }

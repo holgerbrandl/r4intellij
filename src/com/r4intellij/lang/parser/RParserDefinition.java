@@ -11,6 +11,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.lang.ParserDefinition;
 import com.intellij.lang.PsiParser;
+import com.intellij.lexer.FlexAdapter;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.FileViewProvider;
@@ -20,12 +21,13 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.TokenSet;
-import com.r4intellij.lang.RFileType;
 import com.r4intellij.lang.RLanguage;
-import com.r4intellij.lang.lexer.RLexer;
+import com.r4intellij.lang.lexer._RLexer;
 import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RTypes;
 import org.jetbrains.annotations.NotNull;
+
+import java.io.Reader;
 
 
 /**
@@ -41,11 +43,17 @@ public class RParserDefinition implements ParserDefinition, RTypes {
 
 	public static final IFileElementType FILE = new IFileElementType(Language.<RLanguage>findInstance(RLanguage.class));
 
-    @NotNull
+//    @NotNull
+//	@Override
+//    public Lexer createLexer(Project project) {
+//        return new RLexer();
+//    }
+
+	@NotNull
 	@Override
-    public Lexer createLexer(Project project) {
-        return new RLexer();
-    }
+	public Lexer createLexer(Project project) {
+		return new FlexAdapter(new _RLexer((Reader) null));
+	}
 
 	@NotNull
 	public TokenSet getWhitespaceTokens() {

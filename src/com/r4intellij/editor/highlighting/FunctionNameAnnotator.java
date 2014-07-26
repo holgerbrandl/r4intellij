@@ -30,20 +30,7 @@ import org.jetbrains.annotations.NotNull;
 public class FunctionNameAnnotator implements Annotator {
 
     @Override
-    public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {
-
-      if (psiElement instanceof RFuncall)
-	  {
-		annotationHolder.createInfoAnnotation(psiElement.getFirstChild(), null).setTextAttributes(RHighlighterColors.FUNCALL_ATTR_KEY);
-      }
-	  else if(psiElement instanceof RVariable)
-	  {
-		  if(psiElement.getParent() == null || !(psiElement.getParent() instanceof RFuncall))
-			annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(RHighlighterColors.VARIABLE_ATTR_KEY);
-	  }
-
-
-//
+    public void annotate(@NotNull PsiElement psiElement, @NotNull AnnotationHolder annotationHolder) {//
 //    PsiElement parent = psiElement.getParent();
 //    if (parent instanceof BnfRule && ((BnfRule)parent).getId() == psiElement) {
 //      annotationHolder.createInfoAnnotation(psiElement, null).setTextAttributes(BnfSyntaxHighlighter.RULE);

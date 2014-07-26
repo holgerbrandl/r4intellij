@@ -10,7 +10,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiBuilder.Marker;
 import com.intellij.openapi.diagnostic.Logger;
 import static com.r4intellij.psi.RTypes.*;
-import static com.r4intellij.lang.parser.GrammarParserUtil.*;
+import static com.r4intellij.lang.parser.RParserUtilBase.*;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.TokenSet;
@@ -30,6 +30,9 @@ public class RParser implements PsiParser {
     }
     else if (root_ == R_COND) {
       result_ = cond(builder_, 0);
+    }
+    else if (root_ == R_DOCUMENT) {
+      result_ = document(builder_, 0);
     }
     else if (root_ == R_EXPR) {
       result_ = expr(builder_, 0);
@@ -78,69 +81,38 @@ public class RParser implements PsiParser {
   }
 
   protected boolean parse_root_(final IElementType root_, final PsiBuilder builder_, final int level_) {
-    return parseGrammar(builder_, level_ + 1, command_parser_);
+    return document(builder_, level_ + 1);
   }
 
   /* ********************************************************** */
-  // section |  expr_or_assign? (EOL | ';')
+  // section |  expr_or_assign ';'? | EOL
   public static boolean command(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "command")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, "<command>");
     result_ = section(builder_, level_ + 1);
     if (!result_) result_ = command_1(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, R_COMMAND, result_, false, command_recover_until_parser_);
+    if (!result_) result_ = consumeToken(builder_, R_EOL);
+    exit_section_(builder_, level_, marker_, R_COMMAND, result_, false, null);
     return result_;
   }
 
-  // expr_or_assign? (EOL | ';')
+  // expr_or_assign ';'?
   private static boolean command_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "command_1")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = command_1_0(builder_, level_ + 1);
+    result_ = expr_or_assign(builder_, level_ + 1);
     result_ = result_ && command_1_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
-  // expr_or_assign?
-  private static boolean command_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "command_1_0")) return false;
-    expr_or_assign(builder_, level_ + 1);
-    return true;
-  }
-
-  // EOL | ';'
+  // ';'?
   private static boolean command_1_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "command_1_1")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, R_EOL);
-    if (!result_) result_ = consumeToken(builder_, R_SEMICOLON);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  /* ********************************************************** */
-  // !(command)
-  static boolean command_recover_until(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "command_recover_until")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_, level_, _NOT_, null);
-    result_ = !command_recover_until_0(builder_, level_ + 1);
-    exit_section_(builder_, level_, marker_, null, result_, false, null);
-    return result_;
-  }
-
-  // (command)
-  private static boolean command_recover_until_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "command_recover_until_0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = command(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
+    consumeToken(builder_, R_SEMICOLON);
+    return true;
   }
 
   /* ********************************************************** */
@@ -155,6 +127,21 @@ public class RParser implements PsiParser {
     result_ = result_ && consumeToken(builder_, R_RIGHT_PAREN);
     exit_section_(builder_, marker_, R_COND, result_);
     return result_;
+  }
+
+  /* ********************************************************** */
+  // command*
+  public static boolean document(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "document")) return false;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, "<document>");
+    int pos_ = current_position_(builder_);
+    while (true) {
+      if (!command(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "document", pos_)) break;
+      pos_ = current_position_(builder_);
+    }
+    exit_section_(builder_, level_, marker_, R_DOCUMENT, true, false, null);
+    return true;
   }
 
   /* ********************************************************** */
@@ -1092,14 +1079,4 @@ public class RParser implements PsiParser {
     return result_;
   }
 
-  final static Parser command_parser_ = new Parser() {
-    public boolean parse(PsiBuilder builder_, int level_) {
-      return command(builder_, level_ + 1);
-    }
-  };
-  final static Parser command_recover_until_parser_ = new Parser() {
-    public boolean parse(PsiBuilder builder_, int level_) {
-      return command_recover_until(builder_, level_ + 1);
-    }
-  };
 }
