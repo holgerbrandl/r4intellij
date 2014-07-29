@@ -55,6 +55,6 @@ public class RFileType extends LanguageFileType {
 
 
     public Icon getIcon() {
-        return IconLoader.findIcon("/icons/r16_icon.png");
+        return IconLoader.findIcon("/icons/fileTypeR.png");
     }
 }
