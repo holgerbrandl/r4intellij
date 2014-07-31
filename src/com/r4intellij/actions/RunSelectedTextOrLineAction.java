@@ -30,7 +30,8 @@ public class RunSelectedTextOrLineAction extends AnAction {
         String text = ed.getSelectionModel().getSelectedText();
         if (StringUtil.isEmptyOrSpaces(text)) {
             ed.getSelectionModel().selectLineAtCaret();
-            ConnectorUtils.push2R(ed.getSelectionModel().getSelectedText().replace("\\n", ""));
+			if(ed.getSelectionModel().getSelectedText() != null)
+            	ConnectorUtils.push2R(ed.getSelectionModel().getSelectedText().replace("\\n", ""));
 //
 //            int caret = ed.getSelectionModel().getSelectionStart();
 //            PsiFile file = e.getData(DataKeys.PSI_FILE);
