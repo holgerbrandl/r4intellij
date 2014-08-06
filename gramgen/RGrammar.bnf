@@ -118,7 +118,7 @@ expr_or_assign ::= EOL* ( expr [EQ_ASSIGN expr_or_assign] |  COMMENT )
 section ::= SECTION_COMMENT {extends="com.r4intellij.psi.impl.AbstractRSection"}
 
 
-expr ::= EOL* (
+expr ::= (
     NUM_CONST |
     NULL_CONST |
     string_literal | // todo remove this as it is redundant with the last line optionalized with ()?
@@ -175,12 +175,10 @@ funcall ::= variable '(' sublist? ')' {extends="com.r4intellij.psi.impl.Abstract
 
 sublist ::=  sub (EOL? ',' EOL? sub)*
 
-sub ::= EOL*
-    (SYMBOL EQ_ASSIGN
-   | SYMBOL EQ_ASSIGN expr
-   | STR_CONST EQ_ASSIGN
-   | STR_CONST EQ_ASSIGN expr
-   | NULL_CONST EQ_ASSIGN
-   | NULL_CONST EQ_ASSIGN expr
+sub ::=
+   SYMBOL '=' expr
+   | STR_CONST '=' expr
+   | NULL_CONST '=' expr
    | SYMBOL_FORMALS
-   | expr ) EOL* ;
+   | expr
+   ;
