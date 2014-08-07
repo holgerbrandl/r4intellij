@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataKeys;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.util.text.StringUtil;
 import com.r4intellij.misc.connectors.ConnectorUtils;
 
@@ -30,8 +31,11 @@ public class RunSelectedTextOrLineAction extends AnAction {
         String text = ed.getSelectionModel().getSelectedText();
         if (StringUtil.isEmptyOrSpaces(text)) {
             ed.getSelectionModel().selectLineAtCaret();
-			if(ed.getSelectionModel().getSelectedText() != null)
-            	ConnectorUtils.push2R(ed.getSelectionModel().getSelectedText().replace("\\n", ""));
+			if(ed.getSelectionModel().getSelectedText() != null) {
+				ConnectorUtils.push2R(ed.getSelectionModel().getSelectedText().replace("\n", ""));
+				ed.getCaretModel().moveToOffset(ed.getSelectionModel().getSelectionEnd());
+				ed.getSelectionModel().removeSelection();
+			}
 //
 //            int caret = ed.getSelectionModel().getSelectionStart();
 //            PsiFile file = e.getData(DataKeys.PSI_FILE);
