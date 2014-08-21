@@ -30,8 +30,14 @@ public class AppleScriptConnector implements CodeLaunchConnector {
                 String dquotesExpandedText = rCommands.replace("\\", "\\\\");
                 dquotesExpandedText = dquotesExpandedText.replace("\"", "\\\"");
 
+				String[] lines = dquotesExpandedText.split("\n");
 
-                String evalTarget = RSettings.getInstance().codeSnippetEvalTarget;
+				for(String line : lines)
+				{
+					if(line.trim().startsWith("#"))
+						continue;
+
+					String evalTarget = RSettings.getInstance().codeSnippetEvalTarget;
 //                String evalTarget = "R64";
 
 //                //todo remove this hacky thing
@@ -42,32 +48,33 @@ public class AppleScriptConnector implements CodeLaunchConnector {
 
 //                http://stackoverflow.com/questions/1870270/sending-commands-and-strings-to-terminal-app-with-applescript
 
-                String evalSelection;
-                if (evalTarget.equals("Terminal")) {
-                    evalSelection = "tell application \"" + "Terminal" + "\" to do script \"" + dquotesExpandedText + "\" in window 0";
+					String evalSelection;
+					if (evalTarget.equals("Terminal")) {
+						evalSelection = "tell application \"" + "Terminal" + "\" to do script \"" + line + "\" in window 0";
 
-                    if (switchFocus2R) {
-                        evalSelection = "tell application \"Terminal\" to activate\n" + evalSelection;
-                    }
+						if (switchFocus2R) {
+							evalSelection = "tell application \"Terminal\" to activate\n" + evalSelection;
+						}
 
-                } else if (evalTarget.equals("iTerm")) {
-                    evalSelection = "tell application \"iTerm\" to tell current session of current terminal  to write text  \"" + dquotesExpandedText + "\"";
-                    if (switchFocus2R) {
-                        evalSelection = "tell application \"iTerm\" to activate\n" + evalSelection;
-                    }
+					} else if (evalTarget.equals("iTerm")) {
+						evalSelection = "tell application \"iTerm\" to tell current session of current terminal  to write text  \"" + line + "\"";
+						if (switchFocus2R) {
+							evalSelection = "tell application \"iTerm\" to activate\n" + evalSelection;
+						}
 
-                } else {
-                    if (switchFocus2R) {
-                        evalSelection = "tell application \"" + evalTarget + "\" to activate\n" +
-                                "tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
-                    } else {
-                        evalSelection = "tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
-                    }
-                }
+					} else {
+						if (switchFocus2R) {
+							evalSelection = "tell application \"" + evalTarget + "\" to activate\n" +
+									"tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
+						} else {
+							evalSelection = "tell application \"" + evalTarget + "\" to cmd \"" + dquotesExpandedText + "\"";
+						}
+					}
 
-                String[] args = {"osascript", "-e", evalSelection};
+					String[] args = {"osascript", "-e", evalSelection};
 
-                runtime.exec(args);
+					runtime.exec(args);
+				}
             }
         } catch (IOException e1) {
             ConnectorUtils.log.error(e1);
