@@ -34,8 +34,8 @@ public class AppleScriptConnector implements CodeLaunchConnector {
 
 				for(String line : lines)
 				{
-					if(line.trim().startsWith("#"))
-						continue;
+//					if(line.trim().startsWith("#"))
+//						continue;
 
 					String evalTarget = RSettings.getInstance().codeSnippetEvalTarget;
 //                String evalTarget = "R64";
