@@ -1,8 +1,7 @@
 {
   classHeader="header.txt"
   parserClass="com.r4intellij.lang.parser.RParser"
-  parserUtilClass="com.r4intellij.lang.parser.RParserUtil"
-  stubParserClass="com.r4intellij.lang.parser.GrammarParserUtil"
+  parserUtilClass="org.intellij.grammar.parser.GrammarParserUtil"
 
   implements="com.r4intellij.psi.RCompositeElement"
   extends="com.r4intellij.psi.impl.RCompositeElementImpl"
@@ -122,7 +121,6 @@ expr ::= EOL* (
     NUM_CONST |
     NULL_CONST |
     SYMBOL_FORMALS |
-//    string_literal (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST) |
     string_literal | // todo remove this as it is redundant with the last line optionalized with ()?
     funcall |
     variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)? |
