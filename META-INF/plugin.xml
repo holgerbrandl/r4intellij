@@ -48,11 +48,12 @@
 
     <change-notes><![CDATA[
         <html>
-        <b>Changes in v0.8.5:</b>
+        <b>Changes in v0.9:</b>
         <ul>
             <li>Added R color setting page</li>
             <li>Named vector support</li>
             <li>Support for more magrittr operators</li>
+            <li>Improved send to R/terminal</li>
         </ul>
         <b>Changes in v0.8.4:</b>
         <ul>
