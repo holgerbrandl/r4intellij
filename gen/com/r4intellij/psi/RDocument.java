@@ -7,14 +7,12 @@
 package com.r4intellij.psi;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public interface RExprOrAssign extends RCompositeElement {
+import java.util.List;
+
+public interface RDocument extends RCompositeElement {
 
     @NotNull
-    RExpr getExpr();
-
-    @Nullable
-    RExprOrAssign getExprOrAssign();
+    List<RCommand> getCommandList();
 
 }

@@ -52,7 +52,7 @@ public class RElementFactory {
     //
     public static RCommand createFuncallFromText(Project project, String text) {
         PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.INSTANCE, text);
-        return (RCommand) fromText.getFirstChild();
+        return (RCommand) fromText.getFirstChild().getChildren()[0];
     }
 
 }

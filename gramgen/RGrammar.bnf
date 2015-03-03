@@ -1,7 +1,7 @@
 {
   classHeader="header.txt"
   parserClass="com.r4intellij.lang.parser.RParser"
-  parserUtilClass="org.intellij.grammar.parser.GrammarParserUtil"
+  parserUtilClass="com.r4intellij.lang.parser.GrammarParserUtil"
 
   implements="com.r4intellij.psi.RCompositeElement"
   extends="com.r4intellij.psi.impl.RCompositeElementImpl"
@@ -91,28 +91,19 @@ ARITH_MOD="%"
 ARITH_EXPONENTIAION="^"
 //onthefly ARITH_MISC
 
-  named="com.r4intellij.psi.RNamedElement"
-  namedImpl="com.r4intellij.psi.impl.RNamedElementImpl"
+//  named="com.r4intellij.psi.RNamedElement"
+//  namedImpl="com.r4intellij.psi.impl.RNamedElementImpl"
   mixin("string_literal")="com.r4intellij.psi.impl.RStringImpl"
   mixin("variable")="com.r4intellij.psi.impl.RVarImpl"
 
 }
 
-//external grammar ::= document
-//document ::= command* EOF
 
-external grammar ::= parseGrammar command
+external grammar ::= document
 
-//END_OF_INPUT //todo match an empty file --> add unit test
-command ::=
-       section
-    |  expr_or_assign? (EOL | ';')
-//    |  expr_or_assign? ';'
-     {recoverUntil="command_recover_until"}
-private command_recover_until::=!(command)
-
-
-expr_or_assign ::= EOL* ( expr [EQ_ASSIGN expr_or_assign] |  COMMENT )
+document ::= command*
+command ::= (EOL | COMMENT | section |  expr_or_assign ';'?)
+expr_or_assign ::= EOL* ( expr [(EQ_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN | GLOBAL_RIGHT_ASSIGN | GLOBAL_LEFT_ASSIGN) expr_or_assign] )
 
 section ::= SECTION_COMMENT {extends="com.r4intellij.psi.impl.AbstractRSection"}
 
@@ -149,7 +140,6 @@ expr ::= EOL* (
 //private expr_recover_until::=!(';' | 'EOL');
 
 exprlist ::= [(expr_or_assign) (';' expr_or_assign | EOL expr_or_assign |';' |  EOL)*] EOL* ;
-
 
 string_literal ::= STR_CONST //{extends="" implements=""}
 

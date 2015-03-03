@@ -16,6 +16,7 @@ public interface RTypes {
 
     IElementType R_COMMAND = new RCompositeElementType("R_COMMAND");
     IElementType R_COND = new RCompositeElementType("R_COND");
+    IElementType R_DOCUMENT = new RCompositeElementType("R_DOCUMENT");
     IElementType R_EXPR = new RCompositeElementType("R_EXPR");
     IElementType R_EXPRLIST = new RCompositeElementType("R_EXPRLIST");
     IElementType R_EXPR_OR_ASSIGN = new RCompositeElementType("R_EXPR_OR_ASSIGN");
@@ -95,6 +96,8 @@ public interface RTypes {
                 return new RCommandImpl(node);
             } else if (type == R_COND) {
                 return new RCondImpl(node);
+            } else if (type == R_DOCUMENT) {
+                return new RDocumentImpl(node);
             } else if (type == R_EXPR) {
                 return new RExprImpl(node);
             } else if (type == R_EXPRLIST) {

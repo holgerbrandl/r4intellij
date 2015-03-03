@@ -28,9 +28,9 @@ public class RExprOrAssignImpl extends RCompositeElementImpl implements RExprOrA
 
 
     @Override
-    @Nullable
+    @NotNull
     public RExpr getExpr() {
-        return findChildByClass(RExpr.class);
+        return findNotNullChildByClass(RExpr.class);
     }
 
 
