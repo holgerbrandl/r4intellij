@@ -95,7 +95,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
             getApplication().getPicoContainer().registerComponent(new AbstractComponentAdapter(ProgressManager.class.getName(), Object.class) {
                 @Override
                 public Object getComponentInstance(PicoContainer container) throws PicoInitializationException, PicoIntrospectionException {
-                    return new ProgressManagerImpl(getApplication());
+                    return new ProgressManagerImpl();
                 }
 
 
@@ -118,7 +118,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
             public Document fun(CharSequence charSequence) {
                 return editorFactory.createDocument(charSequence);
             }
-        }, FileDocumentManagerImpl.DOCUMENT_KEY));
+        }, FileDocumentManagerImpl.HARD_REF_TO_DOCUMENT_KEY));
         registerComponentInstance(appContainer, PsiDocumentManager.class, new MockPsiDocumentManager());
         myLanguage = myLanguage == null && myDefinitions.length > 0 ? myDefinitions[0].getFileNodeType().getLanguage() : myLanguage;
         registerComponentInstance(appContainer, FileTypeManager.class, new MockFileTypeManager(new MockLanguageFileType(myLanguage, myFileExt)));
