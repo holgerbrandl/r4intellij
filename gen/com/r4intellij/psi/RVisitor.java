@@ -21,6 +21,11 @@ public class RVisitor extends PsiElementVisitor {
     }
 
 
+    public void visitDocument(@NotNull RDocument o) {
+        visitCompositeElement(o);
+    }
+
+
     public void visitExpr(@NotNull RExpr o) {
         visitCompositeElement(o);
     }

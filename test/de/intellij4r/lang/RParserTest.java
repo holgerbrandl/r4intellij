@@ -54,40 +54,40 @@ public class RParserTest extends RParsingTestCase {
 
 
     public void testWrappedGgplot() {
-        doTest(true);
+        doTest(true, true);
     }
 
     public void testAnonymousFunDef() {
-        doTest(true);
+        doTest(true, true);
     }
 
     public void testSimpleTest1() {
-        doTest(true);
+        doTest(true, true);
     }
 
     public void testComplexScript() {
-        doTest(true);
+        doTest(true, true);
     }
 
     public void testEmptyExprList() {
-        doTest(true);
+        doTest(true, true);
     }
 
     public void testFunctionDefinition() {
-        doTest(true);
+        doTest(true, true);
     }
 
     public void testInvalidSymbol() {
-        doTest(true);
+        doTest(true, true);
     }
 
     public void testInvalidAssignment() {
-        doTest(true);
+        doTest(true, true);
     }
 
 
     public void testDcastFormula() {
-        doTest(true);
+        doTest(true, true);
     }
 
 

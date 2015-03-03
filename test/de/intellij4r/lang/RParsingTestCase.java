@@ -55,6 +55,7 @@ import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusFactory;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 import org.picocontainer.*;
 import org.picocontainer.defaults.AbstractComponentAdapter;
 
@@ -194,11 +195,6 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
     }
 
 
-    protected boolean includeRanges() {
-        return true;
-    }
-
-
     protected boolean skipSpaces() {
         return false;
     }
@@ -209,20 +205,24 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
     }
 
 
-    protected void doTest(boolean checkResult) {
+    protected void doTest(boolean checkResult, boolean includeRanges) {
         String name = getTestName(false);
         try {
             String text = loadFile(name + "." + myFileExt);
             myFile = createPsiFile(name, text);
+
             ensureParsed(myFile);
+
             assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
             assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));
             assertEquals("doc text mismatch", text, myFile.getViewProvider().getDocument().getText());
             assertEquals("psi text mismatch", text, myFile.getText());
+
             if (checkResult) {
-                checkResult(name + ".txt", myFile);
+                checkResult(name + ".txt", myFile, includeRanges);
             } else {
-                toParseTreeText(myFile, skipSpaces(), includeRanges());
+                toParseTreeText(myFile, skipSpaces(), includeRanges);
+                Assert.fail("Exported result into file" + myFile);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -236,7 +236,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         myFile = createPsiFile(name, text);
         ensureParsed(myFile);
         assertEquals(text, myFile.getText());
-        checkResult(name + suffix + ".txt", myFile);
+        checkResult(name + suffix + ".txt", myFile, true);
     }
 
 
@@ -245,7 +245,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         myFile = createPsiFile("a", code);
         ensureParsed(myFile);
         assertEquals(code, myFile.getText());
-        checkResult(myFilePrefix + name + ".txt", myFile);
+        checkResult(myFilePrefix + name + ".txt", myFile, true);
     }
 
 
@@ -266,8 +266,8 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
     }
 
 
-    protected void checkResult(@NonNls @TestDataFile String targetDataName, final PsiFile file) throws IOException {
-        doCheckResult(myFullDataPath, file, checkAllPsiRoots(), targetDataName, skipSpaces(), includeRanges());
+    protected void checkResult(@NonNls @TestDataFile String targetDataName, final PsiFile file, boolean includeRanges) throws IOException {
+        doCheckResult(myFullDataPath, file, checkAllPsiRoots(), targetDataName, skipSpaces(), includeRanges);
     }
 
 
@@ -277,7 +277,11 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
                                      String targetDataName,
                                      boolean skipSpaces,
                                      boolean printRanges) throws IOException {
-        final PsiElement[] psiRoots = checkAllPsiRoots ? file.getViewProvider().getAllFiles().toArray(new PsiElement[0]) : PsiElement.EMPTY_ARRAY;
+
+        final PsiElement[] psiRoots = checkAllPsiRoots ?
+                file.getViewProvider().getAllFiles().toArray(new PsiElement[0]) :
+                PsiElement.EMPTY_ARRAY;
+
         if (psiRoots.length > 1) {
             for (int i = 0; i < psiRoots.length; i++) {
                 final PsiElement psiRoot = psiRoots[i];
@@ -297,18 +301,23 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
     private static void doCheckResult(String myFullDataPath, String targetDataName, String text) throws IOException {
         try {
             text = text.trim();
-            String expectedText = doLoadFile(myFullDataPath, targetDataName);
+            String expectedText = doLoadFile(myFullDataPath, targetDataName).trim();
+
             System.out.println("Expected Tree:\n" + expectedText);
             System.out.println("\n\nObtained Tree:\n" + text);
+
             assertEquals(targetDataName, expectedText, text);
+
         } catch (FileNotFoundException e) {
             String fullName = myFullDataPath + File.separatorChar + targetDataName;
             FileWriter writer = new FileWriter(fullName);
+
             try {
                 writer.write(text);
             } finally {
                 writer.close();
             }
+
             fail("No output text found. File " + fullName + " created.");
         }
     }
