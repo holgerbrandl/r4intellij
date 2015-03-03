@@ -6,6 +6,7 @@
   -->
 
 <idea-plugin version="2">
+    <id>com.r4intellij</id>
     <name>R4Intellij</name>
     <description>R coding tools for Intellij IDEA</description>
     <version>0.8.4</version>
@@ -47,6 +48,12 @@
 
     <change-notes><![CDATA[
         <html>
+        <b>Changes in v0.8.5:</b>
+        <ul>
+            <li>Added R color setting page</li>
+            <li>Named vector support</li>
+            <li>Support for more magrittr operators</li>
+        </ul>
         <b>Changes in v0.8.4:</b>
         <ul>
             <li>Added iTerm support for HongKee</li>
@@ -156,11 +163,15 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
+        <lang.syntaxHighlighterFactory key="R"
+                                       implementationClass="com.r4intellij.editor.highlighting.RSyntaxHighlighterFactory"/>
+
+        <colorSettingsPage
+                implementation="com.r4intellij.editor.highlighting.RColorSettingsPage"/>
+
 
         <fileTypeFactory implementation="com.r4intellij.lang.RFileTypeFactory"/>
 
-        <lang.syntaxHighlighterFactory key="R"
-                                       implementationClass="com.r4intellij.editor.highlighting.RSyntaxHighlighterFactory"/>
 
         <!--<annotator language="R" implementationClass="com.r4intellij.inspectionss.FunctionNameAnnotator"/>-->
 

@@ -17,6 +17,10 @@ import com.intellij.lang.Language;
  */
 public class RLanguage extends Language {
 
+    public static final String NAME = "R";
+    public static final String EXTENSION = "R";
+    public static final String FILENAME = "." + EXTENSION;
+
     public static final RLanguage INSTANCE = new RLanguage();
 
 
