@@ -53,4 +53,7 @@ public class RHighlighterColors {
      */
     public static final TextAttributesKey STRING_ATTR_KEY = TextAttributesKey.createTextAttributesKey("R.STRING", DefaultLanguageHighlighterColors.STRING);
 
+
+//    public static final TextAttributesKey FUNCALL_ATTR_KEY = TextAttributesKey.createTextAttributesKey("R.FUNCALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
+
 }

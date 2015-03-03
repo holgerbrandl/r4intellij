@@ -35,6 +35,7 @@ public class RColorSettingsPage implements ColorSettingsPage {
             "   {\n" +
             "      #line comment\n" +
             "      names[,i] = 0\n" +
+            "      names[,i+1] = test()\n" +
             "      names[,'added'] = \"string\"\n" +
             "   }\n" +
             "}\n";
@@ -59,7 +60,8 @@ public class RColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Braces", RHighlighterColors.BRACES_ATTR_KEY),
             new AttributesDescriptor("Brackets", RHighlighterColors.BRACKETS_ATTR_KEY),
             new AttributesDescriptor("Number", RHighlighterColors.NUMBER_ATTR_KEY),
-            new AttributesDescriptor("String ...", RHighlighterColors.STRING_ATTR_KEY),
+            new AttributesDescriptor("String ...", RHighlighterColors.STRING_ATTR_KEY)
+//            new AttributesDescriptor("Function Call", RHighlighterColors.FUNCALL_ATTR_KEY),
     };
 
 

@@ -163,6 +163,13 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
+        <!--<additionalTextAttributes-->
+        <!--file="colorSchemes/RDefault.xml"-->
+        <!--scheme="Default"/>-->
+        <!--<additionalTextAttributes-->
+        <!--file="colorSchemes/RDarcula.xml"-->
+        <!--scheme="Darcula"/>-->
+
         <lang.syntaxHighlighterFactory key="R"
                                        implementationClass="com.r4intellij.editor.highlighting.RSyntaxHighlighterFactory"/>
 

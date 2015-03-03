@@ -71,6 +71,9 @@ public class RSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
             } else if (keywords.contains(iElementType)) {
                 return pack(DefaultLanguageHighlighterColors.KEYWORD);
             }
+//            else if (iElementType == RTypes.R_FUNCALL) {
+//                return pack(DefaultLanguageHighlighterColors.FUNCTION_CALL);
+//          }
 
             return EMPTY;
         }
