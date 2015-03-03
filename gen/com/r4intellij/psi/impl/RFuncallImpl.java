@@ -15,7 +15,6 @@ import com.r4intellij.psi.RVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 public class RFuncallImpl extends AbstractRFunCall implements RFuncall {
 
     public RFuncallImpl(ASTNode node) {

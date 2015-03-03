@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-
 public class RExprlistImpl extends RCompositeElementImpl implements RExprlist {
 
     public RExprlistImpl(ASTNode node) {

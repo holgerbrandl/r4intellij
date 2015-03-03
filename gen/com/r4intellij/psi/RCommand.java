@@ -8,7 +8,6 @@ package com.r4intellij.psi;
 
 import org.jetbrains.annotations.Nullable;
 
-
 public interface RCommand extends RCompositeElement {
 
     @Nullable

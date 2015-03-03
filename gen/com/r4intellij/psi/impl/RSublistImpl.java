@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-
 public class RSublistImpl extends RCompositeElementImpl implements RSublist {
 
     public RSublistImpl(ASTNode node) {

@@ -13,7 +13,6 @@ import com.r4intellij.psi.RExpr;
 import com.r4intellij.psi.RVisitor;
 import org.jetbrains.annotations.NotNull;
 
-
 public class RCondImpl extends RCompositeElementImpl implements RCond {
 
     public RCondImpl(ASTNode node) {

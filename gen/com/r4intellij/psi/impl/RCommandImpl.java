@@ -15,7 +15,6 @@ import com.r4intellij.psi.RVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 public class RCommandImpl extends RCompositeElementImpl implements RCommand {
 
     public RCommandImpl(ASTNode node) {

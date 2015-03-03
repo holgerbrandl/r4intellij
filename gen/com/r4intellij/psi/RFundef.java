@@ -9,7 +9,6 @@ package com.r4intellij.psi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 public interface RFundef extends RCompositeElement {
 
     @NotNull

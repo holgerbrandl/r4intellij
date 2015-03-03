@@ -12,7 +12,6 @@ import com.r4intellij.psi.RSection;
 import com.r4intellij.psi.RVisitor;
 import org.jetbrains.annotations.NotNull;
 
-
 public class RSectionImpl extends AbstractRSection implements RSection {
 
     public RSectionImpl(ASTNode node) {

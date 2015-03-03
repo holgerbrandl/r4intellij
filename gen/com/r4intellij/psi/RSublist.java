@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-
 public interface RSublist extends RCompositeElement {
 
     @NotNull

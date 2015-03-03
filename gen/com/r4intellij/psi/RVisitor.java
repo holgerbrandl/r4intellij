@@ -9,7 +9,6 @@ package com.r4intellij.psi;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 
-
 public class RVisitor extends PsiElementVisitor {
 
     public void visitCommand(@NotNull RCommand o) {
@@ -48,7 +47,7 @@ public class RVisitor extends PsiElementVisitor {
 
 
     public void visitFuncall(@NotNull RFuncall o) {
-        visitnamed(o);
+        visitNamedElement(o);
     }
 
 
@@ -87,8 +86,8 @@ public class RVisitor extends PsiElementVisitor {
     }
 
 
-    public void visitnamed(@NotNull RNamedElement o) {
-        visitElement(o);
+    public void visitNamedElement(@NotNull RNamedElement o) {
+        visitCompositeElement(o);
     }
 
 

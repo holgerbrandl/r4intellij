@@ -8,7 +8,6 @@ package com.r4intellij.psi;
 
 import org.jetbrains.annotations.NotNull;
 
-
 public interface RForcond extends RCompositeElement {
 
     @NotNull

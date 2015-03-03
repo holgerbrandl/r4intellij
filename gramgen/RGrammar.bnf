@@ -171,7 +171,8 @@ fd_argument ::=  SYMBOL '=' expr
         | STR_CONST
         | SYMBOL_FORMALS ;
 
-funcall ::= variable '(' sublist? ')' {extends="com.r4intellij.psi.impl.AbstractRFunCall" implements=named};
+// todo variable is wrong here
+funcall ::= variable '(' sublist? ')' {extends="com.r4intellij.psi.impl.AbstractRFunCall" implements="com.r4intellij.psi.RNamedElement"};
 
 
 sublist ::=  sub (EOL? ',' EOL? sub)*
@@ -180,6 +181,7 @@ sub ::= EOL*
     (SYMBOL '=' expr
 //   | STR_CONST '=' expr
 //   | NULL_CONST '=' expr
+    | STR_CONST EQ_ASSIGN expr
     | SYMBOL_FORMALS
    | expr ) EOL* ;
 

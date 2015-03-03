@@ -14,7 +14,6 @@ import com.r4intellij.psi.RVariable;
 import com.r4intellij.psi.RVisitor;
 import org.jetbrains.annotations.NotNull;
 
-
 public class RForcondImpl extends RCompositeElementImpl implements RForcond {
 
     public RForcondImpl(ASTNode node) {

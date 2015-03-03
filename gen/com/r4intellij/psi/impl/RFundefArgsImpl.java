@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-
 public class RFundefArgsImpl extends RCompositeElementImpl implements RFundefArgs {
 
     public RFundefArgsImpl(ASTNode node) {

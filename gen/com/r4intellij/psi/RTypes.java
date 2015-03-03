@@ -88,9 +88,7 @@ public interface RTypes {
     IElementType R_TILDE = new RTokenType("~");
     IElementType R_WHILE = new RTokenType("WHILE");
 
-
     class Factory {
-
         public static PsiElement createElement(ASTNode node) {
             IElementType type = node.getElementType();
             if (type == R_COMMAND) {
@@ -125,6 +123,6 @@ public interface RTypes {
                 return new RVariableImpl(node);
             }
             throw new AssertionError("Unknown element type: " + type);
-        }
+    }
     }
 }

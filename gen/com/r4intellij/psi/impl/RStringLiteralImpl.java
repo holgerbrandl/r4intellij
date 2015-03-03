@@ -12,7 +12,6 @@ import com.r4intellij.psi.RStringLiteral;
 import com.r4intellij.psi.RVisitor;
 import org.jetbrains.annotations.NotNull;
 
-
 public class RStringLiteralImpl extends RStringImpl implements RStringLiteral {
 
     public RStringLiteralImpl(ASTNode node) {

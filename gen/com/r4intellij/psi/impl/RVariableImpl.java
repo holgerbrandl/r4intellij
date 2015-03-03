@@ -12,7 +12,6 @@ import com.r4intellij.psi.RVariable;
 import com.r4intellij.psi.RVisitor;
 import org.jetbrains.annotations.NotNull;
 
-
 public class RVariableImpl extends RVarImpl implements RVariable {
 
     public RVariableImpl(ASTNode node) {

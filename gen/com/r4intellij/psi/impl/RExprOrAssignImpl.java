@@ -14,7 +14,6 @@ import com.r4intellij.psi.RVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 public class RExprOrAssignImpl extends RCompositeElementImpl implements RExprOrAssign {
 
     public RExprOrAssignImpl(ASTNode node) {
