@@ -195,7 +195,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
 
 
     protected boolean includeRanges() {
-        return false;
+        return true;
     }
 
 
