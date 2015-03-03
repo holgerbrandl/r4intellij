@@ -45,13 +45,13 @@ public class RSettings implements PersistentStateComponent<RSettings> {
     {
         evalActionPrefs.add(new EvalActionPref("head+nrow", "head(%snippet%); nrow(%snippet%);", SNIPACTION_1_DEF_SHORTCUT));
         evalActionPrefs.add(new EvalActionPref("structure", "str(%snippet%);", SNIPACTION_2_DEF_SHORTCUT));
-        evalActionPrefs.add(new EvalActionPref("head+tail", "head(%snippet%); tail(%snippet%);", SNIPACTION_3_DEF_SHORTCUT));
+        evalActionPrefs.add(new EvalActionPref("help", "?%snippet%", SNIPACTION_3_DEF_SHORTCUT));
         evalActionPrefs.add(new EvalActionPref("summarize", "summarize(%snippet%);", SNIPACTION_4_DEF_SHORTCUT));
     }
 
 
-    public String codeSnippetEvalTarget;
-    public boolean keepFocusInEditor;
+    public String codeSnippetEvalTarget = RSettingsPanel.getEvalTargetOptions()[0];
+    public boolean keepFocusInEditor = true;
 
 
     public RSettings getState() {

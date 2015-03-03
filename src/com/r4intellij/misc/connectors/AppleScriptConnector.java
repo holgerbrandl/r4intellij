@@ -30,15 +30,12 @@ public class AppleScriptConnector implements CodeLaunchConnector {
                 String dquotesExpandedText = rCommands.replace("\\", "\\\\");
                 dquotesExpandedText = dquotesExpandedText.replace("\"", "\\\"");
 
+                // trim to remove tailing newline for blocks and especially line evaluation
+                dquotesExpandedText = dquotesExpandedText.trim();
+
 
                 String evalTarget = RSettings.getInstance().codeSnippetEvalTarget;
 //                String evalTarget = "R64";
-
-//                //todo remove this hacky thing
-//                File connectorDef = new File(System.getProperty("user.home") + File.separator + "r4j_evaltarget.txt");
-//                if(connectorDef.exists()) {
-//                    evalTarget = Utils.readFileAsString(connectorDef.getAbsolutePath()).replace("\n", "");
-//                }
 
 //                http://stackoverflow.com/questions/1870270/sending-commands-and-strings-to-terminal-app-with-applescript
 

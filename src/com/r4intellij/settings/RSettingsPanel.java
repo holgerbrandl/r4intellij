@@ -92,7 +92,7 @@ public class RSettingsPanel {
     }
 
 
-    private String[] getEvalTargetOptions() {
-        return Utils.isMacOSX() ? new String[]{"R", "Terminal", "iTerm"} : Utils.isWindowsPlatform() ? new String[]{"R"} : new String[]{""};
+    public static String[] getEvalTargetOptions() {
+        return Utils.isMacOSX() ? new String[]{"R", "Terminal", "iTerm"} : Utils.isWindowsPlatform() ? new String[]{"R"} : new String[]{"<NA>"};
     }
 }

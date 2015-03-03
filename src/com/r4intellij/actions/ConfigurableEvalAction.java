@@ -30,7 +30,7 @@ public class ConfigurableEvalAction extends AbstactEvalTextAction {
 
     @Override
     protected String getEvalCmd(String selectedText) {
-        return codeTemplate.replaceAll("%snippet%", selectedText);
+        return codeTemplate.replace("%snippet%", selectedText);
     }
 
 
