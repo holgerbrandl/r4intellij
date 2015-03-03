@@ -144,7 +144,7 @@ YYINITIAL. */
   "/" { return R_ARITH_DIV; }
   "^" { return R_ARITH_EXPONENTIAION; }
   "%%" { return R_ARITH_MOD; }
-  "%/%" | "%*%" | "%o%" | "%x%" | "%+%" | "%>%" | %in% { return R_ARITH_MISC; }
+  "%/%" | "%*%" | "%o%" | "%x%" | "%+%" | "%>%" | "%<>%" | "%$%" | "%T>$%" | %in% { return R_ARITH_MISC; }
 
 
     // misc
