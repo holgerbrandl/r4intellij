@@ -6,7 +6,6 @@
   -->
 
 <idea-plugin version="2">
-    <id>r4intellij</id>
     <name>R4Intellij</name>
     <description>R coding tools for Intellij IDEA</description>
     <version>0.9</version>
