@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright 2011 Holger Brandl
   ~
@@ -8,52 +7,101 @@
 
 <templateSet group="R">
 
-    <template name="dd" value="ddply($DATA_FRAME$, .($SPLIT_VARS$), $FUN$)" description="ein test template"
+
+    <template name="gt" value="+ ggtitle(&quot;$TITLE$&quot;)$END$" description="ggplot title" toReformat="false"
+              toShortenFQNames="true">
+        <variable name="TITLE" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+
+    <template name="sl"
+              value="save($FILE$, file=&quot;$FILE$.RData&quot;)&#10;# $FILE$ &lt;- local(get(load(&quot;$FILE$.RData&quot;)))&#10;"
+              description="save and load a couple of variables" toReformat="false" toShortenFQNames="true">
+        <variable name="FILE" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+
+    <template name="tr" value="$df$ &lt;- transform($df$, $END$)" description="transform" toReformat="false"
+              toShortenFQNames="true">
+        <variable name="df" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+
+    <template name="tab" value="with($df$, as.data.frame(table($VARS$)))" description="table" toReformat="false"
+              toShortenFQNames="true">
+        <variable name="df" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="VARS" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+
+    <template name="fun" value="$FUN_NAME$ &lt;- function($FUN_ARGS$){&#10;    $SELECTION$&#10;}&#10;$END$"
+              description="function definition" toReformat="true" toShortenFQNames="true">
+        <variable name="FUN_NAME" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="FUN_ARGS" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+    <template name="sxl" value="+ scale_x_log10()" description="use log10 x-axis" toReformat="false"
+              toShortenFQNames="true">
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+
+    <template name="syl" value="+ scale_y_log10()" description="use log10 y-axis" toReformat="false"
+              toShortenFQNames="true">
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+    <template name="si" value="stat=&quot;identity&quot;" toReformat="false" toShortenFQNames="true">
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+
+    <template name="dd" value="ddply($DATA_FRAME$, .($SPLIT_VARS$), $FUN$)" description="ddply template"
               toReformat="false" toShortenFQNames="true">
         <variable name="DATA_FRAME" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="SPLIT_VARS" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="FUN" expression="" defaultValue="" alwaysStopAt="true"/>
-
         <context>
             <option name="R" value="true"/>
         </context>
     </template>
 
 
-    <template name="fun" value="$FUN_NAME$ &lt;- function($FUN_ARGS$){&#10;    $END$&#10;}"
-              description="function definition"
-              toReformat="false" toShortenFQNames="true">
-        <variable name="FUN_NAME" expression="" defaultValue="" alwaysStopAt="true"/>
-        <variable name="FUN_ARGS" expression="" defaultValue="" alwaysStopAt="true"/>
-
+    <template name="mut" value="mutate($VAR$ = $RULE$) $END" description="dplyr mutate" toReformat="true"
+              toShortenFQNames="true">
+        <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="RULE" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
             <option name="R" value="true"/>
         </context>
     </template>
 
-
-    <template name="rea"
-              value="$END$ &lt;- read.table(&quot;$FILENAME$&quot;, header=$HEADER$, sep=&quot;$COL_SEP$&quot;, stringsAsFactors=$STRING_FAC$)"
-              description="read.table" toReformat="false" toShortenFQNames="true">
-        <variable name="FILENAME" expression="" defaultValue="" alwaysStopAt="true"/>
-        <variable name="HEADER" expression="" defaultValue="&quot;TRUE&quot;" alwaysStopAt="true"/>
-        <variable name="COL_SEP" expression="" defaultValue="&quot;\\t&quot;" alwaysStopAt="true"/>
-        <variable name="STRING_FAC" expression="" defaultValue="&quot;TRUE&quot;" alwaysStopAt="true"/>
-
+    <template name="md" value="mutate($TRAFO$) $END$" description="dplyr mutate" toReformat="true"
+              toShortenFQNames="true">
+        <variable name="TRAFO" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
             <option name="R" value="true"/>
         </context>
     </template>
-
-    <template name="gg" value="ggplot($DATA$, aes($VARMAP$)) + geom_$TYPE$()$END$" description="creates a new ggplot"
-              toReformat="false" toShortenFQNames="true">
-        <variable name="DATA" expression="" defaultValue="" alwaysStopAt="true"/>
-        <variable name="VARMAP" expression="" defaultValue="" alwaysStopAt="true"/>
-        <variable name="TYPE" expression="" defaultValue="" alwaysStopAt="true"/>
-
-        <context>
-            <option name="R" value="true"/>
-        </context>
-    </template>
-
 </templateSet>

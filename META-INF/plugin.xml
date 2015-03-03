@@ -28,7 +28,7 @@
         <p/>
 
         This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features or
-        report bugs in our <a href="https://code.google.com/p/r4intellij/">issue tracker</a>.
+        report bugs in our <a href="https://github.com/holgerbrandl/r4intellij/issues">issue tracker</a>.
         <br>
         <b>Features:</b><br>
         <ul>
@@ -42,7 +42,7 @@
             <li> Some (simple) live templates</li>
         </ul>
         <p/>
-        Read more about the features at <a href="https://code.google.com/p/r4intellij">project page</a>
+        Read more about the features at <a href="https://github.com/holgerbrandl/r4intellij">project page</a>
         </html>
         ]]></description>
 
@@ -53,6 +53,7 @@
             <li>Added R color setting page</li>
             <li>Named vector support</li>
             <li>Support for more magrittr operators</li>
+            <li>Added live-templates for dplyr</li>
             <li>Improved send to R/terminal</li>
         </ul>
         <b>Changes in v0.8.4:</b>
