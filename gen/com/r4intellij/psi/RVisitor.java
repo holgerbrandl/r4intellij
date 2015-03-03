@@ -1,9 +1,9 @@
-/*
- * Copyright 2012 Holger Brandl
- *
- * This code is licensed under BSD. For details see
- * http://www.opensource.org/licenses/bsd-license.php
- */
+/*
+ * Copyright 2012 Holger Brandl
+ *
+ * This code is licensed under BSD. For details see
+ * http://www.opensource.org/licenses/bsd-license.php
+ */
 package com.r4intellij.psi;
 
 import org.jetbrains.annotations.*;
@@ -16,6 +16,10 @@ public class RVisitor extends PsiElementVisitor {
   }
 
   public void visitCond(@NotNull RCond o) {
+    visitCompositeElement(o);
+  }
+
+  public void visitDocument(@NotNull RDocument o) {
     visitCompositeElement(o);
   }
 

@@ -177,7 +177,7 @@
         <lang.syntaxHighlighterFactory key="R"
                                        implementationClass="com.r4intellij.editor.highlighting.RSyntaxHighlighterFactory"/>
 
-        <annotator language="R" implementationClass="com.r4intellij.editor.highlighting.FunctionNameAnnotator"/>
+        <!--<annotator language="R" implementationClass="com.r4intellij.editor.highlighting.FunctionNameAnnotator"/>-->
 
         <lang.parserDefinition language="R"
                                implementationClass="com.r4intellij.lang.parser.RParserDefinition"/>

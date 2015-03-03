@@ -19,12 +19,22 @@ import com.intellij.util.containers.Stack;
 %char
 %function advance
 %type IElementType
+%eof{   return;
+%eof}
+
 
 %{
+
   StringBuffer string = new StringBuffer();
 
   //helper
   long yychar = 0;
+
+  public void goTo(int offset) {
+    zzCurrentPos = zzMarkedPos = zzStartRead = offset;
+    zzPushbackPos = 0;
+    zzAtEOF = offset < zzEndRead;
+  }
 %}
 
 /*
@@ -35,9 +45,13 @@ Lexical Rules Section.
 */
 
 /* A line terminator is a \r (carriage return), \n (line feed), or \r\n. */
-EOL = (\r|\n|\r\n)*
-//WHITE_SPACE= {EOL} | [ \t\f]
-WHITE_SPACE= [ \t\f]
+EOL = [\r\n]
+//EOL = ("\r"|"\n"|"\r\n")*
+//EOF = <<eof>>
+//LINE_WS=[ \t\f]
+//WHITE_SPACE= {LINE_WS}
+//WHITE_SPACE=({LINE_WS}|{EOL})+
+
 SECTION_COMMENT = [#]{5,120}[\r\n]{1} [#]{2,5} [^\r\n]*
 COMMENT = "#"[^\r\n]*
 
@@ -45,7 +59,6 @@ COMMENT = "#"[^\r\n]*
 or an underscore followed by zero or more letters between A and Z, a and z,
 zero and nine, or an underscore. */
 SYMBOL = [A-Za-z.][A-Za-z_0-9._]*
-
 
 /* A literal integer is is a number beginning with a number between one and nine
 followed by zero or more numbers between zero and nine or just a zero. */
@@ -65,7 +78,18 @@ EscapeSequence=\\[^\r\n]
 STRING_DQUOTE=\"([^\\\"]|{EscapeSequence})*(\"|\\)?
 STRING_SQUOTE='([^\\\']|{EscapeSequence})*('|\\)?
 
-FUNCTIONCALL=(\w+)\(
+
+
+WHITE_SPACE_CHAR=[\ \t\f]
+//IDENTIFIER=[:jletter:] [:jletterdigit:]*
+//
+//DIGIT = [0-9]
+//DIGIT_OR_UNDERSCORE = [_0-9]
+//DIGITS = {DIGIT} | {DIGIT} {DIGIT_OR_UNDERSCORE}*
+//HEX_DIGIT_OR_UNDERSCORE = [_0-9A-Fa-f]
+//
+//INTEGER_LITERAL = {DIGITS}
+
 
 //%state STRING
 
@@ -79,18 +103,17 @@ will be executed when the scanner matches the associated regular expression. */
 expressions will only be matched if the scanner is in the start state
 YYINITIAL. */
 
-//%state FUNCTION_CALL
+%state FUNCTION_CALL
 
 %%
-
 //<YYINITIAL>  <<EOF>>    { return R_EOF; }
 
 <YYINITIAL> {
-  {WHITE_SPACE} {yybegin(YYINITIAL); return com.intellij.psi.TokenType.WHITE_SPACE; }
-  {EOL} { yybegin(YYINITIAL); return R_EOL; }
+  {WHITE_SPACE_CHAR}+ { return com.intellij.psi.TokenType.WHITE_SPACE; }
+  {EOL}* { return R_EOL; }
 
-  {SECTION_COMMENT} {yybegin(YYINITIAL); return R_SECTION_COMMENT; }
-  {COMMENT} {yybegin(YYINITIAL); return R_COMMENT; }
+  {SECTION_COMMENT} { return R_SECTION_COMMENT; }
+  {COMMENT} { return R_COMMENT; }
 
   // r keywords
   "function" { return R_FUNCTION; }
@@ -105,28 +128,22 @@ YYINITIAL. */
   "NULL" { return R_NULL_CONST; }
   "..." { return R_SYMBOL_FORMALS; }
 
-  {STRING_SQUOTE} | {STRING_DQUOTE} {yybegin(YYINITIAL); return R_STR_CONST; }
-  {FUNCTIONCALL} { yybegin(YYINITIAL); return R_FUNCALL; }
-  {SYMBOL} { yybegin(YYINITIAL); return R_SYMBOL; }
-  // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
-  // {SYMBOL} {System.out.print("word:"+yytext()); yybegin(YYINITIAL); return RTypes.R_SYMBOL; }
-
-  //{NUMBER} {yybegin(YYINITIAL); return RTypes.R_NUM_CONST; }
-  {IntLiteral} | {DoubleLiteral}  { return R_NUM_CONST; }
-  "NULL" { return R_NULL_CONST; }
-
   // separators
-  ";" {yybegin(YYINITIAL); return R_SEMICOLON; }
-  ":" {yybegin(YYINITIAL); return R_COLON; }
-  "," {yybegin(YYINITIAL); return R_COMMA; }
-  "(" {yybegin(YYINITIAL); return R_LEFT_PAREN; }
-  ")" {yybegin(YYINITIAL); return R_RIGHT_PAREN; }
-  "{" {yybegin(YYINITIAL); return R_LEFT_BRACE; }
-  "}" {yybegin(YYINITIAL); return R_RIGHT_BRACE; }
-  "[" {yybegin(YYINITIAL); return R_LEFT_BRACKET; }
-  "]" {yybegin(YYINITIAL); return R_RIGHT_BRACKET; }
-  "[[" {yybegin(YYINITIAL); return R_LBB; }
-  "]]" {yybegin(YYINITIAL); return R_RBB; }
+  ";" { return R_SEMICOLON; }
+  ":" { return R_COLON; }
+  "," { return R_COMMA; }
+  "(" { return R_LEFT_PAREN; }
+  ")" { return R_RIGHT_PAREN; }
+  "{" { return R_LEFT_BRACE; }
+  "}" { return R_RIGHT_BRACE; }
+  "[" { return R_LEFT_BRACKET; }
+  "]" { return R_RIGHT_BRACKET; }
+  "[[" { return R_LBB; }
+  "]]" { return R_RBB; }
+
+  {STRING_SQUOTE} | {STRING_DQUOTE} { return R_STR_CONST; }
+  {IntLiteral} | {DoubleLiteral}  { return R_NUM_CONST; }
+  {SYMBOL} 				{ return R_SYMBOL; }
 
   // logical operators
   // unary
@@ -155,19 +172,18 @@ YYINITIAL. */
   "%/%" | "%*%" | "%o%" | "%x%" | "%+%" | "%>%" | %in% { return R_ARITH_MISC; }
 
 
-    // misc
-    "=" { return R_EQ_ASSIGN; }
-    "<-" { return R_LEFT_ASSIGN; }
-    "->" { return R_RIGHT_ASSIGN; }
-    "->>" { return R_GLOBAL_RIGHT_ASSIGN; }
-    "<<-" { return R_GLOBAL_LEFT_ASSIGN; }
+  // misc
+  "=" { return R_EQ_ASSIGN; }
+  "<-" { return R_LEFT_ASSIGN; }
+  "->" { return R_RIGHT_ASSIGN; }
+  "->>" { return R_GLOBAL_RIGHT_ASSIGN; }
+  "<<-" { return R_GLOBAL_LEFT_ASSIGN; }
 
-   "$" { return R_LIST_SUBSET; }
-   "@" { return R_SLOT; }
-    "?" { return R_QUESTION; }
-    "::" {yybegin(YYINITIAL); return R_NS_GET; }
-    ":::" {yybegin(YYINITIAL); return R_NS_GET_INT; }
+  "$" { return R_LIST_SUBSET; }
+  "@" { return R_SLOT; }
+  "?" { return R_QUESTION; }
+  "::" { return R_NS_GET; }
+  ":::" { return R_NS_GET_INT; }
+
+  .    { return com.intellij.psi.TokenType.BAD_CHARACTER; }
 }
-
-
-.    { return com.intellij.psi.TokenType.BAD_CHARACTER; }

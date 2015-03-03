@@ -15,27 +15,21 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.r4intellij.psi.RTypes.*;
 import com.r4intellij.psi.*;
 
-public class RExprOrAssignImpl extends RCompositeElementImpl implements RExprOrAssign {
+public class RDocumentImpl extends RCompositeElementImpl implements RDocument {
 
-  public RExprOrAssignImpl(ASTNode node) {
+  public RDocumentImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitExprOrAssign(this);
+    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitDocument(this);
     else super.accept(visitor);
   }
 
   @Override
-  @Nullable
-  public RExpr getExpr() {
-    return findChildByClass(RExpr.class);
-  }
-
-  @Override
-  @Nullable
-  public RExprOrAssign getExprOrAssign() {
-    return findChildByClass(RExprOrAssign.class);
+  @NotNull
+  public List<RCommand> getCommandList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, RCommand.class);
   }
 
 }

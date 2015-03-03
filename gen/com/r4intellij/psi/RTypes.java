@@ -1,9 +1,9 @@
-/*
- * Copyright 2012 Holger Brandl
- *
- * This code is licensed under BSD. For details see
- * http://www.opensource.org/licenses/bsd-license.php
- */
+/*
+ * Copyright 2012 Holger Brandl
+ *
+ * This code is licensed under BSD. For details see
+ * http://www.opensource.org/licenses/bsd-license.php
+ */
 package com.r4intellij.psi;
 
 import com.intellij.psi.tree.IElementType;
@@ -16,6 +16,7 @@ public interface RTypes {
 
   IElementType R_COMMAND = new RCompositeElementType("R_COMMAND");
   IElementType R_COND = new RCompositeElementType("R_COND");
+  IElementType R_DOCUMENT = new RCompositeElementType("R_DOCUMENT");
   IElementType R_EXPR = new RCompositeElementType("R_EXPR");
   IElementType R_EXPRLIST = new RCompositeElementType("R_EXPRLIST");
   IElementType R_EXPR_OR_ASSIGN = new RCompositeElementType("R_EXPR_OR_ASSIGN");
@@ -55,6 +56,7 @@ public interface RTypes {
   IElementType R_GLOBAL_LEFT_ASSIGN = new RTokenType("<<-");
   IElementType R_GLOBAL_RIGHT_ASSIGN = new RTokenType("->>");
   IElementType R_GT = new RTokenType(">");
+  IElementType R_ID = new RTokenType("id");
   IElementType R_IF = new RTokenType("IF");
   IElementType R_IN = new RTokenType("IN");
   IElementType R_LBB = new RTokenType("[[");
@@ -98,6 +100,9 @@ public interface RTypes {
       }
       else if (type == R_COND) {
         return new RCondImpl(node);
+      }
+      else if (type == R_DOCUMENT) {
+        return new RDocumentImpl(node);
       }
       else if (type == R_EXPR) {
         return new RExprImpl(node);

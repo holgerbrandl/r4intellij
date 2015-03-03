@@ -10,9 +10,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface RFundefArgs extends RCompositeElement {
+public interface RDocument extends RCompositeElement {
 
   @NotNull
-  List<RFdArgument> getFdArgumentList();
+  List<RCommand> getCommandList();
 
 }

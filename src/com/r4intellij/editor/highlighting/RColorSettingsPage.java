@@ -22,16 +22,6 @@ import java.util.Map;
  * @author HongKee Moon
  */
 public class RColorSettingsPage implements ColorSettingsPage {
-	/** The path to the sample .R file */
-	@NonNls
-	protected static final String SAMPLE_R_PATH = "/sample.R";
-
-	/**
-	 * The sample .R document shown in the colors settings dialog
-	 *
-	 * @see #loadSampleR()
-	 */
-	protected static final String SAMPLE_R = loadSampleR();
 
 	private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
 			new AttributesDescriptor(RBundle.message("highlighter.comment"), RHighlighterColors.COMMENT_ATTR_KEY),
@@ -48,7 +38,7 @@ public class RColorSettingsPage implements ColorSettingsPage {
 	@Nullable
 	@Override
 	public Icon getIcon() {
-		return IconLoader.findIcon("/icons/r16_icon.png");
+		return IconLoader.findIcon("/icons/fileTypeR.png");
 	}
 
 	@NotNull
@@ -60,7 +50,19 @@ public class RColorSettingsPage implements ColorSettingsPage {
 	@NotNull
 	@Override
 	public String getDemoText() {
-		return SAMPLE_R;
+		//return SAMPLE_R;
+		return "\nfor (i in names(list)) {\n" +
+				"    if(true)\n" +
+				"    {\n" +
+				"        #line comment\n" +
+				"        names[,i] = 0\n" +
+				"        names[,'added'] = \"string\"\n" +
+				"    }\n" +
+				"\n" +
+				"    a = 1\n" +
+				"    head(names)\n" +
+				"}\n" +
+				"head(a)";
 	}
 
 	@Nullable
@@ -85,17 +87,5 @@ public class RColorSettingsPage implements ColorSettingsPage {
 	@Override
 	public String getDisplayName() {
 		return RLanguage.NAME;
-	}
-
-	/**
-	 * Loads sample .R file
-	 *
-	 * @return the text loaded from {@link #SAMPLE_R_PATH}
-	 * @see #getDemoText()
-	 * @see #SAMPLE_R_PATH
-	 * @see #SAMPLE_R
-	 */
-	protected static String loadSampleR() {
-		return Resources.getResourceContent(SAMPLE_R_PATH);
 	}
 }

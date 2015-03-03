@@ -43,7 +43,7 @@ public class RElementFactory {
 //        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "\"" + text + "\";");
         PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.INSTANCE, text + ";");
         if ((fromText.getFirstChild()) != null) {
-            return (RStringImpl) ((RCommand) fromText.getFirstChild()).getExprOrAssign().getExpr().getStringLiteral();
+            return (RStringImpl) ((RCommand) fromText.getFirstChild().getFirstChild()).getExprOrAssign().getExpr().getStringLiteral();
         }
         return null;
     }
@@ -52,7 +52,7 @@ public class RElementFactory {
     //
     public static RCommand createFuncallFromText(Project project, String text) {
         PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.INSTANCE, text);
-        return (RCommand) fromText.getFirstChild();
+        return (RCommand) fromText.getFirstChild().getFirstChild();
     }
 
 }
