@@ -123,6 +123,6 @@ public interface RTypes {
                 return new RVariableImpl(node);
             }
             throw new AssertionError("Unknown element type: " + type);
-    }
+        }
     }
 }

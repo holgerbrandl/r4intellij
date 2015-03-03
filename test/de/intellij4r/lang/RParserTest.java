@@ -86,6 +86,11 @@ public class RParserTest extends RParsingTestCase {
     }
 
 
+    public void testDcastFormula() {
+        doTest(true);
+    }
+
+
     ////
     //// Test framework setup functions
     ////

@@ -6,11 +6,11 @@
   -->
 
 <idea-plugin version="2">
-    <id>com.r4intellij</id>
+    <id>r4intellij</id>
     <name>R4Intellij</name>
     <description>R coding tools for Intellij IDEA</description>
-    <version>0.8.4</version>
-    <vendor url="https://code.google.com/p/r4intellij/">Holger Brandl</vendor>
+    <version>0.9</version>
+    <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
 
     <depends>com.intellij.modules.lang</depends>
