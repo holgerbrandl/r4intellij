@@ -23,13 +23,9 @@
  We're using the patched jflex library provided by JetBrains.
 -->
 <project name="JFlex Compiler for RLexer" default="create_flex4r">
+
     <property name="lexer.file" value="src/com/r4intellij/lang/lexer/_RLexer.java"/>
     <property name="lexer.log" value="jflex.log"/>
-    <property name="lexer.source" value="src/com/r4intellij/lang/lexer/r.flex"/>
-    <!--<property name="lexer.source" value="src/com/r4intellij/lang/lexer/simpler.flex"/>-->
-    <!--<property name="lexer.source" value="src/com/r4intellij/lang/lexer/calc.flex"/>-->
-    <property name="lexer.skeleton" value="lib/idea-flex.skeleton"/>
-    <property name="jflex.jar" value="lib/JFlex.jar"/>
 
     <target name="clean">
         <delete file="${lexer.file}~"/>
@@ -40,22 +36,17 @@
     <target name="create_flex4r"
             description="Generate lexer from bash.flex, using idea flex skeleton and patched JFlex"
             depends="clean">
-        <java jar="${jflex.jar}" output="${lexer.log}" fork="true">
+
+        <java jar="misc/jflex/JFlex.jar" output="${lexer.log}" fork="true">
             <arg value="--charat"/>
             <!-- <arg value="- -nomin"/>-->
             <arg value="-skel"/>
-            <arg value="${lexer.skeleton}"/>
-            <arg value="${lexer.source}"/>
+            <arg value="misc/jflex/idea-flex.skeleton"/>
+            <arg value="src/com/r4intellij/lang/lexer/r.flex"/>
+            <!--<property name="lexer.source" value="src/com/r4intellij/lang/lexer/simpler.flex"/>-->
+            <!--<property name="lexer.source" value="src/com/r4intellij/lang/lexer/calc.flex"/>-->
+
         </java>
     </target>
-
-    <!--<taskdef name="jflex" classname="JFlex.anttask.JFlexTask">-->
-    <!--<classpath location="/Users/brandl/projects/rplugin/idea/tools/lexer/jflex-1.4/lib/JFlex.jar"/>-->
-    <!--</taskdef>-->
-
-    <!--<target name="create_flex4r_new" description="use intellij ant taks for creation">-->
-    <!--<jflex skeleton="/Users/brandl/projects/rplugin/idea/tools/lexer/idea-flex.skeleton" nobak="true"-->
-    <!--file="${lexer.source}" destdir="src/com/r4intellij/lang/lexer/" charat="true"/>-->
-    <!--</target>-->
 
 </project>
