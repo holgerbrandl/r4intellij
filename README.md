@@ -79,24 +79,22 @@ Intentions are on-the-fly checks of your R scripts, that highlight problems and 
 Planned &amp; Coming soon
 ----
 
-*   Source code formatting*   Code transformation fixes (like: Convert qplot to ggplot call)*   More refactorings (Extract function; Extract variable)*   More context-aware autocompletion for variables, functions and file paths*   Inspections and quickfixes for common problems
+* Source code formatting
+* Code transformation fixes (like: Convert qplot to ggplot call)
+* More refactorings (Extract function; Extract variable)
+* More context-aware autocompletion for variables, functions and file paths
+* Inspections and quickfixes for common problems
 
 Feel welcome to suggest new features by adding a ticket to our tracker! 
 
 Platform features
 ----
 
-The main strength of our plugin is the underlying Intellij IDE. So if you have not worked with it before, read more&nbsp;about all its amazing [features](http://www.jetbrains.com/idea/index.html). It ships with everything from SCM&nbsp;integration (Git, Subversion, etc.), neat SQL integration, bash scripting support, and so many more interesting&nbsp;features. However, it's main "feature" is its usability. Give it a try! 
+The main strength of our plugin is the underlying Intellij IDE. So if you have not worked with it before, read more&nbsp;about all its amazing [features](http://www.jetbrains.com/idea/index.html). It ships with everything from SCM&nbsp;integration (Git, Subversion, etc.), neat SQL integration, bash scripting support, and so many more interesting&nbsp;features. However, its main "feature" is its usability. Give it a try!
 
 You're still not convinced? Try something else!
 ----
 
-Give a try to [StatET](http://www.walware.de/goto/statet), [textmate](http://macromates.com/) (with the&nbsp;[rbundle](http://worldofrcraft.blogspot.com/2008/11/setting-up-textmate-to-use-r.html)), or [http://rstudio.org/&nbsp;RStudio](http://rstudio.org/ RStudio). 
+Give a try to [StatET](http://www.walware.de/goto/statet), [textmate](http://macromates.com/) (with the&nbsp;[rbundle](http://worldofrcraft.blogspot.com/2008/11/setting-up-textmate-to-use-r.html)), or [RStudio](http://rstudio.org/`).
 
-Feel welcome to report problems or suggest new features by adding an issue to our&nbsp;[tracker](https://code.google.com/p/r4intellij/issues/list). 
-
-# Other projects of the author[](#Other_projects_of_the_author)
-
-*   [Movito](http://www.movito.info/) - An awesome movie collection manager for files, BlueRays and DVDs. It supports movies and TV-series and provides a slick interface to explore and filter your movie collection
-*   [OpenCards](http://opencards.info/) - A free flashcard learning software for ppt-files
- </td>
+Feel welcome to report problems or suggest new features by adding an issue to our&nbsp;[tracker](https://code.google.com/p/r4intellij/issues/list). Or be a hero and send us a pull reuest
