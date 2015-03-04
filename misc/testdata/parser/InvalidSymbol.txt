@@ -1,8 +1,16 @@
 FILE
-  PsiElement(NUM_CONST)('22')
-  PsiErrorElement:$, '!=', '%', '&&', '&', '(', '*', '+', '-', '->', '/', ':', ';', '<', '<-', '<=', '=', '==', '>', '>=', '?', '@', '[', '[[', '^', '|', '||', '~', ARITH_MISC or EOL expected, got 'aa'
-    <empty list>
-  PsiElement(SYMBOL)('aa')
-  PsiElement(<-)('<-')
-  PsiElement(NUM_CONST)('1')
-  PsiElement(EOL)('\n')
+  R_DOCUMENT
+    R_COMMAND
+      R_EXPR_OR_ASSIGN
+        R_EXPR
+          PsiElement(NUM_CONST)('22')
+    R_COMMAND
+      R_EXPR_OR_ASSIGN
+        R_EXPR
+          R_VARIABLE:aa
+            PsiElement(SYMBOL)('aa')
+          PsiElement(LEFT_ASSIGN)('<-')
+          R_EXPR
+            PsiElement(NUM_CONST)('1')
+    R_COMMAND
+      PsiElement(EOL)('\n')

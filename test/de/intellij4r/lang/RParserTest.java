@@ -54,40 +54,55 @@ public class RParserTest extends RParsingTestCase {
 
 
     public void testWrappedGgplot() {
-        doTest(true, true);
+        doTest(true);
     }
+
 
     public void testAnonymousFunDef() {
-        doTest(true, true);
+        doTest(true);
     }
 
-    public void testSimpleTest1() {
-        doTest(true, true);
+
+    public void testExample_1() {
+        doTest(true);
+
     }
 
-    public void testComplexScript() {
-        doTest(true, true);
+
+    public void testExample_2() {
+        doTest(true);
+
     }
+
+
+    public void testExample_3() {
+        doTest(true);
+
+    }
+
 
     public void testEmptyExprList() {
-        doTest(true, true);
+        doTest(true);
     }
+
 
     public void testFunctionDefinition() {
-        doTest(true, true);
+        doTest(true);
     }
+
 
     public void testInvalidSymbol() {
-        doTest(true, true);
+        doTest(true);
     }
 
+
     public void testInvalidAssignment() {
-        doTest(true, true);
+        doTest(true);
     }
 
 
     public void testDcastFormula() {
-        doTest(true, true);
+        doTest(true);
     }
 
 
@@ -95,14 +110,17 @@ public class RParserTest extends RParsingTestCase {
     //// Test framework setup functions
     ////
 
+
     public RParserTest() {
         super("parser", "R", new RParserDefinition());
     }
+
 
     @Override
     protected String getTestDataPath() {
         return "misc/testData";
     }
+
 
     @Override
     protected boolean skipSpaces() {

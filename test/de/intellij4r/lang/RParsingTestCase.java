@@ -205,6 +205,10 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
     }
 
 
+    protected void doTest(boolean checkResult) {
+        doTest(checkResult, false);
+    }
+
     protected void doTest(boolean checkResult, boolean includeRanges) {
         String name = getTestName(false);
         try {

@@ -1,3 +1,14 @@
+
+# use another normality test
+library(nortest)
+
+
+somedata <- R$"counts";
+
+hist(somedata)
+shapiro.test(somedata);
+
+
 somedata <- R$"Nuclei DAPI - Number of Objects.boxcox";
 
 hist(somedata);
