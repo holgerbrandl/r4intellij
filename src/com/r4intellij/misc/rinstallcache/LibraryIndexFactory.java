@@ -13,6 +13,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -68,18 +69,19 @@ public class LibraryIndexFactory {
 
             // try to load the index from the cache
             LIB_INDEX = (LibIndex) CachingUtils.loadObject(getCacheFile());
+
             if (LIB_INDEX == null) {
                 LIB_INDEX = new LibIndex();
             }
 
-            updateIndex(LIB_INDEX);
+            LIB_INDEX = updateIndex(LIB_INDEX);
         }
 
         return LIB_INDEX;
     }
 
 
-    private static void updateIndex(final LibIndex libIndex) {
+    private static LibIndex updateIndex(LibIndex libIndex) {
         // install dplyr and stringr
         CachingUtils.evalRCmd(
                 "if(!require(dplyr)) install.packages('dplyr', repos='http://cran.us.r-project.org');" +
@@ -87,24 +89,40 @@ public class LibraryIndexFactory {
         );
         final boolean[] hasChanged = {false};
 
-        List<String> installedPackages = getListOfInstalledPackages();
+        final List<String> installedPackages = getListOfInstalledPackages();
 
         ExecutorService executorService = Executors.newFixedThreadPool(4);
+
+        // remove packages that are no longer installed
+
+        Predicate<RPackage> predicate = new Predicate<RPackage>() {
+            @Override
+            public boolean apply(RPackage rPackage) {
+                return installedPackages.contains(rPackage.getName());
+            }
+        };
+
+        libIndex = new LibIndex(Sets.newHashSet(Iterables.filter(libIndex, predicate)));
+
+
         for (final String packageName : installedPackages) {
+
+            final LibIndex finalLibIndex = libIndex;
 
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
-                    RPackage indexedPckg = libIndex.getByName(packageName);
+                    RPackage indexedPckg = finalLibIndex.getByName(packageName);
                     String pckgVersion = getPackageVersion(packageName);
 
-                    if (indexedPckg != null && (indexedPckg.isDummy() || pckgVersion.equals(indexedPckg.getVersion()))) {
+
+                    if (indexedPckg != null && pckgVersion.equals(indexedPckg.getVersion())) {
                         return;
                     }
 
-                    RPackage indexedPackage = indexPackage(packageName);
-                    libIndex.remove(libIndex.getByName(packageName));
-                    libIndex.add(indexedPackage);
+                    RPackage newPacakge = indexPackage(packageName);
+                    finalLibIndex.remove(indexedPckg);
+                    finalLibIndex.add(newPacakge);
 
                     hasChanged[0] = true;
                 }
@@ -133,7 +151,7 @@ public class LibraryIndexFactory {
 //        }
 
         if (hasChanged[0]) {
-            CachingUtils.saveObject(LIB_INDEX, getCacheFile());
+            CachingUtils.saveObject(libIndex, getCacheFile());
 
             if (ApplicationManager.getApplication() != null)
                 ApplicationManager.getApplication().invokeLater(new Runnable() {
@@ -155,6 +173,8 @@ public class LibraryIndexFactory {
                     }
                 });
         }
+
+        return libIndex;
     }
 
 
@@ -176,7 +196,7 @@ public class LibraryIndexFactory {
 
 
     private static File getCacheFile() {
-        return new File(System.getProperty("user.home") + File.separator + "r4i_libcache.dat");
+        return new File(System.getProperty("user.home") + File.separator + ".r4i_libcache.dat");
     }
 
 
@@ -295,6 +315,7 @@ public class LibraryIndexFactory {
 
             if (splitter < 0) {
                 System.err.println("doc string parsing failed for: " + docString);
+                continue;
             }
 
             String funName = docString.substring(0, splitter).trim();
@@ -375,7 +396,7 @@ public class LibraryIndexFactory {
 
     private static List<String> getDependencies(String packageName) {
         String rawDeps = CachingUtils.evalRCommandCat("library(tools); paste(pkgDepends('" + packageName + "')$Depends, collapse='')");
-        return Splitter.on(" ").trimResults().splitToList(rawDeps);
+        return Lists.newArrayList(Splitter.on(" ").trimResults().splitToList(rawDeps));
     }
 
 

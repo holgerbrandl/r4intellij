@@ -134,7 +134,7 @@ public class CachingUtils {
 
             return o;
         } catch (Throwable e) {
-
+            System.err.println("could not load R package index");
         }
 
         return null;

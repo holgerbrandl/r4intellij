@@ -10,6 +10,7 @@ package com.r4intellij.misc.rinstallcache;
 import com.intellij.openapi.diagnostic.Logger;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
@@ -26,8 +27,12 @@ public class LibIndex extends HashSet<RPackage> {
     private static final long serialVersionUID = 3817077163528389033L;
 
 
-    LibIndex() {
+    public LibIndex(Collection<? extends RPackage> collection) {
+        super(collection);
+    }
 
+
+    public LibIndex() {
     }
 
 
