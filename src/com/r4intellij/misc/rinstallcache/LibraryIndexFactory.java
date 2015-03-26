@@ -7,6 +7,12 @@
 
 package com.r4intellij.misc.rinstallcache;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -14,12 +20,17 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
+import com.jgoodies.common.base.Preconditions;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -68,27 +79,60 @@ public class LibraryIndexFactory {
     }
 
 
-    private static void updateIndex(LibIndex libIndex) {
-        boolean hasChanged = false;
+    private static void updateIndex(final LibIndex libIndex) {
+        // install dplyr and stringr
+        CachingUtils.evalRCmd(
+                "if(!require(dplyr)) install.packages('dplyr', repos='http://cran.us.r-project.org');" +
+                        "if(!require(stringr)) install.packages('stringr', repos='http://cran.us.r-project.org');"
+        );
+        final boolean[] hasChanged = {false};
 
         List<String> installedPackages = getListOfInstalledPackages();
-        Map<String, String> pckgsWithVersions = getPackageVersions(installedPackages);
 
-        for (String pckgName : installedPackages) {
-            RPackage indexedPckg = libIndex.getByName(pckgName);
-            String pckgVersion = pckgsWithVersions.get(pckgName);
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        for (final String packageName : installedPackages) {
 
-            if (indexedPckg != null && (indexedPckg.isDummy() || pckgVersion.equals(indexedPckg.getVersion()))) {
-                continue;
-            }
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    RPackage indexedPckg = libIndex.getByName(packageName);
+                    String pckgVersion = getPackageVersion(packageName);
 
-            RPackage indexedPackage = indexPackage(pckgName);
-            libIndex.remove(libIndex.getByName(pckgName));
-            libIndex.add(indexedPackage);
-            hasChanged = true;
+                    if (indexedPckg != null && (indexedPckg.isDummy() || pckgVersion.equals(indexedPckg.getVersion()))) {
+                        return;
+                    }
+
+                    RPackage indexedPackage = indexPackage(packageName);
+                    libIndex.remove(libIndex.getByName(packageName));
+                    libIndex.add(indexedPackage);
+
+                    hasChanged[0] = true;
+                }
+            });
         }
 
-        if (hasChanged) {
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(1, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        for (String packageName : installedPackages) {
+//            RPackage indexedPckg = libIndex.getByName(packageName);
+//            String pckgVersion = getPackageVersion(packageName);
+//
+//            if (indexedPckg != null && (indexedPckg.isDummy() || pckgVersion.equals(indexedPckg.getVersion()))) {
+//                continue;
+//            }
+//
+//            RPackage indexedPackage = indexPackage(packageName);
+//            libIndex.remove(libIndex.getByName(packageName));
+//            libIndex.add(indexedPackage);
+//
+//            hasChanged[0] = true;
+//        }
+
+        if (hasChanged[0]) {
             CachingUtils.saveObject(LIB_INDEX, getCacheFile());
 
             if (ApplicationManager.getApplication() != null)
@@ -121,7 +165,9 @@ public class LibraryIndexFactory {
 
         } catch (Throwable t) {
             log.warn("Indexing of package '" + packageName + "'  failed. Adding dummy package...");
+            t.printStackTrace();
             String packageVersion = getPackageVersion(packageName);
+            assert !Strings.isNullOrEmpty(packageName);
             indexedPackage = new RPackage(packageName, new ArrayList<Function>(), packageVersion, new ArrayList<String>());
         }
 
@@ -134,60 +180,130 @@ public class LibraryIndexFactory {
     }
 
 
-    static RPackage buildPackageCache(String packageName) {
+    static RPackage buildPackageCache(final String packageName) {
         log.info("rebuilding cache of " + packageName);
         System.err.println("rebuilding cache of " + packageName);
 
         HashMap<String, Function> api = new HashMap<String, Function>();
+        // note make sure to have a linebreak at the end of the output. otherwise the streamgobbler will not pick it up
+//        String allFunsConcat = CachingUtils.evalRCommandCat("ls(getNamespace(\"" + packageName + "\"), all.names=F)");
+        String allFunsConcat = CachingUtils.evalRCommandCat("getNamespaceExports('" + packageName + "')");
+
+        List<String> allFuns = Splitter.on("\n").trimResults().splitToList(allFunsConcat);
+        allFuns = Lists.newArrayList(Iterables.filter(allFuns, new Predicate<String>() {
+            @Override
+            public boolean apply(String funName) {
+                return !funName.contains("<-") && !funName.startsWith(".");
+            }
+        }));
 
 
-        String rawFunSigs = CachingUtils.evalRComand("library(" + packageName + "); print('----');  lsf.str('package:" + packageName + "')");
-        String[] splitFunSignatures = rawFunSigs.split("----\"\n")[1].replace("\n  ", "").split("\n");
-        List<String> funSigs = new ArrayList<String>();
-        for (int i = 1; i < splitFunSignatures.length - 2; i++) {
-            String curLine = splitFunSignatures[i];
-            if (curLine.contains(" : ")) {
-                funSigs.add(curLine);
+        if (allFuns.isEmpty()) {
+            System.err.println("could not detect functions in package:" + packageName);
+        }
+
+        com.google.common.base.Function<String, String> quoteFun = new com.google.common.base.Function<String, String>() {
+            public String apply(String funName) {
+                // paste('toggleProbes', paste(deparse(args(AnnotationDbi::toggleProbes)), collapse=""), sep='||')
+                return "cat(paste('" + funName + "', paste(deparse(args(" + packageName + "::" + funName + ")), collapse=''), sep='----'), fill=1)";
+//                return "paste(" + funName + ", args(" + packageName + "::" + funName + "), sep='||');";
+            }
+        };
+//        allFuns = allFuns.subList(5, 92);
+//
+//        String getFunSigs =Joiner.on(";").join(Lists.transform(allFuns, quoteFun));
+
+
+//        String getFunSigs = "sigfuns <- c(" + Joiner.on(",").join(allFuns) + ");" +
+//                "beautify_args <- function(name) { paste(deparse(substitute(name)), deparse(args(name)), collapse=\"\") }; " +
+//                "beautify_args(sigfuns)";
+//        System.err.println(getFunSigs);
+
+
+        for (List<String> funNamesBatch : Lists.partition(allFuns, 50)) {
+            String getFunSigs = Joiner.on(";").join(Lists.transform(funNamesBatch, quoteFun));
+            String funSigs = CachingUtils.evalRCommand(getFunSigs);
+
+            List<String> strings = Splitter.on("\n").trimResults().splitToList(funSigs);
+
+            for (String funSig : strings) {
+                String[] splitSig = funSig.split("----");
+                if (splitSig.length == 1)
+                    continue;
+
+                String funName = splitSig[0];
+                String signature = splitSig[1].replace("NULL", "").replace("\n", "");
+
+                api.put(funName, new Function(funName, signature));
+
+            }
+
+        }
+
+        //correct but too slow
+//        for (String funName : allFuns) {
+//            String funSig = CachingUtils.evalRCommand("args(" + packageName + "::" + funName + ")");
+//            funSig = funSig.replace("NULL", "").replace("\n", "");
+//            if (funSig.isEmpty()) {
+//                continue;
+//            }
+//
+//            api.put(funName, new Function(funName, funSig));
+//        }
+
+//        String rawFunSigs = CachingUtils.evalRCommand("library(" + packageName + "); print('----');  lsf.str('package:" + packageName + "')");
+//        String[] splitFunSignatures = rawFunSigs.split("----\"\n")[1].replace("\n  ", "").split("\n");
+//        List<String> funSigs = new ArrayList<String>();
+//        for (int i = 1; i < splitFunSignatures.length - 2; i++) {
+//            String curLine = splitFunSignatures[i];
+//            if (curLine.contains(" : ")) {
+//                funSigs.add(curLine);
+//            } else {
+//                funSigs.add(funSigs.remove(funSigs.size() - 1) + curLine);
+//            }
+//        }
+//
+//        for (String nameAndSig : funSigs) {
+//            int nameSplitter = nameAndSig.indexOf(':');
+//            String funName = nameAndSig.substring(0, nameSplitter).trim();
+//            String funSignature = nameAndSig.substring(nameSplitter + 2, nameAndSig.length()).trim();
+//
+//            api.put(funName, new Function(funName, funSignature));
+//        }
+
+        String[] rawDocStrings = CachingUtils.evalRCommand("pckgDocu <-library(help = " + packageName + "); pckgDocu$info[[2]]").split("\n");
+        List<String> fusedDocStrings = new ArrayList<String>();
+        String curGroup = null;
+        for (int i = 0; i < rawDocStrings.length - 2; i++) {
+            String curRawDoc = rawDocStrings[i];
+            String curLine = curRawDoc.substring(curRawDoc.indexOf("\""), curRawDoc.length());
+
+            curLine = curLine.replace("\"", "").replace("\n", "");
+
+            if (curLine.startsWith("     ")) {
+                curGroup += curLine.trim();
             } else {
-                funSigs.add(funSigs.remove(funSigs.size() - 1) + curLine);
+                if (!Strings.isNullOrEmpty(curGroup)) {
+                    fusedDocStrings.add(curGroup);
+                }
+                curGroup = curLine.trim();
             }
         }
 
-        for (String nameAndSig : funSigs) {
-            int nameSplitter = nameAndSig.indexOf(':');
-            String funName = nameAndSig.substring(0, nameSplitter).trim();
-            String funSignature = nameAndSig.substring(nameSplitter + 2, nameAndSig.length()).trim();
-
-            api.put(funName, new Function(funName, funSignature));
-        }
-//
-//        String funNameOutput = CachingUtils.evalRComand("library(" + packageName + "); paste(ls(\"package:" + packageName + "\"), collapse=';')");
-//        Matcher matcher = Pattern.compile("1] \"(.*)\"").matcher(funNameOutput);
-//        matcher.find();
-//        Collection<String> funNames = Arrays.asList(matcher.group(1).split(";"));
-//
-//
-        String[] rawDocStrings = CachingUtils.evalRComand("pckgDocu <-library(help = " + packageName + "); pckgDocu$info[[2]]").split("\n");
-        List<String> docStrings = new ArrayList<String>();
-        for (int i = 1; i < rawDocStrings.length - 2; i++) {
-            Matcher curLineMatcher = Pattern.compile("] \"(.*)\"").matcher(rawDocStrings[i]);
-            curLineMatcher.find();
-            String curLine = curLineMatcher.group(1);
-
-            if (!curLine.startsWith(" ")) {
-                docStrings.add(curLine);
-            } else {
-                docStrings.add(docStrings.remove(docStrings.size() - 1) + " " + curLine.trim());
-            }
-        }
-
-        for (String docString : docStrings) {
+        for (String docString : fusedDocStrings) {
             int splitter = docString.indexOf(" ");
+
+            if (splitter < 0) {
+                System.err.println("doc string parsing failed for: " + docString);
+            }
+
             String funName = docString.substring(0, splitter).trim();
             String fundDesc = docString.substring(splitter, docString.length()).trim();
             Function function = api.get(funName);
             if (function != null) {
                 function.setShortDesc(fundDesc);
+            } else {
+                System.err.println("could not find function for " + funName);
             }
 
         }
@@ -258,66 +374,33 @@ public class LibraryIndexFactory {
 
 
     private static List<String> getDependencies(String packageName) {
-        Matcher matcher;
-        String rawDeps = CachingUtils.evalRComand("library(tools); paste(pkgDepends('" + packageName + "')$Depends, collapse=',')");
-        matcher = Pattern.compile("1] \"(.*)\"", Pattern.DOTALL).matcher(rawDeps);
-        List<String> cleanedDeps = new ArrayList<String>();
-        if (matcher.find()) {
-            String depCsvList = matcher.group(1);
-            if (!depCsvList.isEmpty()) {
-
-                String[] deps = depCsvList.split(",");
-                for (String dep : deps) {
-                    cleanedDeps.add(dep.contains(" ") ? dep.split(" ")[0] : dep);
-                }
-            }
-        }
-        return cleanedDeps;
-    }
-
-
-    public static Map<String, String> getPackageVersions(List<String> packageNames) {
-        StringBuilder sb = new StringBuilder();
-
-        for (String packageName : packageNames) {
-            sb.append("pckgDocu <-library(help = " + packageName + ")$info[[1]]; paste(pckgDocu[grep('Version|Package:', pckgDocu)], collapse='__');");
-        }
-
-
-        String packageInfo = CachingUtils.evalRComand(sb.toString());
-
-        Matcher matcher = Pattern.compile("Package:[ ]*([A-z0-9]*)__Version:[ ]*([0-9.-]*)[\"]", Pattern.DOTALL).matcher(packageInfo);
-        Map<String, String> pckgVersions = new TreeMap<String, String>();
-        while (matcher.find()) {
-            pckgVersions.put(matcher.group(1), matcher.group(2));
-        }
-
-        return pckgVersions;
-//        return matcher.find() ? matcher.group(1) : null;
-
+        String rawDeps = CachingUtils.evalRCommandCat("library(tools); paste(pkgDepends('" + packageName + "')$Depends, collapse='')");
+        return Splitter.on(" ").trimResults().splitToList(rawDeps);
     }
 
 
     static String getPackageVersion(String packageName) {
-        String packageInfo = CachingUtils.evalRComand("pckgDocu <-library(help = " + packageName + "); pckgDocu$info[[1]]");
-        Matcher matcher = Pattern.compile("Version:[ ]*([0-9.-]*)").matcher(packageInfo);
-
-        return matcher.find() ? matcher.group(1) : null;
+        String s = CachingUtils.evalRCommandCat("packageDescription('" + packageName + "')$Version");
+        Preconditions.checkNotBlank(s, "version is empty");
+        return s;
     }
 
 
     static List<String> getListOfInstalledPackages() {
-        String output = CachingUtils.evalRComand("library()$results[,1]");
-//        System.err.println("output was " + output.getOutput());
+        String output = CachingUtils.evalRCommandCat("library()$results[,1]");
 
-        Pattern pattern = Pattern.compile("\"([A-z0-9]*)\"");
-        Matcher matcher = pattern.matcher(output);
+        assert !Strings.isNullOrEmpty(output);
 
-        List<String> installedPackages = new ArrayList<String>();
-        while (matcher.find()) {
-            installedPackages.add(matcher.group(1));
-        }
+        return Splitter.on("\n").trimResults().splitToList(output);
 
-        return installedPackages;
+//        Pattern pattern = Pattern.compile("\"([A-z0-9]*)\"");
+//        Matcher matcher = pattern.matcher(output);
+//
+//        List<String> installedPackages = new ArrayList<String>();
+//        while (matcher.find()) {
+//            installedPackages.add(matcher.group(1));
+//        }
+//z
+//        return installedPackages;
     }
 }

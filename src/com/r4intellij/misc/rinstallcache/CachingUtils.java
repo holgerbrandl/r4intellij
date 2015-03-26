@@ -71,14 +71,20 @@ public class CachingUtils {
     }
 
 
-    static String evalRComand(String cmd) {
+    static String evalRCommand(String cmd) {
         return evalRCmd(cmd).getOutput();
+    }
+
+
+    static String evalRCommandCat(String cmd) {
+        return evalRCmd("cat(" + cmd + ", sep='\\\\n')").getOutput().trim();
+//        return evalRCmd("cat("+cmd+")").getOutput().trim();
     }
 
 
     static StreamGobbler evalRCmd(String cmd) {
 //        cmd = Utils.isWindowsPlatform() ? cmd.replaceAll("[$]", "\\$") : cmd;
-        String[] getPckgsCmd = new String[]{getRExecutable(), "--vanilla", "--quiet", "-e", cmd};
+        String[] getPckgsCmd = new String[]{getRExecutable(), "--vanilla", "--quiet", "--slave", "-e", cmd};
 
         return evalRInternal(getPckgsCmd);
     }
@@ -151,7 +157,7 @@ public class CachingUtils {
 
 //        System.err.println((evalRCmd("iris$Sepal.Length").getOutput()));
         System.err.println((evalRCmd("tt <-library(help=base); tt$info[[1]]").getOutput()));
-        System.err.println(LibraryIndexFactory.getPackageVersions(Arrays.asList("base")));
+        System.err.println(LibraryIndexFactory.getPackageVersion("base"));
     }
 }
 
