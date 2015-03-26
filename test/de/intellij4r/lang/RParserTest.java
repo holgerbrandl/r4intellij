@@ -106,6 +106,11 @@ public class RParserTest extends RParsingTestCase {
     }
 
 
+    public void testLineBreakInFuncall() {
+        doTest(true);
+    }
+
+
     ////
     //// Test framework setup functions
     ////

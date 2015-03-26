@@ -163,7 +163,7 @@ fd_argument ::=  SYMBOL '=' expr
         | SYMBOL_FORMALS ;
 
 // todo variable is wrong here
-funcall ::= variable '(' sublist? ')' {extends="com.r4intellij.psi.impl.AbstractRFunCall" implements="com.r4intellij.psi.RNamedElement"};
+funcall ::= variable '(' EOL? sublist? ')' {extends="com.r4intellij.psi.impl.AbstractRFunCall" implements="com.r4intellij.psi.RNamedElement"};
 
 
 sublist ::=  sub (EOL? ',' EOL? sub)*

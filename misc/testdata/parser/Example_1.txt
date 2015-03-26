@@ -9388,9 +9388,9 @@ FILE
               R_VARIABLE:list
                 PsiElement(SYMBOL)('list')
               PsiElement(()('(')
+              PsiElement(EOL)('\n')
               R_SUBLIST
                 R_SUB
-                  PsiElement(EOL)('\n')
                   PsiElement(SYMBOL)('positive_charged')
                   PsiElement(=)('=')
                   R_EXPR
