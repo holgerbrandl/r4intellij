@@ -233,7 +233,8 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
                 return ((RFile) myElement).getName();
             }
             if (myElement instanceof RFundef) {
-                return getFunctionName(myElement).getText();
+                RVariable functionName = getFunctionName(myElement);
+                return functionName != null ? functionName.getText() : "could not detect function name";
             } else if (myElement instanceof RSection) {
                 return ((RSectionImpl) myElement).getName();
             }
