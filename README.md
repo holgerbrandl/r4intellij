@@ -98,3 +98,9 @@ You're still not convinced? Try something else!
 Give a try to [StatET](http://www.walware.de/goto/statet), [textmate](http://macromates.com/) (with the&nbsp;[rbundle](http://worldofrcraft.blogspot.com/2008/11/setting-up-textmate-to-use-r.html)), or [RStudio](http://rstudio.org/`).
 
 Feel welcome to report problems or suggest new features by adding an issue to our&nbsp;[tracker](https://code.google.com/p/r4intellij/issues/list). Or be a hero and send us a pull reuest
+
+
+Acknoledgements
+----
+
+This project would not have been possible without great [bash plugin](https://plugins.jetbrains.com/plugin/4230?pr=phpStorm) which inspired us a lot when getting started with r4intllij, and from which we borrowed also some code.

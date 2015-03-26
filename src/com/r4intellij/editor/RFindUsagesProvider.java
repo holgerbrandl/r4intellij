@@ -24,6 +24,8 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
+ * Inspired by com.ansorgit.plugins.bash.editor.usages.BashFindUsagesProvider
+ *
  * @author brandl
  */
 public class RFindUsagesProvider implements FindUsagesProvider {
@@ -33,8 +35,16 @@ public class RFindUsagesProvider implements FindUsagesProvider {
     @Override
     public WordsScanner getWordsScanner() {
 //        if (wordsScanner == null) {
-//            wordsScanner = new DefaultWordsScanner(new ArcLexer(), VARIABLE_REFERENCE_FILTER, COMMENTS, LITERALS);
+//           TokenSet literals = TokenSet.create(RTypes.R_STRING_LITERAL);
+//           TokenSet comments = TokenSet.create(RTypes.R_COMMENT);
+////            TokenSet identifierTokenSet = TokenSet.orSet(keywords, TokenSet.create(INTERNAL_COMMAND));
+//
+//            TokenSet identifierTokenSet = TokenSet.create(RTypes.R_VARIABLE, RTypes.R_SYMBOL);
+//
+//
+//            wordsScanner = new DefaultWordsScanner(new RLexer(), identifierTokenSet, comments, literals);
 //        }
+//
 //        return wordsScanner;
         return null;
     }

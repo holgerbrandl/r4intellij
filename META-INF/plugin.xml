@@ -195,6 +195,10 @@
         <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
 
         <lang.findUsagesProvider language="R" implementationClass="com.r4intellij.editor.RFindUsagesProvider"/>
+
+        <lang.formatter language="R" implementationClass="com.r4intellij.editor.formatting.RFormattingModelBuilder"/>
+
+
         <lang.elementManipulator forClass="com.r4intellij.psi.impl.RStringLiteralImpl"
                                  implementationClass="com.r4intellij.psi.impl.RStringManipulator"/>
         <lang.psiStructureViewFactory language="R"
