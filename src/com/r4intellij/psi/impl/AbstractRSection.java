@@ -35,7 +35,7 @@ public abstract class AbstractRSection extends RCompositeElementImpl {
     private String getNameInternal() {
         String text = getText();
         if (text == null) {
-            text = "txt was nuill";
+            text = "txt was null";
         }
         String sectionName = text.replace("#", "").trim();
         if (sectionName.isEmpty()) {
