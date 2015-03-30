@@ -101,6 +101,7 @@ ARITH_EXPONENTIAION="^"
 
 external grammar ::= document
 
+// document is necessary because grammar = command* creates incompilable parser code (not clear why)
 document ::= command*
 command ::= (EOL | COMMENT | section |  expr_or_assign ';'?)
 expr_or_assign ::= EOL* ( expr [(EQ_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN | GLOBAL_RIGHT_ASSIGN | GLOBAL_LEFT_ASSIGN) expr_or_assign] )
