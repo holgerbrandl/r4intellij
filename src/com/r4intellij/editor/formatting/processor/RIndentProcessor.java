@@ -7,12 +7,17 @@
 
 package com.r4intellij.editor.formatting.processor;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.editor.formatting.RBlock;
 import com.r4intellij.psi.RDocument;
+import com.r4intellij.psi.RExpr;
 import com.r4intellij.psi.RFile;
 import com.r4intellij.psi.RTypes;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +56,19 @@ public abstract class RIndentProcessor implements RTypes {
         }
 
         if (prevChildNode != null && R_ARITH_MISC.equals(prevChildNode.getElementType())) {
-            return Indent.getNormalIndent();
+
+//            parent.getNode().getPsi().getParent().getChildren();
+
+            // traverse up the tree to see if it a pipe chain
+            int pipePosition = getPipePosition(psiParent, 0);
+            if (pipePosition == 1) {
+                return Indent.getNormalIndent();
+//                return Indent.getContinuationWithoutFirstIndent();
+//                return Indent.getContinuationIndent();
+            } else {
+                return Indent.getNoneIndent();
+//                return Indent.getNormalIndent();
+            }
         }
 
 //        if (astParent.getPsi() instanceof RFundef) {
@@ -73,6 +90,34 @@ public abstract class RIndentProcessor implements RTypes {
 
 
         return Indent.getNoneIndent();
+    }
+
+
+    private static int getPipePosition(PsiElement node, int curLevel) {
+        if (node != null) {
+
+            if (node instanceof RExpr && continsPipeOp(node)) {
+
+                return getPipePosition(node.getParent(), curLevel + 1);
+
+            } else {
+                return getPipePosition(node.getParent(), curLevel);
+            }
+        } else {
+            return curLevel;
+        }
+    }
+
+
+    private static boolean continsPipeOp(PsiElement node) {
+        boolean hasPipeOp = Iterables.tryFind(PsiTreeUtil.getChildrenOfTypeAsList(node, LeafPsiElement.class), new Predicate<LeafPsiElement>() {
+            @Override
+            public boolean apply(@Nullable LeafPsiElement leafPsiElement) {
+                return leafPsiElement.getElementType().equals(R_ARITH_MISC);
+            }
+        }).isPresent();
+
+        return hasPipeOp;
     }
 
 
