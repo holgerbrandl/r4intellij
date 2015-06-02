@@ -49,6 +49,12 @@
         <html>
         <b>Changes in v0.9:</b>
         <ul>
+            <li>Fixed PyCharm Support</li>
+            <li>(Experimental) Reformatter</li>
+            <li>Parser improvements</li>
+        </ul>
+        <b>Changes in v0.9:</b>
+        <ul>
             <li>Added R color setting page</li>
             <li>Named vector support</li>
             <li>Support for more magrittr operators</li>

@@ -9,7 +9,7 @@ package com.r4intellij.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.r4intellij.misc.connectors.ConnectorUtils;
@@ -22,7 +22,7 @@ import com.r4intellij.misc.connectors.ConnectorUtils;
 public class RunSelectedTextOrLineAction extends AnAction {
 
     public void actionPerformed(AnActionEvent e) {
-        Editor ed = e.getData(DataKeys.EDITOR);
+        Editor ed = e.getData(PlatformDataKeys.EDITOR);
         if (ed == null) {
             return;
         }
