@@ -36,6 +36,8 @@ public class RActionGroup extends DefaultActionGroup {
         }
 
         // just enable the menu if an R file is open
-        e.getPresentation().setEnabled(data[0].getExtension().equals("R"));
+        boolean hasRExtension = data[0].getExtension() != null && "R".equals(data[0].getExtension());
+
+        e.getPresentation().setEnabled(hasRExtension);
     }
 }

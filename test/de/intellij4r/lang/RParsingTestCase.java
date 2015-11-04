@@ -55,7 +55,6 @@ import com.intellij.util.messages.MessageBus;
 import com.intellij.util.messages.MessageBusFactory;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
 import org.picocontainer.*;
 import org.picocontainer.defaults.AbstractComponentAdapter;
 
@@ -63,6 +62,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 
 //note: this is a copy of com.intellij.testFramework.ParsingTestCase that changes only line 305 to load files without trimming.
@@ -226,7 +228,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
                 checkResult(name + ".txt", myFile, includeRanges);
             } else {
                 toParseTreeText(myFile, skipSpaces(), includeRanges);
-                Assert.fail("Exported result into file" + myFile);
+                fail("Exported result into file" + myFile);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
