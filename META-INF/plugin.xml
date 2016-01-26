@@ -8,7 +8,7 @@
 <idea-plugin version="2">
     <name>R4Intellij</name>
     <description>R coding tools for Intellij IDEA</description>
-    <version>0.10-SNAPSHOT</version>
+    <version>0.10</version>
     <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
 
@@ -47,6 +47,10 @@
 
     <change-notes><![CDATA[
         <html>
+        <b>Changes in v0.10:</b>
+        <ul>
+            <li>Improved Intellij v15 compatibility</li>
+        </ul>
         <b>Changes in v0.9:</b>
         <ul>
             <li>Fixed PyCharm Support</li>
