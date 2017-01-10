@@ -6,9 +6,9 @@
   -->
 
 <idea-plugin version="2">
-    <name>R4Intellij</name>
-    <description>R coding tools for Intellij IDEA</description>
-    <version>0.10</version>
+    <name>R Langauge Support</name>
+    <description>R syntax highlighting and scripting support including auto-imports, quickfixes and refactorings</description>
+    <version>0.11</version>
     <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
     <idea-version since-build="8000"/>
 
@@ -19,7 +19,7 @@
         <html>
         <h3>R support for IntelliJ</h3>
 
-        R4Intellij is an integration of R, which is a language for statistical computing and graphics, into Intellij
+        "R language Support" is an integration of R, which is a language for statistical computing and graphics, into Intellij
         IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever.
         <p/>
         By implementing a fault-tolerant parser for R, the plugin allows for syntax highlighting, intelligent code
