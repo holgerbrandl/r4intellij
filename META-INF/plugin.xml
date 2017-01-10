@@ -6,7 +6,8 @@
   -->
 
 <idea-plugin version="2">
-    <name>R Langauge Support</name>
+    <name>R Language Support</name>
+    <id>R4Intellij</id>
     <description>R syntax highlighting and scripting support including auto-imports, quickfixes and refactorings</description>
     <version>0.11</version>
     <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
