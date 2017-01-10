@@ -1,4 +1,5 @@
-Version History of R4Intellij
+Version History
+===============
 
 ## v0.11
 
