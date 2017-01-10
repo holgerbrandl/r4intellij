@@ -20,8 +20,13 @@ public class RCondImpl extends RCompositeElementImpl implements RCond {
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitCond(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitCond(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

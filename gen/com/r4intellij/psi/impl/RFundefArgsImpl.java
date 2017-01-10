@@ -23,8 +23,13 @@ public class RFundefArgsImpl extends RCompositeElementImpl implements RFundefArg
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitFundefArgs(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitFundefArgs(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

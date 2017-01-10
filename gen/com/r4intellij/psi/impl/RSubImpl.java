@@ -21,8 +21,13 @@ public class RSubImpl extends RCompositeElementImpl implements RSub {
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitSub(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitSub(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

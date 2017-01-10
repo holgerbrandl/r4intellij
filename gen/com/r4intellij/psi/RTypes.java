@@ -89,6 +89,7 @@ public interface RTypes {
     IElementType R_TILDE = new RTokenType("~");
     IElementType R_WHILE = new RTokenType("WHILE");
 
+
     class Factory {
         public static PsiElement createElement(ASTNode node) {
             IElementType type = node.getElementType();

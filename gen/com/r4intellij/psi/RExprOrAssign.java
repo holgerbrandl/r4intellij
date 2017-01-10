@@ -14,6 +14,7 @@ public interface RExprOrAssign extends RCompositeElement {
     @NotNull
     RExpr getExpr();
 
+
     @Nullable
     RExprOrAssign getExprOrAssign();
 

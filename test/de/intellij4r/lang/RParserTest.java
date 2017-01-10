@@ -86,6 +86,12 @@ public class RParserTest extends RParsingTestCase {
     }
 
 
+    public void testHighDimArrayAccess() {
+        // see https://github.com/holgerbrandl/r4intellij/issues/53
+        doTest(true);
+    }
+
+
     public void testFunctionDefinition() {
         doTest(true);
     }

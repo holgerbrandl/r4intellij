@@ -21,8 +21,13 @@ public class RForcondImpl extends RCompositeElementImpl implements RForcond {
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitForcond(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitForcond(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

@@ -13,6 +13,7 @@ public interface RCommand extends RCompositeElement {
     @Nullable
     RExprOrAssign getExprOrAssign();
 
+
     @Nullable
     RSection getSection();
 

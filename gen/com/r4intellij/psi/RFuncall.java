@@ -14,6 +14,7 @@ public interface RFuncall extends RNamedElement {
     @Nullable
     RSublist getSublist();
 
+
     @NotNull
     RVariable getVariable();
 

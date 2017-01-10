@@ -19,8 +19,13 @@ public class RVariableImpl extends RVarImpl implements RVariable {
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitVariable(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitVariable(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

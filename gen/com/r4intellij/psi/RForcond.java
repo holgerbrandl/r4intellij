@@ -13,6 +13,7 @@ public interface RForcond extends RCompositeElement {
     @NotNull
     RExpr getExpr();
 
+
     @NotNull
     RVariable getVariable();
 

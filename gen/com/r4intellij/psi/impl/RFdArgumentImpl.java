@@ -21,8 +21,13 @@ public class RFdArgumentImpl extends RCompositeElementImpl implements RFdArgumen
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitFdArgument(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitFdArgument(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

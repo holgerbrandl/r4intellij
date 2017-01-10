@@ -14,6 +14,7 @@ public interface RFundef extends RCompositeElement {
     @NotNull
     RExprOrAssign getExprOrAssign();
 
+
     @Nullable
     RFundefArgs getFundefArgs();
 

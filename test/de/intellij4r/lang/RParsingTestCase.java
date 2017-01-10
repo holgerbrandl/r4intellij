@@ -30,7 +30,6 @@ import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil;
 import com.intellij.openapi.fileTypes.FileTypeFactory;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import com.intellij.openapi.options.SchemesManagerFactory;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.impl.ProgressManagerImpl;
 import com.intellij.openapi.startup.StartupManager;
@@ -46,7 +45,6 @@ import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistryImpl;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.testFramework.LightVirtualFile;
-import com.intellij.testFramework.MockSchemesManagerFactory;
 import com.intellij.testFramework.PlatformLiteFixture;
 import com.intellij.testFramework.TestDataFile;
 import com.intellij.util.CachedValuesManagerImpl;
@@ -62,9 +60,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 
 //note: this is a copy of com.intellij.testFramework.ParsingTestCase that changes only line 305 to load files without trimming.
@@ -113,7 +108,7 @@ public abstract class RParsingTestCase extends PlatformLiteFixture {
         myFileFactory = new PsiFileFactoryImpl(myPsiManager);
         final MutablePicoContainer appContainer = getApplication().getPicoContainer();
         registerComponentInstance(appContainer, MessageBus.class, MessageBusFactory.newMessageBus(getApplication()));
-        registerComponentInstance(appContainer, SchemesManagerFactory.class, new MockSchemesManagerFactory());
+//        registerComponentInstance(appContainer, SchemesManagerFactory.class, new MockSchemesManagerFactory());
         final MockEditorFactory editorFactory = new MockEditorFactory();
         registerComponentInstance(appContainer, EditorFactory.class, editorFactory);
         registerComponentInstance(appContainer, FileDocumentManager.class, new MockFileDocumentManagerImpl(new Function<CharSequence, Document>() {

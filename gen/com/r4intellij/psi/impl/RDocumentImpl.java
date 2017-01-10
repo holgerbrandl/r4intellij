@@ -23,8 +23,13 @@ public class RDocumentImpl extends RCompositeElementImpl implements RDocument {
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitDocument(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitDocument(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

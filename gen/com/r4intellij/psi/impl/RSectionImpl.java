@@ -19,8 +19,13 @@ public class RSectionImpl extends AbstractRSection implements RSection {
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitSection(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitSection(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

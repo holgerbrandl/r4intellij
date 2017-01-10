@@ -22,8 +22,13 @@ public class RCommandImpl extends RCompositeElementImpl implements RCommand {
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitCommand(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitCommand(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

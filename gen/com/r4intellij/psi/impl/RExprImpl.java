@@ -22,8 +22,13 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitExpr(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitExpr(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

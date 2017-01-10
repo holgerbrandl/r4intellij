@@ -21,8 +21,13 @@ public class RExprOrAssignImpl extends RCompositeElementImpl implements RExprOrA
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitExprOrAssign(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitExprOrAssign(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 

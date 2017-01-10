@@ -133,7 +133,7 @@ expr ::= EOL* (
     (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | GLOBAL_LEFT_ASSIGN | GLOBAL_RIGHT_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
     '(' sublist? ')' |
     '[[' sublist ']]' |
-    '[' ','? sublist ','? ']' |
+    '[' ','* sublist ','* ']' |
     '$' ( SYMBOL | STR_CONST) |
     '@' ( SYMBOL | STR_CONST )
     )*

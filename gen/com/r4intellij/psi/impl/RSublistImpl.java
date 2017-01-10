@@ -23,8 +23,13 @@ public class RSublistImpl extends RCompositeElementImpl implements RSublist {
     }
 
 
+    public void accept(@NotNull RVisitor visitor) {
+        visitor.visitSublist(this);
+    }
+
+
     public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) ((RVisitor) visitor).visitSublist(this);
+        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
         else super.accept(visitor);
     }
 
