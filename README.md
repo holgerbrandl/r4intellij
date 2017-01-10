@@ -1,4 +1,4 @@
-r4intellij
+R Language support for Intellij IDEA
 =====
 
 This project provides an integration of R, which is a language for statistical computing and graphics, into Intellij&nbsp;IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever. 
