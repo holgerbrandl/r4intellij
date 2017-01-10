@@ -19,7 +19,8 @@
         <html>
         <h3>R support for IntelliJ</h3>
 
-        "R language Support" is an integration of R, which is a language for statistical computing and graphics, into Intellij
+        "R language Support" is an integration of R, which is a language for statistical computing and graphics, into
+        Intellij
         IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever.
         <p/>
         By implementing a fault-tolerant parser for R, the plugin allows for syntax highlighting, intelligent code
@@ -47,6 +48,13 @@
 
     <change-notes><![CDATA[
         <html>
+        <b>Changes in v0.11:</b>
+        <ul>
+            <li>New R icon</li>
+            <li>Fixed: parser fails to work for higher dimensional arrays #53</li>
+            <li>Fixed: functions declared with = don't show up in structure view #72</li>
+            <li>Allow for leading commas in functions invokations (e.g. `myFun(,5)`) which seem bad practice (use named arg</li> instead!) but are common
+        </ul>
         <b>Changes in v0.10:</b>
         <ul>
             <li>Improved Intellij v15 compatibility</li>
