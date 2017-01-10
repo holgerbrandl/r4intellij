@@ -3,6 +3,7 @@ Version History of R4Intellij
 ## v0.11
 
 
+* New R icon
 
 Parser improvements
 

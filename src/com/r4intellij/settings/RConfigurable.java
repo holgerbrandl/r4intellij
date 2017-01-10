@@ -28,7 +28,7 @@ public class RConfigurable implements Configurable {
 
     @Nullable
     public Icon getIcon() {
-        return IconLoader.findIcon("/icons/r16_icon.png");
+        return IconLoader.findIcon("/icons/r_logo_16.png");
 //        return ArcIcons.ARC_CONFIG_ICON;
     }
 

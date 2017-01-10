@@ -68,7 +68,7 @@ public class RColorSettingsPage implements ColorSettingsPage {
     @Nullable
     @Override
     public Icon getIcon() {
-        return IconLoader.findIcon("/icons/r16_icon.png");
+        return IconLoader.findIcon("/icons/r_logo_16.png");
     }
 
 
