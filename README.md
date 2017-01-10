@@ -38,7 +38,7 @@ The following features are supported
 
 *   Go To --&gt; Declaration (of symbols and locally defined functions)*   View --&gt; Quick Definition Lookup (of functions): This will show the signature and a short description
 
-![](/docs/r_help_integration.png) 
+![](docs/readme_images/r_help_integration.png) 
 
 *   Search --&gt; Highlight Usage: This will make Intellij to highlight all locations where a function or a symbol is&nbsp;being used*   Brace matching: If you position the caret before or after a bracket then IntelliJ will highlight the other element of&nbsp;the pair of brackets.*   File Structure View: In the structure view IntelliJ shows the functions and code sections of the R script.
 
@@ -47,7 +47,12 @@ Most of these functions use the default shortcuts of the Intellij platform. Cust
 Integration with R session
 ----
 
-R4Intellij supports the evaluation of the current selection or line on Windows (RGui) and MacOS (R GUI, Terminal, [iTerm2](http://www.iterm2.com/)). Furthermore, the user can define up to 4 custom code action which allow to wrap the current selection into some function before sending it to R. For instance, a custom **head of a data.frame** action would be defined as _head(%snippet%);_. These custom code actions can be defined in the preferences and can get keyboard shortcuts assigned to them. ![](/docs/code_snippet_evaluation.png) ![](/docs/code_snippet_evaluation_result.png) ![](/docs/code_snippet_action_config.png)
+R4Intellij supports the evaluation of the current selection or line on Windows (RGui) and MacOS (R GUI, Terminal, [iTerm2](http://www.iterm2.com/)). Furthermore, the user can define up to 4 custom code action which allow to wrap the current selection into some function before sending it to R. For instance, a custom **head of a data.frame** action would be defined as _head(%snippet%);_. These custom code actions can be defined in the preferences and can get keyboard shortcuts assigned to them. 
+
+![](docs/readme_images/code_snippet_evaluation.png) 
+
+![](docs/readme_images/code_snippet_evaluation_result.png) 
+
 
 On Mac, by default Ctrl+Option+Enter sends the current line or selection to the R Gui app. If RGui is not already started it will be started on the Mac dock and you may have to click it to make it visible. (If you did not know this you may think that nothing happened.) To send to the Terminal instead of RGui, go to IntelliJ->Preferences->Other settings->R4Intellij and change the "Snippet Evaluation Target" to Terminal. This is the Mac Terminal not the Terminal embedded in Intellij but that may well be what you wanted or hoped for anyway. The Evaluate menu option is accessible via the right-click floating context menu, not from the main IntelliJ application menu. To change the shortcut key for Evaluate, go to Preferences->Keymap->Plug-ins->R4Intellij->Evaluate then right click and "Add keyboard shortcut"; e.g. F5. You can have many Terminal sessions running and pressing F5 in Intellij will now send that line or selection to the last active Terminal (similar to NppToR on Windows). That snippet may well be R code or it could be bash commands or Python (or anything with a prompt, perhaps via ssh) that you have running in that Terminal. There is no limit to the number of Terminal sessions (unlike the limit of 4 in r-gedit). Very useful!
 
@@ -76,7 +81,7 @@ Intentions are on-the-fly checks of your R scripts, that highlight problems and 
 
 *   Auto-import of packages given a function name
 
-![](/docs/before_autoimport.png?raw=true) ![](/docs/after_autoimport.png)
+![](docs/readme_images/after_autoimport.png)
 
 Planned &amp; Coming soon
 ----
@@ -101,6 +106,15 @@ Give a try to [StatET](http://www.walware.de/goto/statet), [textmate](http://mac
 
 Feel welcome to report problems or suggest new features by adding an issue to our&nbsp;[tracker](https://code.google.com/p/r4intellij/issues/list). Or be a hero and send us a pull reuest
 
+
+
+Further reading
+---------------
+
+* [development notes](docs/devel_notes.md) 
+* [Pointer into Intellij OpenApi](docs/openapi_notes.md) 
+* [Release History](Changes.md) 
+* [FAQ](docs/faq.md) 
 
 Acknoledgements
 ----
