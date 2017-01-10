@@ -34,6 +34,13 @@ public class RExprImpl extends RCompositeElementImpl implements RExpr {
 
 
     @Override
+    @NotNull
+    public List<RAssignOp> getAssignOpList() {
+        return PsiTreeUtil.getChildrenOfTypeAsList(this, RAssignOp.class);
+    }
+
+
+    @Override
     @Nullable
     public RCond getCond() {
         return findChildByClass(RCond.class);

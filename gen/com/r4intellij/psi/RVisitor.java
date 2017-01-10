@@ -11,6 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class RVisitor extends PsiElementVisitor {
 
+    public void visitAssignOp(@NotNull RAssignOp o) {
+        visitCompositeElement(o);
+    }
+
+
     public void visitCommand(@NotNull RCommand o) {
         visitCompositeElement(o);
     }

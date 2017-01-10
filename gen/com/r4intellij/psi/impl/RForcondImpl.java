@@ -16,33 +16,33 @@ import org.jetbrains.annotations.NotNull;
 
 public class RForcondImpl extends RCompositeElementImpl implements RForcond {
 
-    public RForcondImpl(ASTNode node) {
-        super(node);
-    }
+  public RForcondImpl(ASTNode node) {
+    super(node);
+  }
 
 
-    public void accept(@NotNull RVisitor visitor) {
-        visitor.visitForcond(this);
-    }
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitForcond(this);
+  }
 
 
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof RVisitor) accept((RVisitor) visitor);
-        else super.accept(visitor);
-    }
+  public void accept(@NotNull PsiElementVisitor visitor) {
+    if (visitor instanceof RVisitor) accept((RVisitor) visitor);
+    else super.accept(visitor);
+  }
 
 
-    @Override
-    @NotNull
-    public RExpr getExpr() {
-        return findNotNullChildByClass(RExpr.class);
-    }
+  @Override
+  @NotNull
+  public RExpr getExpr() {
+    return findNotNullChildByClass(RExpr.class);
+  }
 
 
-    @Override
-    @NotNull
-    public RVariable getVariable() {
-        return findNotNullChildByClass(RVariable.class);
-    }
+  @Override
+  @NotNull
+  public RVariable getVariable() {
+    return findNotNullChildByClass(RVariable.class);
+  }
 
 }

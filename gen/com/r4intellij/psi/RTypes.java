@@ -14,6 +14,7 @@ import com.r4intellij.psi.impl.*;
 
 public interface RTypes {
 
+    IElementType R_ASSIGN_OP = new RCompositeElementType("R_ASSIGN_OP");
     IElementType R_COMMAND = new RCompositeElementType("R_COMMAND");
     IElementType R_COND = new RCompositeElementType("R_COND");
     IElementType R_DOCUMENT = new RCompositeElementType("R_DOCUMENT");
@@ -93,7 +94,9 @@ public interface RTypes {
     class Factory {
         public static PsiElement createElement(ASTNode node) {
             IElementType type = node.getElementType();
-            if (type == R_COMMAND) {
+            if (type == R_ASSIGN_OP) {
+                return new RAssignOpImpl(node);
+            } else if (type == R_COMMAND) {
                 return new RCommandImpl(node);
             } else if (type == R_COND) {
                 return new RCondImpl(node);

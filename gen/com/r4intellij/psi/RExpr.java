@@ -13,6 +13,10 @@ import java.util.List;
 
 public interface RExpr extends RCompositeElement {
 
+    @NotNull
+    List<RAssignOp> getAssignOpList();
+
+
     @Nullable
     RCond getCond();
 

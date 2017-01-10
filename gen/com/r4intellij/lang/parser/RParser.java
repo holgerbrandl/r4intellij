@@ -29,7 +29,9 @@ public class RParser implements PsiParser, LightPsiParser {
         boolean r;
         b = adapt_builder_(t, b, this, null);
         Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-        if (t == R_COMMAND) {
+        if (t == R_ASSIGN_OP) {
+            r = assign_op(b, 0);
+        } else if (t == R_COMMAND) {
             r = command(b, 0);
         } else if (t == R_COND) {
             r = cond(b, 0);
@@ -70,6 +72,22 @@ public class RParser implements PsiParser, LightPsiParser {
 
     protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
         return document(b, l + 1);
+    }
+
+
+    /* ********************************************************** */
+    // EQ_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN | GLOBAL_RIGHT_ASSIGN | GLOBAL_LEFT_ASSIGN
+    public static boolean assign_op(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "assign_op")) return false;
+        boolean r;
+        Marker m = enter_section_(b, l, _NONE_, R_ASSIGN_OP, "<assign op>");
+        r = consumeToken(b, R_EQ_ASSIGN);
+        if (!r) r = consumeToken(b, R_LEFT_ASSIGN);
+        if (!r) r = consumeToken(b, R_RIGHT_ASSIGN);
+        if (!r) r = consumeToken(b, R_GLOBAL_RIGHT_ASSIGN);
+        if (!r) r = consumeToken(b, R_GLOBAL_LEFT_ASSIGN);
+        exit_section_(b, l, m, r, false, null);
+        return r;
     }
 
 
@@ -149,22 +167,21 @@ public class RParser implements PsiParser, LightPsiParser {
     //     variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)? |
     //     '{' exprlist '}' |
     //     '(' expr_or_assign ')' |
-    //     '-' expr |
-    //     '+' expr |
-    //     '!' expr |
-    //     '~' expr |
-    //     '?' expr |
+    //     // unary expressions (most likely in repl)
+    //     ( '-' | '+' | '!' | '~' | '?' ) expr |
     //     fundef |
     //     IF cond expr_or_assign [ELSE expr_or_assign] |
     //     FOR forcond expr_or_assign |
     //     WHILE cond expr_or_assign |
     //     REPEAT expr_or_assign |
     //     NEXT |
-    //     BREAK) // end of first half
-    //     (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | GLOBAL_LEFT_ASSIGN | GLOBAL_RIGHT_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
-    //     '(' sublist? ')' |
+    //     BREAK)
+    //     // end of left-hand side of expression
+    //     // binary operators
+    //     (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | NE | EQ |  GE | GT | AND | OR | AND2 | OR2 | assign_op ) expr |
+    //     '(' ','*  sublist? ')' |
     //     '[[' sublist ']]' |
-    //     '[' ','* sublist ','* ']' |
+    //     '[' ','* sublist? ','* ']' |
     //     '$' ( SYMBOL | STR_CONST) |
     //     '@' ( SYMBOL | STR_CONST )
     //     )*
@@ -201,11 +218,8 @@ public class RParser implements PsiParser, LightPsiParser {
     //     variable (NS_GET SYMBOL | NS_GET STR_CONST | NS_GET_INT SYMBOL | NS_GET_INT STR_CONST)? |
     //     '{' exprlist '}' |
     //     '(' expr_or_assign ')' |
-    //     '-' expr |
-    //     '+' expr |
-    //     '!' expr |
-    //     '~' expr |
-    //     '?' expr |
+    //     // unary expressions (most likely in repl)
+    //     ( '-' | '+' | '!' | '~' | '?' ) expr |
     //     fundef |
     //     IF cond expr_or_assign [ELSE expr_or_assign] |
     //     FOR forcond expr_or_assign |
@@ -226,15 +240,11 @@ public class RParser implements PsiParser, LightPsiParser {
         if (!r) r = expr_1_6(b, l + 1);
         if (!r) r = expr_1_7(b, l + 1);
         if (!r) r = expr_1_8(b, l + 1);
-        if (!r) r = expr_1_9(b, l + 1);
+        if (!r) r = fundef(b, l + 1);
         if (!r) r = expr_1_10(b, l + 1);
         if (!r) r = expr_1_11(b, l + 1);
         if (!r) r = expr_1_12(b, l + 1);
-        if (!r) r = fundef(b, l + 1);
-        if (!r) r = expr_1_14(b, l + 1);
-        if (!r) r = expr_1_15(b, l + 1);
-        if (!r) r = expr_1_16(b, l + 1);
-        if (!r) r = expr_1_17(b, l + 1);
+        if (!r) r = expr_1_13(b, l + 1);
         if (!r) r = consumeToken(b, R_NEXT);
         if (!r) r = consumeToken(b, R_BREAK);
         exit_section_(b, m, null, r);
@@ -302,91 +312,58 @@ public class RParser implements PsiParser, LightPsiParser {
     }
 
 
-    // '-' expr
+    // ( '-' | '+' | '!' | '~' | '?' ) expr
     private static boolean expr_1_8(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_1_8")) return false;
         boolean r;
         Marker m = enter_section_(b);
+        r = expr_1_8_0(b, l + 1);
+        r = r && expr(b, l + 1);
+        exit_section_(b, m, null, r);
+        return r;
+    }
+
+
+    // '-' | '+' | '!' | '~' | '?'
+    private static boolean expr_1_8_0(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "expr_1_8_0")) return false;
+        boolean r;
+        Marker m = enter_section_(b);
         r = consumeToken(b, R_ARITH_MINUS);
-        r = r && expr(b, l + 1);
-        exit_section_(b, m, null, r);
-        return r;
-    }
-
-
-    // '+' expr
-    private static boolean expr_1_9(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_9")) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeToken(b, R_ARITH_PLUS);
-        r = r && expr(b, l + 1);
-        exit_section_(b, m, null, r);
-        return r;
-    }
-
-
-    // '!' expr
-    private static boolean expr_1_10(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_10")) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeToken(b, R_NEGATION);
-        r = r && expr(b, l + 1);
-        exit_section_(b, m, null, r);
-        return r;
-    }
-
-
-    // '~' expr
-    private static boolean expr_1_11(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_11")) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeToken(b, R_TILDE);
-        r = r && expr(b, l + 1);
-        exit_section_(b, m, null, r);
-        return r;
-    }
-
-
-    // '?' expr
-    private static boolean expr_1_12(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_12")) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeToken(b, R_QUESTION);
-        r = r && expr(b, l + 1);
+        if (!r) r = consumeToken(b, R_ARITH_PLUS);
+        if (!r) r = consumeToken(b, R_NEGATION);
+        if (!r) r = consumeToken(b, R_TILDE);
+        if (!r) r = consumeToken(b, R_QUESTION);
         exit_section_(b, m, null, r);
         return r;
     }
 
 
     // IF cond expr_or_assign [ELSE expr_or_assign]
-    private static boolean expr_1_14(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_14")) return false;
+    private static boolean expr_1_10(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "expr_1_10")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, R_IF);
         r = r && cond(b, l + 1);
         r = r && expr_or_assign(b, l + 1);
-        r = r && expr_1_14_3(b, l + 1);
+        r = r && expr_1_10_3(b, l + 1);
         exit_section_(b, m, null, r);
         return r;
     }
 
 
     // [ELSE expr_or_assign]
-    private static boolean expr_1_14_3(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_14_3")) return false;
-        expr_1_14_3_0(b, l + 1);
+    private static boolean expr_1_10_3(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "expr_1_10_3")) return false;
+        expr_1_10_3_0(b, l + 1);
         return true;
     }
 
 
     // ELSE expr_or_assign
-    private static boolean expr_1_14_3_0(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_14_3_0")) return false;
+    private static boolean expr_1_10_3_0(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "expr_1_10_3_0")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, R_ELSE);
@@ -397,8 +374,8 @@ public class RParser implements PsiParser, LightPsiParser {
 
 
     // FOR forcond expr_or_assign
-    private static boolean expr_1_15(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_15")) return false;
+    private static boolean expr_1_11(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "expr_1_11")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, R_FOR);
@@ -410,8 +387,8 @@ public class RParser implements PsiParser, LightPsiParser {
 
 
     // WHILE cond expr_or_assign
-    private static boolean expr_1_16(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_16")) return false;
+    private static boolean expr_1_12(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "expr_1_12")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, R_WHILE);
@@ -423,8 +400,8 @@ public class RParser implements PsiParser, LightPsiParser {
 
 
     // REPEAT expr_or_assign
-    private static boolean expr_1_17(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_1_17")) return false;
+    private static boolean expr_1_13(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "expr_1_13")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, R_REPEAT);
@@ -434,10 +411,10 @@ public class RParser implements PsiParser, LightPsiParser {
     }
 
 
-    // (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | GLOBAL_LEFT_ASSIGN | GLOBAL_RIGHT_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
-    //     '(' sublist? ')' |
+    // (( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | NE | EQ |  GE | GT | AND | OR | AND2 | OR2 | assign_op ) expr |
+    //     '(' ','*  sublist? ')' |
     //     '[[' sublist ']]' |
-    //     '[' ','* sublist ','* ']' |
+    //     '[' ','* sublist? ','* ']' |
     //     '$' ( SYMBOL | STR_CONST) |
     //     '@' ( SYMBOL | STR_CONST )
     //     )*
@@ -453,10 +430,10 @@ public class RParser implements PsiParser, LightPsiParser {
     }
 
 
-    // ( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | GLOBAL_LEFT_ASSIGN | GLOBAL_RIGHT_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN ) expr |
-    //     '(' sublist? ')' |
+    // ( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | NE | EQ |  GE | GT | AND | OR | AND2 | OR2 | assign_op ) expr |
+    //     '(' ','*  sublist? ')' |
     //     '[[' sublist ']]' |
-    //     '[' ','* sublist ','* ']' |
+    //     '[' ','* sublist? ','* ']' |
     //     '$' ( SYMBOL | STR_CONST) |
     //     '@' ( SYMBOL | STR_CONST )
     private static boolean expr_2_0(PsiBuilder b, int l) {
@@ -474,7 +451,7 @@ public class RParser implements PsiParser, LightPsiParser {
     }
 
 
-    // ( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | GLOBAL_LEFT_ASSIGN | GLOBAL_RIGHT_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN ) expr
+    // ( ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | NE | EQ |  GE | GT | AND | OR | AND2 | OR2 | assign_op ) expr
     private static boolean expr_2_0_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_2_0_0")) return false;
         boolean r;
@@ -486,7 +463,7 @@ public class RParser implements PsiParser, LightPsiParser {
     }
 
 
-    // ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | EQ | NE | GE | GT | AND | OR | AND2 | OR2 | GLOBAL_LEFT_ASSIGN | GLOBAL_RIGHT_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN
+    // ':' | '+' | '-' | '*' | '/' | '^' | ARITH_MISC | '%' | '~' | '?' | LT | LE | NE | EQ |  GE | GT | AND | OR | AND2 | OR2 | assign_op
     private static boolean expr_2_0_0_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_2_0_0_0")) return false;
         boolean r;
@@ -503,39 +480,50 @@ public class RParser implements PsiParser, LightPsiParser {
         if (!r) r = consumeToken(b, R_QUESTION);
         if (!r) r = consumeToken(b, R_LT);
         if (!r) r = consumeToken(b, R_LE);
-        if (!r) r = consumeToken(b, R_EQ);
         if (!r) r = consumeToken(b, R_NE);
+        if (!r) r = consumeToken(b, R_EQ);
         if (!r) r = consumeToken(b, R_GE);
         if (!r) r = consumeToken(b, R_GT);
         if (!r) r = consumeToken(b, R_AND);
         if (!r) r = consumeToken(b, R_OR);
         if (!r) r = consumeToken(b, R_AND2);
         if (!r) r = consumeToken(b, R_OR2);
-        if (!r) r = consumeToken(b, R_GLOBAL_LEFT_ASSIGN);
-        if (!r) r = consumeToken(b, R_GLOBAL_RIGHT_ASSIGN);
-        if (!r) r = consumeToken(b, R_LEFT_ASSIGN);
-        if (!r) r = consumeToken(b, R_RIGHT_ASSIGN);
+        if (!r) r = assign_op(b, l + 1);
         exit_section_(b, m, null, r);
         return r;
     }
 
 
-    // '(' sublist? ')'
+    // '(' ','*  sublist? ')'
     private static boolean expr_2_0_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_2_0_1")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, R_LEFT_PAREN);
         r = r && expr_2_0_1_1(b, l + 1);
+        r = r && expr_2_0_1_2(b, l + 1);
         r = r && consumeToken(b, R_RIGHT_PAREN);
         exit_section_(b, m, null, r);
         return r;
     }
 
 
-    // sublist?
+    // ','*
     private static boolean expr_2_0_1_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_2_0_1_1")) return false;
+        int c = current_position_(b);
+        while (true) {
+            if (!consumeToken(b, R_COMMA)) break;
+            if (!empty_element_parsed_guard_(b, "expr_2_0_1_1", c)) break;
+            c = current_position_(b);
+        }
+        return true;
+    }
+
+
+    // sublist?
+    private static boolean expr_2_0_1_2(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "expr_2_0_1_2")) return false;
         sublist(b, l + 1);
         return true;
     }
@@ -554,14 +542,14 @@ public class RParser implements PsiParser, LightPsiParser {
     }
 
 
-    // '[' ','* sublist ','* ']'
+    // '[' ','* sublist? ','* ']'
     private static boolean expr_2_0_3(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_2_0_3")) return false;
         boolean r;
         Marker m = enter_section_(b);
         r = consumeToken(b, R_LEFT_BRACKET);
         r = r && expr_2_0_3_1(b, l + 1);
-        r = r && sublist(b, l + 1);
+        r = r && expr_2_0_3_2(b, l + 1);
         r = r && expr_2_0_3_3(b, l + 1);
         r = r && consumeToken(b, R_RIGHT_BRACKET);
         exit_section_(b, m, null, r);
@@ -578,6 +566,14 @@ public class RParser implements PsiParser, LightPsiParser {
             if (!empty_element_parsed_guard_(b, "expr_2_0_3_1", c)) break;
             c = current_position_(b);
         }
+        return true;
+    }
+
+
+    // sublist?
+    private static boolean expr_2_0_3_2(PsiBuilder b, int l) {
+        if (!recursion_guard_(b, l, "expr_2_0_3_2")) return false;
+        sublist(b, l + 1);
         return true;
     }
 
@@ -644,7 +640,7 @@ public class RParser implements PsiParser, LightPsiParser {
 
 
     /* ********************************************************** */
-    // EOL* ( expr [(EQ_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN | GLOBAL_RIGHT_ASSIGN | GLOBAL_LEFT_ASSIGN) expr_or_assign] )
+    // EOL* ( expr [assign_op expr_or_assign] )
     public static boolean expr_or_assign(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_or_assign")) return false;
         boolean r;
@@ -669,7 +665,7 @@ public class RParser implements PsiParser, LightPsiParser {
     }
 
 
-    // expr [(EQ_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN | GLOBAL_RIGHT_ASSIGN | GLOBAL_LEFT_ASSIGN) expr_or_assign]
+    // expr [assign_op expr_or_assign]
     private static boolean expr_or_assign_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_or_assign_1")) return false;
         boolean r;
@@ -681,7 +677,7 @@ public class RParser implements PsiParser, LightPsiParser {
     }
 
 
-    // [(EQ_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN | GLOBAL_RIGHT_ASSIGN | GLOBAL_LEFT_ASSIGN) expr_or_assign]
+    // [assign_op expr_or_assign]
     private static boolean expr_or_assign_1_1(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_or_assign_1_1")) return false;
         expr_or_assign_1_1_0(b, l + 1);
@@ -689,28 +685,13 @@ public class RParser implements PsiParser, LightPsiParser {
     }
 
 
-    // (EQ_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN | GLOBAL_RIGHT_ASSIGN | GLOBAL_LEFT_ASSIGN) expr_or_assign
+    // assign_op expr_or_assign
     private static boolean expr_or_assign_1_1_0(PsiBuilder b, int l) {
         if (!recursion_guard_(b, l, "expr_or_assign_1_1_0")) return false;
         boolean r;
         Marker m = enter_section_(b);
-        r = expr_or_assign_1_1_0_0(b, l + 1);
+        r = assign_op(b, l + 1);
         r = r && expr_or_assign(b, l + 1);
-        exit_section_(b, m, null, r);
-        return r;
-    }
-
-
-    // EQ_ASSIGN | LEFT_ASSIGN | RIGHT_ASSIGN | GLOBAL_RIGHT_ASSIGN | GLOBAL_LEFT_ASSIGN
-    private static boolean expr_or_assign_1_1_0_0(PsiBuilder b, int l) {
-        if (!recursion_guard_(b, l, "expr_or_assign_1_1_0_0")) return false;
-        boolean r;
-        Marker m = enter_section_(b);
-        r = consumeToken(b, R_EQ_ASSIGN);
-        if (!r) r = consumeToken(b, R_LEFT_ASSIGN);
-        if (!r) r = consumeToken(b, R_RIGHT_ASSIGN);
-        if (!r) r = consumeToken(b, R_GLOBAL_RIGHT_ASSIGN);
-        if (!r) r = consumeToken(b, R_GLOBAL_LEFT_ASSIGN);
         exit_section_(b, m, null, r);
         return r;
     }
