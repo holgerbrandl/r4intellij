@@ -14,6 +14,8 @@ Restarted devlopment by forking. This gives the following feature set
 
 The following features were merged in from previous version of r4intellij
 * More recent R logo
+* live-templates
+
 
 
 

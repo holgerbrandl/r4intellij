@@ -11,7 +11,7 @@ public class RLineBreakpointType extends XLineBreakpointTypeBase {
   private static final String ID = "the-r-line";
 
   @NotNull
-  private static final String TITLE = "The R Breakpoints";
+  private static final String TITLE = "R Breakpoints";
 
   public RLineBreakpointType() {
     super(ID, TITLE, new REditorsProvider());

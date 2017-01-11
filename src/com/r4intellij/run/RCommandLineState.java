@@ -41,7 +41,7 @@ public class RCommandLineState extends CommandLineState {
     final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
 
     if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
-      throw new ExecutionException("The R interpreter is not specified");
+        throw new ExecutionException("R interpreter is not specified");
     }
 
     final ProcessHandler processHandler = startProcess(

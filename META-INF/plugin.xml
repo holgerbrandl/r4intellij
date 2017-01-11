@@ -90,25 +90,29 @@
     <stubElementTypeHolder class="com.r4intellij.parsing.RElementTypes"/>
     <lang.commenter language="R" implementationClass="com.r4intellij.RCommenter"/>
     <treeStructureProvider implementation="com.r4intellij.projectView.RTreeStructureProvider"/>
-    <quoteHandler className="com.r4intellij.completion.RQuoteHandler" fileType="The R"/>
+      <quoteHandler className="com.r4intellij.completion.RQuoteHandler" fileType="R"/>
+
+      <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
+      <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
 
     <configurationType implementation="com.r4intellij.run.configuration.RRunConfigurationType"/>
     <runConfigurationProducer implementation="com.r4intellij.run.configuration.RRunConfigurationProducer"/>
     <programRunner implementation="com.r4intellij.run.run.RRunRunner"/>
     <programRunner implementation="com.r4intellij.run.debug.RDebugRunner"/>
     <xdebugger.breakpointType implementation="com.r4intellij.run.debug.RLineBreakpointType"/>
-    <toolWindow id="The R Graphics" anchor="right" factoryClass="com.r4intellij.run.graphics.RGraphicsToolWindowFactory"/>
+      <toolWindow id="R Graphics" anchor="right" factoryClass="com.r4intellij.run.graphics.RGraphicsToolWindowFactory"/>
 
-    <localInspection language="R" shortName="RTypeCheckerInspection" displayName="R Type Checker" enabledByDefault="true" level="WARNING"
-                     implementationClass="com.r4intellij.inspections.RTypeCheckerInspection" groupKey=""/>
+      <!--<localInspection language="R" shortName="RTypeCheckerInspection" displayName="R Type Checker" enabledByDefault="true" level="WARNING"-->
+      <!--implementationClass="com.r4intellij.inspections.RTypeCheckerInspection" groupKey=""/>-->
     <localInspection language="R" shortName="RUnusedInspection" displayName="R Unused Inspection" enabledByDefault="true" level="WARNING"
                      implementationClass="com.r4intellij.inspections.RUnusedInspection" groupKey=""/>
-    <localInspection language="R" shortName="RUnresolvedReferenceInspection" displayName="R Unresolved Reference Inspection"
-                     enabledByDefault="true" level="WARNING"
-                     implementationClass="com.r4intellij.inspections.RUnresolvedReferenceInspection" groupKey=""/>
+
+      <!--todo fix me or leave disabled-->
+      <!--<localInspection language="R" shortName="RUnresolvedReferenceInspection" displayName="R Unresolved Reference Inspection"-->
+      <!--enabledByDefault="true" level="WARNING" implementationClass="com.r4intellij.inspections.RUnresolvedReferenceInspection" groupKey=""/>-->
 
     <lang.findUsagesProvider implementationClass="com.r4intellij.RFindUsagesProvider" language="R"/>
-    <toolWindow id="Packages" anchor="right" factoryClass="com.r4intellij.packages.RPackagesToolWindowFactory"/>
+      <toolWindow id="R Packages" anchor="right" factoryClass="com.r4intellij.packages.RPackagesToolWindowFactory"/>
     <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
   </extensions>
 </idea-plugin>

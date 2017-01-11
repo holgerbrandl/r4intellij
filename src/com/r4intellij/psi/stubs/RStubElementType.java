@@ -24,6 +24,6 @@ public abstract class RStubElementType<StubT extends StubElement, PsiT extends R
   @Override
   @NotNull
   public String getExternalId() {
-    return "ther." + super.toString();
+      return "r." + super.toString();
   }
 }

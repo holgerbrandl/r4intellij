@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageConsoleView> {
 
   public RConsoleRunner(@NotNull final Project project, @Nullable final String workingDir) {
-    super(project, "The R Console", workingDir);
+      super(project, "R Console", workingDir);
   }
 
   @NotNull
@@ -66,7 +66,7 @@ public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageCon
     final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
 
     if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
-      throw new ExecutionException("The R interpreter is not specified");
+        throw new ExecutionException("R interpreter is not specified");
     }
 
     return interpreterPath;

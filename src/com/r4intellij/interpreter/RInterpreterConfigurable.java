@@ -2,7 +2,6 @@ package com.r4intellij.interpreter;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -101,7 +100,7 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
   @Nls
   @Override
   public String getDisplayName() {
-    return "The R Interpreter";
+      return "R Interpreter";
   }
 
   @Nullable
