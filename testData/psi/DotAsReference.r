@@ -1,0 +1,1 @@
+step(aov(log(Days+2.5) ~ .^4, data=Quine))

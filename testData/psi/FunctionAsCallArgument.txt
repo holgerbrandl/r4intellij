@@ -1,0 +1,67 @@
+RFile:FunctionAsCallArgument.r
+  THE_R_ASSIGNMENT_STATEMENT
+    THE_R_REFERENCE_EXPRESSION
+      PsiElement(identifier)('wtd.means')
+    PsiWhiteSpace(' ')
+    THE_R_OPERATOR
+      PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    THE_R_CALL_EXPRESSION
+      THE_R_REFERENCE_EXPRESSION
+        PsiElement(identifier)('by')
+      THE_R_ARGUMENT_LIST
+        PsiElement(()('(')
+        THE_R_REFERENCE_EXPRESSION
+          PsiElement(identifier)('firms')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        THE_R_REFERENCE_EXPRESSION
+          PsiElement(identifier)('size.category')
+        PsiElement(,)(',')
+        PsiElement(nl)('\n')
+        PsiWhiteSpace('  ')
+        THE_R_FUNCTION_EXPRESSION
+          PsiElement(function)('function')
+          THE_R_PARAMETER_LIST
+            PsiElement(()('(')
+            THE_R_PARAMETER
+              PsiElement(identifier)('piece')
+            PsiElement())(')')
+          PsiWhiteSpace(' ')
+          THE_R_PARENTHESIZED_EXPRESSION
+            PsiElement(()('(')
+            THE_R_OPERATOR_EXPRESSION
+              THE_R_CALL_EXPRESSION
+                THE_R_REFERENCE_EXPRESSION
+                  PsiElement(identifier)('sum')
+                THE_R_ARGUMENT_LIST
+                  PsiElement(()('(')
+                  THE_R_OPERATOR_EXPRESSION
+                    THE_R_MEMBER_EXPRESSION
+                      THE_R_REFERENCE_EXPRESSION
+                        PsiElement(identifier)('piece')
+                      PsiElement($)('$')
+                      PsiElement(identifier)('mktcap')
+                    THE_R_OPERATOR
+                      PsiElement(*)('*')
+                    THE_R_MEMBER_EXPRESSION
+                      THE_R_REFERENCE_EXPRESSION
+                        PsiElement(identifier)('piece')
+                      PsiElement($)('$')
+                      PsiElement(identifier)('spread')
+                  PsiElement())(')')
+              THE_R_OPERATOR
+                PsiElement(/)('/')
+              THE_R_CALL_EXPRESSION
+                THE_R_REFERENCE_EXPRESSION
+                  PsiElement(identifier)('sum')
+                THE_R_ARGUMENT_LIST
+                  PsiElement(()('(')
+                  THE_R_MEMBER_EXPRESSION
+                    THE_R_REFERENCE_EXPRESSION
+                      PsiElement(identifier)('piece')
+                    PsiElement($)('$')
+                    PsiElement(identifier)('mktcap')
+                  PsiElement())(')')
+            PsiElement())(')')
+        PsiElement())(')')

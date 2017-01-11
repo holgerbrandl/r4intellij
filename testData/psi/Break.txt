@@ -1,0 +1,66 @@
+RFile:Break.r
+  THE_R_ASSIGNMENT_STATEMENT
+    THE_R_REFERENCE_EXPRESSION
+      PsiElement(identifier)('z')
+    PsiWhiteSpace(' ')
+    THE_R_OPERATOR
+      PsiElement(<-)('<-')
+    PsiWhiteSpace(' ')
+    THE_R_NUMERIC_LITERAL_EXPRESSION
+      PsiElement(numeric)('0')
+  PsiElement(nl)('\n')
+  THE_R_REPEAT_STATEMENT
+    PsiElement(repeat)('repeat')
+    PsiWhiteSpace(' ')
+    THE_R_BLOCK_EXPRESSION
+      PsiElement({)('{')
+      PsiElement(nl)('\n')
+      PsiWhiteSpace('  ')
+      THE_R_ASSIGNMENT_STATEMENT
+        THE_R_REFERENCE_EXPRESSION
+          PsiElement(identifier)('z')
+        PsiWhiteSpace(' ')
+        THE_R_OPERATOR
+          PsiElement(<-)('<-')
+        PsiWhiteSpace(' ')
+        THE_R_OPERATOR_EXPRESSION
+          THE_R_REFERENCE_EXPRESSION
+            PsiElement(identifier)('z')
+          PsiWhiteSpace(' ')
+          THE_R_OPERATOR
+            PsiElement(+)('+')
+          PsiWhiteSpace(' ')
+          THE_R_NUMERIC_LITERAL_EXPRESSION
+            PsiElement(numeric)('1')
+      PsiElement(nl)('\n')
+      PsiWhiteSpace('  ')
+      THE_R_CALL_EXPRESSION
+        THE_R_REFERENCE_EXPRESSION
+          PsiElement(identifier)('print')
+        THE_R_ARGUMENT_LIST
+          PsiElement(()('(')
+          THE_R_REFERENCE_EXPRESSION
+            PsiElement(identifier)('z')
+          PsiElement())(')')
+      PsiElement(nl)('\n')
+      PsiWhiteSpace('  ')
+      THE_R_IF_STATEMENT
+        PsiElement(if)('if')
+        PsiElement(()('(')
+        THE_R_OPERATOR_EXPRESSION
+          THE_R_REFERENCE_EXPRESSION
+            PsiElement(identifier)('z')
+          PsiWhiteSpace(' ')
+          THE_R_OPERATOR
+            PsiElement(>)('>')
+          PsiWhiteSpace(' ')
+          THE_R_NUMERIC_LITERAL_EXPRESSION
+            PsiElement(numeric)('100')
+        PsiElement())(')')
+        PsiWhiteSpace(' ')
+        THE_R_BREAK_STATEMENT
+          PsiElement(break)('break')
+          PsiElement(()('(')
+          PsiElement())(')')
+      PsiElement(nl)('\n')
+      PsiElement(})('}')

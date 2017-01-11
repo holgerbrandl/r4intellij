@@ -1,22 +1,11 @@
-<!--
-  ~ Copyright 2011 Holger Brandl
-  ~
-  ~ This code is licensed under BSD. For details see
-  ~ http://www.opensource.org/licenses/bsd-license.php
-  -->
-
 <idea-plugin version="2">
-    <name>R Language Support</name>
-    <id>R4Intellij</id>
-    <description>R syntax highlighting and scripting support including auto-imports, quickfixes and refactorings</description>
-    <version>0.11.1</version>
-    <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
-    <idea-version since-build="8000"/>
+  <name>R Language Support</name>
+  <id>R4Intellij</id>
+  <version>1.0</version>
+  <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
 
-    <depends>com.intellij.modules.lang</depends>
-    <depends>com.intellij.modules.platform</depends>
-
-    <description><![CDATA[
+  <idea-version since-build="145.258.11"/>
+  <description><![CDATA[
         <html>
         <h3>R support for IntelliJ</h3>
 
@@ -44,208 +33,82 @@
         </ul>
         <p/>
         Read more about the features at <a href="https://github.com/holgerbrandl/r4intellij">project page</a>
+
+
+        The project was intially deveoped from scratch, but in 2017 we rebuilt it based on the more modern MIT-licensed codebase of https://github.com/ktisha/RPlugin to
+        provide a more elegant parser backednd and missing features like a debugger.
+
+        Copyright (c) 2013-2017 Ekaterina Tuzova (ktisha)
+        Copyright (c) 2013-2017 Ekaterina Tuzova (ktisha)
+
         </html>
         ]]></description>
 
-    <change-notes><![CDATA[
-        <html>
-        <b>Changes in v0.12:</b>
-        <ul>
-            <li>New R icon</li>
-            <li>Fixed: parser fails to work for higher dimensional arrays #53</li>
-            <li>Fixed: functions declared with = don't show up in structure view #72</li>
-            <li>Allow for leading commas in functions invokations (e.g. `myFun(,5)`) which seem bad practice (use named arg</li> instead!) but are common
-        </ul>
-        <b>Changes in v0.10:</b>
-        <ul>
-            <li>Improved Intellij v15 compatibility</li>
-        </ul>
-        <b>Changes in v0.9:</b>
-        <ul>
-            <li>Fixed PyCharm Support</li>
-            <li>(Experimental) Reformatter</li>
-            <li>Parser improvements</li>
-        </ul>
-        <b>Changes in v0.9:</b>
-        <ul>
-            <li>Added R color setting page</li>
-            <li>Named vector support</li>
-            <li>Support for more magrittr operators</li>
-            <li>Added live-templates for dplyr</li>
-            <li>Improved send to R/terminal</li>
-        </ul>
-        <b>Changes in v0.8.4:</b>
-        <ul>
-            <li>Added iTerm support for HongKee</li>
-        </ul>
-        <b>Changes in v0.8.3:</b>
-        <ul>
-            <li>Added support for pipe operator from magrittr package</li>
-        </ul>
-        <b>Changes in v0.8.2:</b>
-        <ul>
-            <li>Changed plugin definition to support also other Jetbrains products like PhpStorm, PyCharm, etc.</li>
-        </ul>
-        <b>Changes in v0.8.1:</b>
-        <ul>
-            <li>Improved compatibility to Intellij IDEA 13</li>
-        </ul>
-        <b>Changes in v0.8.2:</b>
-        <ul>
-            <li>Added support for more operators (like %+% or <<-</li>
-        </ul>
-        <b>Changes in v0.8:</b>
-        <ul>
-            <li>Added option to keep focus in editor after submitting code to R</li>
-        </ul>
-        <b>Changes in v0.7:</b>
-        <ul>
-            <li>Dramatically improved parser performance</li>
-            <li>Code evaluation bugfixes (macos)</li>
-        </ul>
-        <b>Changes in v0.6:</b>
-        <ul>
-            <li>Highlight usages of functions and variables in file</li>
-            <li>Advanced navigation (structure view, go to declaration)</li>
-            <li>Code section folding</li>
-            <li>Code evaluation connectors for Windows (Rgui) and MacOS (R, R64 and Terminal)</li>
-            <li>Customizable code evaluation snippets</li>
-            <li>Auto-import of functions</li>
-            <li>Simple function help</li>
-        </ul>
-        <b>Changes in v0.5:</b>
-        <ul>
-            <li></li>
-            <li>New shortcut action to call str() for the current word or selection (MacOS only)</li>
-            <li>Function body folding</li>
-            <li>More robust lexer</li>
-            <li>Finished (my first) parser --> allows for growing selection using "Select for word at caret" action</li>
-            <li>bug fixes</li>
-        </ul>
+  <change-notes>
+    <![CDATA[
+    <html>
+    Changes are documented in our [change log ](https://github.com/holgerbrandl/r4intellij/blob/master/Changes.md) on the project page.
+    </html>
+    ]]>
+  </change-notes>
 
-        <b>Changes in v0.4:</b>
-        <ul>
-            <li>Basic code completion</li>
-            <li>Better shortcuts for code evaluation (MacOS only)</li>
-        </ul>
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+  <!--<depends optional="true">com.intellij.modules.python</depends>-->
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+  <actions>
+    <action id="com.r4intellij.console.RConsoleAction" class="com.r4intellij.console.RConsoleAction"
+            text="Run R Console..." description="Starts R interactive console">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+    <action id="RGenerateTypingReport" class="com.r4intellij.actions.RGenerateTypingReport" text="Generate Typing Report"
+            description="Generate Typing Report">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+    <action id="RSkeletonsGenerator" class="com.r4intellij.actions.RSkeletonsGeneratorAction" text="Generate Skeletons"
+            description="Generate skeletons">
+      <add-to-group group-id="ToolsMenu" anchor="last"/>
+    </action>
+  </actions>
 
-        <b>Changes in version 0.3:</b>
-        <ul>
-            <li>Evaluate selection of current line in R (MacOS only)</li>
-            <li>Improved code highlighting</li>
-            <li>Added first live-templates</li>
-        </ul>
+  <extensions defaultExtensionNs="com.intellij">
+    <fileTypeFactory implementation="com.r4intellij.RFileTypeFactory"/>
+    <lang.syntaxHighlighterFactory key="R" implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
+    <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>
+    <lang.braceMatcher language="R" implementationClass="com.r4intellij.highlighting.RBraceMatcher"/>
+    <projectConfigurable instance="com.r4intellij.interpreter.RInterpreterConfigurable"/>
+    <applicationService serviceInterface="com.r4intellij.interpreter.RInterpreterService"
+                        serviceImplementation="com.r4intellij.interpreter.RInterpreterService"/>
+    <applicationService serviceInterface="com.r4intellij.packages.RPackageService"
+                        serviceImplementation="com.r4intellij.packages.RPackageService"/>
+    <directoryProjectConfigurator implementation="com.r4intellij.interpreter.RInterpreterConfigurator" id="interpreter"
+                                  order="after PlatformProjectConfigurator"/>
+    <stubIndex implementation="com.r4intellij.psi.stubs.RAssignmentNameIndex"/>
+    <stubElementTypeHolder class="com.r4intellij.parsing.RElementTypes"/>
+    <lang.commenter language="R" implementationClass="com.r4intellij.RCommenter"/>
+    <treeStructureProvider implementation="com.r4intellij.projectView.RTreeStructureProvider"/>
+    <quoteHandler className="com.r4intellij.completion.RQuoteHandler" fileType="The R"/>
 
-        <b>Changes in version 0.2:</b>
-        Initial release of the plugin. :-)
-        <ul>
-            <li>Syntax highlighting</li>
-            <li>Comment code blocks with usual shortcut ⌘/</li>
-            <li>Register .R as file type</li>
-        </ul>
-        </html>
-        ]]></change-notes>
+    <configurationType implementation="com.r4intellij.run.configuration.RRunConfigurationType"/>
+    <runConfigurationProducer implementation="com.r4intellij.run.configuration.RRunConfigurationProducer"/>
+    <programRunner implementation="com.r4intellij.run.run.RRunRunner"/>
+    <programRunner implementation="com.r4intellij.run.debug.RDebugRunner"/>
+    <xdebugger.breakpointType implementation="com.r4intellij.run.debug.RLineBreakpointType"/>
+    <toolWindow id="The R Graphics" anchor="right" factoryClass="com.r4intellij.run.graphics.RGraphicsToolWindowFactory"/>
 
+    <localInspection language="R" shortName="RTypeCheckerInspection" displayName="R Type Checker" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.r4intellij.inspections.RTypeCheckerInspection" groupKey=""/>
+    <localInspection language="R" shortName="RUnusedInspection" displayName="R Unused Inspection" enabledByDefault="true" level="WARNING"
+                     implementationClass="com.r4intellij.inspections.RUnusedInspection" groupKey=""/>
+    <localInspection language="R" shortName="RUnresolvedReferenceInspection" displayName="R Unresolved Reference Inspection"
+                     enabledByDefault="true" level="WARNING"
+                     implementationClass="com.r4intellij.inspections.RUnresolvedReferenceInspection" groupKey=""/>
 
-    <application-components>
-        <!-- Add your application components here -->
-    </application-components>
-
-    <project-components>
-        <component>
-            <implementation-class>com.r4intellij.actions.CodeEvalActionRegistry</implementation-class>
-            <skipForDefaultProject/>
-        </component>
-    </project-components>
-
-    <actions>
-        <group class="com.r4intellij.actions.RActionGroup" id="RCodeSnippetActionMenu">
-
-            <separator/>
-            <action id="EvalSelction" class="com.r4intellij.actions.RunSelectedTextOrLineAction" text="Evaluate"
-                    description="Evaluates the current line or selection in R">
-                <keyboard-shortcut keymap="$default" first-keystroke="meta alt ENTER"/>
-            </action>
-
-            <!--<action id="EvalHeadNrow" class="com.r4intellij.actions.HeadNrowEvalAction" text="head+nrow"-->
-            <!--description="Evaluates head and nrow for the current data.frame object">-->
-            <!--<keyboard-shortcut keymap="$default" first-keystroke="meta alt H"/>-->
-            <!--</action>-->
-
-            <!--<action id="EvalStr" class="com.r4intellij.actions.ShowStructureEvalAction" text="str()"-->
-            <!--description="Calls the str for the current word or selection">-->
-            <!--<keyboard-shortcut keymap="$default" first-keystroke="meta alt S"/>-->
-            <!--</action>-->
-
-            <separator/>
-            <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-        </group>
-    </actions>
-
-    <extensions defaultExtensionNs="com.intellij">
-        <!--<additionalTextAttributes-->
-        <!--file="colorSchemes/RDefault.xml"-->
-        <!--scheme="Default"/>-->
-        <!--<additionalTextAttributes-->
-        <!--file="colorSchemes/RDarcula.xml"-->
-        <!--scheme="Darcula"/>-->
-
-        <lang.syntaxHighlighterFactory key="R"
-                                       implementationClass="com.r4intellij.editor.highlighting.RSyntaxHighlighterFactory"/>
-
-        <colorSettingsPage
-                implementation="com.r4intellij.editor.highlighting.RColorSettingsPage"/>
-
-
-        <fileTypeFactory implementation="com.r4intellij.lang.RFileTypeFactory"/>
-
-
-        <!--<annotator language="R" implementationClass="com.r4intellij.inspectionss.FunctionNameAnnotator"/>-->
-
-        <lang.parserDefinition language="R"
-                               implementationClass="com.r4intellij.lang.parser.RParserDefinition"/>
-
-        <lang.braceMatcher language="R"
-                           implementationClass="com.r4intellij.editor.highlighting.RBraceMatcher"/>
-
-        <lang.commenter language="R"
-                        implementationClass="com.r4intellij.editor.highlighting.RCommenter"/>
-
-        <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
-
-        <lang.findUsagesProvider language="R" implementationClass="com.r4intellij.editor.RFindUsagesProvider"/>
-
-        <lang.formatter language="R" implementationClass="com.r4intellij.editor.formatting.RFormattingModelBuilder"/>
-
-
-        <lang.elementManipulator forClass="com.r4intellij.psi.impl.RStringLiteralImpl"
-                                 implementationClass="com.r4intellij.psi.impl.RStringManipulator"/>
-        <lang.psiStructureViewFactory language="R"
-                                      implementationClass="com.r4intellij.psi.RScriptStructureViewFactory"/>
-
-        <quoteHandler fileType="R" className="com.r4intellij.editor.highlighting.RQuoteHandler"/>
-
-        <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
-        <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
-
-        <completion.contributor language="R" implementationClass="com.r4intellij.lang.RCompletionContributor"/>
-
-        <documentationProvider implementation="com.r4intellij.editor.RDocumentationProvider"/>
-
-
-        <!-- Inspections -->
-        <localInspection language="R" shortName="MissingPackageImportInspection" displayName="Missing package import"
-                         groupName="R"
-                         enabledByDefault="true" level="WARNING"
-                         implementationClass="com.r4intellij.inspections.MissingImportInspection"/>
-
-
-        <!-- the settings-->
-        <applicationConfigurable implementation="com.r4intellij.settings.RConfigurable"/>
-        <applicationService serviceInterface="com.r4intellij.settings.RSettings"
-                            serviceImplementation="com.r4intellij.settings.RSettings"/>
-        <applicationService serviceInterface="com.r4intellij.misc.rinstallcache.PackageCacheService"
-                            serviceImplementation="com.r4intellij.misc.rinstallcache.PackageCacheService"/>
-
-    </extensions>
+    <lang.findUsagesProvider implementationClass="com.r4intellij.RFindUsagesProvider" language="R"/>
+    <toolWindow id="Packages" anchor="right" factoryClass="com.r4intellij.packages.RPackagesToolWindowFactory"/>
+    <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
+  </extensions>
 </idea-plugin>

@@ -1,0 +1,27 @@
+RFile:StatementBreak.r
+  THE_R_OPERATOR_EXPRESSION
+    THE_R_NUMERIC_LITERAL_EXPRESSION
+      PsiElement(numeric)('13')
+    PsiWhiteSpace(' ')
+    THE_R_OPERATOR
+      PsiElement(+)('+')
+    PsiWhiteSpace(' ')
+    THE_R_NUMERIC_LITERAL_EXPRESSION
+      PsiElement(numeric)('4')
+  PsiElement(nl)('\n')
+  THE_R_OPERATOR_EXPRESSION
+    THE_R_OPERATOR
+      PsiElement(-)('-')
+    THE_R_NUMERIC_LITERAL_EXPRESSION
+      PsiElement(numeric)('7')
+  PsiElement(nl)('\n')
+  THE_R_CALL_EXPRESSION
+    THE_R_REFERENCE_EXPRESSION
+      PsiElement(identifier)('print')
+    THE_R_ARGUMENT_LIST
+      PsiElement(()('(')
+      PsiElement(nl)('\n')
+      THE_R_NUMERIC_LITERAL_EXPRESSION
+        PsiElement(numeric)('1')
+      PsiElement(nl)('\n')
+      PsiElement())(')')

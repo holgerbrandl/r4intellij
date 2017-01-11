@@ -1,0 +1,185 @@
+{
+  parserClass="com.r4intellij.parsing.RParser"
+  parserUtilClass="com.r4intellij.parsing.RParserUtil"
+  elementTypeFactory("assignment_statement")="com.r4intellij.psi.stubs.RElementTypeFactory.getElementTypeByName"
+  implements="com.r4intellij.psi.api.RPsiElement"
+  extends="com.r4intellij.psi.RElementImpl"
+
+  elementTypeHolderClass="com.r4intellij.parsing.RElementTypes"
+  elementTypePrefix="THE_R_"
+  elementTypeClass="com.r4intellij.psi.RElementType"
+  tokenTypeClass="com.r4intellij.psi.RElementType"
+
+  psiImplUtilClass="com.r4intellij.psi.RPsiImplUtil"
+
+  psiClassPrefix="R"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.r4intellij.psi.api"
+  psiImplPackage="com.r4intellij.psi"
+
+  SEMI=";"
+  LEFT_ASSIGN="<-"
+  LEFT_COMPLEX_ASSIGN="<<-"
+  EQ="="
+  RIGHT_ASSIGN="->"
+  RIGHT_COMPLEX_ASSIGN="->>"
+  TILDE="~"
+  AND="&"
+  OR="|"
+  NOT="!"
+  LE="<="
+  GE=">="
+  EQEQ="=="
+  GT=">"
+  LT="<"
+  NOTEQ="!="
+  COMMA=","
+  TICK="`"
+  UNDERSCORE="_"
+  TRIPLECOLON=":::"
+  DOUBLECOLON="::"
+  AT="@"
+  ANDAND="&&"
+  OROR="||"
+  MINUS="-"
+  PLUS="+"
+  MULT="*"
+  DIV="/"
+  EXP="^"
+  LIST_SUBSET="$"
+  COLON=":"
+  LPAR="("
+  RPAR=")"
+  LBRACE="{"
+  RBRACE="}"
+  RDBRACKET="]]"
+  LDBRACKET="[["
+  RBRACKET="]"
+  LBRACKET="["
+  
+
+  extends(".*statement|.*expression")=expression
+  implements("assignment_statement|parameter")="com.r4intellij.psi.api.RNamedElement"
+
+  generateTokenAccessors=true
+}
+
+root ::= expression_list
+private expression_list ::= expression? (semicolon+ expression?)*
+
+private constant ::= numeric_literal_expression | string_literal_expression | logical_literal_expression | null_literal_expression | na_literal_expression
+numeric_literal_expression ::= integer | numeric | complex
+string_literal_expression ::= string
+logical_literal_expression ::= TRUE | FALSE | T | F
+null_literal_expression ::= NULL
+na_literal_expression ::= NA | NA_INTEGER | NA_REAL | NA_COMPLEX | NA_CHARACTER {
+  methods = [getType]
+}
+private special_constant ::= INF | NAN
+private keyword ::= NA_INTEGER | NA_REAL | NA_COMPLEX | NA_CHARACTER |
+  TRIPLE_DOTS | if | else | repeat | while |
+  function | for | in | next | break
+
+expression ::=
+  if_statement | while_statement | for_statement | repeat_statement | break_statement | next_statement |
+  block_expression | help_expression | parenthesized_expression |
+  function_expression | left_assign_expression | eq_assign_expression | right_assign_expression |
+  tilde_group | or_expression | and_expression | unary_not_expression | compare_expression | plusminus_expression |
+  muldiv_expression | user_defined_expression | slice_expression | unary_plusminus_expression | exp_expression | subscription_expression |
+  call_expression | member_expression | at_expression | namespace_access_expression | primitive_expression
+
+//operators
+assignment_statement ::= {
+  methods=[isLeft isRight isEqual getAssignedValue getAssignee getName setName getNameNode]
+  extends="com.r4intellij.psi.stubs.RAssignmentBase"
+  stubClass="com.r4intellij.psi.stubs.RAssignmentStub"
+}
+
+operator ::= {
+  methods=[getName getReference]
+}
+left_assign_operator ::= '<-' | '<<-'  { elementType=operator }
+right_assign_operator ::= '->' | '->>' { elementType=operator }
+eq_assign_operator ::= '=' { elementType=operator }
+or_operator ::= '|' | '||' { elementType=operator }
+tilde_operator ::= '~' { elementType=operator }
+and_operator ::= '&' | '&&' { elementType=operator }
+compare_operator ::= '>' | '>=' | '<' | '<=' | '==' | '!=' { elementType=operator }
+plusminus_operator ::= '+' | '-' { elementType=operator }
+muldiv_operator ::= '*' | '/' { elementType=operator }
+slice_operator ::= ':' { elementType=operator }
+exp_operator ::= '^' { elementType=operator }
+infix_operator ::= INFIX_OP { elementType=operator }
+not_operator ::= '!' { elementType=operator }
+
+operator_expression ::= expression
+left_assign_expression ::= expression left_assign_operator nl* expression { rightAssociative=true; elementType=assignment_statement }
+eq_assign_expression ::= expression eq_assign_operator nl* (expression | external_empty_expression) { rightAssociative=true; elementType=assignment_statement }
+right_assign_expression ::= expression right_assign_operator nl* expression { elementType=assignment_statement }
+private tilde_group ::= unary_tilde_expression | tilde_expression
+unary_tilde_expression ::= tilde_operator nl* expression
+tilde_expression ::= expression tilde_operator nl* expression
+or_expression ::= expression nl* or_operator nl* expression { elementType=operator_expression }
+and_expression ::= expression nl* and_operator nl* expression { elementType=operator_expression }
+unary_not_expression ::= not_operator nl* expression  { elementType=operator_expression }
+compare_expression ::= expression compare_operator nl* expression { elementType=operator_expression }
+plusminus_expression ::= expression plusminus_operator nl* expression { elementType=operator_expression }
+muldiv_expression ::= expression muldiv_operator nl* expression { elementType=operator_expression }
+user_defined_expression ::= expression infix_operator nl* expression { elementType=operator_expression }
+slice_expression ::= expression slice_operator nl* expression
+unary_plusminus_expression ::= plusminus_operator nl* expression { elementType=operator_expression }
+exp_expression ::= expression exp_operator nl* expression { elementType=operator_expression }
+private member_tag ::= identifier | string | '...'
+member_expression ::= expression '$' nl* member_tag {
+  methods = [ getTag ]
+}
+at_expression ::= expression '@' nl* member_tag {
+  methods = [ getTag ]
+}
+namespace_access_expression ::= expression ('::' | ':::') identifier { elementType=reference_expression }
+
+//statements
+if_statement ::= if nl* '(' nl* expression nl* ')' nl* expression (nl* else nl* expression)?
+while_statement ::= while nl* '(' nl* expression nl* ')' nl* expression
+for_statement ::= for nl* '(' nl* expression 'in' nl* expression ')' nl* expression {
+  methods=[ target = "expression[0]" range = "expression[1]" body = "expression[2]"]
+}
+repeat_statement ::= repeat nl* expression
+break_statement ::= break break_next_expression?
+next_statement ::= next break_next_expression?
+private break_next_expression ::= nl* '(' nl* (expression nl*)? ')'
+block_expression ::= '{' nl* expression_list? nl* '}'
+help_expression ::= help (nl* help)? nl* (keyword | expression) //todo: check that here is expr
+
+//other expressions
+reference_expression ::= identifier | special_constant {
+  methods = [ getReference getNamespace getName ]
+}
+private primitive_expression ::= reference_expression | constant
+parenthesized_expression ::= '(' nl* expression nl* ')'
+
+empty_expression ::= expression //todo: required to generate PSI, how to simplify this?
+external external_empty_expression ::= parseEmptyExpression { elementType=empty_expression }
+private subscription_expr_elem ::= '...' | expression | external_empty_expression
+private subscription_expr_list ::= subscription_expr_elem nl* (',' nl* subscription_expr_elem nl*)*
+subscription_expression ::= expression ('[' nl* ']' | '[' nl* subscription_expr_list ']' |
+  '[[' nl* ']]' | '[[' nl* subscription_expr_list ']]')
+
+private arg ::= '...' | expression | external_empty_expression
+argument_list ::= '(' nl* ')' | '(' nl* arg nl* (',' nl* arg nl*)* ')'
+call_expression ::= expression argument_list
+
+parameter ::= (identifier '=' expression) | identifier | '...' {
+  methods = [ getNameNode getName setName]
+}
+parameter_list ::= ('(' ')') | ('(' nl* parameter nl* (',' nl* parameter nl*)* ')')
+function_expression ::= function parameter_list nl* expression {
+methods = [ getDocStringValue]
+}
+
+private semicolon ::= ';' | nl
+
+//todo: directives?
+//todo: user-defined operations as primitive expr, in old parser it was OPERATOR_EXPRESSION, do we really need them?
+//todo: what is underscore, was in lexer earlier?
+//todo: is '...' actually identifier?

@@ -1,0 +1,1 @@
+DF2 <- rbind(DF, DF[7:8,, drop=FALSE])

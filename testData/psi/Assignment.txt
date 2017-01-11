@@ -1,0 +1,10 @@
+RFile:Assignment.r
+  THE_R_ASSIGNMENT_STATEMENT
+    THE_R_REFERENCE_EXPRESSION
+      PsiElement(identifier)('a')
+    PsiWhiteSpace(' ')
+    THE_R_OPERATOR
+      PsiElement(<-)('<-')
+    PsiWhiteSpace(' ')
+    THE_R_NUMERIC_LITERAL_EXPRESSION
+      PsiElement(numeric)('1')

@@ -1,0 +1,5 @@
+mtcars[2:3:5, 1]
+mtcars[1, 2]
+mtcars[, am]
+mtcars[[9]]
+D$names[length(D$names)]

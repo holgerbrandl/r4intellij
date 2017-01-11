@@ -1,0 +1,1 @@
+levelplot(z ~ x+y, pretty=TRUE, contour=TRUE, data=d3)

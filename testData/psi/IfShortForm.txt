@@ -1,0 +1,67 @@
+RFile:IfShortForm.r
+  THE_R_ASSIGNMENT_STATEMENT
+    THE_R_REFERENCE_EXPRESSION
+      PsiElement(identifier)('r')
+    PsiWhiteSpace(' ')
+    THE_R_OPERATOR
+      PsiElement(<-)('<-')
+    PsiWhiteSpace(' ')
+    THE_R_IF_STATEMENT
+      PsiElement(if)('if')
+      PsiElement(()('(')
+      THE_R_REFERENCE_EXPRESSION
+        PsiElement(identifier)('true.only')
+      PsiElement())(')')
+      PsiWhiteSpace(' ')
+      THE_R_CALL_EXPRESSION
+        THE_R_REFERENCE_EXPRESSION
+          PsiElement(identifier)('character')
+        THE_R_ARGUMENT_LIST
+          PsiElement(()('(')
+          THE_R_NUMERIC_LITERAL_EXPRESSION
+            PsiElement(numeric)('0')
+          PsiElement())(')')
+      PsiElement(nl)('\n')
+      PsiWhiteSpace('    ')
+      PsiElement(else)('else')
+      PsiWhiteSpace(' ')
+      THE_R_CALL_EXPRESSION
+        THE_R_REFERENCE_EXPRESSION
+          PsiElement(identifier)('structure')
+        THE_R_ARGUMENT_LIST
+          PsiElement(()('(')
+          THE_R_CALL_EXPRESSION
+            THE_R_REFERENCE_EXPRESSION
+              PsiElement(identifier)('vector')
+            THE_R_ARGUMENT_LIST
+              PsiElement(()('(')
+              THE_R_STRING_LITERAL_EXPRESSION
+                PsiElement(string)('"list"')
+              PsiElement(,)(',')
+              PsiWhiteSpace(' ')
+              THE_R_ASSIGNMENT_STATEMENT
+                THE_R_REFERENCE_EXPRESSION
+                  PsiElement(identifier)('length')
+                THE_R_OPERATOR
+                  PsiElement(=)('=')
+                PsiWhiteSpace(' ')
+                THE_R_CALL_EXPRESSION
+                  THE_R_REFERENCE_EXPRESSION
+                    PsiElement(identifier)('length')
+                  THE_R_ARGUMENT_LIST
+                    PsiElement(()('(')
+                    THE_R_REFERENCE_EXPRESSION
+                      PsiElement(identifier)('use.fn')
+                    PsiElement())(')')
+              PsiElement())(')')
+          PsiElement(,)(',')
+          PsiWhiteSpace(' ')
+          THE_R_ASSIGNMENT_STATEMENT
+            THE_R_REFERENCE_EXPRESSION
+              PsiElement(identifier)('names')
+            THE_R_OPERATOR
+              PsiElement(=)('=')
+            PsiWhiteSpace(' ')
+            THE_R_REFERENCE_EXPRESSION
+              PsiElement(identifier)('use.fn')
+          PsiElement())(')')

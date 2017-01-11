@@ -1,0 +1,1 @@
+of1(if(inCode || inCodeBlock) "..."  else tag)

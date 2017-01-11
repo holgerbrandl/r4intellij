@@ -1,0 +1,55 @@
+RFile:ReprAsKeywordArgument.r
+  THE_R_ASSIGNMENT_STATEMENT
+    THE_R_REFERENCE_EXPRESSION
+      PsiElement(identifier)('DF')
+    PsiWhiteSpace(' ')
+    THE_R_OPERATOR
+      PsiElement(<-)('<-')
+    PsiWhiteSpace(' ')
+    THE_R_CALL_EXPRESSION
+      THE_R_REFERENCE_EXPRESSION
+        PsiElement(identifier)('data.frame')
+      THE_R_ARGUMENT_LIST
+        PsiElement(()('(')
+        THE_R_ASSIGNMENT_STATEMENT
+          THE_R_REFERENCE_EXPRESSION
+            PsiElement(identifier)('y')
+          THE_R_OPERATOR
+            PsiElement(=)('=')
+          THE_R_CALL_EXPRESSION
+            THE_R_REFERENCE_EXPRESSION
+              PsiElement(identifier)('rnorm')
+            THE_R_ARGUMENT_LIST
+              PsiElement(()('(')
+              THE_R_NUMERIC_LITERAL_EXPRESSION
+                PsiElement(numeric)('21')
+              PsiElement())(')')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        THE_R_ASSIGNMENT_STATEMENT
+          THE_R_REFERENCE_EXPRESSION
+            PsiElement(identifier)('`x 1`')
+          THE_R_OPERATOR
+            PsiElement(=)('=')
+          THE_R_SLICE_EXPRESSION
+            THE_R_OPERATOR_EXPRESSION
+              THE_R_OPERATOR
+                PsiElement(-)('-')
+              THE_R_NUMERIC_LITERAL_EXPRESSION
+                PsiElement(numeric)('10')
+            THE_R_OPERATOR
+              PsiElement(:)(':')
+            THE_R_NUMERIC_LITERAL_EXPRESSION
+              PsiElement(numeric)('10.')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        THE_R_ASSIGNMENT_STATEMENT
+          THE_R_REFERENCE_EXPRESSION
+            PsiElement(identifier)('check.names')
+          PsiWhiteSpace(' ')
+          THE_R_OPERATOR
+            PsiElement(=)('=')
+          PsiWhiteSpace(' ')
+          THE_R_LOGICAL_LITERAL_EXPRESSION
+            PsiElement(FALSE)('FALSE')
+        PsiElement())(')')

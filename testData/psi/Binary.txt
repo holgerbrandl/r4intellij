@@ -1,0 +1,17 @@
+RFile:Binary.r
+  THE_R_OPERATOR_EXPRESSION
+    THE_R_OPERATOR_EXPRESSION
+      THE_R_NUMERIC_LITERAL_EXPRESSION
+        PsiElement(numeric)('1')
+      PsiWhiteSpace(' ')
+      THE_R_OPERATOR
+        PsiElement(*)('*')
+      PsiWhiteSpace(' ')
+      THE_R_NUMERIC_LITERAL_EXPRESSION
+        PsiElement(numeric)('2')
+    PsiWhiteSpace(' ')
+    THE_R_OPERATOR
+      PsiElement(+)('+')
+    PsiWhiteSpace(' ')
+    THE_R_NUMERIC_LITERAL_EXPRESSION
+      PsiElement(numeric)('3')

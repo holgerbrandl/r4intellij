@@ -1,52 +1,88 @@
-<!--
-  ~ Copyright 2009 Holger Brandl
-  ~ File: build.xml, Class: build.xml
-  ~ Last modified: 2009-12-04
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~    http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<project name="RPlugin" default="plugin.zip">
 
-<!--
- This build file is used to create the lexer's Java source code.
- Whenever you change bash.flex you have to run this build script.
+  <!--dependencies-->
+  <property name="dep.idea.lib.dir" value="${idea.home}/lib"/>
 
- We're using the patched jflex library provided by JetBrains.
--->
-<project name="JFlex Compiler for RLexer" default="create_flex4r">
+  <path id="dep.plugin.classpath">
+    <fileset dir="${dep.idea.lib.dir}">
+      <include name="annotations.jar"/>
+      <include name="extensions.jar"/>
+      <include name="forms_rt.jar"/>
+      <include name="guava-*.jar"/>
+      <include name="idea.jar"/>
+      <include name="jdom.jar"/>
+      <include name="openapi.jar"/>
+      <include name="rt.jar"/>
+      <include name="trove4j.jar"/>
+      <include name="util.jar"/>
+      <include name="winp-*.jar"/>
+    </fileset>
+  </path>
 
-    <property name="lexer.file" value="src/com/r4intellij/lang/lexer/_RLexer.java"/>
-    <property name="lexer.log" value="jflex.log"/>
+  <path id="dep.javac2.classpath">
+    <fileset dir="${dep.idea.lib.dir}">
+      <include name="javac2.jar"/>
+      <include name="jdom.jar"/>
+      <include name="asm-all.jar"/>
+      <include name="jgoodies-forms.jar"/>
+    </fileset>
+  </path>
 
-    <target name="clean">
-        <delete file="${lexer.file}~"/>
-        <delete file="${lexer.log}"/>
-    </target>
+  <!--input-->
+  <property name="in.meta-inf.dir" value="META-INF"/>
 
+  <property name="in.sources.dir" value="src"/>
+  <property name="in.generated.sources.dir" value="gen"/>
 
-    <target name="create_flex4r"
-            description="Generate lexer from bash.flex, using idea flex skeleton and patched JFlex"
-            depends="clean">
+  <property name="in.resources.dir" value="resources"/>
+  <property name="in.r-helpers.dir" value="r-helpers"/>
 
-        <java jar="misc/jflex/JFlex.jar" output="${lexer.log}" fork="true">
-            <arg value="--charat"/>
-            <!-- <arg value="- -nomin"/>-->
-            <arg value="-skel"/>
-            <arg value="misc/jflex/idea-flex.skeleton"/>
-            <arg value="src/com/r4intellij/lang/lexer/r.flex"/>
-            <!--<property name="lexer.source" value="src/com/r4intellij/lang/lexer/simpler.flex"/>-->
-            <!--<property name="lexer.source" value="src/com/r4intellij/lang/lexer/calc.flex"/>-->
+  <!--output-->
+  <property name="out.dir" value="out/ant"/>
 
-        </java>
-    </target>
+  <property name="out.classes.dir" value="${out.dir}/classes"/>
+  <property name="out.jar.dir" value="${out.dir}/jar"/>
+  <property name="out.zip.dir" value="${out.dir}/zip"/>
+
+  <property name="out.jar" value="${out.jar.dir}/${ant.project.name}.jar"/>
+  <property name="out.zip" value="${out.zip.dir}/${ant.project.name}.zip"/>
+
+  <!--tasks-->
+  <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="dep.javac2.classpath"/>
+
+  <!--targets-->
+  <target name="clean">
+    <delete dir="${out.dir}"/>
+  </target>
+
+  <target name="init">
+    <mkdir dir="${out.classes.dir}"/>
+    <mkdir dir="${out.jar.dir}"/>
+    <mkdir dir="${out.zip.dir}"/>
+  </target>
+
+  <target name="compile" depends="init">
+    <javac2 srcdir="${in.sources.dir}:${in.generated.sources.dir}"
+            destdir="${out.classes.dir}"
+            classpathref="dep.plugin.classpath"
+            source="1.6"
+            target="1.6"
+            includeantruntime="false"
+    />
+  </target>
+
+  <target name="plugin.zip" depends="clean, compile">
+    <jar destfile="${out.jar}">
+      <zipfileset dir="${out.classes.dir}"/>
+      <zipfileset dir="${in.resources.dir}/icons" prefix="icons"/>
+      <zipfileset dir="${in.resources.dir}/inspectionDescriptions" prefix="inspectionDescriptions"/>
+      <zipfileset dir="${in.meta-inf.dir}" prefix="${in.meta-inf.dir}"/>
+    </jar>
+
+    <zip destfile="${out.zip}">
+      <zipfileset file="${out.jar}" prefix="${ant.project.name}/lib"/>
+      <zipfileset dir="${in.r-helpers.dir}" prefix="${ant.project.name}"/>
+    </zip>
+  </target>
 
 </project>

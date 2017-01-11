@@ -1,0 +1,37 @@
+RFile:KeywordArg.r
+  THE_R_CALL_EXPRESSION
+    THE_R_REFERENCE_EXPRESSION
+      PsiElement(identifier)('print')
+    THE_R_ARGUMENT_LIST
+      PsiElement(()('(')
+      THE_R_ASSIGNMENT_STATEMENT
+        THE_R_REFERENCE_EXPRESSION
+          PsiElement(identifier)('z')
+        PsiWhiteSpace(' ')
+        THE_R_OPERATOR
+          PsiElement(<-)('<-')
+        PsiWhiteSpace(' ')
+        THE_R_CALL_EXPRESSION
+          THE_R_REFERENCE_EXPRESSION
+            PsiElement(identifier)('nsz')
+          THE_R_ARGUMENT_LIST
+            PsiElement(()('(')
+            THE_R_NUMERIC_LITERAL_EXPRESSION
+              PsiElement(numeric)('14.084')
+            PsiElement(,)(',')
+            THE_R_OPERATOR_EXPRESSION
+              THE_R_OPERATOR
+                PsiElement(-)('-')
+              THE_R_NUMERIC_LITERAL_EXPRESSION
+                PsiElement(numeric)('3.4107')
+            PsiElement(,)(',')
+            THE_R_NUMERIC_LITERAL_EXPRESSION
+              PsiElement(numeric)('0.0015')
+            PsiElement(,)(',')
+            THE_R_NUMERIC_LITERAL_EXPRESSION
+              PsiElement(numeric)('1.8832')
+            PsiElement(,)(',')
+            THE_R_REFERENCE_EXPRESSION
+              PsiElement(identifier)('timepoints')
+            PsiElement())(')')
+      PsiElement())(')')

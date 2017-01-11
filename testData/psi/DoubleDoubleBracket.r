@@ -1,0 +1,1 @@
+vjj <- value[[ jvseq[[jjj]] ]]
