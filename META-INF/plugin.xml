@@ -1,11 +1,11 @@
 <idea-plugin version="2">
-  <name>R Language Support</name>
-  <id>R4Intellij</id>
-  <version>1.0</version>
-  <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
+    <name>R Language Support</name>
+    <id>R4Intellij</id>
+    <version>1.0</version>
+    <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
 
-  <idea-version since-build="145.258.11"/>
-  <description><![CDATA[
+    <idea-version since-build="145.258.11"/>
+    <description><![CDATA[
         <html>
         <h3>R support for IntelliJ</h3>
 
@@ -35,7 +35,8 @@
         Read more about the features at <a href="https://github.com/holgerbrandl/r4intellij">project page</a>
 
 
-        The project was intially deveoped from scratch, but in 2017 we rebuilt it based on the more modern MIT-licensed codebase of https://github.com/ktisha/RPlugin to
+        The project was intially deveoped from scratch, but in 2017 we rebuilt it based on the more modern MIT-licensed
+        codebase of https://github.com/ktisha/RPlugin to
         provide a more elegant parser backednd and missing features like a debugger.
 
         Copyright (c) 2013-2017 Ekaterina Tuzova (ktisha)
@@ -44,75 +45,87 @@
         </html>
         ]]></description>
 
-  <change-notes>
+    <change-notes>
     <![CDATA[
-    <html>
-    Changes are documented in our [change log ](https://github.com/holgerbrandl/r4intellij/blob/master/Changes.md) on the project page.
-    </html>
-    ]]>
+        <html>
+        Changes are documented in our [change log ](https://github.com/holgerbrandl/r4intellij/blob/master/Changes.md)
+        on the project page.
+        </html>
+        ]]>
   </change-notes>
 
-  <application-components>
-    <!-- Add your application components here -->
-  </application-components>
-  <!--<depends optional="true">com.intellij.modules.python</depends>-->
-  <project-components>
-    <!-- Add your project components here -->
-  </project-components>
-  <actions>
-    <action id="com.r4intellij.console.RConsoleAction" class="com.r4intellij.console.RConsoleAction"
-            text="Run R Console..." description="Starts R interactive console">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </action>
-    <action id="RGenerateTypingReport" class="com.r4intellij.actions.RGenerateTypingReport" text="Generate Typing Report"
-            description="Generate Typing Report">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </action>
-    <action id="RSkeletonsGenerator" class="com.r4intellij.actions.RSkeletonsGeneratorAction" text="Generate Skeletons"
-            description="Generate skeletons">
-      <add-to-group group-id="ToolsMenu" anchor="last"/>
-    </action>
-  </actions>
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
+    <!--<depends optional="true">com.intellij.modules.python</depends>-->
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
+    <actions>
+        <action id="com.r4intellij.console.RConsoleAction" class="com.r4intellij.console.RConsoleAction"
+                text="Run R Console..." description="Starts R interactive console">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        <action id="RGenerateTypingReport" class="com.r4intellij.actions.RGenerateTypingReport"
+                text="Generate Typing Report"
+                description="Generate Typing Report">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        <action id="RSkeletonsGenerator" class="com.r4intellij.actions.RSkeletonsGeneratorAction"
+                text="Generate Skeletons"
+                description="Generate skeletons">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+    </actions>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <fileTypeFactory implementation="com.r4intellij.RFileTypeFactory"/>
-    <lang.syntaxHighlighterFactory key="R" implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
-    <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>
-    <lang.braceMatcher language="R" implementationClass="com.r4intellij.highlighting.RBraceMatcher"/>
-    <projectConfigurable instance="com.r4intellij.interpreter.RInterpreterConfigurable"/>
-    <applicationService serviceInterface="com.r4intellij.interpreter.RInterpreterService"
-                        serviceImplementation="com.r4intellij.interpreter.RInterpreterService"/>
-    <applicationService serviceInterface="com.r4intellij.packages.RPackageService"
-                        serviceImplementation="com.r4intellij.packages.RPackageService"/>
-    <directoryProjectConfigurator implementation="com.r4intellij.interpreter.RInterpreterConfigurator" id="interpreter"
-                                  order="after PlatformProjectConfigurator"/>
-    <stubIndex implementation="com.r4intellij.psi.stubs.RAssignmentNameIndex"/>
-    <stubElementTypeHolder class="com.r4intellij.parsing.RElementTypes"/>
-    <lang.commenter language="R" implementationClass="com.r4intellij.RCommenter"/>
-    <treeStructureProvider implementation="com.r4intellij.projectView.RTreeStructureProvider"/>
-      <quoteHandler className="com.r4intellij.completion.RQuoteHandler" fileType="R"/>
+    <extensions defaultExtensionNs="com.intellij">
+        <fileTypeFactory implementation="com.r4intellij.RFileTypeFactory"/>
+        <lang.syntaxHighlighterFactory key="R"
+                                       implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
+        <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>
+        <lang.braceMatcher language="R" implementationClass="com.r4intellij.highlighting.RBraceMatcher"/>
+        <projectConfigurable instance="com.r4intellij.interpreter.RInterpreterConfigurable"/>
+        <applicationService serviceInterface="com.r4intellij.interpreter.RInterpreterService"
+                            serviceImplementation="com.r4intellij.interpreter.RInterpreterService"/>
+        <applicationService serviceInterface="com.r4intellij.packages.RPackageService"
+                            serviceImplementation="com.r4intellij.packages.RPackageService"/>
+        <directoryProjectConfigurator implementation="com.r4intellij.interpreter.RInterpreterConfigurator"
+                                      id="interpreter"
+                                      order="after PlatformProjectConfigurator"/>
+        <stubIndex implementation="com.r4intellij.psi.stubs.RAssignmentNameIndex"/>
+        <stubElementTypeHolder class="com.r4intellij.parsing.RElementTypes"/>
+        <lang.commenter language="R" implementationClass="com.r4intellij.RCommenter"/>
 
-      <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
-      <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
+        <treeStructureProvider implementation="com.r4intellij.projectView.RTreeStructureProvider"/>
+        <lang.psiStructureViewFactory language="R"
+                                      implementationClass="com.r4intellij.psi.RScriptStructureViewFactory"/>
 
-    <configurationType implementation="com.r4intellij.run.configuration.RRunConfigurationType"/>
-    <runConfigurationProducer implementation="com.r4intellij.run.configuration.RRunConfigurationProducer"/>
-    <programRunner implementation="com.r4intellij.run.run.RRunRunner"/>
-    <programRunner implementation="com.r4intellij.run.debug.RDebugRunner"/>
-    <xdebugger.breakpointType implementation="com.r4intellij.run.debug.RLineBreakpointType"/>
-      <toolWindow id="R Graphics" anchor="right" factoryClass="com.r4intellij.run.graphics.RGraphicsToolWindowFactory"/>
 
-      <!--<localInspection language="R" shortName="RTypeCheckerInspection" displayName="R Type Checker" enabledByDefault="true" level="WARNING"-->
-      <!--implementationClass="com.r4intellij.inspections.RTypeCheckerInspection" groupKey=""/>-->
-    <localInspection language="R" shortName="RUnusedInspection" displayName="R Unused Inspection" enabledByDefault="true" level="WARNING"
-                     implementationClass="com.r4intellij.inspections.RUnusedInspection" groupKey=""/>
+        <quoteHandler className="com.r4intellij.completion.RQuoteHandler" fileType="R"/>
 
-      <!--todo fix me or leave disabled-->
-      <!--<localInspection language="R" shortName="RUnresolvedReferenceInspection" displayName="R Unresolved Reference Inspection"-->
-      <!--enabledByDefault="true" level="WARNING" implementationClass="com.r4intellij.inspections.RUnresolvedReferenceInspection" groupKey=""/>-->
+        <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
+        <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
 
-    <lang.findUsagesProvider implementationClass="com.r4intellij.RFindUsagesProvider" language="R"/>
-      <toolWindow id="R Packages" anchor="right" factoryClass="com.r4intellij.packages.RPackagesToolWindowFactory"/>
-    <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
-  </extensions>
+        <configurationType implementation="com.r4intellij.run.configuration.RRunConfigurationType"/>
+        <runConfigurationProducer implementation="com.r4intellij.run.configuration.RRunConfigurationProducer"/>
+        <programRunner implementation="com.r4intellij.run.run.RRunRunner"/>
+        <programRunner implementation="com.r4intellij.run.debug.RDebugRunner"/>
+        <xdebugger.breakpointType implementation="com.r4intellij.run.debug.RLineBreakpointType"/>
+        <toolWindow id="R Graphics" anchor="right"
+                    factoryClass="com.r4intellij.run.graphics.RGraphicsToolWindowFactory"/>
+
+        <!--<localInspection language="R" shortName="RTypeCheckerInspection" displayName="R Type Checker" enabledByDefault="true" level="WARNING"-->
+        <!--implementationClass="com.r4intellij.inspections.RTypeCheckerInspection" groupKey=""/>-->
+        <localInspection language="R" shortName="RUnusedInspection" displayName="R Unused Inspection"
+                         enabledByDefault="true" level="WARNING"
+                         implementationClass="com.r4intellij.inspections.RUnusedInspection" groupKey=""/>
+
+        <!--todo fix me or leave disabled-->
+        <!--<localInspection language="R" shortName="RUnresolvedReferenceInspection" displayName="R Unresolved Reference Inspection"-->
+        <!--enabledByDefault="true" level="WARNING" implementationClass="com.r4intellij.inspections.RUnresolvedReferenceInspection" groupKey=""/>-->
+
+        <lang.findUsagesProvider implementationClass="com.r4intellij.RFindUsagesProvider" language="R"/>
+        <toolWindow id="R Packages" anchor="right" factoryClass="com.r4intellij.packages.RPackagesToolWindowFactory"/>
+        <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
+    </extensions>
 </idea-plugin>
