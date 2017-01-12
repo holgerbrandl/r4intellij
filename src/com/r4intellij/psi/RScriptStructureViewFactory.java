@@ -15,6 +15,8 @@
  */
 package com.r4intellij.psi;
 
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.intellij.ide.structureView.*;
 import com.intellij.ide.util.treeView.smartTree.Filter;
 import com.intellij.ide.util.treeView.smartTree.Grouper;
@@ -163,6 +165,18 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
 
             final List<PsiElement> childrenElements = new ArrayList<PsiElement>();
 
+            final PsiElementVisitor functionCollector = new PsiElementVisitor() {
+                public void visitElement(PsiElement element) {
+//                        if (element instanceof RSection || (getFunctionName(element) != null && getSection(element) == null)) {
+                    if (element instanceof RFunctionExpression) {
+                        childrenElements.add(element);
+                        return;
+                    }
+
+                    element.acceptChildren(this);
+                }
+            };
+
 
             // split file into sections
             if (myElement instanceof RFile) {
@@ -175,23 +189,28 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
                         }
                     }
 
-                    //no further recursion here because we just support sectioning on top level
+
+                    @Override
+                    public void visitElement(PsiElement element) {
+                        // don't add function on root level if wehave
+                        if (Iterables.any(childrenElements, Predicates.instanceOf(PsiComment.class))) {
+                            return;
+                        }
+
+                        element.acceptChildren(functionCollector);
+                    }
+//no further recursion here because we just support sectioning on top level
                 });
             }
 
-            PsiElementVisitor functionCollector = new PsiElementVisitor() {
-                public void visitElement(PsiElement element) {
-//                        if (element instanceof RSection || (getFunctionName(element) != null && getSection(element) == null)) {
-                    if (element instanceof RFunctionExpression) {
-                        childrenElements.add(element);
-                        return;
-                    }
 
-                    element.acceptChildren(this);
+            if (isSectionDivider(myElement)) {
+                PsiElement nextSibling = myElement.getNextSibling();
+                while (nextSibling != null && !isSectionDivider(nextSibling)) {
+                    nextSibling.acceptChildren(functionCollector);
+                    nextSibling = nextSibling.getNextSibling();
                 }
-            };
-
-            myElement.acceptChildren(functionCollector);
+            }
 
 
             // reshape into array
@@ -205,21 +224,11 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
 
 
         private boolean isSectionDivider(PsiElement myElement) {
-            if (myElement instanceof PsiComment) {
-                return myElement.getText().startsWith("#' #");
-            }
+            if (!(myElement instanceof PsiComment)) return false;
+            if (myElement.getText().startsWith("#' #")) return true;
+            if (myElement.getText().matches("[#]{2,5} [^\\r\\n]*")) return true;
 
             return false;
-        }
-
-
-        private PsiElement getSection(PsiElement element) {
-            //note in old version of r4ij this was implemented in RCommandImpl using
-            // PsiElementBase.findChildByClass(RSection.class)
-
-            if (isSectionDivider(element.getPrevSibling())) return element.getPrevSibling();
-
-            return null;
         }
 
 
@@ -236,7 +245,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
                 }
 
             } else if (myElement instanceof PsiComment) {
-                return myElement.getText();
+                return myElement.getText().replaceFirst("#' ", "").replaceAll("^[#]*", "");
             }
 
             throw new AssertionError(myElement.getClass().getName());
