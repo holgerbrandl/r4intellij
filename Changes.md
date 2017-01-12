@@ -4,18 +4,23 @@ Version History
 ## Changeshanges in v1.0*
 
 Restarted devlopment by forking. This gives the following feature set
-*   Lexer-based syntax highlighting
-*   Parser
-*   Interactive console
-*   Builtin help
-*   Package manager
-*   Debugger
+* Lexer-based syntax highlighting
+* Parser
+* Interactive console
+* Builtin help
+* Package manager
+* Debugger
+* Run configurations
 
 
 The following features were merged in from previous version of r4intellij
 * More recent R logo
-* live-templates
+* Live-templates
+* Structure view to jump to sections and functions
 
+
+New Intentions and Inspections
+* incomplete parameter list warning when calling functions
 
 
 

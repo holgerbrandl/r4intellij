@@ -61,11 +61,6 @@ parser package for R
 
 # Brainstorming
 
-## R Console
-
-* merge from R language support
-* also see TinnR
-
 
 ## Options for code snippet evaluation
 
@@ -79,3 +74,59 @@ parser package for R
 * Maybe DOM is a solution: rdom, RDCOMClient
 * Or white 
 * Or most promising, we could try to use the windows API via VBScript or C#
+
+
+
+## Intentions
+
+incomplete arument list (via RTypeCheckerInspection)
+
+
+# TheR
+
+https://github.com/ktisha/TheRPlugin
+
+
+cool
+* dot support for name completion
+* skeleton libraries allow to browse local packages
+
+## Skeletons
+
+skeltons are saved under  (see module deps --> libaries)
+/Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/-1481726564
+
+## potential improvements and differe ce
+
+general
+* auto-detect R and do not force user to specify installation location
+* function help should be context aware
+* no live-templates
+* structure view
+* run does not work for macos
+
+intentions
+* auto-import missing packages (use com.jetbrains.ther.packages.TheRPackagesUtil#getInstalledPackages)
+* auto-install missing packages in require
+
+
+## later features
+
+* implement new code fence feature
+
+
+Icons see http://www.jetbrains.org/intellij/sdk/docs/reference_guide/work_with_icons_and_images.html
+
+custom zip deployment
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206769505-Plugin-with-dependency-on-additional-module-how-to-get-two-jars-in-zip-
+
+mine has file icons, theirs not
+
+
+## todo
+
+shortcut to evaluate current expression and proceed
+
+
+impl fenceprovider
+https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586

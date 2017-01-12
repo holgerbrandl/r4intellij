@@ -2,11 +2,11 @@ package com.r4intellij.inspections;
 
 import org.jetbrains.annotations.NotNull;
 
-public class RUnusedInspectionTest extends RInspectionTest {
+public class RUnusedParameterInspectionTest extends RInspectionTest {
 
   @Override
   protected String getTestDataPath() {
-    return super.getTestDataPath() + "/inspections/unusedInspection";
+    return super.getTestDataPath() + "/inspections/unusedParameterInspection";
   }
 
   public void test() {
@@ -16,6 +16,6 @@ public class RUnusedInspectionTest extends RInspectionTest {
   @NotNull
   @Override
   Class<? extends RLocalInspection> getInspection() {
-    return RUnusedInspection.class;
+    return RUnusedParameterInspection.class;
   }
 }

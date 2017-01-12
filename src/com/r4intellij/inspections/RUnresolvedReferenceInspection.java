@@ -20,7 +20,7 @@ public class RUnresolvedReferenceInspection extends RLocalInspection {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "Unresolved reference inspection";
+    return "Unresolved reference";
   }
 
   @NotNull

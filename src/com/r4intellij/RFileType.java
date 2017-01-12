@@ -34,7 +34,7 @@ public class RFileType extends LanguageFileType {
   @Override
   @NotNull
   public String getDefaultExtension() {
-    return "R";
+    return "r";
   }
 
   @Override
