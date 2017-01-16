@@ -17,9 +17,9 @@ public class RFindUsagesProvider implements FindUsagesProvider {
   @Nullable
   @Override
   public WordsScanner getWordsScanner() {
-    return new DefaultWordsScanner(new RLexer(), TokenSet.create(RElementTypes.THE_R_IDENTIFIER),
+      return new DefaultWordsScanner(new RLexer(), TokenSet.create(RElementTypes.R_IDENTIFIER),
                                    TokenSet.create(RParserDefinition.END_OF_LINE_COMMENT),
-                                   TokenSet.create(RElementTypes.THE_R_STRING_LITERAL_EXPRESSION));
+              TokenSet.create(RElementTypes.R_STRING_LITERAL_EXPRESSION));
   }
 
   @Override

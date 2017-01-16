@@ -10,10 +10,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class RBraceMatcher implements PairedBraceMatcher {
   private final BracePair[] PAIRS = new BracePair[]{
-    new BracePair(RElementTypes.THE_R_LPAR, RElementTypes.THE_R_RPAR, false),
-    new BracePair(RElementTypes.THE_R_LBRACKET, RElementTypes.THE_R_RBRACKET, false),
-    new BracePair(RElementTypes.THE_R_LDBRACKET, RElementTypes.THE_R_RDBRACKET, false),
-    new BracePair(RElementTypes.THE_R_LBRACE, RElementTypes.THE_R_RBRACE, false)};
+          new BracePair(RElementTypes.R_LPAR, RElementTypes.R_RPAR, false),
+          new BracePair(RElementTypes.R_LBRACKET, RElementTypes.R_RBRACKET, false),
+          new BracePair(RElementTypes.R_LDBRACKET, RElementTypes.R_RDBRACKET, false),
+          new BracePair(RElementTypes.R_LBRACE, RElementTypes.R_RBRACE, false)};
 
   @Override
   public BracePair[] getPairs() {

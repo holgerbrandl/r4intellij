@@ -1,51 +1,51 @@
 RFile:IfInKeywordArgument.r
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('a')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
-      THE_R_ASSIGNMENT_STATEMENT
-        THE_R_STRING_LITERAL_EXPRESSION
+      R_ASSIGNMENT_STATEMENT
+        R_STRING_LITERAL_EXPRESSION
           PsiElement(string)('"\\cite"')
         PsiWhiteSpace(' ')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(=)('=')
         PsiElement(nl)('\n')
         PsiWhiteSpace('                   ')
-        THE_R_IF_STATEMENT
+        R_IF_STATEMENT
           PsiElement(if)('if')
           PsiWhiteSpace(' ')
           PsiElement(()('(')
-          THE_R_REFERENCE_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('inCodeBlock')
           PsiElement())(')')
           PsiWhiteSpace(' ')
-          THE_R_CALL_EXPRESSION
-            THE_R_REFERENCE_EXPRESSION
+          R_CALL_EXPRESSION
+            R_REFERENCE_EXPRESSION
               PsiElement(identifier)('writeContent')
-            THE_R_ARGUMENT_LIST
+            R_ARGUMENT_LIST
               PsiElement(()('(')
-              THE_R_REFERENCE_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('block')
               PsiElement(,)(',')
               PsiWhiteSpace(' ')
-              THE_R_REFERENCE_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('tag')
               PsiElement())(')')
           PsiElement(nl)('\n')
           PsiWhiteSpace('                   ')
           PsiElement(else)('else')
           PsiWhiteSpace(' ')
-          THE_R_CALL_EXPRESSION
-            THE_R_REFERENCE_EXPRESSION
+          R_CALL_EXPRESSION
+            R_REFERENCE_EXPRESSION
               PsiElement(identifier)('writeWrapped')
-            THE_R_ARGUMENT_LIST
+            R_ARGUMENT_LIST
               PsiElement(()('(')
-              THE_R_REFERENCE_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('block')
               PsiElement(,)(',')
               PsiWhiteSpace(' ')
-              THE_R_REFERENCE_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('tag')
               PsiElement())(')')
       PsiElement())(')')

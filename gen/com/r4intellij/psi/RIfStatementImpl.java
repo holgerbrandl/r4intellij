@@ -16,8 +16,12 @@ public class RIfStatementImpl extends RExpressionImpl implements RIfStatement {
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitIfStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitIfStatement(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,25 +34,25 @@ public class RIfStatementImpl extends RExpressionImpl implements RIfStatement {
   @Override
   @NotNull
   public PsiElement getLpar() {
-    return findNotNullChildByType(THE_R_LPAR);
+    return notNullChild(findChildByType(R_LPAR));
   }
 
   @Override
   @NotNull
   public PsiElement getRpar() {
-    return findNotNullChildByType(THE_R_RPAR);
+    return notNullChild(findChildByType(R_RPAR));
   }
 
   @Override
   @Nullable
   public PsiElement getElse() {
-    return findChildByType(THE_R_ELSE);
+    return findChildByType(R_ELSE);
   }
 
   @Override
   @NotNull
   public PsiElement getIf() {
-    return findNotNullChildByType(THE_R_IF);
+    return notNullChild(findChildByType(R_IF));
   }
 
 }

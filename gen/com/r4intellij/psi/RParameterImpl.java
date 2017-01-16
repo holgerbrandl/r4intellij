@@ -16,27 +16,31 @@ public class RParameterImpl extends RElementImpl implements RParameter {
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitParameter(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitParameter(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
   public RExpression getExpression() {
-    return findChildByClass(RExpression.class);
+    return PsiTreeUtil.getChildOfType(this, RExpression.class);
   }
 
   @Override
   @Nullable
   public PsiElement getEq() {
-    return findChildByType(THE_R_EQ);
+    return findChildByType(R_EQ);
   }
 
   @Override
   @Nullable
   public PsiElement getIdentifier() {
-    return findChildByType(THE_R_IDENTIFIER);
+    return findChildByType(R_IDENTIFIER);
   }
 
   public ASTNode getNameNode() {

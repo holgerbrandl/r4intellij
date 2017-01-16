@@ -16,8 +16,12 @@ public class RBlockExpressionImpl extends RExpressionImpl implements RBlockExpre
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitBlockExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitBlockExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,13 +34,13 @@ public class RBlockExpressionImpl extends RExpressionImpl implements RBlockExpre
   @Override
   @NotNull
   public PsiElement getLbrace() {
-    return findNotNullChildByType(THE_R_LBRACE);
+    return notNullChild(findChildByType(R_LBRACE));
   }
 
   @Override
   @NotNull
   public PsiElement getRbrace() {
-    return findNotNullChildByType(THE_R_RBRACE);
+    return notNullChild(findChildByType(R_RBRACE));
   }
 
 }

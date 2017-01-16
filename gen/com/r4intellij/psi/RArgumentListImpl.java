@@ -16,8 +16,12 @@ public class RArgumentListImpl extends RElementImpl implements RArgumentList {
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitArgumentList(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitArgumentList(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,13 +34,13 @@ public class RArgumentListImpl extends RElementImpl implements RArgumentList {
   @Override
   @NotNull
   public PsiElement getLpar() {
-    return findNotNullChildByType(THE_R_LPAR);
+    return notNullChild(findChildByType(R_LPAR));
   }
 
   @Override
   @NotNull
   public PsiElement getRpar() {
-    return findNotNullChildByType(THE_R_RPAR);
+    return notNullChild(findChildByType(R_RPAR));
   }
 
 }

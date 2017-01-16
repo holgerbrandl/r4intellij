@@ -16,8 +16,12 @@ public class RWhileStatementImpl extends RExpressionImpl implements RWhileStatem
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitWhileStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitWhileStatement(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,19 +34,19 @@ public class RWhileStatementImpl extends RExpressionImpl implements RWhileStatem
   @Override
   @NotNull
   public PsiElement getLpar() {
-    return findNotNullChildByType(THE_R_LPAR);
+    return notNullChild(findChildByType(R_LPAR));
   }
 
   @Override
   @NotNull
   public PsiElement getRpar() {
-    return findNotNullChildByType(THE_R_RPAR);
+    return notNullChild(findChildByType(R_RPAR));
   }
 
   @Override
   @NotNull
   public PsiElement getWhile() {
-    return findNotNullChildByType(THE_R_WHILE);
+    return notNullChild(findChildByType(R_WHILE));
   }
 
 }

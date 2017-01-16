@@ -32,8 +32,8 @@ public class RResolver {
     for (String name : names) {
       RResolver.addFromProject(name, element.getProject(), result);
       RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.The_R_USER_SKELETONS);
-      RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.THE_R_SKELETONS);
-      RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.THE_R_LIBRARY);
+        RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.R_SKELETONS);
+        RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.R_LIBRARY);
     }
   }
 
@@ -78,7 +78,7 @@ public class RResolver {
                                           @NotNull final List<ResolveResult> result) {
     final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
     final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
-    final Library library = model.getLibraryByName(RInterpreterConfigurable.THE_R_LIBRARY);
+      final Library library = model.getLibraryByName(RInterpreterConfigurable.R_LIBRARY);
     if (library != null) {
       final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);
       for (VirtualFile child : files) {

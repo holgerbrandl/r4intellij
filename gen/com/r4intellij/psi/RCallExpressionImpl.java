@@ -16,21 +16,25 @@ public class RCallExpressionImpl extends RExpressionImpl implements RCallExpress
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitCallExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitCallExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @NotNull
   public RArgumentList getArgumentList() {
-    return findNotNullChildByClass(RArgumentList.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, RArgumentList.class));
   }
 
   @Override
   @NotNull
   public RExpression getExpression() {
-    return findNotNullChildByClass(RExpression.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, RExpression.class));
   }
 
 }

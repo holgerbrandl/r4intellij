@@ -16,8 +16,12 @@ public class REmptyExpressionImpl extends RExpressionImpl implements REmptyExpre
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitEmptyExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitEmptyExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 

@@ -16,21 +16,25 @@ public class RRepeatStatementImpl extends RExpressionImpl implements RRepeatStat
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitRepeatStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitRepeatStatement(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
   public RExpression getExpression() {
-    return findChildByClass(RExpression.class);
+    return PsiTreeUtil.getChildOfType(this, RExpression.class);
   }
 
   @Override
   @NotNull
   public PsiElement getRepeat() {
-    return findNotNullChildByType(THE_R_REPEAT);
+    return notNullChild(findChildByType(R_REPEAT));
   }
 
 }

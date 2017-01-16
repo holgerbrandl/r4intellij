@@ -10,7 +10,7 @@ public interface RSliceExpression extends RExpression {
   @NotNull
   List<RExpression> getExpressionList();
 
-  @Nullable
+  @NotNull
   ROperator getOperator();
 
 }

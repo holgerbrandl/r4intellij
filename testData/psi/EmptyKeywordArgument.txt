@@ -1,75 +1,75 @@
 RFile:EmptyKeywordArgument.r
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('switch')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
-      THE_R_REFERENCE_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('tag')
       PsiElement(,)(',')
       PsiElement(nl)('\n')
       PsiWhiteSpace('               ')
-      THE_R_ASSIGNMENT_STATEMENT
-        THE_R_REFERENCE_EXPRESSION
+      R_ASSIGNMENT_STATEMENT
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('UNKNOWN')
         PsiWhiteSpace(' ')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(=)('=')
-        THE_R_EMPTY_EXPRESSION
+        R_EMPTY_EXPRESSION
           <empty list>
       PsiElement(,)(',')
       PsiElement(nl)('\n')
       PsiWhiteSpace('               ')
-      THE_R_ASSIGNMENT_STATEMENT
-        THE_R_REFERENCE_EXPRESSION
+      R_ASSIGNMENT_STATEMENT
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('VERB')
         PsiWhiteSpace(' ')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(=)('=')
         PsiWhiteSpace(' ')
-        THE_R_CALL_EXPRESSION
-          THE_R_REFERENCE_EXPRESSION
+        R_CALL_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('of1')
-          THE_R_ARGUMENT_LIST
+          R_ARGUMENT_LIST
             PsiElement(()('(')
-            THE_R_CALL_EXPRESSION
-              THE_R_REFERENCE_EXPRESSION
+            R_CALL_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('texify')
-              THE_R_ARGUMENT_LIST
+              R_ARGUMENT_LIST
                 PsiElement(()('(')
-                THE_R_REFERENCE_EXPRESSION
+                R_REFERENCE_EXPRESSION
                   PsiElement(identifier)('block')
                 PsiElement(,)(',')
                 PsiWhiteSpace(' ')
-                THE_R_LOGICAL_LITERAL_EXPRESSION
+                R_LOGICAL_LITERAL_EXPRESSION
                   PsiElement(TRUE)('TRUE')
                 PsiElement())(')')
             PsiElement())(')')
       PsiElement(,)(',')
       PsiElement(nl)('\n')
       PsiWhiteSpace('               ')
-      THE_R_ASSIGNMENT_STATEMENT
-        THE_R_REFERENCE_EXPRESSION
+      R_ASSIGNMENT_STATEMENT
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('RCODE')
         PsiWhiteSpace(' ')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(=)('=')
         PsiWhiteSpace(' ')
-        THE_R_CALL_EXPRESSION
-          THE_R_REFERENCE_EXPRESSION
+        R_CALL_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('of1')
-          THE_R_ARGUMENT_LIST
+          R_ARGUMENT_LIST
             PsiElement(()('(')
-            THE_R_CALL_EXPRESSION
-              THE_R_REFERENCE_EXPRESSION
+            R_CALL_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('texify')
-              THE_R_ARGUMENT_LIST
+              R_ARGUMENT_LIST
                 PsiElement(()('(')
-                THE_R_REFERENCE_EXPRESSION
+                R_REFERENCE_EXPRESSION
                   PsiElement(identifier)('block')
                 PsiElement(,)(',')
                 PsiWhiteSpace(' ')
-                THE_R_LOGICAL_LITERAL_EXPRESSION
+                R_LOGICAL_LITERAL_EXPRESSION
                   PsiElement(TRUE)('TRUE')
                 PsiElement())(')')
             PsiElement())(')')

@@ -16,27 +16,31 @@ public class RNumericLiteralExpressionImpl extends RExpressionImpl implements RN
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitNumericLiteralExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitNumericLiteralExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
   public PsiElement getComplex() {
-    return findChildByType(THE_R_COMPLEX);
+    return findChildByType(R_COMPLEX);
   }
 
   @Override
   @Nullable
   public PsiElement getInteger() {
-    return findChildByType(THE_R_INTEGER);
+    return findChildByType(R_INTEGER);
   }
 
   @Override
   @Nullable
   public PsiElement getNumeric() {
-    return findChildByType(THE_R_NUMERIC);
+    return findChildByType(R_NUMERIC);
   }
 
 }

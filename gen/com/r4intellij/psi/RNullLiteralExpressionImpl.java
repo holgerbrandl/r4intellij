@@ -16,15 +16,19 @@ public class RNullLiteralExpressionImpl extends RExpressionImpl implements RNull
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitNullLiteralExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitNullLiteralExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @NotNull
   public PsiElement getNull() {
-    return findNotNullChildByType(THE_R_NULL);
+    return notNullChild(findChildByType(R_NULL));
   }
 
 }

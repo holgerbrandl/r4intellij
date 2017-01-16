@@ -1,48 +1,48 @@
 RFile:Formulae.r
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('levelplot')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
-      THE_R_TILDE_EXPRESSION
-        THE_R_REFERENCE_EXPRESSION
+      R_TILDE_EXPRESSION
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('z')
         PsiWhiteSpace(' ')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(~)('~')
         PsiWhiteSpace(' ')
-        THE_R_OPERATOR_EXPRESSION
-          THE_R_REFERENCE_EXPRESSION
+        R_OPERATOR_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('x')
-          THE_R_OPERATOR
+          R_OPERATOR
             PsiElement(+)('+')
-          THE_R_REFERENCE_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('y')
       PsiElement(,)(',')
       PsiWhiteSpace(' ')
-      THE_R_ASSIGNMENT_STATEMENT
-        THE_R_REFERENCE_EXPRESSION
+      R_ASSIGNMENT_STATEMENT
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('pretty')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(=)('=')
-        THE_R_LOGICAL_LITERAL_EXPRESSION
+        R_LOGICAL_LITERAL_EXPRESSION
           PsiElement(TRUE)('TRUE')
       PsiElement(,)(',')
       PsiWhiteSpace(' ')
-      THE_R_ASSIGNMENT_STATEMENT
-        THE_R_REFERENCE_EXPRESSION
+      R_ASSIGNMENT_STATEMENT
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('contour')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(=)('=')
-        THE_R_LOGICAL_LITERAL_EXPRESSION
+        R_LOGICAL_LITERAL_EXPRESSION
           PsiElement(TRUE)('TRUE')
       PsiElement(,)(',')
       PsiWhiteSpace(' ')
-      THE_R_ASSIGNMENT_STATEMENT
-        THE_R_REFERENCE_EXPRESSION
+      R_ASSIGNMENT_STATEMENT
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('data')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(=)('=')
-        THE_R_REFERENCE_EXPRESSION
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('d3')
       PsiElement())(')')

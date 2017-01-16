@@ -10,7 +10,7 @@ import com.intellij.lang.parser.GeneratedParserUtilBase;
 public class RParserUtil extends GeneratedParserUtilBase {
   public static boolean parseEmptyExpression(PsiBuilder builder, int level) {
     PsiBuilder.Marker emptyMarker = builder.mark();
-    emptyMarker.done(RElementTypes.THE_R_EMPTY_EXPRESSION);
+      emptyMarker.done(RElementTypes.R_EMPTY_EXPRESSION);
     return true;
   }
 }

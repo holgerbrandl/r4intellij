@@ -21,25 +21,25 @@ public class RHighlighter extends SyntaxHighlighterBase {
 
     fillMap(ATTRIBUTES, RPsiImplUtil.OPERATORS, RSyntaxHighlighterColors.OPERATION_SIGN);
 
-    ATTRIBUTES.put(RElementTypes.THE_R_STRING, RSyntaxHighlighterColors.STRING);
-    ATTRIBUTES.put(RElementTypes.THE_R_NUMERIC, RSyntaxHighlighterColors.NUMBER);
-    ATTRIBUTES.put(RElementTypes.THE_R_COMPLEX, RSyntaxHighlighterColors.NUMBER);
-    ATTRIBUTES.put(RElementTypes.THE_R_INTEGER, RSyntaxHighlighterColors.NUMBER);
+      ATTRIBUTES.put(RElementTypes.R_STRING, RSyntaxHighlighterColors.STRING);
+      ATTRIBUTES.put(RElementTypes.R_NUMERIC, RSyntaxHighlighterColors.NUMBER);
+      ATTRIBUTES.put(RElementTypes.R_COMPLEX, RSyntaxHighlighterColors.NUMBER);
+      ATTRIBUTES.put(RElementTypes.R_INTEGER, RSyntaxHighlighterColors.NUMBER);
 
 
-    ATTRIBUTES.put(RElementTypes.THE_R_LPAR, RSyntaxHighlighterColors.PARENTHS);
-    ATTRIBUTES.put(RElementTypes.THE_R_RPAR, RSyntaxHighlighterColors.PARENTHS);
+      ATTRIBUTES.put(RElementTypes.R_LPAR, RSyntaxHighlighterColors.PARENTHS);
+      ATTRIBUTES.put(RElementTypes.R_RPAR, RSyntaxHighlighterColors.PARENTHS);
 
-    ATTRIBUTES.put(RElementTypes.THE_R_LBRACE, RSyntaxHighlighterColors.BRACES);
-    ATTRIBUTES.put(RElementTypes.THE_R_RBRACE, RSyntaxHighlighterColors.BRACES);
+      ATTRIBUTES.put(RElementTypes.R_LBRACE, RSyntaxHighlighterColors.BRACES);
+      ATTRIBUTES.put(RElementTypes.R_RBRACE, RSyntaxHighlighterColors.BRACES);
 
-    ATTRIBUTES.put(RElementTypes.THE_R_LBRACKET, RSyntaxHighlighterColors.BRACKETS);
-    ATTRIBUTES.put(RElementTypes.THE_R_LDBRACKET, RSyntaxHighlighterColors.BRACKETS);
-    ATTRIBUTES.put(RElementTypes.THE_R_RBRACKET, RSyntaxHighlighterColors.BRACKETS);
-    ATTRIBUTES.put(RElementTypes.THE_R_RDBRACKET, RSyntaxHighlighterColors.BRACKETS);
+      ATTRIBUTES.put(RElementTypes.R_LBRACKET, RSyntaxHighlighterColors.BRACKETS);
+      ATTRIBUTES.put(RElementTypes.R_LDBRACKET, RSyntaxHighlighterColors.BRACKETS);
+      ATTRIBUTES.put(RElementTypes.R_RBRACKET, RSyntaxHighlighterColors.BRACKETS);
+      ATTRIBUTES.put(RElementTypes.R_RDBRACKET, RSyntaxHighlighterColors.BRACKETS);
 
-    ATTRIBUTES.put(RElementTypes.THE_R_COMMA, RSyntaxHighlighterColors.COMMA);
-    ATTRIBUTES.put(RElementTypes.THE_R_SEMI, RSyntaxHighlighterColors.SEMICOLON);
+      ATTRIBUTES.put(RElementTypes.R_COMMA, RSyntaxHighlighterColors.COMMA);
+      ATTRIBUTES.put(RElementTypes.R_SEMI, RSyntaxHighlighterColors.SEMICOLON);
 
     ATTRIBUTES.put(RParserDefinition.END_OF_LINE_COMMENT, RSyntaxHighlighterColors.LINE_COMMENT);
 

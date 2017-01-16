@@ -35,8 +35,8 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
   private final TextFieldWithBrowseButton myInterpreterField;
   private final TextFieldWithBrowseButton mySourcesField;
 
-  public static final String THE_R_LIBRARY = "R Library";
-  public static final String THE_R_SKELETONS = "R Skeletons";
+    public static final String R_LIBRARY = "R Library";
+    public static final String R_SKELETONS = "R Skeletons";
   public static final String The_R_USER_SKELETONS = "R User Skeletons";
 
   RInterpreterConfigurable(Project project) {
@@ -185,13 +185,13 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
       public void run() {
         // add all paths to library
         final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(myProject);
-        final Library library = model.getLibraryByName(THE_R_LIBRARY);
+          final Library library = model.getLibraryByName(R_LIBRARY);
         if (library != null) {
 
           final Module[] modules = ModuleManager.getInstance(myProject).getModules();
           for (Module module : modules) {
             final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
-            OrderEntry entry = OrderEntryUtil.findLibraryOrderEntry(modifiableModel, THE_R_LIBRARY);
+              OrderEntry entry = OrderEntryUtil.findLibraryOrderEntry(modifiableModel, R_LIBRARY);
             if (entry != null) {
               modifiableModel.removeOrderEntry(entry);
               modelsProvider.commitModuleModifiableModel(modifiableModel);
@@ -214,9 +214,9 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
       public void run() {
         // add all paths to library
         final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(myProject);
-        Library library = model.getLibraryByName(THE_R_LIBRARY);
+          Library library = model.getLibraryByName(R_LIBRARY);
         if (library == null) {
-          library = model.createLibrary(THE_R_LIBRARY);
+            library = model.createLibrary(R_LIBRARY);
         }
         RSkeletonGenerator.fillLibrary(library, paths);
         model.commit();

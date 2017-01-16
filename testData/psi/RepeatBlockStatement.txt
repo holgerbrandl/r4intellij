@@ -1,27 +1,27 @@
 RFile:RepeatBlockStatement.r
-  THE_R_REPEAT_STATEMENT
+  R_REPEAT_STATEMENT
     PsiElement(repeat)('repeat')
     PsiWhiteSpace(' ')
-    THE_R_BLOCK_EXPRESSION
+    R_BLOCK_EXPRESSION
       PsiElement({)('{')
       PsiElement(nl)('\n')
       PsiWhiteSpace('  ')
-      THE_R_CALL_EXPRESSION
-        THE_R_REFERENCE_EXPRESSION
+      R_CALL_EXPRESSION
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('print')
-        THE_R_ARGUMENT_LIST
+        R_ARGUMENT_LIST
           PsiElement(()('(')
-          THE_R_STRING_LITERAL_EXPRESSION
+          R_STRING_LITERAL_EXPRESSION
             PsiElement(string)('"Swag"')
           PsiElement())(')')
       PsiElement(nl)('\n')
       PsiWhiteSpace('  ')
-      THE_R_CALL_EXPRESSION
-        THE_R_REFERENCE_EXPRESSION
+      R_CALL_EXPRESSION
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('Sys.sleep')
-        THE_R_ARGUMENT_LIST
+        R_ARGUMENT_LIST
           PsiElement(()('(')
-          THE_R_NUMERIC_LITERAL_EXPRESSION
+          R_NUMERIC_LITERAL_EXPRESSION
             PsiElement(numeric)('15')
           PsiElement())(')')
       PsiElement(nl)('\n')

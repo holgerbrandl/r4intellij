@@ -30,7 +30,7 @@ public class DocStringUtil {
 
   private static PsiElement getNextComment(PsiElement element) {
     PsiElement nextLine = element.getPrevSibling();
-    if (nextLine == null || nextLine.getNode().getElementType() != RElementTypes.THE_R_NL) {
+      if (nextLine == null || nextLine.getNode().getElementType() != RElementTypes.R_NL) {
       return null;
     }
     PsiElement comment = nextLine.getPrevSibling();

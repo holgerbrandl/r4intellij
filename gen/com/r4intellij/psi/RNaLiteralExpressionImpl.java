@@ -17,39 +17,43 @@ public class RNaLiteralExpressionImpl extends RExpressionImpl implements RNaLite
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitNaLiteralExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitNaLiteralExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
   public PsiElement getNa() {
-    return findChildByType(THE_R_NA);
+    return findChildByType(R_NA);
   }
 
   @Override
   @Nullable
   public PsiElement getNaCharacter() {
-    return findChildByType(THE_R_NA_CHARACTER);
+    return findChildByType(R_NA_CHARACTER);
   }
 
   @Override
   @Nullable
   public PsiElement getNaComplex() {
-    return findChildByType(THE_R_NA_COMPLEX);
+    return findChildByType(R_NA_COMPLEX);
   }
 
   @Override
   @Nullable
   public PsiElement getNaInteger() {
-    return findChildByType(THE_R_NA_INTEGER);
+    return findChildByType(R_NA_INTEGER);
   }
 
   @Override
   @Nullable
   public PsiElement getNaReal() {
-    return findChildByType(THE_R_NA_REAL);
+    return findChildByType(R_NA_REAL);
   }
 
   public RType getType() {

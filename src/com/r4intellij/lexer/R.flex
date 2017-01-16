@@ -72,131 +72,131 @@ private Stack<IElementType> myExpectedBracketsStack = new Stack<IElementType>();
 %%
 
 <YYINITIAL> {
-[\n]                        { return RElementTypes.THE_R_NL; }
+[\n]                        { return RElementTypes.R_NL; }
 {END_OF_LINE_COMMENT}       { return RParserDefinition.END_OF_LINE_COMMENT; }
 [\ ]                        { return RParserDefinition.SPACE; }
 [\t]                        { return RParserDefinition.TAB; }
 [\f]                        { return RParserDefinition.FORMFEED; }
 
 // logical constants
-"TRUE"                      { return RElementTypes.THE_R_TRUE; }
-"FALSE"                     { return RElementTypes.THE_R_FALSE; }
-"T"                         { return RElementTypes.THE_R_TRUE; }
-"F"                         { return RElementTypes.THE_R_FALSE; }
+"TRUE"                      { return RElementTypes.R_TRUE; }
+"FALSE"                     { return RElementTypes.R_FALSE; }
+"T"                         { return RElementTypes.R_TRUE; }
+"F"                         { return RElementTypes.R_FALSE; }
 
 // numeric constants
-{INTEGER}                   { return RElementTypes.THE_R_NUMERIC; }
-{FLOAT_NUMBER}              { return RElementTypes.THE_R_NUMERIC; }
+{INTEGER}                   { return RElementTypes.R_NUMERIC; }
+{FLOAT_NUMBER}              { return RElementTypes.R_NUMERIC; }
 
 // complex constants
-{COMPLEX_NUMBER}            { return RElementTypes.THE_R_COMPLEX; }
+{COMPLEX_NUMBER}            { return RElementTypes.R_COMPLEX; }
 
 // integer constants
-{LONG_INTEGER}              { return RElementTypes.THE_R_INTEGER; }
+{LONG_INTEGER}              { return RElementTypes.R_INTEGER; }
 
 // string constants
-{STRING}                    { return RElementTypes.THE_R_STRING; }
+{STRING}                    { return RElementTypes.R_STRING; }
 // special constants
-"NULL"                      { return RElementTypes.THE_R_NULL; }
-"NA"                        { return RElementTypes.THE_R_NA; }
-"Inf"                       { return RElementTypes.THE_R_INF; }
-"NaN"                       { return RElementTypes.THE_R_NAN; }
+"NULL"                      { return RElementTypes.R_NULL; }
+"NA"                        { return RElementTypes.R_NA; }
+"Inf"                       { return RElementTypes.R_INF; }
+"NaN"                       { return RElementTypes.R_NAN; }
 
-"NA_integer_"               { return RElementTypes.THE_R_NA_INTEGER; }
-"NA_real_"                  { return RElementTypes.THE_R_NA_REAL; }
-"NA_complex_"               { return RElementTypes.THE_R_NA_COMPLEX; }
-"NA_character_"             { return RElementTypes.THE_R_NA_CHARACTER; }
+"NA_integer_"               { return RElementTypes.R_NA_INTEGER; }
+"NA_real_"                  { return RElementTypes.R_NA_REAL; }
+"NA_complex_"               { return RElementTypes.R_NA_COMPLEX; }
+"NA_character_"             { return RElementTypes.R_NA_CHARACTER; }
 
-"if"                        { return RElementTypes.THE_R_IF; }
-"else"                      { return RElementTypes.THE_R_ELSE; }
-"repeat"                    { return RElementTypes.THE_R_REPEAT; }
-"while"                     { return RElementTypes.THE_R_WHILE; }
-"function"                  { return RElementTypes.THE_R_FUNCTION; }
-"for"                       { return RElementTypes.THE_R_FOR; }
-"in"                        { return RElementTypes.THE_R_IN; }
-"next"                      { return RElementTypes.THE_R_NEXT; }
-"break"                     { return RElementTypes.THE_R_BREAK; }
-"..."                       { return RElementTypes.THE_R_TRIPLE_DOTS; }
+"if"                        { return RElementTypes.R_IF; }
+"else"                      { return RElementTypes.R_ELSE; }
+"repeat"                    { return RElementTypes.R_REPEAT; }
+"while"                     { return RElementTypes.R_WHILE; }
+"function"                  { return RElementTypes.R_FUNCTION; }
+"for"                       { return RElementTypes.R_FOR; }
+"in"                        { return RElementTypes.R_IN; }
+"next"                      { return RElementTypes.R_NEXT; }
+"break"                     { return RElementTypes.R_BREAK; }
+"..."                       { return RElementTypes.R_TRIPLE_DOTS; }
 
-{IDENTIFIER}                { return RElementTypes.THE_R_IDENTIFIER; }
+{IDENTIFIER}                { return RElementTypes.R_IDENTIFIER; }
 
 //special operators
-"%"{LETTER_OR_OP}*"%"       { return RElementTypes.THE_R_INFIX_OP; }
+"%"{LETTER_OR_OP}*"%"       { return RElementTypes.R_INFIX_OP; }
 
 // Infix and prefix operators
-":::"                       { return RElementTypes.THE_R_TRIPLECOLON; }
-"::"                        { return RElementTypes.THE_R_DOUBLECOLON; }
-"@"                         { return RElementTypes.THE_R_AT; }
-"&&"                        { return RElementTypes.THE_R_ANDAND; }
-"||"                        { return RElementTypes.THE_R_OROR; }
+":::"                       { return RElementTypes.R_TRIPLECOLON; }
+"::"                        { return RElementTypes.R_DOUBLECOLON; }
+"@"                         { return RElementTypes.R_AT; }
+"&&"                        { return RElementTypes.R_ANDAND; }
+"||"                        { return RElementTypes.R_OROR; }
 
 
 //arithmetic
-"-"                         { return RElementTypes.THE_R_MINUS; }
-"+"                         { return RElementTypes.THE_R_PLUS; }
-"*"                         { return RElementTypes.THE_R_MULT; }
-"/"                         { return RElementTypes.THE_R_DIV; }
-"^"                         { return RElementTypes.THE_R_EXP; }
+"-"                         { return RElementTypes.R_MINUS; }
+"+"                         { return RElementTypes.R_PLUS; }
+"*"                         { return RElementTypes.R_MULT; }
+"/"                         { return RElementTypes.R_DIV; }
+"^"                         { return RElementTypes.R_EXP; }
 
 // relational
-"<"                         { return RElementTypes.THE_R_LT; }
-">"                         { return RElementTypes.THE_R_GT; }
-"=="                        { return RElementTypes.THE_R_EQEQ; }
-">="                        { return RElementTypes.THE_R_GE; }
-"<="                        { return RElementTypes.THE_R_LE; }
-"!="                        { return RElementTypes.THE_R_NOTEQ; }
+"<"                         { return RElementTypes.R_LT; }
+">"                         { return RElementTypes.R_GT; }
+"=="                        { return RElementTypes.R_EQEQ; }
+">="                        { return RElementTypes.R_GE; }
+"<="                        { return RElementTypes.R_LE; }
+"!="                        { return RElementTypes.R_NOTEQ; }
 
 // logical
-"!"                         { return RElementTypes.THE_R_NOT; }
-"|"                         { return RElementTypes.THE_R_OR; }
-"&"                         { return RElementTypes.THE_R_AND; }
+"!"                         { return RElementTypes.R_NOT; }
+"|"                         { return RElementTypes.R_OR; }
+"&"                         { return RElementTypes.R_AND; }
 
 // model formulae
-"~"                         { return RElementTypes.THE_R_TILDE; }
+"~"                         { return RElementTypes.R_TILDE; }
 
 // assign
-"<<-"                       { return RElementTypes.THE_R_LEFT_COMPLEX_ASSIGN; }
-"->>"                       { return RElementTypes.THE_R_RIGHT_COMPLEX_ASSIGN; }
-"<-"                        { return RElementTypes.THE_R_LEFT_ASSIGN; }
-"->"                        { return RElementTypes.THE_R_RIGHT_ASSIGN; }
-"="                         { return RElementTypes.THE_R_EQ; }
+"<<-"                       { return RElementTypes.R_LEFT_COMPLEX_ASSIGN; }
+"->>"                       { return RElementTypes.R_RIGHT_COMPLEX_ASSIGN; }
+"<-"                        { return RElementTypes.R_LEFT_ASSIGN; }
+"->"                        { return RElementTypes.R_RIGHT_ASSIGN; }
+"="                         { return RElementTypes.R_EQ; }
 
 // list indexing
-"$"                         { return RElementTypes.THE_R_LIST_SUBSET; }
+"$"                         { return RElementTypes.R_LIST_SUBSET; }
 
 // sequence
-":"                         { return RElementTypes.THE_R_COLON; }
+":"                         { return RElementTypes.R_COLON; }
 
 // grouping
-"("                         { return RElementTypes.THE_R_LPAR; }
-")"                         { return RElementTypes.THE_R_RPAR; }
-"{"                         { return RElementTypes.THE_R_LBRACE; }
-"}"                         { return RElementTypes.THE_R_RBRACE; }
+"("                         { return RElementTypes.R_LPAR; }
+")"                         { return RElementTypes.R_RPAR; }
+"{"                         { return RElementTypes.R_LBRACE; }
+"}"                         { return RElementTypes.R_RBRACE; }
 
 // indexing
-"[["                        { myExpectedBracketsStack.add(RElementTypes.THE_R_RDBRACKET); return RElementTypes.THE_R_LDBRACKET; }
+"[["                        { myExpectedBracketsStack.add(RElementTypes.R_RDBRACKET); return RElementTypes.R_LDBRACKET; }
 "]]"                        {
-                              if (myExpectedBracketsStack.isEmpty()) return RElementTypes.THE_R_RDBRACKET;
+                              if (myExpectedBracketsStack.isEmpty()) return RElementTypes.R_RDBRACKET;
                               final IElementType expectedBracket = myExpectedBracketsStack.pop();
-                              if (expectedBracket == RElementTypes.THE_R_RDBRACKET) {
-                                return RElementTypes.THE_R_RDBRACKET;
+                              if (expectedBracket == RElementTypes.R_RDBRACKET) {
+                                return RElementTypes.R_RDBRACKET;
                               }
                               else {
                                 yypushback(1);
-                                return RElementTypes.THE_R_RBRACKET;
+                                return RElementTypes.R_RBRACKET;
                               }
                               }
-"["                         { myExpectedBracketsStack.add(RElementTypes.THE_R_RBRACKET); return RElementTypes.THE_R_LBRACKET; }
+"["                         { myExpectedBracketsStack.add(RElementTypes.R_RBRACKET); return RElementTypes.R_LBRACKET; }
 "]"                         {
-                              if (myExpectedBracketsStack.isEmpty()) return RElementTypes.THE_R_RBRACKET;
+                              if (myExpectedBracketsStack.isEmpty()) return RElementTypes.R_RBRACKET;
                               myExpectedBracketsStack.pop();
-                              return RElementTypes.THE_R_RBRACKET; }
+                              return RElementTypes.R_RBRACKET; }
 
 // separators
-","                         { return RElementTypes.THE_R_COMMA; }
-";"                         { return RElementTypes.THE_R_SEMI; }
+","                         { return RElementTypes.R_COMMA; }
+";"                         { return RElementTypes.R_SEMI; }
 
-"?"                         { return RElementTypes.THE_R_HELP; }
+"?"                         { return RElementTypes.R_HELP; }
 .                           { return RParserDefinition.BAD_CHARACTER; }
 
 }

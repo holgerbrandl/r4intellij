@@ -1,5 +1,5 @@
 <project name="Generate lexer from ther.flex" default="dist">
-  <property name="jflex.dir" value="/usr/local/java/idea-8.1-dev/tools/jflex"/>
+    <property name="jflex.dir" value="/Users/brandl/projects/rplugin/r4intellij_v2/misc/JFlex.jar"/>
 
   <property name="lexer.dir" value="."/>
   <property name="lexer.file" value="${lexer.dir}/_RLexer.java"/>

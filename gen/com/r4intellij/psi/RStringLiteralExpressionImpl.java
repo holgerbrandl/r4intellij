@@ -16,15 +16,19 @@ public class RStringLiteralExpressionImpl extends RExpressionImpl implements RSt
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitStringLiteralExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitStringLiteralExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @NotNull
   public PsiElement getString() {
-    return findNotNullChildByType(THE_R_STRING);
+    return notNullChild(findChildByType(R_STRING));
   }
 
 }

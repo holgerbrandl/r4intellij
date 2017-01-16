@@ -16,8 +16,12 @@ public class RSubscriptionExpressionImpl extends RExpressionImpl implements RSub
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitSubscriptionExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitSubscriptionExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,25 +34,25 @@ public class RSubscriptionExpressionImpl extends RExpressionImpl implements RSub
   @Override
   @Nullable
   public PsiElement getLbracket() {
-    return findChildByType(THE_R_LBRACKET);
+    return findChildByType(R_LBRACKET);
   }
 
   @Override
   @Nullable
   public PsiElement getLdbracket() {
-    return findChildByType(THE_R_LDBRACKET);
+    return findChildByType(R_LDBRACKET);
   }
 
   @Override
   @Nullable
   public PsiElement getRbracket() {
-    return findChildByType(THE_R_RBRACKET);
+    return findChildByType(R_RBRACKET);
   }
 
   @Override
   @Nullable
   public PsiElement getRdbracket() {
-    return findChildByType(THE_R_RDBRACKET);
+    return findChildByType(R_RDBRACKET);
   }
 
 }

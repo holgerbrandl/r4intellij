@@ -8,7 +8,7 @@ import com.r4intellij.parsing.RElementTypes;
 
 public class RQuoteHandler extends SimpleTokenSetQuoteHandler {
   public RQuoteHandler() {
-    super(RElementTypes.THE_R_STRING);
+      super(RElementTypes.R_STRING);
   }
 
   @Override

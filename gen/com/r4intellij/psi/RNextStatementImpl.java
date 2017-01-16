@@ -16,33 +16,37 @@ public class RNextStatementImpl extends RExpressionImpl implements RNextStatemen
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitNextStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitNextStatement(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
   public RExpression getExpression() {
-    return findChildByClass(RExpression.class);
+    return PsiTreeUtil.getChildOfType(this, RExpression.class);
   }
 
   @Override
   @Nullable
   public PsiElement getLpar() {
-    return findChildByType(THE_R_LPAR);
+    return findChildByType(R_LPAR);
   }
 
   @Override
   @Nullable
   public PsiElement getRpar() {
-    return findChildByType(THE_R_RPAR);
+    return findChildByType(R_RPAR);
   }
 
   @Override
   @NotNull
   public PsiElement getNext() {
-    return findNotNullChildByType(THE_R_NEXT);
+    return notNullChild(findChildByType(R_NEXT));
   }
 
 }

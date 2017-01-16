@@ -17,27 +17,31 @@ public class RReferenceExpressionImpl extends RExpressionImpl implements RRefere
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitReferenceExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitReferenceExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
   public PsiElement getInf() {
-    return findChildByType(THE_R_INF);
+    return findChildByType(R_INF);
   }
 
   @Override
   @Nullable
   public PsiElement getNan() {
-    return findChildByType(THE_R_NAN);
+    return findChildByType(R_NAN);
   }
 
   @Override
   @Nullable
   public PsiElement getIdentifier() {
-    return findChildByType(THE_R_IDENTIFIER);
+    return findChildByType(R_IDENTIFIER);
   }
 
   public RReferenceImpl getReference() {

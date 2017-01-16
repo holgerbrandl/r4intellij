@@ -1,95 +1,95 @@
 RFile:DotAsFunctionParameter.r
-  THE_R_ASSIGNMENT_STATEMENT
-    THE_R_REFERENCE_EXPRESSION
+  R_ASSIGNMENT_STATEMENT
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('not.Ident')
     PsiWhiteSpace(' ')
-    THE_R_OPERATOR
+    R_OPERATOR
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
-    THE_R_FUNCTION_EXPRESSION
+    R_FUNCTION_EXPRESSION
       PsiElement(function)('function')
-      THE_R_PARAMETER_LIST
+      R_PARAMETER_LIST
         PsiElement(()('(')
-        THE_R_PARAMETER
+        R_PARAMETER
           PsiElement(identifier)('ch')
         PsiElement(,)(',')
         PsiWhiteSpace(' ')
-        THE_R_PARAMETER
+        R_PARAMETER
           PsiElement(identifier)('TRAFO')
           PsiElement(=)('=')
-          THE_R_REFERENCE_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('identity')
         PsiElement(,)(',')
         PsiWhiteSpace(' ')
-        THE_R_PARAMETER
+        R_PARAMETER
           PsiElement(TRIPLE_DOTS)('...')
         PsiElement())(')')
       PsiElement(nl)('\n')
       PsiWhiteSpace('\t')
       PsiWhiteSpace('\t')
       PsiWhiteSpace('    ')
-      THE_R_CALL_EXPRESSION
-        THE_R_REFERENCE_EXPRESSION
+      R_CALL_EXPRESSION
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('vapply')
-        THE_R_ARGUMENT_LIST
+        R_ARGUMENT_LIST
           PsiElement(()('(')
-          THE_R_REFERENCE_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('ch')
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
-          THE_R_FUNCTION_EXPRESSION
+          R_FUNCTION_EXPRESSION
             PsiElement(function)('function')
-            THE_R_PARAMETER_LIST
+            R_PARAMETER_LIST
               PsiElement(()('(')
-              THE_R_PARAMETER
+              R_PARAMETER
                 PsiElement(identifier)('.')
               PsiElement())(')')
             PsiElement(nl)('\n')
             PsiWhiteSpace('                           ')
-            THE_R_OPERATOR_EXPRESSION
-              THE_R_OPERATOR
+            R_OPERATOR_EXPRESSION
+              R_OPERATOR
                 PsiElement(!)('!')
-              THE_R_CALL_EXPRESSION
-                THE_R_REFERENCE_EXPRESSION
+              R_CALL_EXPRESSION
+                R_REFERENCE_EXPRESSION
                   PsiElement(identifier)('identical')
-                THE_R_ARGUMENT_LIST
+                R_ARGUMENT_LIST
                   PsiElement(()('(')
-                  THE_R_CALL_EXPRESSION
-                    THE_R_REFERENCE_EXPRESSION
+                  R_CALL_EXPRESSION
+                    R_REFERENCE_EXPRESSION
                       PsiElement(identifier)('TRAFO')
-                    THE_R_ARGUMENT_LIST
+                    R_ARGUMENT_LIST
                       PsiElement(()('(')
-                      THE_R_CALL_EXPRESSION
-                        THE_R_REFERENCE_EXPRESSION
+                      R_CALL_EXPRESSION
+                        R_REFERENCE_EXPRESSION
                           PsiElement(identifier)('get')
-                        THE_R_ARGUMENT_LIST
+                        R_ARGUMENT_LIST
                           PsiElement(()('(')
-                          THE_R_REFERENCE_EXPRESSION
+                          R_REFERENCE_EXPRESSION
                             PsiElement(identifier)('.')
                           PsiElement(,)(',')
                           PsiWhiteSpace(' ')
-                          THE_R_REFERENCE_EXPRESSION
+                          R_REFERENCE_EXPRESSION
                             PsiElement(identifier)('i')
                           PsiElement())(')')
                       PsiElement())(')')
                   PsiElement(,)(',')
                   PsiElement(nl)('\n')
                   PsiWhiteSpace('                                      ')
-                  THE_R_CALL_EXPRESSION
-                    THE_R_REFERENCE_EXPRESSION
+                  R_CALL_EXPRESSION
+                    R_REFERENCE_EXPRESSION
                       PsiElement(identifier)('TRAFO')
-                    THE_R_ARGUMENT_LIST
+                    R_ARGUMENT_LIST
                       PsiElement(()('(')
-                      THE_R_CALL_EXPRESSION
-                        THE_R_REFERENCE_EXPRESSION
+                      R_CALL_EXPRESSION
+                        R_REFERENCE_EXPRESSION
                           PsiElement(identifier)('get')
-                        THE_R_ARGUMENT_LIST
+                        R_ARGUMENT_LIST
                           PsiElement(()('(')
-                          THE_R_REFERENCE_EXPRESSION
+                          R_REFERENCE_EXPRESSION
                             PsiElement(identifier)('.')
                           PsiElement(,)(',')
                           PsiWhiteSpace(' ')
-                          THE_R_REFERENCE_EXPRESSION
+                          R_REFERENCE_EXPRESSION
                             PsiElement(identifier)('lib.pos')
                           PsiElement())(')')
                       PsiElement())(')')
@@ -100,6 +100,6 @@ RFile:DotAsFunctionParameter.r
           PsiElement(,)(',')
           PsiElement(nl)('\n')
           PsiWhiteSpace('                           ')
-          THE_R_NA_LITERAL_EXPRESSION
+          R_NA_LITERAL_EXPRESSION
             PsiElement(NA)('NA')
           PsiElement())(')')

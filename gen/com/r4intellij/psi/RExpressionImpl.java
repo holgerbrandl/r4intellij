@@ -10,14 +10,18 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.r4intellij.parsing.RElementTypes.*;
 import com.r4intellij.psi.api.*;
 
-public class RExpressionImpl extends RElementImpl implements RExpression {
+public abstract class RExpressionImpl extends RElementImpl implements RExpression {
 
   public RExpressionImpl(ASTNode node) {
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 

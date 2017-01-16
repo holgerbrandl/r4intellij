@@ -1,12 +1,12 @@
 RFile:ReprInSublist.r
-  THE_R_OPERATOR_EXPRESSION
-    THE_R_OPERATOR
+  R_OPERATOR_EXPRESSION
+    R_OPERATOR
       PsiElement(!)('!')
-    THE_R_MEMBER_EXPRESSION
-      THE_R_CALL_EXPRESSION
-        THE_R_REFERENCE_EXPRESSION
+    R_MEMBER_EXPRESSION
+      R_CALL_EXPRESSION
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('l10n_info')
-        THE_R_ARGUMENT_LIST
+        R_ARGUMENT_LIST
           PsiElement(()('(')
           PsiElement())(')')
       PsiElement($)('$')

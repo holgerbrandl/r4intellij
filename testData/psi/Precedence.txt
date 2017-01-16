@@ -1,39 +1,39 @@
 RFile:Precedence.r
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('table')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
-      THE_R_CALL_EXPRESSION
-        THE_R_REFERENCE_EXPRESSION
+      R_CALL_EXPRESSION
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('replicate')
-        THE_R_ARGUMENT_LIST
+        R_ARGUMENT_LIST
           PsiElement(()('(')
-          THE_R_NUMERIC_LITERAL_EXPRESSION
+          R_NUMERIC_LITERAL_EXPRESSION
             PsiElement(numeric)('1000')
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
-          THE_R_OPERATOR_EXPRESSION
-            THE_R_MEMBER_EXPRESSION
-              THE_R_CALL_EXPRESSION
-                THE_R_REFERENCE_EXPRESSION
+          R_OPERATOR_EXPRESSION
+            R_MEMBER_EXPRESSION
+              R_CALL_EXPRESSION
+                R_REFERENCE_EXPRESSION
                   PsiElement(identifier)('runs.test')
-                THE_R_ARGUMENT_LIST
+                R_ARGUMENT_LIST
                   PsiElement(()('(')
-                  THE_R_CALL_EXPRESSION
-                    THE_R_REFERENCE_EXPRESSION
+                  R_CALL_EXPRESSION
+                    R_REFERENCE_EXPRESSION
                       PsiElement(identifier)('factor')
-                    THE_R_ARGUMENT_LIST
+                    R_ARGUMENT_LIST
                       PsiElement(()('(')
-                      THE_R_CALL_EXPRESSION
-                        THE_R_REFERENCE_EXPRESSION
+                      R_CALL_EXPRESSION
+                        R_REFERENCE_EXPRESSION
                           PsiElement(identifier)('sign')
-                        THE_R_ARGUMENT_LIST
+                        R_ARGUMENT_LIST
                           PsiElement(()('(')
-                          THE_R_CALL_EXPRESSION
-                            THE_R_REFERENCE_EXPRESSION
+                          R_CALL_EXPRESSION
+                            R_REFERENCE_EXPRESSION
                               PsiElement(identifier)('one.ts')
-                            THE_R_ARGUMENT_LIST
+                            R_ARGUMENT_LIST
                               PsiElement(()('(')
                               PsiElement())(')')
                           PsiElement())(')')
@@ -42,10 +42,10 @@ RFile:Precedence.r
               PsiElement($)('$')
               PsiElement(identifier)('p.value')
             PsiWhiteSpace(' ')
-            THE_R_OPERATOR
+            R_OPERATOR
               PsiElement(<)('<')
             PsiWhiteSpace(' ')
-            THE_R_NUMERIC_LITERAL_EXPRESSION
+            R_NUMERIC_LITERAL_EXPRESSION
               PsiElement(numeric)('0.05')
           PsiElement())(')')
       PsiElement())(')')

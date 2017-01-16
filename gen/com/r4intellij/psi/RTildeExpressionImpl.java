@@ -16,8 +16,12 @@ public class RTildeExpressionImpl extends RExpressionImpl implements RTildeExpre
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitTildeExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitTildeExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -28,9 +32,9 @@ public class RTildeExpressionImpl extends RExpressionImpl implements RTildeExpre
   }
 
   @Override
-  @Nullable
+  @NotNull
   public ROperator getOperator() {
-    return findChildByClass(ROperator.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, ROperator.class));
   }
 
 }

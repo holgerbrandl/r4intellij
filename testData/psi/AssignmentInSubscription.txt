@@ -1,84 +1,84 @@
 RFile:AssignmentInSubscription.r
-  THE_R_ASSIGNMENT_STATEMENT
-    THE_R_SUBSCRIPTION_EXPRESSION
-      THE_R_REFERENCE_EXPRESSION
+  R_ASSIGNMENT_STATEMENT
+    R_SUBSCRIPTION_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('fill')
       PsiElement([)('[')
       PsiWhiteSpace(' ')
-      THE_R_EMPTY_EXPRESSION
+      R_EMPTY_EXPRESSION
         <empty list>
       PsiElement(,)(',')
       PsiWhiteSpace(' ')
-      THE_R_ASSIGNMENT_STATEMENT
-        THE_R_REFERENCE_EXPRESSION
+      R_ASSIGNMENT_STATEMENT
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('i2')
         PsiWhiteSpace(' ')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(<-)('<-')
         PsiWhiteSpace(' ')
-        THE_R_CALL_EXPRESSION
-          THE_R_REFERENCE_EXPRESSION
+        R_CALL_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('c')
-          THE_R_ARGUMENT_LIST
+          R_ARGUMENT_LIST
             PsiElement(()('(')
-            THE_R_NUMERIC_LITERAL_EXPRESSION
+            R_NUMERIC_LITERAL_EXPRESSION
               PsiElement(numeric)('1')
             PsiElement(,)(',')
-            THE_R_CALL_EXPRESSION
-              THE_R_REFERENCE_EXPRESSION
+            R_CALL_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('ncol')
-              THE_R_ARGUMENT_LIST
+              R_ARGUMENT_LIST
                 PsiElement(()('(')
-                THE_R_REFERENCE_EXPRESSION
+                R_REFERENCE_EXPRESSION
                   PsiElement(identifier)('fill')
                 PsiElement())(')')
             PsiElement())(')')
       PsiElement(])(']')
     PsiWhiteSpace(' ')
-    THE_R_OPERATOR
+    R_OPERATOR
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
-    THE_R_STRING_LITERAL_EXPRESSION
+    R_STRING_LITERAL_EXPRESSION
       PsiElement(string)('"gray"')
   PsiElement(nl)('\n')
-  THE_R_ASSIGNMENT_STATEMENT
-    THE_R_SUBSCRIPTION_EXPRESSION
-      THE_R_REFERENCE_EXPRESSION
+  R_ASSIGNMENT_STATEMENT
+    R_SUBSCRIPTION_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('fill')
       PsiElement([)('[')
-      THE_R_ASSIGNMENT_STATEMENT
-        THE_R_REFERENCE_EXPRESSION
+      R_ASSIGNMENT_STATEMENT
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('i1')
         PsiWhiteSpace(' ')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(<-)('<-')
         PsiWhiteSpace(' ')
-        THE_R_CALL_EXPRESSION
-          THE_R_REFERENCE_EXPRESSION
+        R_CALL_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('c')
-          THE_R_ARGUMENT_LIST
+          R_ARGUMENT_LIST
             PsiElement(()('(')
-            THE_R_NUMERIC_LITERAL_EXPRESSION
+            R_NUMERIC_LITERAL_EXPRESSION
               PsiElement(numeric)('1')
             PsiElement(,)(',')
-            THE_R_CALL_EXPRESSION
-              THE_R_REFERENCE_EXPRESSION
+            R_CALL_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('nrow')
-              THE_R_ARGUMENT_LIST
+              R_ARGUMENT_LIST
                 PsiElement(()('(')
-                THE_R_REFERENCE_EXPRESSION
+                R_REFERENCE_EXPRESSION
                   PsiElement(identifier)('fill')
                 PsiElement())(')')
             PsiElement())(')')
       PsiWhiteSpace(' ')
       PsiElement(,)(',')
       PsiWhiteSpace(' ')
-      THE_R_EMPTY_EXPRESSION
+      R_EMPTY_EXPRESSION
         <empty list>
       PsiElement(])(']')
     PsiWhiteSpace(' ')
-    THE_R_OPERATOR
+    R_OPERATOR
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
-    THE_R_STRING_LITERAL_EXPRESSION
+    R_STRING_LITERAL_EXPRESSION
       PsiElement(string)('"gray"')

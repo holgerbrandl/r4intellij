@@ -23,19 +23,19 @@ import java.util.List;
  */
 public class RPsiImplUtil {
   public static final TokenSet LEFT_ASSIGNMENTS = TokenSet.create(
-    RElementTypes.THE_R_LEFT_ASSIGN, RElementTypes.THE_R_LEFT_COMPLEX_ASSIGN);
+          RElementTypes.R_LEFT_ASSIGN, RElementTypes.R_LEFT_COMPLEX_ASSIGN);
   public static final TokenSet RIGHT_ASSIGNMENTS = TokenSet.create(
-    RElementTypes.THE_R_RIGHT_ASSIGN, RElementTypes.THE_R_RIGHT_COMPLEX_ASSIGN);
+          RElementTypes.R_RIGHT_ASSIGN, RElementTypes.R_RIGHT_COMPLEX_ASSIGN);
   public static final TokenSet RESERVED_WORDS = TokenSet.create(
-    RElementTypes.THE_R_IF, RElementTypes.THE_R_ELSE, RElementTypes.THE_R_REPEAT,
-    RElementTypes.THE_R_WHILE, RElementTypes.THE_R_FUNCTION, RElementTypes.THE_R_FOR,
-    RElementTypes.THE_R_IN, RElementTypes.THE_R_NEXT, RElementTypes.THE_R_BREAK);
+          RElementTypes.R_IF, RElementTypes.R_ELSE, RElementTypes.R_REPEAT,
+          RElementTypes.R_WHILE, RElementTypes.R_FUNCTION, RElementTypes.R_FOR,
+          RElementTypes.R_IN, RElementTypes.R_NEXT, RElementTypes.R_BREAK);
   public static final TokenSet OPERATORS = TokenSet.create(
-    RElementTypes.THE_R_MINUS, RElementTypes.THE_R_PLUS, RElementTypes.THE_R_NOT, RElementTypes.THE_R_TILDE, RElementTypes.THE_R_HELP,
-    RElementTypes.THE_R_COLON, RElementTypes.THE_R_MULT, RElementTypes.THE_R_DIV, RElementTypes.THE_R_EXP,
-    RElementTypes.THE_R_INFIX_OP, RElementTypes.THE_R_LT, RElementTypes.THE_R_GT, RElementTypes.THE_R_EQEQ, RElementTypes.THE_R_GE,
-    RElementTypes.THE_R_LE, RElementTypes.THE_R_AND, RElementTypes.THE_R_ANDAND, RElementTypes.THE_R_OR, RElementTypes.THE_R_OROR,
-    RElementTypes.THE_R_LEFT_ASSIGN, RElementTypes.THE_R_RIGHT_ASSIGN, RElementTypes.THE_R_LIST_SUBSET, RElementTypes.THE_R_AT);
+          RElementTypes.R_MINUS, RElementTypes.R_PLUS, RElementTypes.R_NOT, RElementTypes.R_TILDE, RElementTypes.R_HELP,
+          RElementTypes.R_COLON, RElementTypes.R_MULT, RElementTypes.R_DIV, RElementTypes.R_EXP,
+          RElementTypes.R_INFIX_OP, RElementTypes.R_LT, RElementTypes.R_GT, RElementTypes.R_EQEQ, RElementTypes.R_GE,
+          RElementTypes.R_LE, RElementTypes.R_AND, RElementTypes.R_ANDAND, RElementTypes.R_OR, RElementTypes.R_OROR,
+          RElementTypes.R_LEFT_ASSIGN, RElementTypes.R_RIGHT_ASSIGN, RElementTypes.R_LIST_SUBSET, RElementTypes.R_AT);
 
 
   public static String getName(ROperator binaryOperator) {
@@ -52,7 +52,7 @@ public class RPsiImplUtil {
   }
 
   public static boolean isEqual(RAssignmentStatement assignment) {
-    final ASTNode operator = assignment.getNode().findChildByType(RElementTypes.THE_R_EQ);
+      final ASTNode operator = assignment.getNode().findChildByType(RElementTypes.R_EQ);
     return operator != null;
   }
 
@@ -105,10 +105,10 @@ public class RPsiImplUtil {
     if (nameNode == null) {
       return assignment;
     }
-    final ASTNode oldNameIdentifier = nameNode.findChildByType(RElementTypes.THE_R_IDENTIFIER);
+      final ASTNode oldNameIdentifier = nameNode.findChildByType(RElementTypes.R_IDENTIFIER);
     if (oldNameIdentifier != null) {
       final PsiFile dummyFile = RElementGenerator.createDummyFile(name, false, assignment.getProject());
-      ASTNode identifier = dummyFile.getNode().getFirstChildNode().findChildByType(RElementTypes.THE_R_IDENTIFIER);
+        ASTNode identifier = dummyFile.getNode().getFirstChildNode().findChildByType(RElementTypes.R_IDENTIFIER);
       if (identifier != null) {
         nameNode.replaceChild(oldNameIdentifier, identifier);
       }
@@ -140,7 +140,7 @@ public class RPsiImplUtil {
     final ASTNode oldNameIdentifier = parameter.getNameNode();
     if (oldNameIdentifier != null) {
       final PsiFile dummyFile = RElementGenerator.createDummyFile(name, false, parameter.getProject());
-      ASTNode identifier = dummyFile.getNode().getFirstChildNode().findChildByType(RElementTypes.THE_R_IDENTIFIER);
+        ASTNode identifier = dummyFile.getNode().getFirstChildNode().findChildByType(RElementTypes.R_IDENTIFIER);
       if (identifier != null) {
         parameter.getNode().replaceChild(oldNameIdentifier, identifier);
       }

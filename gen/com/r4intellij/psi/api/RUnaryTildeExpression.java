@@ -10,7 +10,7 @@ public interface RUnaryTildeExpression extends RExpression {
   @Nullable
   RExpression getExpression();
 
-  @Nullable
+  @NotNull
   ROperator getOperator();
 
 }

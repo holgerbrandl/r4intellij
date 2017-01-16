@@ -90,10 +90,10 @@ public class RReferenceImpl implements PsiPolyVariantReference {
 
   @Override
   public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
-    final ASTNode oldNameIdentifier = getElement().getNode().findChildByType(RElementTypes.THE_R_IDENTIFIER);
+      final ASTNode oldNameIdentifier = getElement().getNode().findChildByType(RElementTypes.R_IDENTIFIER);
     if (oldNameIdentifier != null) {
       final PsiFile dummyFile = RElementGenerator.createDummyFile(newElementName, false, getElement().getProject());
-      ASTNode identifier = dummyFile.getNode().getFirstChildNode().findChildByType(RElementTypes.THE_R_IDENTIFIER);
+        ASTNode identifier = dummyFile.getNode().getFirstChildNode().findChildByType(RElementTypes.R_IDENTIFIER);
       if (identifier != null) {
         getElement().getNode().replaceChild(oldNameIdentifier, identifier);
       }
@@ -158,7 +158,7 @@ public class RReferenceImpl implements PsiPolyVariantReference {
     final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
     final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(myElement.getProject());
     if (model != null) {
-      final Library library = model.getLibraryByName(RInterpreterConfigurable.THE_R_SKELETONS);
+        final Library library = model.getLibraryByName(RInterpreterConfigurable.R_SKELETONS);
       final String skeletonsDir = RSkeletonGenerator.getSkeletonsPath(RInterpreterService.getInstance().getInterpreterPath());
       if (library != null) {
         final Collection<String> assignmentStatements = RAssignmentNameIndex.allKeys(myElement.getProject());

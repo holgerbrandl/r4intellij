@@ -16,33 +16,37 @@ public class RLogicalLiteralExpressionImpl extends RExpressionImpl implements RL
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitLogicalLiteralExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitLogicalLiteralExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @Nullable
   public PsiElement getF() {
-    return findChildByType(THE_R_F);
+    return findChildByType(R_F);
   }
 
   @Override
   @Nullable
   public PsiElement getFalse() {
-    return findChildByType(THE_R_FALSE);
+    return findChildByType(R_FALSE);
   }
 
   @Override
   @Nullable
   public PsiElement getT() {
-    return findChildByType(THE_R_T);
+    return findChildByType(R_T);
   }
 
   @Override
   @Nullable
   public PsiElement getTrue() {
-    return findChildByType(THE_R_TRUE);
+    return findChildByType(R_TRUE);
   }
 
 }

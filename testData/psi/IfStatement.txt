@@ -1,40 +1,40 @@
 RFile:IfStatement.r
-  THE_R_IF_STATEMENT
+  R_IF_STATEMENT
     PsiElement(if)('if')
     PsiElement(()('(')
-    THE_R_OPERATOR_EXPRESSION
-      THE_R_REFERENCE_EXPRESSION
+    R_OPERATOR_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('A')
-      THE_R_OPERATOR
+      R_OPERATOR
         PsiElement(>)('>')
-      THE_R_REFERENCE_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('a')
     PsiElement())(')')
     PsiWhiteSpace(' ')
     PsiComment(END_OF_LINE_COMMENT)('# true, 84 > 42')
     PsiElement(nl)('\n')
-    THE_R_BLOCK_EXPRESSION
+    R_BLOCK_EXPRESSION
       PsiElement({)('{')
       PsiElement(nl)('\n')
       PsiWhiteSpace('  ')
-      THE_R_CALL_EXPRESSION
-        THE_R_REFERENCE_EXPRESSION
+      R_CALL_EXPRESSION
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('cat')
-        THE_R_ARGUMENT_LIST
+        R_ARGUMENT_LIST
           PsiElement(()('(')
-          THE_R_REFERENCE_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('A')
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
-          THE_R_STRING_LITERAL_EXPRESSION
+          R_STRING_LITERAL_EXPRESSION
             PsiElement(string)('">"')
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
-          THE_R_REFERENCE_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('a')
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
-          THE_R_STRING_LITERAL_EXPRESSION
+          R_STRING_LITERAL_EXPRESSION
             PsiElement(string)('"\n"')
           PsiElement())(')')
       PsiElement(nl)('\n')

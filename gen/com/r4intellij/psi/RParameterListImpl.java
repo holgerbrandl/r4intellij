@@ -16,8 +16,12 @@ public class RParameterListImpl extends RElementImpl implements RParameterList {
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitParameterList(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitParameterList(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,13 +34,13 @@ public class RParameterListImpl extends RElementImpl implements RParameterList {
   @Override
   @NotNull
   public PsiElement getLpar() {
-    return findNotNullChildByType(THE_R_LPAR);
+    return notNullChild(findChildByType(R_LPAR));
   }
 
   @Override
   @NotNull
   public PsiElement getRpar() {
-    return findNotNullChildByType(THE_R_RPAR);
+    return notNullChild(findChildByType(R_RPAR));
   }
 
 }

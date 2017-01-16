@@ -1,47 +1,47 @@
 RFile:DotAsReference.r
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('step')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
-      THE_R_CALL_EXPRESSION
-        THE_R_REFERENCE_EXPRESSION
+      R_CALL_EXPRESSION
+        R_REFERENCE_EXPRESSION
           PsiElement(identifier)('aov')
-        THE_R_ARGUMENT_LIST
+        R_ARGUMENT_LIST
           PsiElement(()('(')
-          THE_R_TILDE_EXPRESSION
-            THE_R_CALL_EXPRESSION
-              THE_R_REFERENCE_EXPRESSION
+          R_TILDE_EXPRESSION
+            R_CALL_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('log')
-              THE_R_ARGUMENT_LIST
+              R_ARGUMENT_LIST
                 PsiElement(()('(')
-                THE_R_OPERATOR_EXPRESSION
-                  THE_R_REFERENCE_EXPRESSION
+                R_OPERATOR_EXPRESSION
+                  R_REFERENCE_EXPRESSION
                     PsiElement(identifier)('Days')
-                  THE_R_OPERATOR
+                  R_OPERATOR
                     PsiElement(+)('+')
-                  THE_R_NUMERIC_LITERAL_EXPRESSION
+                  R_NUMERIC_LITERAL_EXPRESSION
                     PsiElement(numeric)('2.5')
                 PsiElement())(')')
             PsiWhiteSpace(' ')
-            THE_R_OPERATOR
+            R_OPERATOR
               PsiElement(~)('~')
             PsiWhiteSpace(' ')
-            THE_R_OPERATOR_EXPRESSION
-              THE_R_REFERENCE_EXPRESSION
+            R_OPERATOR_EXPRESSION
+              R_REFERENCE_EXPRESSION
                 PsiElement(identifier)('.')
-              THE_R_OPERATOR
+              R_OPERATOR
                 PsiElement(^)('^')
-              THE_R_NUMERIC_LITERAL_EXPRESSION
+              R_NUMERIC_LITERAL_EXPRESSION
                 PsiElement(numeric)('4')
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
-          THE_R_ASSIGNMENT_STATEMENT
-            THE_R_REFERENCE_EXPRESSION
+          R_ASSIGNMENT_STATEMENT
+            R_REFERENCE_EXPRESSION
               PsiElement(identifier)('data')
-            THE_R_OPERATOR
+            R_OPERATOR
               PsiElement(=)('=')
-            THE_R_REFERENCE_EXPRESSION
+            R_REFERENCE_EXPRESSION
               PsiElement(identifier)('Quine')
           PsiElement())(')')
       PsiElement())(')')

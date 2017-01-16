@@ -1,48 +1,48 @@
 RFile:StringKeywordArg.r
-  THE_R_ASSIGNMENT_STATEMENT
-    THE_R_REFERENCE_EXPRESSION
+  R_ASSIGNMENT_STATEMENT
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('person')
     PsiWhiteSpace(' ')
-    THE_R_OPERATOR
+    R_OPERATOR
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
-    THE_R_CALL_EXPRESSION
-      THE_R_REFERENCE_EXPRESSION
+    R_CALL_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('list')
-      THE_R_ARGUMENT_LIST
+      R_ARGUMENT_LIST
         PsiElement(()('(')
-        THE_R_ASSIGNMENT_STATEMENT
-          THE_R_STRING_LITERAL_EXPRESSION
+        R_ASSIGNMENT_STATEMENT
+          R_STRING_LITERAL_EXPRESSION
             PsiElement(string)('"3"')
-          THE_R_OPERATOR
+          R_OPERATOR
             PsiElement(=)('=')
-          THE_R_STRING_LITERAL_EXPRESSION
+          R_STRING_LITERAL_EXPRESSION
             PsiElement(string)('"payal"')
         PsiElement(,)(',')
         PsiWhiteSpace(' ')
-        THE_R_ASSIGNMENT_STATEMENT
-          THE_R_REFERENCE_EXPRESSION
+        R_ASSIGNMENT_STATEMENT
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('x')
-          THE_R_OPERATOR
+          R_OPERATOR
             PsiElement(=)('=')
-          THE_R_NUMERIC_LITERAL_EXPRESSION
+          R_NUMERIC_LITERAL_EXPRESSION
             PsiElement(numeric)('2')
         PsiElement(,)(',')
         PsiWhiteSpace(' ')
-        THE_R_ASSIGNMENT_STATEMENT
-          THE_R_REFERENCE_EXPRESSION
+        R_ASSIGNMENT_STATEMENT
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('y')
-          THE_R_OPERATOR
+          R_OPERATOR
             PsiElement(=)('=')
-          THE_R_NUMERIC_LITERAL_EXPRESSION
+          R_NUMERIC_LITERAL_EXPRESSION
             PsiElement(numeric)('9')
         PsiElement(,)(',')
         PsiWhiteSpace(' ')
-        THE_R_ASSIGNMENT_STATEMENT
-          THE_R_REFERENCE_EXPRESSION
+        R_ASSIGNMENT_STATEMENT
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('year')
-          THE_R_OPERATOR
+          R_OPERATOR
             PsiElement(=)('=')
-          THE_R_NUMERIC_LITERAL_EXPRESSION
+          R_NUMERIC_LITERAL_EXPRESSION
             PsiElement(numeric)('1990')
         PsiElement())(')')

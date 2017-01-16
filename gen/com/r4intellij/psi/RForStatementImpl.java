@@ -16,8 +16,12 @@ public class RForStatementImpl extends RExpressionImpl implements RForStatement 
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitForStatement(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitForStatement(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -30,19 +34,19 @@ public class RForStatementImpl extends RExpressionImpl implements RForStatement 
   @Override
   @NotNull
   public PsiElement getLpar() {
-    return findNotNullChildByType(THE_R_LPAR);
+    return notNullChild(findChildByType(R_LPAR));
   }
 
   @Override
   @NotNull
   public PsiElement getRpar() {
-    return findNotNullChildByType(THE_R_RPAR);
+    return notNullChild(findChildByType(R_RPAR));
   }
 
   @Override
   @NotNull
   public PsiElement getFor() {
-    return findNotNullChildByType(THE_R_FOR);
+    return notNullChild(findChildByType(R_FOR));
   }
 
   @Override

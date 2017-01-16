@@ -106,7 +106,7 @@ public class RSkeletonGenerator {
                 LOG.error(e);
               }
             }
-            generateLibrary(RInterpreterConfigurable.THE_R_SKELETONS, skeletonLibraryPath, project);
+              generateLibrary(RInterpreterConfigurable.R_SKELETONS, skeletonLibraryPath, project);
             final String userSkeletonsPath = RHelpersLocator.getHelperPath("r-user-skeletons");
             generateLibrary(RInterpreterConfigurable.The_R_USER_SKELETONS, userSkeletonsPath, project);
           }

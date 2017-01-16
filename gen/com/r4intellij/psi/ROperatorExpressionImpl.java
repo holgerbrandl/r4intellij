@@ -16,8 +16,12 @@ public class ROperatorExpressionImpl extends RExpressionImpl implements ROperato
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitOperatorExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitOperatorExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 

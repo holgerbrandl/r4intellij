@@ -1,28 +1,28 @@
 RFile:HelpOnKeyword.r
   PsiComment(END_OF_LINE_COMMENT)('# Getting help on a function (seq - functionname)')
   PsiElement(nl)('\n')
-  THE_R_HELP_EXPRESSION
+  R_HELP_EXPRESSION
     PsiElement(help)('?')
-    THE_R_REFERENCE_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('seq')
   PsiElement(nl)('\n')
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('help')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
-      THE_R_REFERENCE_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('seq')
       PsiElement())(')')
   PsiElement(nl)('\n')
   PsiComment(END_OF_LINE_COMMENT)('# Run all the R code from the Examples part of R's online help topic')
   PsiElement(nl)('\n')
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('example')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
-      THE_R_REFERENCE_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('seq')
       PsiElement())(')')
   PsiElement(nl)('\n')
@@ -31,10 +31,10 @@ RFile:HelpOnKeyword.r
   PsiElement(nl)('\n')
   PsiComment(END_OF_LINE_COMMENT)('# demo() gives the list of available topics.')
   PsiElement(nl)('\n')
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('demo')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
       PsiElement())(')')
   PsiElement(nl)('\n')
@@ -49,38 +49,38 @@ RFile:HelpOnKeyword.r
   PsiElement(nl)('\n')
   PsiComment(END_OF_LINE_COMMENT)('# matched help entries are displayed nicely formatted.')
   PsiElement(nl)('\n')
-  THE_R_HELP_EXPRESSION
+  R_HELP_EXPRESSION
     PsiElement(help)('?')
     PsiElement(help)('?')
-    THE_R_STRING_LITERAL_EXPRESSION
+    R_STRING_LITERAL_EXPRESSION
       PsiElement(string)('"multivariate normal"')
   PsiElement(nl)('\n')
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('help.search')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
-      THE_R_STRING_LITERAL_EXPRESSION
+      R_STRING_LITERAL_EXPRESSION
         PsiElement(string)('"multivariate normal"')
       PsiElement())(')')
   PsiElement(nl)('\n')
   PsiElement(nl)('\n')
   PsiComment(END_OF_LINE_COMMENT)('# help for loop')
   PsiElement(nl)('\n')
-  THE_R_HELP_EXPRESSION
+  R_HELP_EXPRESSION
     PsiElement(help)('?')
     PsiElement(for)('for')
   PsiElement(nl)('\n')
   PsiElement(nl)('\n')
   PsiComment(END_OF_LINE_COMMENT)('#')
   PsiElement(nl)('\n')
-  THE_R_HELP_EXPRESSION
+  R_HELP_EXPRESSION
     PsiElement(help)('?')
-    THE_R_REFERENCE_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('Startup')
   PsiElement(nl)('\n')
   PsiElement(nl)('\n')
-  THE_R_HELP_EXPRESSION
+  R_HELP_EXPRESSION
     PsiElement(help)('?')
-    THE_R_REFERENCE_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('files')

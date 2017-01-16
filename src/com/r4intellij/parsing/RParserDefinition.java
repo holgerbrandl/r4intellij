@@ -33,7 +33,7 @@ public class RParserDefinition implements ParserDefinition {
   public RParserDefinition() {
     myWhitespaceTokens = TokenSet.create(SPACE, TAB, FORMFEED);
     myCommentTokens = TokenSet.create(END_OF_LINE_COMMENT);
-    myStringLiteralTokens = TokenSet.create(RElementTypes.THE_R_STRING);
+      myStringLiteralTokens = TokenSet.create(RElementTypes.R_STRING);
   }
 
   @Override

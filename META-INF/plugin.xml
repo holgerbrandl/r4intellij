@@ -130,7 +130,11 @@
         <!--enabledByDefault="true" level="WARNING"-->
         <!--implementationClass="com.r4intellij.inspections.RUnresolvedReferenceInspection" groupKey=""/>-->
 
+        <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
+
+
         <lang.findUsagesProvider implementationClass="com.r4intellij.RFindUsagesProvider" language="R"/>
+
         <toolWindow id="R Packages" anchor="right" factoryClass="com.r4intellij.packages.RPackagesToolWindowFactory"/>
         <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
     </extensions>

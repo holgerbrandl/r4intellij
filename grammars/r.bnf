@@ -6,7 +6,7 @@
   extends="com.r4intellij.psi.RElementImpl"
 
   elementTypeHolderClass="com.r4intellij.parsing.RElementTypes"
-  elementTypePrefix="THE_R_"
+  elementTypePrefix="R_"
   elementTypeClass="com.r4intellij.psi.RElementType"
   tokenTypeClass="com.r4intellij.psi.RElementType"
 

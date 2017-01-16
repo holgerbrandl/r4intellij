@@ -16,8 +16,12 @@ public class RSliceExpressionImpl extends RExpressionImpl implements RSliceExpre
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitSliceExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitSliceExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
@@ -28,9 +32,9 @@ public class RSliceExpressionImpl extends RExpressionImpl implements RSliceExpre
   }
 
   @Override
-  @Nullable
+  @NotNull
   public ROperator getOperator() {
-    return findChildByClass(ROperator.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, ROperator.class));
   }
 
 }

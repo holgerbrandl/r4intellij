@@ -58,6 +58,6 @@ final class RLineBreakpointUtils {
   }
 
   private static boolean isNotStoppable(@NotNull final IElementType type) {
-    return type == RElementTypes.THE_R_LBRACE || type == RElementTypes.THE_R_RBRACE;
+      return type == RElementTypes.R_LBRACE || type == RElementTypes.R_RBRACE;
   }
 }

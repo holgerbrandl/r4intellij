@@ -16,33 +16,37 @@ public class RAtExpressionImpl extends RExpressionImpl implements RAtExpression 
     super(node);
   }
 
+  public void accept(@NotNull RVisitor visitor) {
+    visitor.visitAtExpression(this);
+  }
+
   public void accept(@NotNull PsiElementVisitor visitor) {
-    if (visitor instanceof RVisitor) ((RVisitor)visitor).visitAtExpression(this);
+    if (visitor instanceof RVisitor) accept((RVisitor)visitor);
     else super.accept(visitor);
   }
 
   @Override
   @NotNull
   public RExpression getExpression() {
-    return findNotNullChildByClass(RExpression.class);
+    return notNullChild(PsiTreeUtil.getChildOfType(this, RExpression.class));
   }
 
   @Override
   @NotNull
   public PsiElement getAt() {
-    return findNotNullChildByType(THE_R_AT);
+    return notNullChild(findChildByType(R_AT));
   }
 
   @Override
   @Nullable
   public PsiElement getIdentifier() {
-    return findChildByType(THE_R_IDENTIFIER);
+    return findChildByType(R_IDENTIFIER);
   }
 
   @Override
   @Nullable
   public PsiElement getString() {
-    return findChildByType(THE_R_STRING);
+    return findChildByType(R_STRING);
   }
 
   public String getTag() {

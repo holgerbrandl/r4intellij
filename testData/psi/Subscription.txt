@@ -1,72 +1,72 @@
 RFile:Subscription.r
-  THE_R_SUBSCRIPTION_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_SUBSCRIPTION_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('mtcars')
     PsiElement([)('[')
-    THE_R_SLICE_EXPRESSION
-      THE_R_SLICE_EXPRESSION
-        THE_R_NUMERIC_LITERAL_EXPRESSION
+    R_SLICE_EXPRESSION
+      R_SLICE_EXPRESSION
+        R_NUMERIC_LITERAL_EXPRESSION
           PsiElement(numeric)('2')
-        THE_R_OPERATOR
+        R_OPERATOR
           PsiElement(:)(':')
-        THE_R_NUMERIC_LITERAL_EXPRESSION
+        R_NUMERIC_LITERAL_EXPRESSION
           PsiElement(numeric)('3')
-      THE_R_OPERATOR
+      R_OPERATOR
         PsiElement(:)(':')
-      THE_R_NUMERIC_LITERAL_EXPRESSION
+      R_NUMERIC_LITERAL_EXPRESSION
         PsiElement(numeric)('5')
     PsiElement(,)(',')
     PsiWhiteSpace(' ')
-    THE_R_NUMERIC_LITERAL_EXPRESSION
+    R_NUMERIC_LITERAL_EXPRESSION
       PsiElement(numeric)('1')
     PsiElement(])(']')
   PsiElement(nl)('\n')
-  THE_R_SUBSCRIPTION_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_SUBSCRIPTION_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('mtcars')
     PsiElement([)('[')
-    THE_R_NUMERIC_LITERAL_EXPRESSION
+    R_NUMERIC_LITERAL_EXPRESSION
       PsiElement(numeric)('1')
     PsiElement(,)(',')
     PsiWhiteSpace(' ')
-    THE_R_NUMERIC_LITERAL_EXPRESSION
+    R_NUMERIC_LITERAL_EXPRESSION
       PsiElement(numeric)('2')
     PsiElement(])(']')
   PsiElement(nl)('\n')
-  THE_R_SUBSCRIPTION_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_SUBSCRIPTION_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('mtcars')
     PsiElement([)('[')
-    THE_R_EMPTY_EXPRESSION
+    R_EMPTY_EXPRESSION
       <empty list>
     PsiElement(,)(',')
     PsiWhiteSpace(' ')
-    THE_R_REFERENCE_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('am')
     PsiElement(])(']')
   PsiElement(nl)('\n')
-  THE_R_SUBSCRIPTION_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_SUBSCRIPTION_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('mtcars')
     PsiElement([[)('[[')
-    THE_R_NUMERIC_LITERAL_EXPRESSION
+    R_NUMERIC_LITERAL_EXPRESSION
       PsiElement(numeric)('9')
     PsiElement(]])(']]')
   PsiElement(nl)('\n')
-  THE_R_SUBSCRIPTION_EXPRESSION
-    THE_R_MEMBER_EXPRESSION
-      THE_R_REFERENCE_EXPRESSION
+  R_SUBSCRIPTION_EXPRESSION
+    R_MEMBER_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('D')
       PsiElement($)('$')
       PsiElement(identifier)('names')
     PsiElement([)('[')
-    THE_R_CALL_EXPRESSION
-      THE_R_REFERENCE_EXPRESSION
+    R_CALL_EXPRESSION
+      R_REFERENCE_EXPRESSION
         PsiElement(identifier)('length')
-      THE_R_ARGUMENT_LIST
+      R_ARGUMENT_LIST
         PsiElement(()('(')
-        THE_R_MEMBER_EXPRESSION
-          THE_R_REFERENCE_EXPRESSION
+        R_MEMBER_EXPRESSION
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('D')
           PsiElement($)('$')
           PsiElement(identifier)('names')

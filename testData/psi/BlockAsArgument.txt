@@ -1,66 +1,66 @@
 RFile:BlockAsArgument.r
-  THE_R_CALL_EXPRESSION
-    THE_R_REFERENCE_EXPRESSION
+  R_CALL_EXPRESSION
+    R_REFERENCE_EXPRESSION
       PsiElement(identifier)('system.time')
-    THE_R_ARGUMENT_LIST
+    R_ARGUMENT_LIST
       PsiElement(()('(')
-      THE_R_BLOCK_EXPRESSION
+      R_BLOCK_EXPRESSION
         PsiElement({)('{')
         PsiElement(nl)('\n')
         PsiWhiteSpace('  ')
-        THE_R_ASSIGNMENT_STATEMENT
-          THE_R_REFERENCE_EXPRESSION
+        R_ASSIGNMENT_STATEMENT
+          R_REFERENCE_EXPRESSION
             PsiElement(identifier)('B')
           PsiWhiteSpace(' ')
-          THE_R_OPERATOR
+          R_OPERATOR
             PsiElement(=)('=')
           PsiWhiteSpace(' ')
-          THE_R_CALL_EXPRESSION
-            THE_R_REFERENCE_EXPRESSION
+          R_CALL_EXPRESSION
+            R_REFERENCE_EXPRESSION
               PsiElement(identifier)('data.frame')
-            THE_R_ARGUMENT_LIST
+            R_ARGUMENT_LIST
               PsiElement(()('(')
-              THE_R_ASSIGNMENT_STATEMENT
-                THE_R_REFERENCE_EXPRESSION
+              R_ASSIGNMENT_STATEMENT
+                R_REFERENCE_EXPRESSION
                   PsiElement(identifier)('x1')
-                THE_R_OPERATOR
+                R_OPERATOR
                   PsiElement(=)('=')
-                THE_R_CALL_EXPRESSION
-                  THE_R_REFERENCE_EXPRESSION
+                R_CALL_EXPRESSION
+                  R_REFERENCE_EXPRESSION
                     PsiElement(identifier)('runif')
-                  THE_R_ARGUMENT_LIST
+                  R_ARGUMENT_LIST
                     PsiElement(()('(')
-                    THE_R_NUMERIC_LITERAL_EXPRESSION
+                    R_NUMERIC_LITERAL_EXPRESSION
                       PsiElement(numeric)('100000')
                     PsiElement())(')')
               PsiElement(,)(',')
               PsiWhiteSpace(' ')
-              THE_R_ASSIGNMENT_STATEMENT
-                THE_R_REFERENCE_EXPRESSION
+              R_ASSIGNMENT_STATEMENT
+                R_REFERENCE_EXPRESSION
                   PsiElement(identifier)('x2')
-                THE_R_OPERATOR
+                R_OPERATOR
                   PsiElement(=)('=')
-                THE_R_CALL_EXPRESSION
-                  THE_R_REFERENCE_EXPRESSION
+                R_CALL_EXPRESSION
+                  R_REFERENCE_EXPRESSION
                     PsiElement(identifier)('runif')
-                  THE_R_ARGUMENT_LIST
+                  R_ARGUMENT_LIST
                     PsiElement(()('(')
-                    THE_R_NUMERIC_LITERAL_EXPRESSION
+                    R_NUMERIC_LITERAL_EXPRESSION
                       PsiElement(numeric)('100000')
                     PsiElement())(')')
               PsiElement(,)(',')
               PsiWhiteSpace(' ')
-              THE_R_ASSIGNMENT_STATEMENT
-                THE_R_REFERENCE_EXPRESSION
+              R_ASSIGNMENT_STATEMENT
+                R_REFERENCE_EXPRESSION
                   PsiElement(identifier)('x3')
-                THE_R_OPERATOR
+                R_OPERATOR
                   PsiElement(=)('=')
-                THE_R_CALL_EXPRESSION
-                  THE_R_REFERENCE_EXPRESSION
+                R_CALL_EXPRESSION
+                  R_REFERENCE_EXPRESSION
                     PsiElement(identifier)('runif')
-                  THE_R_ARGUMENT_LIST
+                  R_ARGUMENT_LIST
                     PsiElement(()('(')
-                    THE_R_NUMERIC_LITERAL_EXPRESSION
+                    R_NUMERIC_LITERAL_EXPRESSION
                       PsiElement(numeric)('100000')
                     PsiElement())(')')
               PsiElement())(')')

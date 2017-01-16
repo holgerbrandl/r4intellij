@@ -40,7 +40,7 @@ public class RUnresolvedReferenceInspection extends RLocalInspection {
     @Override
     public void visitReferenceExpression(@NotNull RReferenceExpression element) {
       PsiElement sibling = element.getNextSibling();
-      if (sibling != null && sibling.getNode().getElementType() == RElementTypes.THE_R_DOUBLECOLON) {
+        if (sibling != null && sibling.getNode().getElementType() == RElementTypes.R_DOUBLECOLON) {
         return;
       }
 
