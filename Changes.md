@@ -20,7 +20,8 @@ The following features were merged in from previous version of r4intellij
 
 
 New Intentions and Inspections
-* incomplete parameter list warning when calling functions
+* incomplete parameter list warning when calling functions (from TheR)
+*
 
 
 

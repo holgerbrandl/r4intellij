@@ -1,15 +1,48 @@
-## External jars
+## Next steps
 
-This creates a .jar or .zip archive file to be used to install and publish your plugin. If the plugin module does not depend on libraries, the .jar archive will be created. Otherwise, a .zip archive will be created that will include all the plugin libraries specified in the project settings. [src](https://confluence.jetbrains.com/display/IDEADEV/Getting+Started+with+Plugin+Development)
+### Port snippet evaluation
+
+### Migrate Folding from r4intllij
+
+http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/folding_builder.html
 
 
-## Useful links
-https://confluence.jetbrains.com/display/IDEADEV/Developing+Custom+Language+Plugins+for+IntelliJ+IDEA
+### Implement proper completion contributor
+
+* for installed and not installed packages
+
+http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
+
+    
+### 1. Go to reference
+*  http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/reference_contributor.html
+* https://intellij-support.jetbrains.com/hc/en-us/community/posts/207250965-PsiReferenceContributor-Find-Usages-and-Go-to-Declaration
 
 
-API
+## potential improvements and differences
 
-## Release Action List
+general
+* auto-detect R and do not force user to specify installation location
+* function help should be context aware
+* no live-templates
+* structure view
+* run does not work for macos
+
+intentions
+* auto-import missing packages (use com.jetbrains.ther.packages.TheRPackagesUtil#getInstalledPackages)
+* auto-install missing packages in require
+
+
+
+## later features
+
+* implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
+
+shortcut to evaluate current expression and proceed
+
+
+Release Action List
+===================
 
 1. Increase version
 2. Snapshot on github
@@ -17,30 +50,10 @@ API
 4. Deploy jar and upload to plugin reposiotry
 
 
+Brainstorming  & Roadmap
+=======
 
-## Competitors
-
-## TinnR
-
-* Allows for Rgui interaction to evaluate line or selection
-    * including list variables or objects, clearing console, even stopping the current process.
-* Code formatter
-* Bracket matching & checking
-* Commenting uncommenting
-
-
-
-## Parser
-
-parser package for R
-* Uses almost identical version of R grammar
-* According to parser docu: created using bison
-* Source file creates c-parser
-
-# Roadmap
-
-* Basic refactorings to match StatET (rename variable, introduce local variable, inline local variable,  extract function, Generate Element Comment)
-
+* Basic refactorings to match StatET ()
 
 * File path completion (learn from bash plugin)
 * Already possible by injecting bash into literal
@@ -59,9 +72,6 @@ parser package for R
 * BnfAnnotator: psi-aware highlightling of syntax elements
 
 
-# Brainstorming
-
-
 ## Options for code snippet evaluation
 
 * R Session has almost complete implementation for console, objects, etc
@@ -75,58 +85,3 @@ parser package for R
 * Or white 
 * Or most promising, we could try to use the windows API via VBScript or C#
 
-
-
-## Intentions
-
-incomplete arument list (via RTypeCheckerInspection)
-
-
-# TheR
-
-https://github.com/ktisha/TheRPlugin
-
-
-cool
-* dot support for name completion
-* skeleton libraries allow to browse local packages
-
-## Skeletons
-
-skeltons are saved under  (see module deps --> libaries)
-/Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/-1481726564
-
-## potential improvements and differe ce
-
-general
-* auto-detect R and do not force user to specify installation location
-* function help should be context aware
-* no live-templates
-* structure view
-* run does not work for macos
-
-intentions
-* auto-import missing packages (use com.jetbrains.ther.packages.TheRPackagesUtil#getInstalledPackages)
-* auto-install missing packages in require
-
-
-## later features
-
-* implement new code fence feature
-
-
-Icons see http://www.jetbrains.org/intellij/sdk/docs/reference_guide/work_with_icons_and_images.html
-
-custom zip deployment
-https://intellij-support.jetbrains.com/hc/en-us/community/posts/206769505-Plugin-with-dependency-on-additional-module-how-to-get-two-jars-in-zip-
-
-mine has file icons, theirs not
-
-
-## todo
-
-shortcut to evaluate current expression and proceed
-
-
-impl fenceprovider
-https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586

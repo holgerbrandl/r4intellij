@@ -8,6 +8,6 @@ import org.jetbrains.annotations.NotNull;
 public class RFileTypeFactory extends FileTypeFactory {
   @Override
   public void createFileTypes(@NonNls @NotNull final FileTypeConsumer consumer) {
-    consumer.consume(RFileType.INSTANCE, "r");
+      consumer.consume(RFileType.INSTANCE, RFileType.INSTANCE.getDefaultExtension());
   }
 }
