@@ -19,128 +19,145 @@ import java.util.Map;
 // TODO [run][test]
 public class RRunConfigurationForm implements RRunConfigurationParams {
 
-  private JPanel myRootPanel;
+    private JPanel myRootPanel;
 
-  private JBLabel myScriptPathLabel;
-  private TextFieldWithBrowseButton myScriptPathField;
+    private JBLabel myScriptPathLabel;
+    private TextFieldWithBrowseButton myScriptPathField;
 
-  private JBLabel myScriptArgsLabel;
-  private RawCommandLineEditor myScriptArgsField;
+    private JBLabel myScriptArgsLabel;
+    private RawCommandLineEditor myScriptArgsField;
 
-  private JBLabel myWorkingDirectoryPathLabel;
-  private TextFieldWithBrowseButton myWorkingDirectoryPathField;
+    private JBLabel myWorkingDirectoryPathLabel;
+    private TextFieldWithBrowseButton myWorkingDirectoryPathField;
 
-  private EnvironmentVariablesComponent myEnvsComponent;
+    private EnvironmentVariablesComponent myEnvsComponent;
 
-  public RRunConfigurationForm(@NotNull final Project project) {
-    setupScriptPathField(project);
-    setupScriptArgsField();
-    setupWorkingDirectoryPathField(project);
 
-    myScriptPathLabel.setAnchor(myEnvsComponent.getLabel());
-    myScriptArgsLabel.setAnchor(myEnvsComponent.getLabel());
-    myWorkingDirectoryPathLabel.setAnchor(myEnvsComponent.getLabel());
-  }
+    public RRunConfigurationForm(@NotNull final Project project) {
+        setupScriptPathField(project);
+        setupScriptArgsField();
+        setupWorkingDirectoryPathField(project);
 
-  @NotNull
-  public JComponent getPanel() {
-    return myRootPanel;
-  }
+        myScriptPathLabel.setAnchor(myEnvsComponent.getLabel());
+        myScriptArgsLabel.setAnchor(myEnvsComponent.getLabel());
+        myWorkingDirectoryPathLabel.setAnchor(myEnvsComponent.getLabel());
+    }
 
-  @NotNull
-  @Override
-  public String getScriptPath() {
-    return getPath(myScriptPathField);
-  }
 
-  @Override
-  public void setScriptPath(@NotNull final String scriptPath) {
-    setPath(myScriptPathField, scriptPath);
-  }
+    @NotNull
+    public JComponent getPanel() {
+        return myRootPanel;
+    }
 
-  @NotNull
-  @Override
-  public String getScriptArgs() {
-    return myScriptArgsField.getText().trim();
-  }
 
-  @Override
-  public void setScriptArgs(@NotNull final String scriptArgs) {
-    myScriptArgsField.setText(scriptArgs);
-  }
+    @NotNull
+    @Override
+    public String getScriptPath() {
+        return getPath(myScriptPathField);
+    }
 
-  @NotNull
-  @Override
-  public String getWorkingDirectoryPath() {
-    return getPath(myWorkingDirectoryPathField);
-  }
 
-  @Override
-  public void setWorkingDirectoryPath(@NotNull final String workingDirectoryPath) {
-    setPath(myWorkingDirectoryPathField, workingDirectoryPath);
-  }
+    @Override
+    public void setScriptPath(@NotNull final String scriptPath) {
+        setPath(myScriptPathField, scriptPath);
+    }
 
-  @Override
-  public boolean isPassParentEnvs() {
-    return myEnvsComponent.isPassParentEnvs();
-  }
 
-  @Override
-  public void setPassParentEnvs(final boolean passParentEnvs) {
-    myEnvsComponent.setPassParentEnvs(passParentEnvs);
-  }
+    @NotNull
+    @Override
+    public String getScriptArgs() {
+        return myScriptArgsField.getText().trim();
+    }
 
-  @NotNull
-  @Override
-  public Map<String, String> getEnvs() {
-    return myEnvsComponent.getEnvs();
-  }
 
-  @Override
-  public void setEnvs(@NotNull final Map<String, String> envs) {
-    myEnvsComponent.setEnvs(envs);
-  }
+    @Override
+    public void setScriptArgs(@NotNull final String scriptArgs) {
+        myScriptArgsField.setText(scriptArgs);
+    }
 
-  private void setupScriptPathField(@NotNull final Project project) {
-    final ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> listener =
-      new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(
-        "Select Script",
-        "",
-        myScriptPathField,
-        project,
-        FileChooserDescriptorFactory.createSingleFileDescriptor(RFileType.INSTANCE),
-        TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT
-      ) {
-        @Override
-        protected void onFileChosen(@NotNull final VirtualFile chosenFile) {
-          super.onFileChosen(chosenFile);
 
-          RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(RRunConfigurationForm.this);
-        }
-      };
+    @NotNull
+    @Override
+    public String getWorkingDirectoryPath() {
+        return getPath(myWorkingDirectoryPathField);
+    }
 
-    myScriptPathField.addActionListener(listener);
-  }
 
-  private void setupScriptArgsField() {
-    myScriptArgsField.setDialogCaption("Script Args");
-  }
+    @Override
+    public void setWorkingDirectoryPath(@NotNull final String workingDirectoryPath) {
+        setPath(myWorkingDirectoryPathField, workingDirectoryPath);
+    }
 
-  private void setupWorkingDirectoryPathField(@NotNull final Project project) {
-    myWorkingDirectoryPathField.addBrowseFolderListener(
-      "Select Working Directory",
-      "",
-      project,
-      FileChooserDescriptorFactory.createSingleFolderDescriptor()
-    );
-  }
 
-  @NotNull
-  private String getPath(@NotNull final TextFieldWithBrowseButton field) {
-    return FileUtil.toSystemIndependentName(field.getText().trim());
-  }
+    @Override
+    public boolean isPassParentEnvs() {
+        return myEnvsComponent.isPassParentEnvs();
+    }
 
-  private void setPath(@NotNull final TextFieldWithBrowseButton field, @NotNull final String path) {
-    field.setText(FileUtil.toSystemDependentName(path));
-  }
+
+    @Override
+    public void setPassParentEnvs(final boolean passParentEnvs) {
+        myEnvsComponent.setPassParentEnvs(passParentEnvs);
+    }
+
+
+    @NotNull
+    @Override
+    public Map<String, String> getEnvs() {
+        return myEnvsComponent.getEnvs();
+    }
+
+
+    @Override
+    public void setEnvs(@NotNull final Map<String, String> envs) {
+        myEnvsComponent.setEnvs(envs);
+    }
+
+
+    private void setupScriptPathField(@NotNull final Project project) {
+        final ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> listener =
+                new ComponentWithBrowseButton.BrowseFolderActionListener<JTextField>(
+                        "Select Script",
+                        "",
+                        myScriptPathField,
+                        project,
+                        FileChooserDescriptorFactory.createSingleFileDescriptor(RFileType.INSTANCE),
+                        TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT
+                ) {
+                    @Override
+                    protected void onFileChosen(@NotNull final VirtualFile chosenFile) {
+                        super.onFileChosen(chosenFile);
+
+                        RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(RRunConfigurationForm.this);
+                    }
+                };
+
+        myScriptPathField.addActionListener(listener);
+    }
+
+
+    private void setupScriptArgsField() {
+        myScriptArgsField.setDialogCaption("Script Args");
+    }
+
+
+    private void setupWorkingDirectoryPathField(@NotNull final Project project) {
+        myWorkingDirectoryPathField.addBrowseFolderListener(
+                "Select Working Directory",
+                "",
+                project,
+                FileChooserDescriptorFactory.createSingleFolderDescriptor()
+        );
+    }
+
+
+    @NotNull
+    private String getPath(@NotNull final TextFieldWithBrowseButton field) {
+        return FileUtil.toSystemIndependentName(field.getText().trim());
+    }
+
+
+    private void setPath(@NotNull final TextFieldWithBrowseButton field, @NotNull final String path) {
+        field.setText(FileUtil.toSystemDependentName(path));
+    }
 }

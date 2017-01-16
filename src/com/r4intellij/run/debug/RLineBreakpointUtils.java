@@ -13,51 +13,55 @@ import org.jetbrains.annotations.NotNull;
 
 final class RLineBreakpointUtils {
 
-  public static boolean canPutAt(@NotNull final Project project, @NotNull final VirtualFile file, final int line) {
-    return isRFile(file) && isStoppable(project, file, line);
-  }
+    public static boolean canPutAt(@NotNull final Project project, @NotNull final VirtualFile file, final int line) {
+        return isRFile(file) && isStoppable(project, file, line);
+    }
 
-  private static boolean isRFile(@NotNull final VirtualFile file) {
-    final String defaultExtension = RFileType.INSTANCE.getDefaultExtension();
-    final String extension = file.getExtension();
 
-    return defaultExtension.equalsIgnoreCase(extension);
-  }
+    private static boolean isRFile(@NotNull final VirtualFile file) {
+        final String defaultExtension = RFileType.INSTANCE.getDefaultExtension();
+        final String extension = file.getExtension();
 
-  private static boolean isStoppable(@NotNull final Project project, @NotNull final VirtualFile file, final int line) {
-    final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+        return defaultExtension.equalsIgnoreCase(extension);
+    }
 
-    if (psiFile == null) return false;
 
-    final Document document = PsiDocumentManager.getInstance(project).getDocument(psiFile);
+    private static boolean isStoppable(@NotNull final Project project, @NotNull final VirtualFile file, final int line) {
+        final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
 
-    if (document == null) return false;
+        if (psiFile == null) return false;
 
-    final boolean[] justResult = new boolean[]{false};
+        final Document document = PsiDocumentManager.getInstance(project).getDocument(psiFile);
 
-    XDebuggerUtil.getInstance().iterateLine(
-      project,
-      document,
-      line,
-      new Processor<PsiElement>() {
-        @Override
-        public boolean process(@NotNull final PsiElement element) {
-          if (isNotStoppable(element) || isNotStoppable(element.getNode().getElementType())) return true;
+        if (document == null) return false;
 
-          justResult[0] = true;
-          return false;
-        }
-      }
-    );
+        final boolean[] justResult = new boolean[]{false};
 
-    return justResult[0];
-  }
+        XDebuggerUtil.getInstance().iterateLine(
+                project,
+                document,
+                line,
+                new Processor<PsiElement>() {
+                    @Override
+                    public boolean process(@NotNull final PsiElement element) {
+                        if (isNotStoppable(element) || isNotStoppable(element.getNode().getElementType())) return true;
 
-  private static boolean isNotStoppable(@NotNull final PsiElement element) {
-    return element instanceof PsiWhiteSpace || element instanceof PsiComment;
-  }
+                        justResult[0] = true;
+                        return false;
+                    }
+                }
+        );
 
-  private static boolean isNotStoppable(@NotNull final IElementType type) {
-      return type == RElementTypes.R_LBRACE || type == RElementTypes.R_RBRACE;
-  }
+        return justResult[0];
+    }
+
+
+    private static boolean isNotStoppable(@NotNull final PsiElement element) {
+        return element instanceof PsiWhiteSpace || element instanceof PsiComment;
+    }
+
+
+    private static boolean isNotStoppable(@NotNull final IElementType type) {
+        return type == RElementTypes.R_LBRACE || type == RElementTypes.R_RBRACE;
+    }
 }

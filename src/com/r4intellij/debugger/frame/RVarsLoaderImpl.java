@@ -25,130 +25,135 @@ import static com.r4intellij.debugger.executor.RExecutorUtils.execute;
 // TODO [dbg][upd_test]
 class RVarsLoaderImpl implements RVarsLoader {
 
-  @NotNull
-  private final RExecutor myExecutor;
+    @NotNull
+    private final RExecutor myExecutor;
 
-  @NotNull
-  private final ROutputReceiver myReceiver;
+    @NotNull
+    private final ROutputReceiver myReceiver;
 
-  @NotNull
-  private final RValueModifier myModifier;
+    @NotNull
+    private final RValueModifier myModifier;
 
-  private final int myFrameNumber;
+    private final int myFrameNumber;
 
-  public RVarsLoaderImpl(@NotNull final RExecutor executor,
-                         @NotNull final ROutputReceiver receiver,
-                         @NotNull final RValueModifier modifier,
-                         final int frameNumber) {
-    myExecutor = executor;
-    myReceiver = receiver;
-    myModifier = modifier;
-    myFrameNumber = frameNumber;
-  }
 
-  @NotNull
-  @Override
-  public List<RVar> load() throws RDebuggerException {
-    final String text = execute(
-      myExecutor,
-      lsCommand(myFrameNumber),
-      RESPONSE,
-      myReceiver
-    );
-
-    final List<RVar> vars = new ArrayList<RVar>();
-
-    for (final String variableName : calculateVariableNames(text)) {
-      final RVar var = loadVar(variableName);
-
-      if (var != null) {
-        vars.add(var);
-      }
+    public RVarsLoaderImpl(@NotNull final RExecutor executor,
+                           @NotNull final ROutputReceiver receiver,
+                           @NotNull final RValueModifier modifier,
+                           final int frameNumber) {
+        myExecutor = executor;
+        myReceiver = receiver;
+        myModifier = modifier;
+        myFrameNumber = frameNumber;
     }
 
-    return vars;
-  }
 
-  @NotNull
-  private List<String> calculateVariableNames(@NotNull final String text) {
-    final List<String> result = new ArrayList<String>();
+    @NotNull
+    @Override
+    public List<RVar> load() throws RDebuggerException {
+        final String text = execute(
+                myExecutor,
+                lsCommand(myFrameNumber),
+                RESPONSE,
+                myReceiver
+        );
 
-    for (final String line : StringUtil.splitByLines(text)) {
-      for (final String token : StringUtil.tokenize(new StringTokenizer(line))) {
-        final String var = getVariableName(token);
+        final List<RVar> vars = new ArrayList<RVar>();
 
-        if (var != null) {
-          result.add(var);
+        for (final String variableName : calculateVariableNames(text)) {
+            final RVar var = loadVar(variableName);
+
+            if (var != null) {
+                vars.add(var);
+            }
         }
-      }
+
+        return vars;
     }
 
-    return result;
-  }
 
-  @Nullable
-  private RVar loadVar(@NotNull final String var) throws RDebuggerException {
-    final String type = execute(
-      myExecutor,
-      typeOfCommand(expressionOnFrameCommand(myFrameNumber, var)),
-      RESPONSE,
-      myReceiver
-    );
+    @NotNull
+    private List<String> calculateVariableNames(@NotNull final String text) {
+        final List<String> result = new ArrayList<String>();
 
-    if (type.equals(FUNCTION_TYPE) && RDebuggerUtils.isServiceName(var)) {
-      return null;
+        for (final String line : StringUtil.splitByLines(text)) {
+            for (final String token : StringUtil.tokenize(new StringTokenizer(line))) {
+                final String var = getVariableName(token);
+
+                if (var != null) {
+                    result.add(var);
+                }
+            }
+        }
+
+        return result;
     }
 
-    return new RVar(
-      var,
-      type,
-      loadValue(var, type),
-      myModifier
-    );
-  }
 
-  @Nullable
-  private String getVariableName(@NotNull final String token) {
-    final boolean isNotEmptyQuotedString = StringUtil.isQuotedString(token) && token.length() > 2;
-
-    if (isNotEmptyQuotedString) {
-      return token.substring(1, token.length() - 1);
-    }
-    else {
-      return null;
-    }
-  }
-
-  @NotNull
-  private String loadValue(@NotNull final String var,
-                           @NotNull final String type) throws RDebuggerException {
-    final RExecutionResult result = execute(myExecutor, calculateValueCommand(myFrameNumber, var), myReceiver);
-
-    switch (result.getType()) {
-      case RESPONSE:
-        return calculateRepresentation(
-          type,
-          result.getOutput()
+    @Nullable
+    private RVar loadVar(@NotNull final String var) throws RDebuggerException {
+        final String type = execute(
+                myExecutor,
+                typeOfCommand(expressionOnFrameCommand(myFrameNumber, var)),
+                RESPONSE,
+                myReceiver
         );
-      case DEBUG_AT:
-        return calculateRepresentation(
-          type,
-          execute(
-            myExecutor,
-            EXECUTE_AND_STEP_COMMAND,
-            RESPONSE,
-            myReceiver
-          )
-        );
-      default:
-        throw new RUnexpectedExecutionResultTypeException(
-          "Actual type is not the same as expected: " +
-          "[" +
-          "actual: " + result.getType() + ", " +
-          "expected: " +
-          "[" + RESPONSE + ", " + DEBUG_AT + "]" +
-          "]"
+
+        if (type.equals(FUNCTION_TYPE) && RDebuggerUtils.isServiceName(var)) {
+            return null;
+        }
+
+        return new RVar(
+                var,
+                type,
+                loadValue(var, type),
+                myModifier
         );
     }
-  }
+
+
+    @Nullable
+    private String getVariableName(@NotNull final String token) {
+        final boolean isNotEmptyQuotedString = StringUtil.isQuotedString(token) && token.length() > 2;
+
+        if (isNotEmptyQuotedString) {
+            return token.substring(1, token.length() - 1);
+        } else {
+            return null;
+        }
+    }
+
+
+    @NotNull
+    private String loadValue(@NotNull final String var,
+                             @NotNull final String type) throws RDebuggerException {
+        final RExecutionResult result = execute(myExecutor, calculateValueCommand(myFrameNumber, var), myReceiver);
+
+        switch (result.getType()) {
+            case RESPONSE:
+                return calculateRepresentation(
+                        type,
+                        result.getOutput()
+                );
+            case DEBUG_AT:
+                return calculateRepresentation(
+                        type,
+                        execute(
+                                myExecutor,
+                                EXECUTE_AND_STEP_COMMAND,
+                                RESPONSE,
+                                myReceiver
+                        )
+                );
+            default:
+                throw new RUnexpectedExecutionResultTypeException(
+                        "Actual type is not the same as expected: " +
+                                "[" +
+                                "actual: " + result.getType() + ", " +
+                                "expected: " +
+                                "[" + RESPONSE + ", " + DEBUG_AT + "]" +
+                                "]"
+                );
+        }
+    }
 }

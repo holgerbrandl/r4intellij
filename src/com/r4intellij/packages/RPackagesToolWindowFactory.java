@@ -15,17 +15,18 @@ import javax.swing.*;
  */
 public class RPackagesToolWindowFactory implements ToolWindowFactory {
 
-  public RPackagesToolWindowFactory() {
-  }
+    public RPackagesToolWindowFactory() {
+    }
 
-  @Override
-  public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
-    final PackagesNotificationPanel notificationPanel = new PackagesNotificationPanel();
-    final RInstalledPackagesPanel packagesPanel = new RInstalledPackagesPanel(project, notificationPanel);
-    packagesPanel.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
-    packagesPanel.updatePackages(new RPackageManagementService(project));
-    final ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-    final Content content = contentFactory.createContent(packagesPanel, "", false);
-    toolWindow.getContentManager().addContent(content);
-  }
+
+    @Override
+    public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
+        final PackagesNotificationPanel notificationPanel = new PackagesNotificationPanel();
+        final RInstalledPackagesPanel packagesPanel = new RInstalledPackagesPanel(project, notificationPanel);
+        packagesPanel.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
+        packagesPanel.updatePackages(new RPackageManagementService(project));
+        final ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
+        final Content content = contentFactory.createContent(packagesPanel, "", false);
+        toolWindow.getContentManager().addContent(content);
+    }
 }

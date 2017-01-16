@@ -17,54 +17,55 @@ import static com.r4intellij.debugger.executor.RExecutorUtils.execute;
 
 public class RFunctionDebuggerFactoryImpl implements RFunctionDebuggerFactory {
 
-  @NotNull
-  @Override
-  public RFunctionDebugger getFunctionDebugger(@NotNull final RExecutor executor,
-                                               @NotNull final RFunctionDebuggerHandler debuggerHandler,
-                                               @NotNull final ROutputReceiver outputReceiver)
-    throws RDebuggerException {
-    execute(executor, EXECUTE_AND_STEP_COMMAND, RExecutionResultType.DEBUG_AT, outputReceiver);
+    @NotNull
+    @Override
+    public RFunctionDebugger getFunctionDebugger(@NotNull final RExecutor executor,
+                                                 @NotNull final RFunctionDebuggerHandler debuggerHandler,
+                                                 @NotNull final ROutputReceiver outputReceiver)
+            throws RDebuggerException {
+        execute(executor, EXECUTE_AND_STEP_COMMAND, RExecutionResultType.DEBUG_AT, outputReceiver);
 
-    final RExecutionResult startTraceResult = execute(executor, EXECUTE_AND_STEP_COMMAND, outputReceiver);
+        final RExecutionResult startTraceResult = execute(executor, EXECUTE_AND_STEP_COMMAND, outputReceiver);
 
-    switch (startTraceResult.getType()) {
-      case START_TRACE_BRACE:
-        return new RBraceFunctionDebugger(
-          executor,
-          this,
-          debuggerHandler,
-          outputReceiver,
-          extractFunctionName(startTraceResult.getOutput())
-        );
+        switch (startTraceResult.getType()) {
+            case START_TRACE_BRACE:
+                return new RBraceFunctionDebugger(
+                        executor,
+                        this,
+                        debuggerHandler,
+                        outputReceiver,
+                        extractFunctionName(startTraceResult.getOutput())
+                );
 
-      case START_TRACE_UNBRACE:
-        return new RUnbraceFunctionDebugger(
-          executor,
-          this,
-          debuggerHandler,
-          outputReceiver,
-          extractFunctionName(startTraceResult.getOutput())
-        );
-      default:
-        throw new RUnexpectedExecutionResultTypeException(
-          "Actual type is not the same as expected: " +
-          "[" +
-          "actual: " + startTraceResult.getType() + ", " +
-          "expected: " +
-          "[" + START_TRACE_BRACE + ", " + START_TRACE_UNBRACE + "]" +
-          "]"
+            case START_TRACE_UNBRACE:
+                return new RUnbraceFunctionDebugger(
+                        executor,
+                        this,
+                        debuggerHandler,
+                        outputReceiver,
+                        extractFunctionName(startTraceResult.getOutput())
+                );
+            default:
+                throw new RUnexpectedExecutionResultTypeException(
+                        "Actual type is not the same as expected: " +
+                                "[" +
+                                "actual: " + startTraceResult.getType() + ", " +
+                                "expected: " +
+                                "[" + START_TRACE_BRACE + ", " + START_TRACE_UNBRACE + "]" +
+                                "]"
+                );
+        }
+    }
+
+
+    @NotNull
+    private static String extractFunctionName(@NotNull final String startTraceText) {
+        final int secondLineBegin = findNextLineBegin(startTraceText, 0);
+        final int secondLineEnd = findCurrentLineEnd(startTraceText, secondLineBegin);
+
+        return startTraceText.substring(
+                secondLineBegin + "[1] \"".length(),
+                secondLineEnd - "\"".length()
         );
     }
-  }
-
-  @NotNull
-  private static String extractFunctionName(@NotNull final String startTraceText) {
-    final int secondLineBegin = findNextLineBegin(startTraceText, 0);
-    final int secondLineEnd = findCurrentLineEnd(startTraceText, secondLineBegin);
-
-    return startTraceText.substring(
-      secondLineBegin + "[1] \"".length(),
-      secondLineEnd - "\"".length()
-    );
-  }
 }

@@ -7,35 +7,48 @@ import java.io.FileNotFoundException;
 
 public interface RGraphicsState {
 
-  boolean hasNext();
+    boolean hasNext();
 
-  boolean hasPrevious();
 
-  boolean hasCurrent();
+    boolean hasPrevious();
 
-  void next();
 
-  void previous();
+    boolean hasCurrent();
 
-  @NotNull
-  VirtualFile current() throws FileNotFoundException;
 
-  int size();
+    void next();
 
-  void refresh(final boolean asynchronous);
 
-  void reset();
+    void previous();
 
-  void addListener(@NotNull final Listener listener);
 
-  void removeListener(@NotNull final Listener listener);
+    @NotNull
+    VirtualFile current() throws FileNotFoundException;
 
-  interface Listener {
 
-    void onAdd();
+    int size();
 
-    void onCurrentChange();
 
-    void onReset();
-  }
+    void refresh(final boolean asynchronous);
+
+
+    void reset();
+
+
+    void addListener(@NotNull final Listener listener);
+
+
+    void removeListener(@NotNull final Listener listener);
+
+
+    interface Listener {
+
+        void onAdd();
+
+
+        void onCurrentChange();
+
+
+        void onReset();
+    }
 }

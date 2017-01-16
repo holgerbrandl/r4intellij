@@ -4,14 +4,17 @@ import org.jetbrains.annotations.NotNull;
 
 public interface RDebuggerEvaluator {
 
-  void evaluate(@NotNull final String expression, @NotNull final Receiver receiver);
+    void evaluate(@NotNull final String expression, @NotNull final Receiver receiver);
 
-  interface Receiver {
 
-    void receiveResult(@NotNull final String result);
+    interface Receiver {
 
-    void receiveError(@NotNull final Exception e);
+        void receiveResult(@NotNull final String result);
 
-    void receiveError(@NotNull final String error);
-  }
+
+        void receiveError(@NotNull final Exception e);
+
+
+        void receiveError(@NotNull final String error);
+    }
 }

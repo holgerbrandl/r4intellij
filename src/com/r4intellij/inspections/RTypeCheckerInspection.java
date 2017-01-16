@@ -20,92 +20,102 @@ import java.util.List;
 import java.util.Map;
 
 public class RTypeCheckerInspection extends RLocalInspection {
-  @Nls
-  @NotNull
-  @Override
-  public String getDisplayName() {
-    return "R Type Checker";
-  }
-
-  @NotNull
-  @Override
-  public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session) {
-    return new Visitor(holder);
-  }
-
-  private class Visitor extends RVisitor {
-    private final ProblemsHolder myProblemHolder;
-
-    public Visitor(ProblemsHolder holder) {
-      myProblemHolder = holder;
-    }
-
+    @Nls
+    @NotNull
     @Override
-    public void visitCallExpression(@NotNull RCallExpression callExpression) {
-      PsiReference referenceToFunction = callExpression.getExpression().getReference();
-      List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
-      checkFunctionCall(callExpression, referenceToFunction, arguments);
-      visitExpression(callExpression);
-      RTypeProvider.getType(callExpression);
+    public String getDisplayName() {
+        return "R Type Checker";
     }
 
+
+    @NotNull
     @Override
-    public void visitOperatorExpression(@NotNull ROperatorExpression operatorExpression) {
-      ROperator operator = PsiTreeUtil.getChildOfType(operatorExpression, ROperator.class);
-      if (operator == null) {
-        return;
-      }
-      PsiReference referenceToFunction = operator.getReference();
-      List<RExpression> arguments = PsiTreeUtil.getChildrenOfTypeAsList(operatorExpression, RExpression.class);
-      checkFunctionCall(operatorExpression, referenceToFunction, arguments);
-      RTypeProvider.getType(operatorExpression);
+    public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session) {
+        return new Visitor(holder);
     }
 
-    @Override
-    public void visitAtExpression(@NotNull RAtExpression o) {
-      RTypeProvider.getType(o);
-    }
 
-    @Override
-    public void visitMemberExpression(@NotNull RMemberExpression o) {
-      RTypeProvider.getType(o);
-    }
+    private class Visitor extends RVisitor {
+        private final ProblemsHolder myProblemHolder;
 
-    @Override
-    public void visitSubscriptionExpression(@NotNull RSubscriptionExpression o) {
-      RTypeProvider.getType(o);
-    }
 
-    private void checkFunctionCall(PsiElement callSite, PsiReference referenceToFunction, List<RExpression> arguments) {
-      if (referenceToFunction != null) {
-        PsiElement assignmentStatement = referenceToFunction.resolve();
-        if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
-          RAssignmentStatement assignment = (RAssignmentStatement)assignmentStatement;
-          RPsiElement assignedValue = assignment.getAssignedValue();
-          if (assignedValue != null && assignedValue instanceof RFunctionExpression) {
-            RFunctionExpression function = (RFunctionExpression)assignedValue;
-            try {
-              RTypeChecker.checkTypes(arguments, function);
-            }
-            catch (MatchingException e) {
-              registerProblem(myProblemHolder, callSite, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-            }
-          }
+        public Visitor(ProblemsHolder holder) {
+            myProblemHolder = holder;
         }
-      }
-    }
-  }
 
-  @Override
-  public boolean isEnabledByDefault() {
-    return false;
-  }
 
-  @Override
-  public void inspectionFinished(@NotNull LocalInspectionToolSession session, @NotNull ProblemsHolder problemsHolder) {
-    Map<RPsiElement, RErrorType> errors = RTypeContext.getExpressionsWithError(problemsHolder.getProject());
-    for (Map.Entry<RPsiElement, RErrorType> error : errors.entrySet()) {
-      registerProblem(problemsHolder, error.getKey(), error.getValue().getErrorMessage(), ProblemHighlightType.GENERIC_ERROR);
+        @Override
+        public void visitCallExpression(@NotNull RCallExpression callExpression) {
+            PsiReference referenceToFunction = callExpression.getExpression().getReference();
+            List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
+            checkFunctionCall(callExpression, referenceToFunction, arguments);
+            visitExpression(callExpression);
+            RTypeProvider.getType(callExpression);
+        }
+
+
+        @Override
+        public void visitOperatorExpression(@NotNull ROperatorExpression operatorExpression) {
+            ROperator operator = PsiTreeUtil.getChildOfType(operatorExpression, ROperator.class);
+            if (operator == null) {
+                return;
+            }
+            PsiReference referenceToFunction = operator.getReference();
+            List<RExpression> arguments = PsiTreeUtil.getChildrenOfTypeAsList(operatorExpression, RExpression.class);
+            checkFunctionCall(operatorExpression, referenceToFunction, arguments);
+            RTypeProvider.getType(operatorExpression);
+        }
+
+
+        @Override
+        public void visitAtExpression(@NotNull RAtExpression o) {
+            RTypeProvider.getType(o);
+        }
+
+
+        @Override
+        public void visitMemberExpression(@NotNull RMemberExpression o) {
+            RTypeProvider.getType(o);
+        }
+
+
+        @Override
+        public void visitSubscriptionExpression(@NotNull RSubscriptionExpression o) {
+            RTypeProvider.getType(o);
+        }
+
+
+        private void checkFunctionCall(PsiElement callSite, PsiReference referenceToFunction, List<RExpression> arguments) {
+            if (referenceToFunction != null) {
+                PsiElement assignmentStatement = referenceToFunction.resolve();
+                if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
+                    RAssignmentStatement assignment = (RAssignmentStatement) assignmentStatement;
+                    RPsiElement assignedValue = assignment.getAssignedValue();
+                    if (assignedValue != null && assignedValue instanceof RFunctionExpression) {
+                        RFunctionExpression function = (RFunctionExpression) assignedValue;
+                        try {
+                            RTypeChecker.checkTypes(arguments, function);
+                        } catch (MatchingException e) {
+                            registerProblem(myProblemHolder, callSite, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
+
+
+    @Override
+    public boolean isEnabledByDefault() {
+        return false;
+    }
+
+
+    @Override
+    public void inspectionFinished(@NotNull LocalInspectionToolSession session, @NotNull ProblemsHolder problemsHolder) {
+        Map<RPsiElement, RErrorType> errors = RTypeContext.getExpressionsWithError(problemsHolder.getProject());
+        for (Map.Entry<RPsiElement, RErrorType> error : errors.entrySet()) {
+            registerProblem(problemsHolder, error.getKey(), error.getValue().getErrorMessage(), ProblemHighlightType.GENERIC_ERROR);
+        }
+    }
 }

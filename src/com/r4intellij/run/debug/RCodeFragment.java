@@ -14,33 +14,37 @@ import org.jetbrains.annotations.NotNull;
 
 class RCodeFragment extends RFileImpl {
 
-  public RCodeFragment(@NotNull final Project project, @NotNull final String name, @NotNull final String text) {
-    super(createLightVirtualFileViewProvider(project, name, text));
+    public RCodeFragment(@NotNull final Project project, @NotNull final String name, @NotNull final String text) {
+        super(createLightVirtualFileViewProvider(project, name, text));
 
-    ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
-  }
+        ((SingleRootFileViewProvider) getViewProvider()).forceCachedPsi(this);
+    }
 
-  @NotNull
-  private static FileViewProvider createLightVirtualFileViewProvider(@NotNull final Project project,
-                                                                     @NotNull final String name,
-                                                                     @NotNull final String text) {
-    return getFileManager(project).createFileViewProvider(
-      createLightVirtualFile(name, text), true
-    );
-  }
 
-  @NotNull
-  private static FileManager getFileManager(@NotNull final Project project) {
-    return ((PsiManagerEx)PsiManager.getInstance(project)).getFileManager();
-  }
+    @NotNull
+    private static FileViewProvider createLightVirtualFileViewProvider(@NotNull final Project project,
+                                                                       @NotNull final String name,
+                                                                       @NotNull final String text) {
+        return getFileManager(project).createFileViewProvider(
+                createLightVirtualFile(name, text), true
+        );
+    }
 
-  @NotNull
-  private static LightVirtualFile createLightVirtualFile(@NotNull final String name, @NotNull final String text) {
-    return new LightVirtualFile(name, getFileType(name), text);
-  }
 
-  @NotNull
-  private static FileType getFileType(@NotNull final String name) {
-    return FileTypeManager.getInstance().getFileTypeByFileName(name);
-  }
+    @NotNull
+    private static FileManager getFileManager(@NotNull final Project project) {
+        return ((PsiManagerEx) PsiManager.getInstance(project)).getFileManager();
+    }
+
+
+    @NotNull
+    private static LightVirtualFile createLightVirtualFile(@NotNull final String name, @NotNull final String text) {
+        return new LightVirtualFile(name, getFileType(name), text);
+    }
+
+
+    @NotNull
+    private static FileType getFileType(@NotNull final String name) {
+        return FileTypeManager.getInstance().getFileTypeByFileName(name);
+    }
 }

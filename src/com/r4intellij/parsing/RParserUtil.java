@@ -8,9 +8,9 @@ import com.intellij.lang.parser.GeneratedParserUtilBase;
  * @since 23/12/14.
  */
 public class RParserUtil extends GeneratedParserUtilBase {
-  public static boolean parseEmptyExpression(PsiBuilder builder, int level) {
-    PsiBuilder.Marker emptyMarker = builder.mark();
-      emptyMarker.done(RElementTypes.R_EMPTY_EXPRESSION);
-    return true;
-  }
+    public static boolean parseEmptyExpression(PsiBuilder builder, int level) {
+        PsiBuilder.Marker emptyMarker = builder.mark();
+        emptyMarker.done(RElementTypes.R_EMPTY_EXPRESSION);
+        return true;
+    }
 }

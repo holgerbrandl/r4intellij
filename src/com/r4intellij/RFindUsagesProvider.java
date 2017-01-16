@@ -14,40 +14,45 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RFindUsagesProvider implements FindUsagesProvider {
-  @Nullable
-  @Override
-  public WordsScanner getWordsScanner() {
-      return new DefaultWordsScanner(new RLexer(), TokenSet.create(RElementTypes.R_IDENTIFIER),
-                                   TokenSet.create(RParserDefinition.END_OF_LINE_COMMENT),
-              TokenSet.create(RElementTypes.R_STRING_LITERAL_EXPRESSION));
-  }
+    @Nullable
+    @Override
+    public WordsScanner getWordsScanner() {
+        return new DefaultWordsScanner(new RLexer(), TokenSet.create(RElementTypes.R_IDENTIFIER),
+                TokenSet.create(RParserDefinition.END_OF_LINE_COMMENT),
+                TokenSet.create(RElementTypes.R_STRING_LITERAL_EXPRESSION));
+    }
 
-  @Override
-  public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
-    return psiElement instanceof PsiNamedElement || psiElement instanceof RReferenceExpression;
-  }
 
-  @Nullable
-  @Override
-  public String getHelpId(@NotNull PsiElement psiElement) {
-    return null;
-  }
+    @Override
+    public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
+        return psiElement instanceof PsiNamedElement || psiElement instanceof RReferenceExpression;
+    }
 
-  @NotNull
-  @Override
-  public String getType(@NotNull PsiElement element) {
-    return "RElement";
-  }
 
-  @NotNull
-  @Override
-  public String getDescriptiveName(@NotNull PsiElement element) {
-    return "THeRElement";
-  }
+    @Nullable
+    @Override
+    public String getHelpId(@NotNull PsiElement psiElement) {
+        return null;
+    }
 
-  @NotNull
-  @Override
-  public String getNodeText(@NotNull PsiElement element, boolean useFullName) {
-    return element.getText();
-  }
+
+    @NotNull
+    @Override
+    public String getType(@NotNull PsiElement element) {
+        return "RElement";
+    }
+
+
+    @NotNull
+    @Override
+    public String getDescriptiveName(@NotNull PsiElement element) {
+        return "THeRElement";
+    }
+
+
+    @NotNull
+    @Override
+    public String getNodeText(@NotNull PsiElement element, boolean useFullName) {
+        return element.getText();
+    }
 }

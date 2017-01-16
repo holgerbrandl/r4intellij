@@ -6,43 +6,50 @@ import com.sun.javafx.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 @State(
-  name = "RInterpreterService",
-  storages = {
-    @Storage(
-      file = StoragePathMacros.APP_CONFIG + "/rInterpreterSettings.xml"
-    )}
+        name = "RInterpreterService",
+        storages = {
+                @Storage(
+                        file = StoragePathMacros.APP_CONFIG + "/rInterpreterSettings.xml"
+                )}
 )
 public class RInterpreterService implements PersistentStateComponent<RInterpreterService> {
-  public String INTERPRETER_PATH = Utils.isMac() || Utils.isUnix() ? "/usr/local/bin/R" : "";
-  public String INTERPRETER_SOURCES_PATH = "";
+    public String INTERPRETER_PATH = Utils.isMac() || Utils.isUnix() ? "/usr/local/bin/R" : "";
+    public String INTERPRETER_SOURCES_PATH = "";
 
-  public static RInterpreterService getInstance() {
-    return ServiceManager.getService(RInterpreterService.class);
-  }
 
-  @Override
-  public RInterpreterService getState() {
-    return this;
-  }
+    public static RInterpreterService getInstance() {
+        return ServiceManager.getService(RInterpreterService.class);
+    }
 
-  @Override
-  public void loadState(RInterpreterService state) {
-    XmlSerializerUtil.copyBean(state, this);
-  }
 
-  public String getInterpreterPath() {
-    return INTERPRETER_PATH;
-  }
+    @Override
+    public RInterpreterService getState() {
+        return this;
+    }
 
-  public void setInterpreterPath(@NotNull final String interpreterPath) {
-    INTERPRETER_PATH = interpreterPath;
-  }
 
-  public String getSourcesPath() {
-    return INTERPRETER_SOURCES_PATH;
-  }
+    @Override
+    public void loadState(RInterpreterService state) {
+        XmlSerializerUtil.copyBean(state, this);
+    }
 
-  public void setSourcesPath(@NotNull final String interpreterSourcesPath) {
-    INTERPRETER_SOURCES_PATH = interpreterSourcesPath;
-  }
+
+    public String getInterpreterPath() {
+        return INTERPRETER_PATH;
+    }
+
+
+    public void setInterpreterPath(@NotNull final String interpreterPath) {
+        INTERPRETER_PATH = interpreterPath;
+    }
+
+
+    public String getSourcesPath() {
+        return INTERPRETER_SOURCES_PATH;
+    }
+
+
+    public void setSourcesPath(@NotNull final String interpreterSourcesPath) {
+        INTERPRETER_SOURCES_PATH = interpreterSourcesPath;
+    }
 }

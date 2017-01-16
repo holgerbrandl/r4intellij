@@ -28,12 +28,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class RPsiUtils {
   private static final Logger LOG = Logger.getInstance(RPsiUtils.class);
   public static final int MINUTE = 60 * 1000;
+
 
   public static List<RExpression> getParametersExpressions(List<RParameter> parameters) {
     List<RExpression> parametersExpressions = new ArrayList<RExpression>();
@@ -42,6 +42,7 @@ public class RPsiUtils {
     }
     return parametersExpressions;
   }
+
 
   @Nullable
   public static RAssignmentStatement getAssignmentStatement(@NotNull final RParameter parameter) {
@@ -53,14 +54,16 @@ public class RPsiUtils {
     if (assignmentStatement == null || !(assignmentStatement instanceof RAssignmentStatement)) {
       return null;
     }
-    return (RAssignmentStatement)assignmentStatement;
+    return (RAssignmentStatement) assignmentStatement;
   }
+
 
   @Nullable
   public static RFunctionExpression getFunction(RParameter parameter) {
     //TODO: check some conditions when we should stop
     return PsiTreeUtil.getParentOfType(parameter, RFunctionExpression.class);
   }
+
 
   public static boolean isNamedArgument(RReferenceExpression element) {
     PsiElement parent = element.getParent();
@@ -71,6 +74,7 @@ public class RPsiUtils {
     return argumentList != null && argumentList instanceof RArgumentList;
   }
 
+
   @Nullable
   public static RFunctionExpression getFunction(@NotNull final RCallExpression callExpression) {
     RExpression expression = callExpression.getExpression();
@@ -79,6 +83,7 @@ public class RPsiUtils {
     }
     return null;
   }
+
 
   @Nullable
   private static RFunctionExpression getFunctionFromReference(PsiReference reference) {
@@ -96,6 +101,7 @@ public class RPsiUtils {
     return PsiTreeUtil.getChildOfType(assignmentStatement, RFunctionExpression.class);
   }
 
+
   @Nullable
   public static RFunctionExpression getFunction(@NotNull final ROperatorExpression binaryExpression) {
     ROperator operator = PsiTreeUtil.getChildOfType(binaryExpression, ROperator.class);
@@ -104,6 +110,7 @@ public class RPsiUtils {
     }
     return null;
   }
+
 
   public static boolean containsTripleDot(List<RParameter> formalArguments) {
     for (RParameter parameter : formalArguments) {
@@ -114,13 +121,15 @@ public class RPsiUtils {
     return false;
   }
 
+
   public static RAssignmentStatement getAssignmentStatement(@NotNull final RFunctionExpression expression) {
     PsiElement assignmentStatement = expression.getParent();
     if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
-      return (RAssignmentStatement)assignmentStatement;
+      return (RAssignmentStatement) assignmentStatement;
     }
     return null;
   }
+
 
   /**
    * If packageName parameter equals null we do not load package
@@ -147,12 +156,12 @@ public class RPsiUtils {
         return null;
       }
       return stdout;
-    }
-    catch (ExecutionException e) {
+    } catch (ExecutionException e) {
       LOG.error(e);
     }
     return null;
   }
+
 
   @NotNull
   public static <T extends RPsiElement> T[] getAllChildrenOfType(@NotNull PsiElement element, @NotNull Class<T> aClass) {
@@ -160,23 +169,24 @@ public class RPsiUtils {
     for (PsiElement child : element.getChildren()) {
       if (aClass.isInstance(child)) {
         //noinspection unchecked
-        result.add((T)child);
-      }
-      else {
+        result.add((T) child);
+      } else {
         ContainerUtil.addAll(result, getAllChildrenOfType(child, aClass));
       }
     }
     return ArrayUtil.toObjectArray(result, aClass);
   }
 
+
   public static boolean isReturn(RCallExpression expression) {
     return expression.getText().startsWith("return");
   }
 
+
   public static RCallExpression findCall(Project project, String functionName, Predicate<RCallExpression> predicate) {
     ProjectAndLibrariesScope scope = new ProjectAndLibrariesScope(project);
     Collection<RAssignmentStatement> possibleDefinitions =
-      RAssignmentNameIndex.find(functionName, project, scope);
+            RAssignmentNameIndex.find(functionName, project, scope);
     RAssignmentStatement functionDefinition = null;
     for (RAssignmentStatement assignment : possibleDefinitions) {
       if (assignment.getAssignedValue() instanceof RFunctionExpression) {
@@ -193,7 +203,7 @@ public class RPsiUtils {
       if (parent == null || !RCallExpression.class.isInstance(parent)) {
         continue;
       }
-      RCallExpression call = (RCallExpression)parent;
+      RCallExpression call = (RCallExpression) parent;
       if (predicate.apply(call)) {
         return call;
       }
@@ -201,29 +211,29 @@ public class RPsiUtils {
     return null;
   }
 
+
   public static RExpression findParameterValue(String param, RCallExpression callExpression) {
     return findParameterValues(callExpression, param).get(param);
   }
+
 
   public static Map<String, RExpression> findParameterValues(RCallExpression callExpression, String... params) {
     RFunctionExpression function = RPsiUtils.getFunction(callExpression);
     final RFunctionType functionType;
     if (function != null) {
       functionType = new RFunctionType(function);
-    }
-    else {
+    } else {
       RType type = RTypeProvider.getType(callExpression.getExpression());
       if (!RFunctionType.class.isInstance(type)) {
         return Collections.emptyMap();
       }
-      functionType = (RFunctionType)type;
+      functionType = (RFunctionType) type;
     }
     Map<RExpression, RParameter> matchedParams = new HashMap<RExpression, RParameter>();
     List<RExpression> matchedByTripleDot = new ArrayList<RExpression>();
     try {
       RTypeChecker.matchArgs(callExpression.getArgumentList().getExpressionList(), matchedParams, matchedByTripleDot, functionType);
-    }
-    catch (MatchingException e) {
+    } catch (MatchingException e) {
       return Collections.emptyMap();
     }
     Map<String, RExpression> result = new HashMap<String, RExpression>();
@@ -231,7 +241,7 @@ public class RPsiUtils {
       String parameterName = entry.getValue().getName();
       RExpression expression = entry.getKey();
       if (expression instanceof RAssignmentStatement) {
-        expression = (RExpression)((RAssignmentStatement)expression).getAssignedValue();
+        expression = (RExpression) ((RAssignmentStatement) expression).getAssignedValue();
       }
       for (String param : params) {
         if (param != null && param.equals(parameterName)) {

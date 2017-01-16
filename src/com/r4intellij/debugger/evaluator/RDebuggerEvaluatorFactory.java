@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 public interface RDebuggerEvaluatorFactory {
 
-  @NotNull
-  RDebuggerEvaluator getEvaluator(@NotNull final RExecutor executor,
-                                  @NotNull final RFunctionDebuggerFactory factory,
-                                  @NotNull final ROutputReceiver receiver,
-                                  @NotNull final RExpressionHandler handler,
-                                  final int frameNumber);
+    @NotNull
+    RDebuggerEvaluator getEvaluator(@NotNull final RExecutor executor,
+                                    @NotNull final RFunctionDebuggerFactory factory,
+                                    @NotNull final ROutputReceiver receiver,
+                                    @NotNull final RExpressionHandler handler,
+                                    final int frameNumber);
 }

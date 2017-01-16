@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface RVarsLoader {
 
-  @NotNull
-  List<RVar> load() throws RDebuggerException;
+    @NotNull
+    List<RVar> load() throws RDebuggerException;
 }

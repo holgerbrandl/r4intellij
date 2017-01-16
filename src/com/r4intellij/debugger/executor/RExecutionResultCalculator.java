@@ -4,8 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 public interface RExecutionResultCalculator {
 
-  boolean isComplete(@NotNull final CharSequence output);
+    boolean isComplete(@NotNull final CharSequence output);
 
-  @NotNull
-  RExecutionResult calculate(@NotNull final CharSequence output, @NotNull final String error);
+
+    @NotNull
+    RExecutionResult calculate(@NotNull final CharSequence output, @NotNull final String error);
 }

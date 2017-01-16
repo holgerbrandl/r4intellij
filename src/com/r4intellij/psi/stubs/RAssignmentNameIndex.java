@@ -11,19 +11,22 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collection;
 
 public class RAssignmentNameIndex extends StringStubIndexExtension<RAssignmentStatement> {
-  public static final StubIndexKey<String, RAssignmentStatement> KEY = StubIndexKey.createIndexKey("R.function.shortName");
+    public static final StubIndexKey<String, RAssignmentStatement> KEY = StubIndexKey.createIndexKey("R.function.shortName");
 
-  @Override
-  @NotNull
-  public StubIndexKey<String, RAssignmentStatement> getKey() {
-    return KEY;
-  }
 
-  public static Collection<RAssignmentStatement> find(String name, Project project, GlobalSearchScope scope) {
-    return StubIndex.getElements(KEY, name, project, scope, RAssignmentStatement.class);
-  }
+    @Override
+    @NotNull
+    public StubIndexKey<String, RAssignmentStatement> getKey() {
+        return KEY;
+    }
 
-  public static Collection<String> allKeys(Project project) {
-    return StubIndex.getInstance().getAllKeys(KEY, project);
-  }
+
+    public static Collection<RAssignmentStatement> find(String name, Project project, GlobalSearchScope scope) {
+        return StubIndex.getElements(KEY, name, project, scope, RAssignmentStatement.class);
+    }
+
+
+    public static Collection<String> allKeys(Project project) {
+        return StubIndex.getInstance().getAllKeys(KEY, project);
+    }
 }

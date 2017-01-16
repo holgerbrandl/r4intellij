@@ -9,6 +9,6 @@ import org.jetbrains.annotations.Nullable;
  * @since 27/01/15.
  */
 public interface RNamedElement extends RPsiElement, PsiNamedElement {
-  @Nullable
-  ASTNode getNameNode();
+    @Nullable
+    ASTNode getNameNode();
 }

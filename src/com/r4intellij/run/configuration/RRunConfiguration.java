@@ -23,172 +23,191 @@ import java.util.Map;
 
 public class RRunConfiguration extends LocatableConfigurationBase implements RRunConfigurationParams {
 
-  @NotNull
-  private static final String SCRIPT_PATH = "SCRIPT_PATH";
+    @NotNull
+    private static final String SCRIPT_PATH = "SCRIPT_PATH";
 
-  @NotNull
-  private static final String SCRIPT_ARGS = "SCRIPT_ARGS";
+    @NotNull
+    private static final String SCRIPT_ARGS = "SCRIPT_ARGS";
 
-  @NotNull
-  private static final String WORKING_DIRECTORY_PATH = "WORKING_DIRECTORY_PATH";
+    @NotNull
+    private static final String WORKING_DIRECTORY_PATH = "WORKING_DIRECTORY_PATH";
 
-  @NotNull
-  private static final String PASS_PARENT_ENVS = "PASS_PARENT_ENVS";
+    @NotNull
+    private static final String PASS_PARENT_ENVS = "PASS_PARENT_ENVS";
 
-  @NotNull
-  private String myScriptPath;
+    @NotNull
+    private String myScriptPath;
 
-  @NotNull
-  private String myScriptArgs;
+    @NotNull
+    private String myScriptArgs;
 
-  @NotNull
-  private String myWorkingDirectoryPath;
+    @NotNull
+    private String myWorkingDirectoryPath;
 
-  @NotNull
-  private final Map<String, String> myEnvs;
+    @NotNull
+    private final Map<String, String> myEnvs;
 
-  private boolean myPassParentEnvs;
+    private boolean myPassParentEnvs;
 
-  RRunConfiguration(@NotNull final Project project, @NotNull final ConfigurationFactory configurationFactory) {
-    super(project, configurationFactory, "");
 
-    myScriptPath = "";
-    myScriptArgs = "";
-    myWorkingDirectoryPath = "";
-    myEnvs = new LinkedHashMap<String, String>();
-    myPassParentEnvs = true;
-  }
+    RRunConfiguration(@NotNull final Project project, @NotNull final ConfigurationFactory configurationFactory) {
+        super(project, configurationFactory, "");
 
-  @Override
-  public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment environment)
-    throws ExecutionException {
-    return new RCommandLineState(environment, this);
-  }
-
-  @NotNull
-  @Override
-  public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-    return new RRunConfigurationEditor(getProject());
-  }
-
-  @Override
-  public void checkConfiguration() throws RuntimeConfigurationException {
-    try {
-      RRunConfigurationUtils.checkConfiguration(this);
+        myScriptPath = "";
+        myScriptArgs = "";
+        myWorkingDirectoryPath = "";
+        myEnvs = new LinkedHashMap<String, String>();
+        myPassParentEnvs = true;
     }
-    catch (final ConfigurationException e) {
-      throw new RuntimeConfigurationException(e.getMessage());
+
+
+    @Override
+    public RunProfileState getState(@NotNull final Executor executor, @NotNull final ExecutionEnvironment environment)
+            throws ExecutionException {
+        return new RCommandLineState(environment, this);
     }
-  }
 
-  @Override
-  @Nullable
-  public String suggestedName() {
-    return RRunConfigurationUtils.suggestedName(this);
-  }
 
-  @NotNull
-  @Override
-  public String getScriptPath() {
-    return myScriptPath;
-  }
+    @NotNull
+    @Override
+    public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+        return new RRunConfigurationEditor(getProject());
+    }
 
-  @Override
-  public void setScriptPath(@NotNull final String scriptPath) {
-    myScriptPath = scriptPath;
-  }
 
-  @NotNull
-  @Override
-  public String getScriptArgs() {
-    return myScriptArgs;
-  }
+    @Override
+    public void checkConfiguration() throws RuntimeConfigurationException {
+        try {
+            RRunConfigurationUtils.checkConfiguration(this);
+        } catch (final ConfigurationException e) {
+            throw new RuntimeConfigurationException(e.getMessage());
+        }
+    }
 
-  @Override
-  public void setScriptArgs(@NotNull final String scriptArgs) {
-    myScriptArgs = scriptArgs;
-  }
 
-  @NotNull
-  @Override
-  public String getWorkingDirectoryPath() {
-    return myWorkingDirectoryPath;
-  }
+    @Override
+    @Nullable
+    public String suggestedName() {
+        return RRunConfigurationUtils.suggestedName(this);
+    }
 
-  @Override
-  public void setWorkingDirectoryPath(@NotNull final String workingDirectoryPath) {
-    myWorkingDirectoryPath = workingDirectoryPath;
-  }
 
-  @Override
-  @NotNull
-  public Map<String, String> getEnvs() {
-    return myEnvs;
-  }
+    @NotNull
+    @Override
+    public String getScriptPath() {
+        return myScriptPath;
+    }
 
-  @Override
-  public void setEnvs(@NotNull final Map<String, String> envs) {
-    myEnvs.clear();
-    myEnvs.putAll(envs);
-  }
 
-  @Override
-  public boolean isPassParentEnvs() {
-    return myPassParentEnvs;
-  }
+    @Override
+    public void setScriptPath(@NotNull final String scriptPath) {
+        myScriptPath = scriptPath;
+    }
 
-  @Override
-  public void setPassParentEnvs(final boolean passParentEnvs) {
-    myPassParentEnvs = passParentEnvs;
-  }
 
-  @Override
-  public void readExternal(@NotNull final Element element) throws InvalidDataException {
-    PathMacroManager.getInstance(getProject()).expandPaths(element);
+    @NotNull
+    @Override
+    public String getScriptArgs() {
+        return myScriptArgs;
+    }
 
-    super.readExternal(element);
 
-    myScriptPath = JDOMExternalizerUtil.readField(element, SCRIPT_PATH, "");
-    myScriptArgs = JDOMExternalizerUtil.readField(element, SCRIPT_ARGS, "");
-    myWorkingDirectoryPath = JDOMExternalizerUtil.readField(element, WORKING_DIRECTORY_PATH, "");
+    @Override
+    public void setScriptArgs(@NotNull final String scriptArgs) {
+        myScriptArgs = scriptArgs;
+    }
 
-    readEnvs(element);
-  }
 
-  @Override
-  public void writeExternal(@NotNull final Element element) throws WriteExternalException {
-    super.writeExternal(element);
+    @NotNull
+    @Override
+    public String getWorkingDirectoryPath() {
+        return myWorkingDirectoryPath;
+    }
 
-    JDOMExternalizerUtil.writeField(element, SCRIPT_PATH, myScriptPath);
-    JDOMExternalizerUtil.writeField(element, SCRIPT_ARGS, myScriptArgs);
-    JDOMExternalizerUtil.writeField(element, WORKING_DIRECTORY_PATH, myWorkingDirectoryPath);
 
-    writeEnvs(element);
+    @Override
+    public void setWorkingDirectoryPath(@NotNull final String workingDirectoryPath) {
+        myWorkingDirectoryPath = workingDirectoryPath;
+    }
 
-    PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
-  }
 
-  public static void copyParams(@NotNull final RRunConfigurationParams source, @NotNull final RRunConfigurationParams target) {
-    target.setScriptPath(source.getScriptPath());
-    target.setScriptArgs(source.getScriptArgs());
-    target.setWorkingDirectoryPath(source.getWorkingDirectoryPath());
-    target.setPassParentEnvs(source.isPassParentEnvs());
-    target.setEnvs(Collections.unmodifiableMap(source.getEnvs()));
-  }
+    @Override
+    @NotNull
+    public Map<String, String> getEnvs() {
+        return myEnvs;
+    }
 
-  private void readEnvs(@NotNull final Element element) {
-    setPassParentEnvs(
-      Boolean.parseBoolean(
-        JDOMExternalizerUtil.readField(element, PASS_PARENT_ENVS, "")
-      )
-    );
 
-    EnvironmentVariablesComponent.readExternal(element, getEnvs());
-  }
+    @Override
+    public void setEnvs(@NotNull final Map<String, String> envs) {
+        myEnvs.clear();
+        myEnvs.putAll(envs);
+    }
 
-  private void writeEnvs(@NotNull final Element element) {
-    JDOMExternalizerUtil.writeField(element, PASS_PARENT_ENVS, Boolean.toString(isPassParentEnvs()));
 
-    EnvironmentVariablesComponent.writeExternal(element, getEnvs());
-  }
+    @Override
+    public boolean isPassParentEnvs() {
+        return myPassParentEnvs;
+    }
+
+
+    @Override
+    public void setPassParentEnvs(final boolean passParentEnvs) {
+        myPassParentEnvs = passParentEnvs;
+    }
+
+
+    @Override
+    public void readExternal(@NotNull final Element element) throws InvalidDataException {
+        PathMacroManager.getInstance(getProject()).expandPaths(element);
+
+        super.readExternal(element);
+
+        myScriptPath = JDOMExternalizerUtil.readField(element, SCRIPT_PATH, "");
+        myScriptArgs = JDOMExternalizerUtil.readField(element, SCRIPT_ARGS, "");
+        myWorkingDirectoryPath = JDOMExternalizerUtil.readField(element, WORKING_DIRECTORY_PATH, "");
+
+        readEnvs(element);
+    }
+
+
+    @Override
+    public void writeExternal(@NotNull final Element element) throws WriteExternalException {
+        super.writeExternal(element);
+
+        JDOMExternalizerUtil.writeField(element, SCRIPT_PATH, myScriptPath);
+        JDOMExternalizerUtil.writeField(element, SCRIPT_ARGS, myScriptArgs);
+        JDOMExternalizerUtil.writeField(element, WORKING_DIRECTORY_PATH, myWorkingDirectoryPath);
+
+        writeEnvs(element);
+
+        PathMacroManager.getInstance(getProject()).collapsePathsRecursively(element);
+    }
+
+
+    public static void copyParams(@NotNull final RRunConfigurationParams source, @NotNull final RRunConfigurationParams target) {
+        target.setScriptPath(source.getScriptPath());
+        target.setScriptArgs(source.getScriptArgs());
+        target.setWorkingDirectoryPath(source.getWorkingDirectoryPath());
+        target.setPassParentEnvs(source.isPassParentEnvs());
+        target.setEnvs(Collections.unmodifiableMap(source.getEnvs()));
+    }
+
+
+    private void readEnvs(@NotNull final Element element) {
+        setPassParentEnvs(
+                Boolean.parseBoolean(
+                        JDOMExternalizerUtil.readField(element, PASS_PARENT_ENVS, "")
+                )
+        );
+
+        EnvironmentVariablesComponent.readExternal(element, getEnvs());
+    }
+
+
+    private void writeEnvs(@NotNull final Element element) {
+        JDOMExternalizerUtil.writeField(element, PASS_PARENT_ENVS, Boolean.toString(isPassParentEnvs()));
+
+        EnvironmentVariablesComponent.writeExternal(element, getEnvs());
+    }
 }

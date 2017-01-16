@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface RFunctionDebuggerFactory {
 
-  @NotNull
-  RFunctionDebugger getFunctionDebugger(@NotNull final RExecutor executor,
-                                        @NotNull final RFunctionDebuggerHandler debuggerHandler,
-                                        @NotNull final ROutputReceiver outputReceiver) throws RDebuggerException;
+    @NotNull
+    RFunctionDebugger getFunctionDebugger(@NotNull final RExecutor executor,
+                                          @NotNull final RFunctionDebuggerHandler debuggerHandler,
+                                          @NotNull final ROutputReceiver outputReceiver) throws RDebuggerException;
 }

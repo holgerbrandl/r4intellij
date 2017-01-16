@@ -9,37 +9,43 @@ import javax.swing.*;
 
 public class RFileType extends LanguageFileType {
 
-  public static final RFileType INSTANCE = new RFileType();
+    public static final RFileType INSTANCE = new RFileType();
 
-  private RFileType() {
-    this(new RLanguage());
-  }
 
-  public RFileType(@NotNull final Language language) {
-    super(language);
-  }
+    private RFileType() {
+        this(new RLanguage());
+    }
 
-  @Override
-  @NotNull
-  public String getName() {
-    return "R";
-  }
 
-  @Override
-  @NotNull
-  public String getDescription() {
-    return "R scripts";
-  }
+    public RFileType(@NotNull final Language language) {
+        super(language);
+    }
 
-  @Override
-  @NotNull
-  public String getDefaultExtension() {
-    return "r";
-  }
 
-  @Override
-  //@NotNull
-  public Icon getIcon() {
-    return IconLoader.findIcon("/icons/r_logo_16.png");
-  }
+    @Override
+    @NotNull
+    public String getName() {
+        return "R";
+    }
+
+
+    @Override
+    @NotNull
+    public String getDescription() {
+        return "R scripts";
+    }
+
+
+    @Override
+    @NotNull
+    public String getDefaultExtension() {
+        return "r";
+    }
+
+
+    @Override
+    //@NotNull
+    public Icon getIcon() {
+        return IconLoader.findIcon("/icons/r_logo_16.png");
+    }
 }

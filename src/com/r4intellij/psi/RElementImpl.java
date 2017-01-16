@@ -5,7 +5,7 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 
 public class RElementImpl extends RBaseElementImpl<StubElement> {
-  public RElementImpl(@NotNull final ASTNode astNode) {
-    super(astNode);
-  }
+    public RElementImpl(@NotNull final ASTNode astNode) {
+        super(astNode);
+    }
 }

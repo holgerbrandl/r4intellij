@@ -6,28 +6,37 @@ import java.util.Map;
 
 interface RRunConfigurationParams {
 
-  @NotNull
-  String getScriptPath();
+    @NotNull
+    String getScriptPath();
 
-  void setScriptPath(@NotNull final String scriptPath);
 
-  @NotNull
-  String getScriptArgs();
+    void setScriptPath(@NotNull final String scriptPath);
 
-  void setScriptArgs(@NotNull final String scriptArgs);
 
-  @NotNull
-  String getWorkingDirectoryPath();
+    @NotNull
+    String getScriptArgs();
 
-  void setWorkingDirectoryPath(@NotNull final String workingDirectoryPath);
 
-  @NotNull
-  Map<String, String> getEnvs();
+    void setScriptArgs(@NotNull final String scriptArgs);
 
-  void setEnvs(@NotNull final Map<String, String> envs);
 
-  boolean isPassParentEnvs();
+    @NotNull
+    String getWorkingDirectoryPath();
 
-  void setPassParentEnvs(final boolean passParentEnvs);
+
+    void setWorkingDirectoryPath(@NotNull final String workingDirectoryPath);
+
+
+    @NotNull
+    Map<String, String> getEnvs();
+
+
+    void setEnvs(@NotNull final Map<String, String> envs);
+
+
+    boolean isPassParentEnvs();
+
+
+    void setPassParentEnvs(final boolean passParentEnvs);
 }
 

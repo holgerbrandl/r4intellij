@@ -20,120 +20,125 @@ import javax.swing.*;
 import java.util.List;
 
 public class RManageRepoDialog extends DialogWrapper {
-  private JPanel myMainPanel;
-  private CheckBoxList myList;
-  private int currentCRANMirror;
-  private RPackageManagementService myController;
+    private JPanel myMainPanel;
+    private CheckBoxList myList;
+    private int currentCRANMirror;
+    private RPackageManagementService myController;
 
-  public RManageRepoDialog(@Nullable final Project project, @NotNull final RPackageManagementService controller) {
-    super(project, false);
 
-    setTitle("Manage Repositories");
-    myMainPanel = new JPanel();
-    myList = new CheckBoxList();
-    final JPanel repositoryList = createRepositoriesList();
-    myMainPanel.add(repositoryList);
+    public RManageRepoDialog(@Nullable final Project project, @NotNull final RPackageManagementService controller) {
+        super(project, false);
 
-    myController = controller;
-    reloadList();
+        setTitle("Manage Repositories");
+        myMainPanel = new JPanel();
+        myList = new CheckBoxList();
+        final JPanel repositoryList = createRepositoriesList();
+        myMainPanel.add(repositoryList);
 
-    init();
-  }
+        myController = controller;
+        reloadList();
 
-  private void reloadList() {
-    myList.clear();
-    final List<RDefaultRepository> repositories = myController.getDefaultRepositories();
-    RPackageService service = RPackageService.getInstance();
-    for (RDefaultRepository repository : repositories) {
-      myList.addItem(repository, repository.getUrl(), service.enabledRepositories.contains(repository.getUrl()));
+        init();
     }
-    for (String repository : service.userRepositories) {
-      myList.addItem(repository, repository, true);
-    }
-  }
 
-  private JPanel createRepositoriesList() {
-    return ToolbarDecorator.createDecorator(myList)
-      .disableUpDownActions()
-      .setAddAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          String url = Messages.showInputDialog("Please input repository URL", "Repository URL", null);
-          myList.addItem(new RRepository(url), url, true);
+
+    private void reloadList() {
+        myList.clear();
+        final List<RDefaultRepository> repositories = myController.getDefaultRepositories();
+        RPackageService service = RPackageService.getInstance();
+        for (RDefaultRepository repository : repositories) {
+            myList.addItem(repository, repository.getUrl(), service.enabledRepositories.contains(repository.getUrl()));
         }
-      })
-      .setEditAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          final int index = myList.getSelectedIndex();
-          final RRepository oldValue = (RRepository)myList.getItemAt(index);
-          if (oldValue != null && oldValue.getUrl().equals("@CRAN@")) {
-            List<String> mirrorsList = myController.getMirrors();
-            String[] mirrors = mirrorsList.toArray(new String[mirrorsList.size()]);
-            currentCRANMirror = Messages.showChooseDialog("", "Choose CRAN mirror", mirrors,
-                                                          mirrors[myController.getCRANMirror()], null);
-          }
-          else {
-            String url =
-              Messages.showInputDialog("Please edit repository URL", "Repository URL", null, oldValue.getUrl(), new InputValidator() {
-                @Override
-                public boolean checkInput(String inputString) {
-                  return !StringUtil.isEmptyOrSpaces(inputString);
-                }
+        for (String repository : service.userRepositories) {
+            myList.addItem(repository, repository, true);
+        }
+    }
 
-                @Override
-                public boolean canClose(String inputString) {
-                  return true;
+
+    private JPanel createRepositoriesList() {
+        return ToolbarDecorator.createDecorator(myList)
+                .disableUpDownActions()
+                .setAddAction(new AnActionButtonRunnable() {
+                    @Override
+                    public void run(AnActionButton button) {
+                        String url = Messages.showInputDialog("Please input repository URL", "Repository URL", null);
+                        myList.addItem(new RRepository(url), url, true);
+                    }
+                })
+                .setEditAction(new AnActionButtonRunnable() {
+                    @Override
+                    public void run(AnActionButton button) {
+                        final int index = myList.getSelectedIndex();
+                        final RRepository oldValue = (RRepository) myList.getItemAt(index);
+                        if (oldValue != null && oldValue.getUrl().equals("@CRAN@")) {
+                            List<String> mirrorsList = myController.getMirrors();
+                            String[] mirrors = mirrorsList.toArray(new String[mirrorsList.size()]);
+                            currentCRANMirror = Messages.showChooseDialog("", "Choose CRAN mirror", mirrors,
+                                    mirrors[myController.getCRANMirror()], null);
+                        } else {
+                            String url =
+                                    Messages.showInputDialog("Please edit repository URL", "Repository URL", null, oldValue.getUrl(), new InputValidator() {
+                                        @Override
+                                        public boolean checkInput(String inputString) {
+                                            return !StringUtil.isEmptyOrSpaces(inputString);
+                                        }
+
+
+                                        @Override
+                                        public boolean canClose(String inputString) {
+                                            return true;
+                                        }
+                                    });
+                            if (!StringUtil.isEmptyOrSpaces(url) && !oldValue.getUrl().equals(url)) {
+                                myList.updateItem(oldValue, new RRepository(url), url);
+                            }
+                        }
+                    }
+                })
+                .setRemoveAction(new AnActionButtonRunnable() {
+                    @Override
+                    public void run(AnActionButton button) {
+                        RPackageService service = RPackageService.getInstance();
+                        final int index = myList.getSelectedIndex();
+                        final String selected = (String) myList.getItemAt(index);
+                        if (selected != null && service.userRepositories.contains(selected)) {
+                            service.userRepositories.remove(selected);
+                        }
+                        reloadList();
+                    }
+                })
+                .setRemoveActionUpdater(new AnActionButtonUpdater() {
+                    @Override
+                    public boolean isEnabled(AnActionEvent event) {
+                        final int index = myList.getSelectedIndex();
+                        return !(myList.getItemAt(index) instanceof RDefaultRepository);
+                    }
+                })
+                .createPanel();
+    }
+
+
+    @Override
+    protected void doOKAction() {
+        this.processDoNotAskOnOk(0);
+        if (this.getOKAction().isEnabled()) {
+            List<RRepository> enabled = Lists.newArrayList();
+            for (int i = 0; i < myList.getItemsCount(); i++) {
+                if (myList.isItemSelected(i)) {
+                    final Object item = myList.getItemAt(i);
+                    enabled.add((RRepository) item);
                 }
-              });
-            if (!StringUtil.isEmptyOrSpaces(url) && !oldValue.getUrl().equals(url)) {
-              myList.updateItem(oldValue, new RRepository(url), url);
             }
-          }
+            myController.setCRANMirror(currentCRANMirror);
+            myController.setRepositories(enabled);
+            this.close(0);
         }
-      })
-      .setRemoveAction(new AnActionButtonRunnable() {
-        @Override
-        public void run(AnActionButton button) {
-          RPackageService service = RPackageService.getInstance();
-          final int index = myList.getSelectedIndex();
-          final String selected = (String)myList.getItemAt(index);
-          if (selected != null && service.userRepositories.contains(selected)) {
-            service.userRepositories.remove(selected);
-          }
-          reloadList();
-        }
-      })
-      .setRemoveActionUpdater(new AnActionButtonUpdater() {
-        @Override
-        public boolean isEnabled(AnActionEvent event) {
-          final int index = myList.getSelectedIndex();
-          return !(myList.getItemAt(index) instanceof RDefaultRepository);
-        }
-      })
-      .createPanel();
-  }
-
-  @Override
-  protected void doOKAction() {
-    this.processDoNotAskOnOk(0);
-    if (this.getOKAction().isEnabled()) {
-      List<RRepository> enabled = Lists.newArrayList();
-      for (int i = 0; i < myList.getItemsCount(); i++) {
-        if (myList.isItemSelected(i)) {
-          final Object item = myList.getItemAt(i);
-          enabled.add((RRepository)item);
-        }
-      }
-      myController.setCRANMirror(currentCRANMirror);
-      myController.setRepositories(enabled);
-      this.close(0);
     }
-  }
 
-  @Nullable
-  @Override
-  protected JComponent createCenterPanel() {
-    return myMainPanel;
-  }
+
+    @Nullable
+    @Override
+    protected JComponent createCenterPanel() {
+        return myMainPanel;
+    }
 }

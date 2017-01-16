@@ -5,6 +5,6 @@ import org.jetbrains.annotations.NotNull;
 
 public interface RExecutor {
 
-  @NotNull
-  RExecutionResult execute(@NotNull final String command) throws RDebuggerException;
+    @NotNull
+    RExecutionResult execute(@NotNull final String command) throws RDebuggerException;
 }

@@ -7,23 +7,26 @@ import java.util.Map;
 
 public class RFunctionRule {
 
-  private RType myReturnType;
-  private Map<String, RParameterConfiguration> myParameters = new HashMap<String, RParameterConfiguration>();
-
-  public RFunctionRule(RType returnType) {
-    myReturnType = returnType;
-  }
+    private RType myReturnType;
+    private Map<String, RParameterConfiguration> myParameters = new HashMap<String, RParameterConfiguration>();
 
 
-  public Map<String, RParameterConfiguration> getParameters() {
-    return myParameters;
-  }
+    public RFunctionRule(RType returnType) {
+        myReturnType = returnType;
+    }
 
-  public void addParameter(String name, RType type, RExpression value) {
-    myParameters.put(name, new RParameterConfiguration(type, value));
-  }
 
-  public RType getReturnType() {
-    return myReturnType;
-  }
+    public Map<String, RParameterConfiguration> getParameters() {
+        return myParameters;
+    }
+
+
+    public void addParameter(String name, RType type, RExpression value) {
+        myParameters.put(name, new RParameterConfiguration(type, value));
+    }
+
+
+    public RType getReturnType() {
+        return myReturnType;
+    }
 }

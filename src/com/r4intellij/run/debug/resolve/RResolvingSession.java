@@ -7,11 +7,13 @@ import org.jetbrains.annotations.Nullable;
 
 public interface RResolvingSession {
 
-  @Nullable
-  XSourcePosition resolveNext(@NotNull final RLocation nextLocation);
+    @Nullable
+    XSourcePosition resolveNext(@NotNull final RLocation nextLocation);
 
-  @Nullable
-  XSourcePosition resolveCurrent(final int line);
 
-  void dropLast(final int number);
+    @Nullable
+    XSourcePosition resolveCurrent(final int line);
+
+
+    void dropLast(final int number);
 }

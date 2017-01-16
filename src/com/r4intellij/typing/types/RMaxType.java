@@ -9,24 +9,27 @@ import java.util.List;
 
 public class RMaxType extends RType {
 
-  private List<RType> myTypes;
+    private List<RType> myTypes;
 
-  public RMaxType(List<RType> types) {
-    myTypes = types;
-  }
 
-  @Override
-  public String getCanonicalName() {
-    return "max type of" + StringUtil.join(myTypes, new Function<RType, String>() {
-      @Override
-      public String fun(RType type) {
-        return type.getName();
-      }
-    }, ",");
-  }
+    public RMaxType(List<RType> types) {
+        myTypes = types;
+    }
 
-  @Override
-  public RType resolveType(RTypeEnvironment env) {
-    return RType.getMaxType(myTypes, env);
-  }
+
+    @Override
+    public String getCanonicalName() {
+        return "max type of" + StringUtil.join(myTypes, new Function<RType, String>() {
+            @Override
+            public String fun(RType type) {
+                return type.getName();
+            }
+        }, ",");
+    }
+
+
+    @Override
+    public RType resolveType(RTypeEnvironment env) {
+        return RType.getMaxType(myTypes, env);
+    }
 }

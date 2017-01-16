@@ -6,35 +6,39 @@ import org.jetbrains.annotations.NotNull;
 
 public class RStackFrame {
 
-  @NotNull
-  private final RLocation myLocation;
+    @NotNull
+    private final RLocation myLocation;
 
-  @NotNull
-  private final RVarsLoader myLoader;
+    @NotNull
+    private final RVarsLoader myLoader;
 
-  @NotNull
-  private final RDebuggerEvaluator myEvaluator;
+    @NotNull
+    private final RDebuggerEvaluator myEvaluator;
 
-  public RStackFrame(@NotNull final RLocation location,
-                     @NotNull final RVarsLoader loader,
-                     @NotNull final RDebuggerEvaluator evaluator) {
-    myLocation = location;
-    myLoader = loader;
-    myEvaluator = evaluator;
-  }
 
-  @NotNull
-  public RLocation getLocation() {
-    return myLocation;
-  }
+    public RStackFrame(@NotNull final RLocation location,
+                       @NotNull final RVarsLoader loader,
+                       @NotNull final RDebuggerEvaluator evaluator) {
+        myLocation = location;
+        myLoader = loader;
+        myEvaluator = evaluator;
+    }
 
-  @NotNull
-  public RVarsLoader getLoader() {
-    return myLoader;
-  }
 
-  @NotNull
-  public RDebuggerEvaluator getEvaluator() {
-    return myEvaluator;
-  }
+    @NotNull
+    public RLocation getLocation() {
+        return myLocation;
+    }
+
+
+    @NotNull
+    public RVarsLoader getLoader() {
+        return myLoader;
+    }
+
+
+    @NotNull
+    public RDebuggerEvaluator getEvaluator() {
+        return myEvaluator;
+    }
 }

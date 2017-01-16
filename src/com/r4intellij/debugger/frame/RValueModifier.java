@@ -4,16 +4,20 @@ import org.jetbrains.annotations.NotNull;
 
 public interface RValueModifier {
 
-  boolean isEnabled();
+    boolean isEnabled();
 
-  void setValue(@NotNull final String name, @NotNull final String value, @NotNull final Listener listener);
 
-  interface Listener {
+    void setValue(@NotNull final String name, @NotNull final String value, @NotNull final Listener listener);
 
-    void onSuccess();
 
-    void onError(@NotNull final String error);
+    interface Listener {
 
-    void onError(@NotNull final Exception e);
-  }
+        void onSuccess();
+
+
+        void onError(@NotNull final String error);
+
+
+        void onError(@NotNull final Exception e);
+    }
 }

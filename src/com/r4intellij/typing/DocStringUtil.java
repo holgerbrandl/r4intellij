@@ -11,37 +11,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DocStringUtil {
-  public static final String COMMENT_SYMBOL = "##";
+    public static final String COMMENT_SYMBOL = "##";
 
-  public static List<Substring> getDocStringLines(RAssignmentStatement statement) {
-    List<Substring> lines = new ArrayList<Substring>();
-    PsiElement comment = getNextComment(statement);
-    while (comment != null && comment.getText().startsWith(COMMENT_SYMBOL)) {
-      lines.add(processComment(comment.getText()));
-      comment = getNextComment(comment);
+
+    public static List<Substring> getDocStringLines(RAssignmentStatement statement) {
+        List<Substring> lines = new ArrayList<Substring>();
+        PsiElement comment = getNextComment(statement);
+        while (comment != null && comment.getText().startsWith(COMMENT_SYMBOL)) {
+            lines.add(processComment(comment.getText()));
+            comment = getNextComment(comment);
+        }
+        return lines;
     }
-    return lines;
-  }
 
-  private static Substring processComment(String text) {
-    Substring substring = new Substring(text);
-    return substring.substring(COMMENT_SYMBOL.length()).trim();
-  }
 
-  private static PsiElement getNextComment(PsiElement element) {
-    PsiElement nextLine = element.getPrevSibling();
-      if (nextLine == null || nextLine.getNode().getElementType() != RElementTypes.R_NL) {
-      return null;
+    private static Substring processComment(String text) {
+        Substring substring = new Substring(text);
+        return substring.substring(COMMENT_SYMBOL.length()).trim();
     }
-    PsiElement comment = nextLine.getPrevSibling();
-    return isComment(comment) ? comment : null;
-  }
 
-  private static boolean isComment(PsiElement comment) {
-    return comment != null && comment.getNode().getElementType() == RParserDefinition.END_OF_LINE_COMMENT;
-  }
 
-  public static String generateTypeAnnotation(RParameter parameter, RType type) {
-    return "## @type " + parameter.getName() + " : " + type.toString() + "\n";
-  }
+    private static PsiElement getNextComment(PsiElement element) {
+        PsiElement nextLine = element.getPrevSibling();
+        if (nextLine == null || nextLine.getNode().getElementType() != RElementTypes.R_NL) {
+            return null;
+        }
+        PsiElement comment = nextLine.getPrevSibling();
+        return isComment(comment) ? comment : null;
+    }
+
+
+    private static boolean isComment(PsiElement comment) {
+        return comment != null && comment.getNode().getElementType() == RParserDefinition.END_OF_LINE_COMMENT;
+    }
+
+
+    public static String generateTypeAnnotation(RParameter parameter, RType type) {
+        return "## @type " + parameter.getName() + " : " + type.toString() + "\n";
+    }
 }

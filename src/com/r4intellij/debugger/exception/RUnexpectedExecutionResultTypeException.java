@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class RUnexpectedExecutionResultTypeException extends RDebuggerException {
 
-  public RUnexpectedExecutionResultTypeException(@NotNull final String message) {
-    super(message);
-  }
+    public RUnexpectedExecutionResultTypeException(@NotNull final String message) {
+        super(message);
+    }
 }

@@ -19,56 +19,62 @@ import org.jetbrains.annotations.Nullable;
 
 public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageConsoleView> {
 
-  public RConsoleRunner(@NotNull final Project project, @Nullable final String workingDir) {
-      super(project, "R Console", workingDir);
-  }
-
-  @NotNull
-  @Override
-  protected LanguageConsoleView createConsoleView() {
-    final LanguageConsoleImpl console = new LanguageConsoleImpl(getProject(), getConsoleTitle(), RLanguage.getInstance());
-    console.setPrompt(null);
-    return console;
-  }
-
-  @NotNull
-  @Override
-  protected Process createProcess() throws ExecutionException {
-    return getCommandLine(getInterpreterPath()).createProcess();
-  }
-
-  @NotNull
-  @Override
-  protected OSProcessHandler createProcessHandler(@NotNull final Process process) {
-    final String commandLine = getCommandLine(RInterpreterService.getInstance().getInterpreterPath()).getCommandLineString();
-    return new ColoredProcessHandler(process, commandLine);
-  }
-
-  @NotNull
-  @Override
-  protected ProcessBackedConsoleExecuteActionHandler createExecuteActionHandler() {
-    final ProcessBackedConsoleExecuteActionHandler handler = new ProcessBackedConsoleExecuteActionHandler(getProcessHandler(), false);
-    handler.setAddCurrentToHistory(false);
-    return handler;
-  }
-
-  @NotNull
-  private GeneralCommandLine getCommandLine(@NotNull final String exePath) {
-    return new GeneralCommandLine()
-      .withExePath(exePath)
-      .withParameters(RInterpreterConstants.QUIET_PARAMETER, SystemInfo.isWindows ? "--ess" : "--interactive")
-      .withWorkDirectory(getWorkingDir())
-      .withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.CONSOLE);
-  }
-
-  @NotNull
-  private String getInterpreterPath() throws ExecutionException {
-    final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
-
-    if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
-        throw new ExecutionException("R interpreter is not specified");
+    public RConsoleRunner(@NotNull final Project project, @Nullable final String workingDir) {
+        super(project, "R Console", workingDir);
     }
 
-    return interpreterPath;
-  }
+
+    @NotNull
+    @Override
+    protected LanguageConsoleView createConsoleView() {
+        final LanguageConsoleImpl console = new LanguageConsoleImpl(getProject(), getConsoleTitle(), RLanguage.getInstance());
+        console.setPrompt(null);
+        return console;
+    }
+
+
+    @NotNull
+    @Override
+    protected Process createProcess() throws ExecutionException {
+        return getCommandLine(getInterpreterPath()).createProcess();
+    }
+
+
+    @NotNull
+    @Override
+    protected OSProcessHandler createProcessHandler(@NotNull final Process process) {
+        final String commandLine = getCommandLine(RInterpreterService.getInstance().getInterpreterPath()).getCommandLineString();
+        return new ColoredProcessHandler(process, commandLine);
+    }
+
+
+    @NotNull
+    @Override
+    protected ProcessBackedConsoleExecuteActionHandler createExecuteActionHandler() {
+        final ProcessBackedConsoleExecuteActionHandler handler = new ProcessBackedConsoleExecuteActionHandler(getProcessHandler(), false);
+        handler.setAddCurrentToHistory(false);
+        return handler;
+    }
+
+
+    @NotNull
+    private GeneralCommandLine getCommandLine(@NotNull final String exePath) {
+        return new GeneralCommandLine()
+                .withExePath(exePath)
+                .withParameters(RInterpreterConstants.QUIET_PARAMETER, SystemInfo.isWindows ? "--ess" : "--interactive")
+                .withWorkDirectory(getWorkingDir())
+                .withParentEnvironmentType(GeneralCommandLine.ParentEnvironmentType.CONSOLE);
+    }
+
+
+    @NotNull
+    private String getInterpreterPath() throws ExecutionException {
+        final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
+
+        if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
+            throw new ExecutionException("R interpreter is not specified");
+        }
+
+        return interpreterPath;
+    }
 }

@@ -10,24 +10,23 @@ import org.jetbrains.annotations.Nullable;
 
 public class RDocumentationProvider extends AbstractDocumentationProvider {
 
-  @Nullable
-  @Override
-  public String generateDoc(PsiElement element, @Nullable PsiElement element1) {
-    for (PsiElement el = element.getFirstChild(); el != null; el = el.getNextSibling()) {
-      if (el instanceof RFunctionExpression) {
-        final String docString = ((RFunctionExpression)el).getDocStringValue();
-        if (docString != null) {
-          return RDocumentationUtils.getFormattedString(docString);
+    @Nullable
+    @Override
+    public String generateDoc(PsiElement element, @Nullable PsiElement element1) {
+        for (PsiElement el = element.getFirstChild(); el != null; el = el.getNextSibling()) {
+            if (el instanceof RFunctionExpression) {
+                final String docString = ((RFunctionExpression) el).getDocStringValue();
+                if (docString != null) {
+                    return RDocumentationUtils.getFormattedString(docString);
+                }
+                break;
+            }
         }
-        break;
-      }
+        final String helpText = RPsiUtils.getHelpForFunction(element, null);
+        if (helpText == null) {
+            return null;
+        } else {
+            return RDocumentationUtils.getFormattedString(new RHelp(helpText));
+        }
     }
-    final String helpText = RPsiUtils.getHelpForFunction(element, null);
-    if (helpText == null) {
-      return null;
-    }
-    else {
-      return RDocumentationUtils.getFormattedString(new RHelp(helpText));
-    }
-  }
 }

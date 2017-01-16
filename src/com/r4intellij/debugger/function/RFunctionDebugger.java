@@ -6,13 +6,16 @@ import org.jetbrains.annotations.NotNull;
 
 public interface RFunctionDebugger {
 
-  @NotNull
-  RLocation getLocation();
+    @NotNull
+    RLocation getLocation();
 
-  boolean hasNext();
 
-  void advance() throws RDebuggerException;
+    boolean hasNext();
 
-  @NotNull
-  String getResult();
+
+    void advance() throws RDebuggerException;
+
+
+    @NotNull
+    String getResult();
 }

@@ -15,55 +15,57 @@ import static com.r4intellij.debugger.data.RResponseConstants.ENVIRONMENT_PREFIX
 
 public final class RDebuggerUtils {
 
-  @NotNull
-  public static String forciblyEvaluateFunction(@NotNull final RExecutor executor,
-                                                @NotNull final RFunctionDebuggerFactory factory,
-                                                @NotNull final ROutputReceiver receiver) throws RDebuggerException {
-    final RForcedFunctionDebuggerHandler handler = new RForcedFunctionDebuggerHandler(executor, factory, receiver);
+    @NotNull
+    public static String forciblyEvaluateFunction(@NotNull final RExecutor executor,
+                                                  @NotNull final RFunctionDebuggerFactory factory,
+                                                  @NotNull final ROutputReceiver receiver) throws RDebuggerException {
+        final RForcedFunctionDebuggerHandler handler = new RForcedFunctionDebuggerHandler(executor, factory, receiver);
 
-    //noinspection StatementWithEmptyBody
-    while (handler.advance()) {
+        //noinspection StatementWithEmptyBody
+        while (handler.advance()) {
+        }
+
+        return handler.getResult();
     }
 
-    return handler.getResult();
-  }
 
-  @NotNull
-  public static String calculateRepresentation(@NotNull final String value) {
-    final int lastLineBegin = findLastLineBegin(value);
+    @NotNull
+    public static String calculateRepresentation(@NotNull final String value) {
+        final int lastLineBegin = findLastLineBegin(value);
 
-    if (value.startsWith(ENVIRONMENT_PREFIX, lastLineBegin)) {
-      return value.substring(
-        0,
-        findLastButOneLineEnd(value, lastLineBegin)
-      );
+        if (value.startsWith(ENVIRONMENT_PREFIX, lastLineBegin)) {
+            return value.substring(
+                    0,
+                    findLastButOneLineEnd(value, lastLineBegin)
+            );
+        } else {
+            return value;
+        }
     }
-    else {
-      return value;
+
+
+    @NotNull
+    public static String calculateRepresentation(@NotNull final String type, @NotNull final String value) {
+        if (type.equals(FUNCTION_TYPE)) {
+            return calculateRepresentation(value);
+        } else {
+            return value;
+        }
     }
-  }
 
-  @NotNull
-  public static String calculateRepresentation(@NotNull final String type, @NotNull final String value) {
-    if (type.equals(FUNCTION_TYPE)) {
-      return calculateRepresentation(value);
+
+    @NotNull
+    public static String calculateValueCommand(final int frameNumber, @NotNull final String var) {
+        final String globalVar = expressionOnFrameCommand(frameNumber, var);
+
+        final String isFunction = typeOfCommand(globalVar) + " == \"" + CLOSURE + "\"";
+        final String isDebugged = isDebuggedCommand(globalVar);
+
+        return "if (" + isFunction + " && " + isDebugged + ") " + attrCommand(globalVar, "original") + " else " + globalVar;
     }
-    else {
-      return value;
+
+
+    public static boolean isServiceName(@NotNull final String name) {
+        return name.startsWith(SERVICE_FUNCTION_PREFIX);
     }
-  }
-
-  @NotNull
-  public static String calculateValueCommand(final int frameNumber, @NotNull final String var) {
-    final String globalVar = expressionOnFrameCommand(frameNumber, var);
-
-    final String isFunction = typeOfCommand(globalVar) + " == \"" + CLOSURE + "\"";
-    final String isDebugged = isDebuggedCommand(globalVar);
-
-    return "if (" + isFunction + " && " + isDebugged + ") " + attrCommand(globalVar, "original") + " else " + globalVar;
-  }
-
-  public static boolean isServiceName(@NotNull final String name) {
-    return name.startsWith(SERVICE_FUNCTION_PREFIX);
-  }
 }

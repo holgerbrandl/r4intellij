@@ -4,5 +4,5 @@ import com.intellij.psi.stubs.NamedStub;
 import com.r4intellij.psi.api.RAssignmentStatement;
 
 public interface RAssignmentStub extends NamedStub<RAssignmentStatement> {
-  public boolean isFunctionDeclaration();
+    public boolean isFunctionDeclaration();
 }

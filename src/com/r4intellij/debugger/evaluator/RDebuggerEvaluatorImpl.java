@@ -17,99 +17,101 @@ import static com.r4intellij.debugger.executor.RExecutorUtils.execute;
 
 class RDebuggerEvaluatorImpl implements RDebuggerEvaluator {
 
-  @NotNull
-  private final RExecutor myExecutor;
+    @NotNull
+    private final RExecutor myExecutor;
 
-  @NotNull
-  private final RFunctionDebuggerFactory myFactory;
+    @NotNull
+    private final RFunctionDebuggerFactory myFactory;
 
-  @NotNull
-  private final ROutputReceiver myReceiver;
+    @NotNull
+    private final ROutputReceiver myReceiver;
 
-  @NotNull
-  private final RExpressionHandler myHandler;
+    @NotNull
+    private final RExpressionHandler myHandler;
 
-  private final int myFrameNumber;
+    private final int myFrameNumber;
 
-  public RDebuggerEvaluatorImpl(@NotNull final RExecutor executor,
-                                @NotNull final RFunctionDebuggerFactory factory,
-                                @NotNull final ROutputReceiver receiver,
-                                @NotNull final RExpressionHandler handler,
-                                final int frameNumber) {
-    myExecutor = executor;
-    myFactory = factory;
-    myReceiver = receiver;
-    myHandler = handler;
-    myFrameNumber = frameNumber;
-  }
 
-  @Override
-  public void evaluate(@NotNull final String expression, @NotNull final Receiver receiver) {
-    try {
-      doEvaluate(
-        myHandler.handle(myFrameNumber, expression),
-        receiver
-      );
+    public RDebuggerEvaluatorImpl(@NotNull final RExecutor executor,
+                                  @NotNull final RFunctionDebuggerFactory factory,
+                                  @NotNull final ROutputReceiver receiver,
+                                  @NotNull final RExpressionHandler handler,
+                                  final int frameNumber) {
+        myExecutor = executor;
+        myFactory = factory;
+        myReceiver = receiver;
+        myHandler = handler;
+        myFrameNumber = frameNumber;
     }
-    catch (final RDebuggerException e) {
-      receiver.receiveError(e);
-    }
-  }
 
-  private void doEvaluate(@NotNull final String expression,
-                          @NotNull final Receiver receiver) throws RDebuggerException {
-    final RExecutionResult result = myExecutor.execute(expression);
 
-    switch (result.getType()) {
-      case DEBUGGING_IN:
-        appendError(result, myReceiver);
-
-        receiver.receiveResult(
-          calculateRepresentation(
-            RDebuggerUtils.forciblyEvaluateFunction(
-              myExecutor, myFactory, myReceiver
-            )
-          )
-        );
-
-        break;
-      case EMPTY:
-        final String error = result.getError();
-
-        if (!error.isEmpty()) {
-          receiver.receiveError(error);
+    @Override
+    public void evaluate(@NotNull final String expression, @NotNull final Receiver receiver) {
+        try {
+            doEvaluate(
+                    myHandler.handle(myFrameNumber, expression),
+                    receiver
+            );
+        } catch (final RDebuggerException e) {
+            receiver.receiveError(e);
         }
-
-        break;
-      case RESPONSE:
-        appendError(result, myReceiver);
-
-        receiver.receiveResult(
-          calculateRepresentation(
-            result.getOutput()
-          )
-        );
-
-        break;
-      case DEBUG_AT:
-        appendError(result, myReceiver);
-
-        receiver.receiveResult(
-          calculateRepresentation(
-            execute(myExecutor, EXECUTE_AND_STEP_COMMAND, RESPONSE, myReceiver)
-          )
-        );
-
-        break;
-      default:
-        throw new RUnexpectedExecutionResultTypeException(
-          "Actual type is not the same as expected: " +
-          "[" +
-          "actual: " + result.getType() + ", " +
-          "expected: " +
-          "[" + DEBUGGING_IN + ", " + EMPTY + ", " + RESPONSE + ", " + DEBUG_AT + "]" +
-          "]"
-        );
     }
-  }
+
+
+    private void doEvaluate(@NotNull final String expression,
+                            @NotNull final Receiver receiver) throws RDebuggerException {
+        final RExecutionResult result = myExecutor.execute(expression);
+
+        switch (result.getType()) {
+            case DEBUGGING_IN:
+                appendError(result, myReceiver);
+
+                receiver.receiveResult(
+                        calculateRepresentation(
+                                RDebuggerUtils.forciblyEvaluateFunction(
+                                        myExecutor, myFactory, myReceiver
+                                )
+                        )
+                );
+
+                break;
+            case EMPTY:
+                final String error = result.getError();
+
+                if (!error.isEmpty()) {
+                    receiver.receiveError(error);
+                }
+
+                break;
+            case RESPONSE:
+                appendError(result, myReceiver);
+
+                receiver.receiveResult(
+                        calculateRepresentation(
+                                result.getOutput()
+                        )
+                );
+
+                break;
+            case DEBUG_AT:
+                appendError(result, myReceiver);
+
+                receiver.receiveResult(
+                        calculateRepresentation(
+                                execute(myExecutor, EXECUTE_AND_STEP_COMMAND, RESPONSE, myReceiver)
+                        )
+                );
+
+                break;
+            default:
+                throw new RUnexpectedExecutionResultTypeException(
+                        "Actual type is not the same as expected: " +
+                                "[" +
+                                "actual: " + result.getType() + ", " +
+                                "expected: " +
+                                "[" + DEBUGGING_IN + ", " + EMPTY + ", " + RESPONSE + ", " + DEBUG_AT + "]" +
+                                "]"
+                );
+        }
+    }
 }

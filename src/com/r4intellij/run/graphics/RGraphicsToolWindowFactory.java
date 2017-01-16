@@ -9,16 +9,16 @@ import org.jetbrains.annotations.NotNull;
 
 public class RGraphicsToolWindowFactory implements ToolWindowFactory {
 
-  @Override
-  public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
-    final ContentManager contentManager = toolWindow.getContentManager();
+    @Override
+    public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
+        final ContentManager contentManager = toolWindow.getContentManager();
 
-    final Content content = contentManager.getFactory().createContent(
-      new RGraphicsToolWindow(RGraphicsUtils.getGraphicsState(project)),
-      null,
-      false
-    );
+        final Content content = contentManager.getFactory().createContent(
+                new RGraphicsToolWindow(RGraphicsUtils.getGraphicsState(project)),
+                null,
+                false
+        );
 
-    contentManager.addContent(content);
-  }
+        contentManager.addContent(content);
+    }
 }

@@ -9,41 +9,43 @@ import static com.r4intellij.debugger.RDebuggerStringUtils.appendError;
 
 public final class RExecutorUtils {
 
-  @NotNull
-  public static RExecutionResult execute(@NotNull final RExecutor executor,
-                                         @NotNull final String command,
-                                         @NotNull final RExecutionResultType expectedType) throws RDebuggerException {
-    final RExecutionResult result = executor.execute(command);
+    @NotNull
+    public static RExecutionResult execute(@NotNull final RExecutor executor,
+                                           @NotNull final String command,
+                                           @NotNull final RExecutionResultType expectedType) throws RDebuggerException {
+        final RExecutionResult result = executor.execute(command);
 
-    if (result.getType() != expectedType) {
-      throw new RUnexpectedExecutionResultTypeException(
-        "Actual type is not the same as expected: [actual: " + result.getType() + ", expected: " + expectedType + "]"
-      );
+        if (result.getType() != expectedType) {
+            throw new RUnexpectedExecutionResultTypeException(
+                    "Actual type is not the same as expected: [actual: " + result.getType() + ", expected: " + expectedType + "]"
+            );
+        }
+
+        return result;
     }
 
-    return result;
-  }
 
-  @NotNull
-  public static String execute(@NotNull final RExecutor executor,
-                               @NotNull final String command,
-                               @NotNull final RExecutionResultType expectedType,
-                               @NotNull final ROutputReceiver receiver) throws RDebuggerException {
-    final RExecutionResult result = execute(executor, command, expectedType);
+    @NotNull
+    public static String execute(@NotNull final RExecutor executor,
+                                 @NotNull final String command,
+                                 @NotNull final RExecutionResultType expectedType,
+                                 @NotNull final ROutputReceiver receiver) throws RDebuggerException {
+        final RExecutionResult result = execute(executor, command, expectedType);
 
-    appendError(result, receiver);
+        appendError(result, receiver);
 
-    return result.getOutput();
-  }
+        return result.getOutput();
+    }
 
-  @NotNull
-  public static RExecutionResult execute(@NotNull final RExecutor executor,
-                                         @NotNull final String command,
-                                         @NotNull final ROutputReceiver receiver) throws RDebuggerException {
-    final RExecutionResult result = executor.execute(command);
 
-    appendError(result, receiver);
+    @NotNull
+    public static RExecutionResult execute(@NotNull final RExecutor executor,
+                                           @NotNull final String command,
+                                           @NotNull final ROutputReceiver receiver) throws RDebuggerException {
+        final RExecutionResult result = executor.execute(command);
 
-    return result;
-  }
+        appendError(result, receiver);
+
+        return result;
+    }
 }

@@ -7,20 +7,23 @@ import org.jetbrains.annotations.NotNull;
 
 public class RXValue extends XValue {
 
-  @NotNull
-  private final String myValue;
+    @NotNull
+    private final String myValue;
 
-  public RXValue(@NotNull final String value) {
-    myValue = value;
-  }
 
-  @Override
-  public void computePresentation(@NotNull final XValueNode node, @NotNull final XValuePlace place) {
-    RXPresentationUtils.computePresentation(myValue, node);
-  }
+    public RXValue(@NotNull final String value) {
+        myValue = value;
+    }
 
-  @NotNull
-  public String getValue() {
-    return myValue;
-  }
+
+    @Override
+    public void computePresentation(@NotNull final XValueNode node, @NotNull final XValuePlace place) {
+        RXPresentationUtils.computePresentation(myValue, node);
+    }
+
+
+    @NotNull
+    public String getValue() {
+        return myValue;
+    }
 }

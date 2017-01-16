@@ -15,72 +15,77 @@ import org.jetbrains.annotations.Nullable;
 // TODO [run][test]
 public class RRunConfigurationProducer extends RunConfigurationProducer<RRunConfiguration> {
 
-  public RRunConfigurationProducer() {
-    super(RRunConfigurationType.getInstance().getMainFactory());
-  }
-
-  @Override
-  protected boolean setupConfigurationFromContext(@NotNull final RRunConfiguration configuration,
-                                                  @NotNull final ConfigurationContext context,
-                                                  @Nullable final Ref<PsiElement> sourceElement) {
-    final VirtualFile scriptVirtualFile = getScriptVirtualFile(context);
-
-    if (scriptVirtualFile == null) {
-      return false;
+    public RRunConfigurationProducer() {
+        super(RRunConfigurationType.getInstance().getMainFactory());
     }
 
-    configuration.setScriptPath(scriptVirtualFile.getPath());
 
-    RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(configuration);
-    configuration.setName(RRunConfigurationUtils.suggestedName(configuration));
+    @Override
+    protected boolean setupConfigurationFromContext(@NotNull final RRunConfiguration configuration,
+                                                    @NotNull final ConfigurationContext context,
+                                                    @Nullable final Ref<PsiElement> sourceElement) {
+        final VirtualFile scriptVirtualFile = getScriptVirtualFile(context);
 
-    return true;
-  }
+        if (scriptVirtualFile == null) {
+            return false;
+        }
 
-  @Override
-  public boolean isConfigurationFromContext(@NotNull final RRunConfiguration configuration,
-                                            @NotNull final ConfigurationContext context) {
-    final VirtualFile scriptVirtualFile = getScriptVirtualFile(context);
+        configuration.setScriptPath(scriptVirtualFile.getPath());
 
-    if (scriptVirtualFile == null) {
-      return false;
+        RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(configuration);
+        configuration.setName(RRunConfigurationUtils.suggestedName(configuration));
+
+        return true;
     }
 
-    final String configurationScriptPath = configuration.getScriptPath();
-    final String configurationWorkingDirectoryPath = configuration.getWorkingDirectoryPath();
 
-    final String contextScriptPath = scriptVirtualFile.getPath();
-    final String contextWorkingDirectoryPath = RRunConfigurationUtils.suggestedWorkingDirectoryPath(configuration);
+    @Override
+    public boolean isConfigurationFromContext(@NotNull final RRunConfiguration configuration,
+                                              @NotNull final ConfigurationContext context) {
+        final VirtualFile scriptVirtualFile = getScriptVirtualFile(context);
 
-    return configurationScriptPath.equals(contextScriptPath) && configurationWorkingDirectoryPath.equals(contextWorkingDirectoryPath);
-  }
+        if (scriptVirtualFile == null) {
+            return false;
+        }
 
-  @Nullable
-  private static VirtualFile getScriptVirtualFile(@NotNull final ConfigurationContext context) {
-    final Location location = context.getLocation();
-    if (location == null) return null;
+        final String configurationScriptPath = configuration.getScriptPath();
+        final String configurationWorkingDirectoryPath = configuration.getWorkingDirectoryPath();
 
-    final PsiFile psiFile = getRunnablePsiFile(location);
-    if (psiFile == null) return null;
+        final String contextScriptPath = scriptVirtualFile.getPath();
+        final String contextWorkingDirectoryPath = RRunConfigurationUtils.suggestedWorkingDirectoryPath(configuration);
 
-    return getPhysicalVirtualFile(psiFile);
-  }
+        return configurationScriptPath.equals(contextScriptPath) && configurationWorkingDirectoryPath.equals(contextWorkingDirectoryPath);
+    }
 
-  @Nullable
-  private static PsiFile getRunnablePsiFile(@NotNull final Location location) {
-    final PsiFile result = location.getPsiElement().getContainingFile();
 
-    if (result == null || result.getFileType() != RFileType.INSTANCE) return null;
+    @Nullable
+    private static VirtualFile getScriptVirtualFile(@NotNull final ConfigurationContext context) {
+        final Location location = context.getLocation();
+        if (location == null) return null;
 
-    return result;
-  }
+        final PsiFile psiFile = getRunnablePsiFile(location);
+        if (psiFile == null) return null;
 
-  @Nullable
-  private static VirtualFile getPhysicalVirtualFile(@NotNull final PsiFile psiFile) {
-    final VirtualFile result = psiFile.getVirtualFile();
+        return getPhysicalVirtualFile(psiFile);
+    }
 
-    if (result == null || result instanceof LightVirtualFile) return null;
 
-    return result;
-  }
+    @Nullable
+    private static PsiFile getRunnablePsiFile(@NotNull final Location location) {
+        final PsiFile result = location.getPsiElement().getContainingFile();
+
+        if (result == null || result.getFileType() != RFileType.INSTANCE) return null;
+
+        return result;
+    }
+
+
+    @Nullable
+    private static VirtualFile getPhysicalVirtualFile(@NotNull final PsiFile psiFile) {
+        final VirtualFile result = psiFile.getVirtualFile();
+
+        if (result == null || result instanceof LightVirtualFile) return null;
+
+        return result;
+    }
 }

@@ -21,68 +21,71 @@ import static java.lang.Boolean.parseBoolean;
 
 public class RCommandLineState extends CommandLineState {
 
-  @NotNull
-  private static final String IO_ENV_KEY = "ther.debugger.io";
+    @NotNull
+    private static final String IO_ENV_KEY = "ther.debugger.io";
 
-  @NotNull
-  private final RRunConfiguration myRunConfiguration;
+    @NotNull
+    private final RRunConfiguration myRunConfiguration;
 
-  public RCommandLineState(@NotNull final ExecutionEnvironment environment, @NotNull final RRunConfiguration runConfiguration) {
-    super(environment);
 
-    myRunConfiguration = runConfiguration;
-  }
+    public RCommandLineState(@NotNull final ExecutionEnvironment environment, @NotNull final RRunConfiguration runConfiguration) {
+        super(environment);
 
-  @NotNull
-  @Override
-  protected ProcessHandler startProcess() throws ExecutionException {
-    checkRunConfiguration();
-
-    final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
-
-    if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
-        throw new ExecutionException("R interpreter is not specified");
+        myRunConfiguration = runConfiguration;
     }
 
-    final ProcessHandler processHandler = startProcess(
-      myRunConfiguration,
-      RCommandLineCalculator.calculateCommandLine(
-        interpreterPath,
-        myRunConfiguration
-      )
-    );
 
-    ProcessTerminatedListener.attach(processHandler, myRunConfiguration.getProject());
+    @NotNull
+    @Override
+    protected ProcessHandler startProcess() throws ExecutionException {
+        checkRunConfiguration();
 
-    return processHandler;
-  }
+        final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
 
-  private void checkRunConfiguration() throws ExecutionException {
-    try {
-      RRunConfigurationUtils.checkConfiguration(myRunConfiguration);
+        if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
+            throw new ExecutionException("R interpreter is not specified");
+        }
+
+        final ProcessHandler processHandler = startProcess(
+                myRunConfiguration,
+                RCommandLineCalculator.calculateCommandLine(
+                        interpreterPath,
+                        myRunConfiguration
+                )
+        );
+
+        ProcessTerminatedListener.attach(processHandler, myRunConfiguration.getProject());
+
+        return processHandler;
     }
-    catch (final ConfigurationException e) {
-      throw new ExecutionException(e);
-    }
-  }
 
-  @NotNull
-  private ProcessHandler startProcess(@NotNull final RRunConfiguration runConfiguration,
-                                      @NotNull final GeneralCommandLine commandLine) throws ExecutionException {
-    return new RXProcessHandler(
-      commandLine,
-      createExecutionResultCalculator(),
-      parseBoolean(runConfiguration.getEnvs().get(IO_ENV_KEY))
-    );
-  }
 
-  @NotNull
-  private RExecutionResultCalculator createExecutionResultCalculator() {
-    if (getEnvironment().getExecutor().getId().equals(DefaultDebugExecutor.EXECUTOR_ID)) {
-      return new RExecutionResultCalculatorImpl();
+    private void checkRunConfiguration() throws ExecutionException {
+        try {
+            RRunConfigurationUtils.checkConfiguration(myRunConfiguration);
+        } catch (final ConfigurationException e) {
+            throw new ExecutionException(e);
+        }
     }
-    else {
-      return new RRunExecutionResultCalculator();
+
+
+    @NotNull
+    private ProcessHandler startProcess(@NotNull final RRunConfiguration runConfiguration,
+                                        @NotNull final GeneralCommandLine commandLine) throws ExecutionException {
+        return new RXProcessHandler(
+                commandLine,
+                createExecutionResultCalculator(),
+                parseBoolean(runConfiguration.getEnvs().get(IO_ENV_KEY))
+        );
     }
-  }
+
+
+    @NotNull
+    private RExecutionResultCalculator createExecutionResultCalculator() {
+        if (getEnvironment().getExecutor().getId().equals(DefaultDebugExecutor.EXECUTOR_ID)) {
+            return new RExecutionResultCalculatorImpl();
+        } else {
+            return new RRunExecutionResultCalculator();
+        }
+    }
 }

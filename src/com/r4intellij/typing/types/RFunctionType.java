@@ -3,7 +3,10 @@ package com.r4intellij.typing.types;
 import com.intellij.psi.PsiManager;
 import com.r4intellij.RPsiUtils;
 import com.r4intellij.RStaticAnalyzerHelper;
-import com.r4intellij.psi.api.*;
+import com.r4intellij.psi.api.RAssignmentStatement;
+import com.r4intellij.psi.api.RExpression;
+import com.r4intellij.psi.api.RFunctionExpression;
+import com.r4intellij.psi.api.RParameter;
 import com.r4intellij.typing.*;
 
 import java.util.*;
@@ -14,6 +17,7 @@ public class RFunctionType extends RType {
   private List<RFunctionRule> myRules = new ArrayList<RFunctionRule>();
   private Map<String, RTypedParameter> myParameters = new HashMap<String, RTypedParameter>();
 
+
   public RFunctionType(RFunctionExpression functionExpression) {
     myFunctionExpression = functionExpression;
     List<RParameter> parameters = functionExpression.getParameterList().getParameterList();
@@ -23,6 +27,7 @@ public class RFunctionType extends RType {
     }
     createFunctionType();
   }
+
 
   public RFunctionType(RS4ClassType returnType) {
     myReturnType = returnType;
@@ -35,15 +40,18 @@ public class RFunctionType extends RType {
     }
   }
 
+
   @Override
   public String getCanonicalName() {
     return "function";
   }
 
+
   @Override
   public RType resolveType(RTypeEnvironment env) {
     throw new UnsupportedOperationException();
   }
+
 
   private void createFunctionType() {
     RAssignmentStatement assignmentStatement = RPsiUtils.getAssignmentStatement(myFunctionExpression);
@@ -87,37 +95,46 @@ public class RFunctionType extends RType {
     }
   }
 
+
   public void setOptional(String paramName) {
     myParameters.get(paramName).setOptional(true);
   }
+
 
   public RType getReturnType() {
     return myReturnType;
   }
 
+
   public List<RFunctionRule> getRules() {
     return myRules;
   }
+
 
   public void addParameterType(String name, RType type) {
     myParameters.get(name).setType(type);
   }
 
+
   public RType getParameterType(String name) {
     return myParameters.get(name).getType();
   }
+
 
   public void setReturnType(RType returnType) {
     myReturnType = returnType;
   }
 
+
   public RFunctionExpression getFunctionExpression() {
     return myFunctionExpression;
   }
 
+
   public void addRule(RFunctionRule rule) {
     myRules.add(0, rule); // we are parsing from bottom to top
   }
+
 
   public List<RParameter> getOptionalParams() {
     List<RParameter> optionalParams = new ArrayList<RParameter>();
@@ -129,6 +146,7 @@ public class RFunctionType extends RType {
     return optionalParams;
   }
 
+
   @SuppressWarnings("SimplifiableIfStatement")
   public boolean isOptional(String param) {
     if (param != null && myParameters.containsKey(param)) {
@@ -137,9 +155,10 @@ public class RFunctionType extends RType {
     return true;
   }
 
+
   public List<RParameter> getFormalArguments() {
     return myFunctionExpression != null
-           ? myFunctionExpression.getParameterList().getParameterList()
-           : Collections.<RParameter>emptyList();
+            ? myFunctionExpression.getParameterList().getParameterList()
+            : Collections.<RParameter>emptyList();
   }
 }

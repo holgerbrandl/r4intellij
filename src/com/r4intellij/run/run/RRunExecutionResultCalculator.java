@@ -12,38 +12,39 @@ import static com.r4intellij.debugger.data.RResponseConstants.PROMPT;
 
 public class RRunExecutionResultCalculator implements RExecutionResultCalculator {
 
-  @Override
-  public boolean isComplete(@NotNull final CharSequence output) {
-    final int promptIndex = output.length() - PROMPT.length();
+    @Override
+    public boolean isComplete(@NotNull final CharSequence output) {
+        final int promptIndex = output.length() - PROMPT.length();
 
-    return StringUtil.endsWith(output, PROMPT) &&
-           promptIndex > 0 &&
-           StringUtil.isLineBreak(output.charAt(promptIndex - 1));
-  }
-
-  @NotNull
-  @Override
-  public RExecutionResult calculate(@NotNull final CharSequence output, @NotNull final String error) {
-    final String result = calculateResult(output);
-
-    return new RExecutionResult(
-      result,
-      RExecutionResultType.RESPONSE,
-      TextRange.allOf(result),
-      error
-    );
-  }
-
-  @NotNull
-  private String calculateResult(@NotNull final CharSequence output) {
-    final int leftBound = findNextLineBegin(output, 0);
-    final int rightBound = findLastButOneLineEnd(output, findLastLineBegin(output));
-
-    if (leftBound >= rightBound) {
-      return "";
+        return StringUtil.endsWith(output, PROMPT) &&
+                promptIndex > 0 &&
+                StringUtil.isLineBreak(output.charAt(promptIndex - 1));
     }
-    else {
-      return output.subSequence(leftBound, rightBound).toString();
+
+
+    @NotNull
+    @Override
+    public RExecutionResult calculate(@NotNull final CharSequence output, @NotNull final String error) {
+        final String result = calculateResult(output);
+
+        return new RExecutionResult(
+                result,
+                RExecutionResultType.RESPONSE,
+                TextRange.allOf(result),
+                error
+        );
     }
-  }
+
+
+    @NotNull
+    private String calculateResult(@NotNull final CharSequence output) {
+        final int leftBound = findNextLineBegin(output, 0);
+        final int rightBound = findLastButOneLineEnd(output, findLastLineBegin(output));
+
+        if (leftBound >= rightBound) {
+            return "";
+        } else {
+            return output.subSequence(leftBound, rightBound).toString();
+        }
+    }
 }

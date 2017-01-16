@@ -8,9 +8,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RSyntaxHighlighterFactory extends SyntaxHighlighterFactory {
-  @Override
-  @NotNull
-  public SyntaxHighlighter getSyntaxHighlighter(@Nullable final Project project, @Nullable final VirtualFile virtualFile) {
-    return new RHighlighter();
-  }
+    @Override
+    @NotNull
+    public SyntaxHighlighter getSyntaxHighlighter(@Nullable final Project project, @Nullable final VirtualFile virtualFile) {
+        return new RHighlighter();
+    }
 }

@@ -7,10 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 public interface RValueModifierFactory {
 
-  @NotNull
-  RValueModifier getModifier(@NotNull final RExecutor executor,
-                             @NotNull final RFunctionDebuggerFactory factory,
-                             @NotNull final ROutputReceiver receiver,
-                             @NotNull final RValueModifierHandler handler,
-                             final int frameNumber);
+    @NotNull
+    RValueModifier getModifier(@NotNull final RExecutor executor,
+                               @NotNull final RFunctionDebuggerFactory factory,
+                               @NotNull final ROutputReceiver receiver,
+                               @NotNull final RValueModifierHandler handler,
+                               final int frameNumber);
 }

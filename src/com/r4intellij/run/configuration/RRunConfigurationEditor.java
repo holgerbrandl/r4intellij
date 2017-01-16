@@ -9,30 +9,35 @@ import javax.swing.*;
 
 class RRunConfigurationEditor extends SettingsEditor<RRunConfiguration> {
 
-  private RRunConfigurationForm myForm;
+    private RRunConfigurationForm myForm;
 
-  public RRunConfigurationEditor(@NotNull final Project project) {
-    myForm = new RRunConfigurationForm(project);
-  }
 
-  @Override
-  protected void resetEditorFrom(@NotNull final RRunConfiguration config) {
-    RRunConfiguration.copyParams(config, myForm);
-  }
+    public RRunConfigurationEditor(@NotNull final Project project) {
+        myForm = new RRunConfigurationForm(project);
+    }
 
-  @Override
-  protected void applyEditorTo(@NotNull final RRunConfiguration config) throws ConfigurationException {
-    RRunConfiguration.copyParams(myForm, config);
-  }
 
-  @Override
-  @NotNull
-  protected JComponent createEditor() {
-    return myForm.getPanel();
-  }
+    @Override
+    protected void resetEditorFrom(@NotNull final RRunConfiguration config) {
+        RRunConfiguration.copyParams(config, myForm);
+    }
 
-  @Override
-  protected void disposeEditor() {
-    myForm = null;
-  }
+
+    @Override
+    protected void applyEditorTo(@NotNull final RRunConfiguration config) throws ConfigurationException {
+        RRunConfiguration.copyParams(myForm, config);
+    }
+
+
+    @Override
+    @NotNull
+    protected JComponent createEditor() {
+        return myForm.getPanel();
+    }
+
+
+    @Override
+    protected void disposeEditor() {
+        myForm = null;
+    }
 }

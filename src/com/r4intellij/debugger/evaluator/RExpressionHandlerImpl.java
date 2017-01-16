@@ -8,25 +8,26 @@ import static com.r4intellij.debugger.data.RCommands.expressionOnFrameCommand;
 
 public class RExpressionHandlerImpl implements RExpressionHandler {
 
-  private int myLastFrameNumber = 0;
+    private int myLastFrameNumber = 0;
 
-  @NotNull
-  @Override
-  public String handle(final int frameNumber, @NotNull final String expression) {
-    if (StringUtil.isJavaIdentifier(expression)) {
-      return RDebuggerUtils.calculateValueCommand(frameNumber, expression);
+
+    @NotNull
+    @Override
+    public String handle(final int frameNumber, @NotNull final String expression) {
+        if (StringUtil.isJavaIdentifier(expression)) {
+            return RDebuggerUtils.calculateValueCommand(frameNumber, expression);
+        }
+
+        if (frameNumber == myLastFrameNumber) {
+            return expression;
+        } else {
+            return expressionOnFrameCommand(frameNumber, expression);
+        }
     }
 
-    if (frameNumber == myLastFrameNumber) {
-      return expression;
-    }
-    else {
-      return expressionOnFrameCommand(frameNumber, expression);
-    }
-  }
 
-  @Override
-  public void setLastFrameNumber(final int lastFrameNumber) {
-    myLastFrameNumber = lastFrameNumber;
-  }
+    @Override
+    public void setLastFrameNumber(final int lastFrameNumber) {
+        myLastFrameNumber = lastFrameNumber;
+    }
 }

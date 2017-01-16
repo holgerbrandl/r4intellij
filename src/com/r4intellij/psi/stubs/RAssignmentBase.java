@@ -7,11 +7,12 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class RAssignmentBase extends RBaseElementImpl<RAssignmentStub> implements RExpression {
 
-  public RAssignmentBase(@NotNull com.intellij.lang.ASTNode node) {
-    super(node);
-  }
+    public RAssignmentBase(@NotNull com.intellij.lang.ASTNode node) {
+        super(node);
+    }
 
-  public RAssignmentBase(@NotNull RAssignmentStub stub, @NotNull IStubElementType nodeType) {
-    super(stub, nodeType);
-  }
+
+    public RAssignmentBase(@NotNull RAssignmentStub stub, @NotNull IStubElementType nodeType) {
+        super(stub, nodeType);
+    }
 }

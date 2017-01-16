@@ -13,23 +13,23 @@ import java.util.Arrays;
 
 public class RConsoleAction extends AnAction implements DumbAware {
 
-  @Override
-  public void actionPerformed(@NotNull final AnActionEvent event) {
-    final Project project = CommonDataKeys.PROJECT.getData(event.getDataContext());
-    if (project == null) return;
+    @Override
+    public void actionPerformed(@NotNull final AnActionEvent event) {
+        final Project project = CommonDataKeys.PROJECT.getData(event.getDataContext());
+        if (project == null) return;
 
-    try {
-      RConsoleRunner runner = new RConsoleRunner(project, project.getBasePath());
-      runner.initAndRun();
+        try {
+            RConsoleRunner runner = new RConsoleRunner(project, project.getBasePath());
+            runner.initAndRun();
+        } catch (ExecutionException ex) {
+            ExecutionHelper.showErrors(project, Arrays.<Exception>asList(ex), "R Console", null);
+        }
     }
-    catch (ExecutionException ex) {
-      ExecutionHelper.showErrors(project, Arrays.<Exception>asList(ex), "R Console", null);
-    }
-  }
 
-  @Override
-  public void update(@NotNull final AnActionEvent e) {
-    final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
-    e.getPresentation().setVisible(project != null);
-  }
+
+    @Override
+    public void update(@NotNull final AnActionEvent e) {
+        final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
+        e.getPresentation().setVisible(project != null);
+    }
 }

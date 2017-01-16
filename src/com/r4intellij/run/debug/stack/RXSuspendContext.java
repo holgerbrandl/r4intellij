@@ -10,43 +10,49 @@ import java.util.List;
 
 class RXSuspendContext extends XSuspendContext {
 
-  @NotNull
-  private final RXExecutionStack myExecutionStack;
+    @NotNull
+    private final RXExecutionStack myExecutionStack;
 
-  public RXSuspendContext(@NotNull final List<RXStackFrame> stack) {
-    myExecutionStack = new RXExecutionStack(stack);
-  }
 
-  @NotNull
-  @Override
-  public XExecutionStack getActiveExecutionStack() {
-    return myExecutionStack;
-  }
+    public RXSuspendContext(@NotNull final List<RXStackFrame> stack) {
+        myExecutionStack = new RXExecutionStack(stack);
+    }
 
-  private static class RXExecutionStack extends XExecutionStack {
 
     @NotNull
-    private final List<RXStackFrame> myStack;
-
-    private RXExecutionStack(@NotNull final List<RXStackFrame> stack) {
-      super(""); // argument used as a description for current thread
-
-      myStack = stack;
-    }
-
-    @Nullable
     @Override
-    public XStackFrame getTopFrame() {
-      return myStack.isEmpty() ? null : myStack.get(0);
+    public XExecutionStack getActiveExecutionStack() {
+        return myExecutionStack;
     }
 
-    @Override
-    public void computeStackFrames(final int firstFrameIndex, final XStackFrameContainer container) {
-      if (firstFrameIndex <= myStack.size()) {
-        final List<RXStackFrame> stackFrames = myStack.subList(firstFrameIndex, myStack.size());
 
-        container.addStackFrames(stackFrames, true);
-      }
+    private static class RXExecutionStack extends XExecutionStack {
+
+        @NotNull
+        private final List<RXStackFrame> myStack;
+
+
+        private RXExecutionStack(@NotNull final List<RXStackFrame> stack) {
+            super(""); // argument used as a description for current thread
+
+            myStack = stack;
+        }
+
+
+        @Nullable
+        @Override
+        public XStackFrame getTopFrame() {
+            return myStack.isEmpty() ? null : myStack.get(0);
+        }
+
+
+        @Override
+        public void computeStackFrames(final int firstFrameIndex, final XStackFrameContainer container) {
+            if (firstFrameIndex <= myStack.size()) {
+                final List<RXStackFrame> stackFrames = myStack.subList(firstFrameIndex, myStack.size());
+
+                container.addStackFrames(stackFrames, true);
+            }
+        }
     }
-  }
 }

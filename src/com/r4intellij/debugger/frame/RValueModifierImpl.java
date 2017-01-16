@@ -15,86 +15,88 @@ import static com.r4intellij.debugger.executor.RExecutorUtils.execute;
 
 class RValueModifierImpl implements RValueModifier {
 
-  @NotNull
-  private final RExecutor myExecutor;
+    @NotNull
+    private final RExecutor myExecutor;
 
-  @NotNull
-  private final RFunctionDebuggerFactory myFactory;
+    @NotNull
+    private final RFunctionDebuggerFactory myFactory;
 
-  @NotNull
-  private final ROutputReceiver myReceiver;
+    @NotNull
+    private final ROutputReceiver myReceiver;
 
-  @NotNull
-  private final RValueModifierHandler myHandler;
+    @NotNull
+    private final RValueModifierHandler myHandler;
 
-  private final int myFrameNumber;
+    private final int myFrameNumber;
 
-  public RValueModifierImpl(@NotNull final RExecutor executor,
-                            @NotNull final RFunctionDebuggerFactory factory,
-                            @NotNull final ROutputReceiver receiver,
-                            @NotNull final RValueModifierHandler handler,
-                            final int frameNumber) {
-    myExecutor = executor;
-    myFactory = factory;
-    myReceiver = receiver;
-    myHandler = handler;
-    myFrameNumber = frameNumber;
-  }
 
-  @Override
-  public boolean isEnabled() {
-    return myHandler.isModificationAvailable(myFrameNumber);
-  }
-
-  @Override
-  public void setValue(@NotNull final String name, @NotNull final String value, @NotNull final Listener listener) {
-    if (!isEnabled()) {
-      throw new IllegalStateException("SetValue could be called only if isEnabled returns true");
+    public RValueModifierImpl(@NotNull final RExecutor executor,
+                              @NotNull final RFunctionDebuggerFactory factory,
+                              @NotNull final ROutputReceiver receiver,
+                              @NotNull final RValueModifierHandler handler,
+                              final int frameNumber) {
+        myExecutor = executor;
+        myFactory = factory;
+        myReceiver = receiver;
+        myHandler = handler;
+        myFrameNumber = frameNumber;
     }
 
-    try {
-      doSetValue(name, value, listener);
-    }
-    catch (final RDebuggerException e) {
-      listener.onError(e);
-    }
-  }
 
-  private void doSetValue(@NotNull final String name, @NotNull final String value, @NotNull final Listener listener)
-    throws RDebuggerException {
-    final RExecutionResult result = execute(myExecutor, name + " <- " + value, myReceiver);
+    @Override
+    public boolean isEnabled() {
+        return myHandler.isModificationAvailable(myFrameNumber);
+    }
 
-    switch (result.getType()) {
-      case EMPTY:
-        if (result.getError().isEmpty()) {
-          listener.onSuccess();
-        }
-        else {
-          listener.onError(result.getError());
+
+    @Override
+    public void setValue(@NotNull final String name, @NotNull final String value, @NotNull final Listener listener) {
+        if (!isEnabled()) {
+            throw new IllegalStateException("SetValue could be called only if isEnabled returns true");
         }
 
-        return;
-      case DEBUGGING_IN:
-        RDebuggerUtils.forciblyEvaluateFunction(myExecutor, myFactory, myReceiver);
-
-        listener.onSuccess();
-
-        return;
-      case DEBUG_AT:
-        execute(myExecutor, EXECUTE_AND_STEP_COMMAND, RESPONSE, myReceiver);
-
-        listener.onSuccess();
-
-        return;
-      default:
-        throw new RUnexpectedExecutionResultTypeException(
-          "Actual type is not the same as expected: " +
-          "[" +
-          "actual: " + result.getType() + ", " +
-          "expected: " +
-          "[" + DEBUGGING_IN + ", " + EMPTY + ", " + DEBUG_AT + "]" +
-          "]"
-        );
+        try {
+            doSetValue(name, value, listener);
+        } catch (final RDebuggerException e) {
+            listener.onError(e);
+        }
     }
-  }
+
+
+    private void doSetValue(@NotNull final String name, @NotNull final String value, @NotNull final Listener listener)
+            throws RDebuggerException {
+        final RExecutionResult result = execute(myExecutor, name + " <- " + value, myReceiver);
+
+        switch (result.getType()) {
+            case EMPTY:
+                if (result.getError().isEmpty()) {
+                    listener.onSuccess();
+                } else {
+                    listener.onError(result.getError());
+                }
+
+                return;
+            case DEBUGGING_IN:
+                RDebuggerUtils.forciblyEvaluateFunction(myExecutor, myFactory, myReceiver);
+
+                listener.onSuccess();
+
+                return;
+            case DEBUG_AT:
+                execute(myExecutor, EXECUTE_AND_STEP_COMMAND, RESPONSE, myReceiver);
+
+                listener.onSuccess();
+
+                return;
+            default:
+                throw new RUnexpectedExecutionResultTypeException(
+                        "Actual type is not the same as expected: " +
+                                "[" +
+                                "actual: " + result.getType() + ", " +
+                                "expected: " +
+                                "[" + DEBUGGING_IN + ", " + EMPTY + ", " + DEBUG_AT + "]" +
+                                "]"
+                );
+        }
+    }
 }

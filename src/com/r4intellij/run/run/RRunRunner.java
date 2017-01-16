@@ -17,43 +17,47 @@ import org.jetbrains.annotations.NotNull;
 
 public class RRunRunner extends GenericProgramRunner {
 
-  @NotNull
-  private static final String RUNNER_ID = "RRunRunner";
+    @NotNull
+    private static final String RUNNER_ID = "RRunRunner";
 
-  @NotNull
-  private static final String EXECUTOR_NAME = "RRunBackground";
+    @NotNull
+    private static final String EXECUTOR_NAME = "RRunBackground";
 
-  @NotNull
-  @Override
-  public String getRunnerId() {
-    return RUNNER_ID;
-  }
 
-  @Override
-  public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
-    return executorId.equals(DefaultRunExecutor.EXECUTOR_ID) && profile instanceof RRunConfiguration;
-  }
+    @NotNull
+    @Override
+    public String getRunnerId() {
+        return RUNNER_ID;
+    }
 
-  @Override
-  protected RunContentDescriptor doExecute(@NotNull final RunProfileState state, @NotNull final ExecutionEnvironment environment)
-    throws ExecutionException {
-    FileDocumentManager.getInstance().saveAllDocuments();
 
-    final Project project = environment.getProject();
+    @Override
+    public boolean canRun(@NotNull final String executorId, @NotNull final RunProfile profile) {
+        return executorId.equals(DefaultRunExecutor.EXECUTOR_ID) && profile instanceof RRunConfiguration;
+    }
 
-    return new RRunProcess(
-      project,
-      environment,
-      getExecutionResult(state, environment),
-      ConcurrencyUtil.newSingleThreadExecutor(EXECUTOR_NAME)
-    ).getRunContentDescriptor();
-  }
 
-  @NotNull
-  private ExecutionResult getExecutionResult(@NotNull final RunProfileState state, @NotNull final ExecutionEnvironment environment)
-    throws ExecutionException {
-    final RCommandLineState commandLineState = (RCommandLineState)state;
+    @Override
+    protected RunContentDescriptor doExecute(@NotNull final RunProfileState state, @NotNull final ExecutionEnvironment environment)
+            throws ExecutionException {
+        FileDocumentManager.getInstance().saveAllDocuments();
 
-    return commandLineState.execute(environment.getExecutor(), this);
-  }
+        final Project project = environment.getProject();
+
+        return new RRunProcess(
+                project,
+                environment,
+                getExecutionResult(state, environment),
+                ConcurrencyUtil.newSingleThreadExecutor(EXECUTOR_NAME)
+        ).getRunContentDescriptor();
+    }
+
+
+    @NotNull
+    private ExecutionResult getExecutionResult(@NotNull final RunProfileState state, @NotNull final ExecutionEnvironment environment)
+            throws ExecutionException {
+        final RCommandLineState commandLineState = (RCommandLineState) state;
+
+        return commandLineState.execute(environment.getExecutor(), this);
+    }
 }

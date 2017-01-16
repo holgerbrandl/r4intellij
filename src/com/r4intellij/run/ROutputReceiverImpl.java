@@ -11,28 +11,32 @@ import static com.r4intellij.debugger.data.RLanguageConstants.LINE_SEPARATOR;
 
 public class ROutputReceiverImpl implements ROutputReceiver {
 
-  @NotNull
-  private final ProcessHandler myProcessHandler;
+    @NotNull
+    private final ProcessHandler myProcessHandler;
 
-  public ROutputReceiverImpl(@NotNull final ProcessHandler processHandler) {
-    myProcessHandler = processHandler;
-  }
 
-  @Override
-  public void receiveOutput(@NotNull final String output) {
-    receiveOutput(output, ProcessOutputTypes.STDOUT);
-  }
-
-  @Override
-  public void receiveError(@NotNull final String error) {
-    receiveOutput(error, ProcessOutputTypes.STDERR);
-  }
-
-  private void receiveOutput(@NotNull final String output, @NotNull final Key type) {
-    myProcessHandler.notifyTextAvailable(output, type);
-
-    if (!StringUtil.endsWithLineBreak(output)) {
-      myProcessHandler.notifyTextAvailable(LINE_SEPARATOR, type);
+    public ROutputReceiverImpl(@NotNull final ProcessHandler processHandler) {
+        myProcessHandler = processHandler;
     }
-  }
+
+
+    @Override
+    public void receiveOutput(@NotNull final String output) {
+        receiveOutput(output, ProcessOutputTypes.STDOUT);
+    }
+
+
+    @Override
+    public void receiveError(@NotNull final String error) {
+        receiveOutput(error, ProcessOutputTypes.STDERR);
+    }
+
+
+    private void receiveOutput(@NotNull final String output, @NotNull final Key type) {
+        myProcessHandler.notifyTextAvailable(output, type);
+
+        if (!StringUtil.endsWithLineBreak(output)) {
+            myProcessHandler.notifyTextAvailable(LINE_SEPARATOR, type);
+        }
+    }
 }

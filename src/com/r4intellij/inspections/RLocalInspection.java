@@ -9,16 +9,17 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class RLocalInspection extends LocalInspectionTool {
 
-  @Nls
-  @NotNull
-  @Override
-  public String getGroupDisplayName() {
-    return "R inspections";
-  }
-
-  protected void registerProblem(ProblemsHolder holder, PsiElement element, String message, ProblemHighlightType highlightType) {
-    if (holder != null) {
-      holder.registerProblem(element, message, highlightType);
+    @Nls
+    @NotNull
+    @Override
+    public String getGroupDisplayName() {
+        return "R inspections";
     }
-  }
+
+
+    protected void registerProblem(ProblemsHolder holder, PsiElement element, String message, ProblemHighlightType highlightType) {
+        if (holder != null) {
+            holder.registerProblem(element, message, highlightType);
+        }
+    }
 }

@@ -22,10 +22,9 @@ import java.util.List;
 import static com.r4intellij.parsing.RElementTypes.*;
 
 
-
 /**
  * Defines how code folding should behave for R files
- *
+ * <p>
  * For details see http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/folding_builder.html
  */
 public class RFoldingBuilder implements FoldingBuilder {

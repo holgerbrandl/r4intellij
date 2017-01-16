@@ -7,69 +7,74 @@ import org.jetbrains.annotations.NotNull;
 
 public final class RDebuggerStringUtils {
 
-  public static void appendError(@NotNull final RExecutionResult result, @NotNull final ROutputReceiver receiver) {
-    final String error = result.getError();
+    public static void appendError(@NotNull final RExecutionResult result, @NotNull final ROutputReceiver receiver) {
+        final String error = result.getError();
 
-    if (!error.isEmpty()) {
-      receiver.receiveError(error);
-    }
-  }
-
-  public static void appendResult(@NotNull final RExecutionResult result, @NotNull final ROutputReceiver receiver) {
-    final TextRange range = result.getResultRange();
-
-    if (!range.isEmpty()) {
-      receiver.receiveOutput(
-        range.substring(
-          result.getOutput()
-        )
-      );
-    }
-  }
-
-  public static int findNextLineBegin(@NotNull final CharSequence sequence, final int index) {
-    int current = index;
-
-    while (current < sequence.length() && !StringUtil.isLineBreak(sequence.charAt(current))) {
-      current++;
+        if (!error.isEmpty()) {
+            receiver.receiveError(error);
+        }
     }
 
-    while (current < sequence.length() && StringUtil.isLineBreak(sequence.charAt(current))) {
-      current++;
+
+    public static void appendResult(@NotNull final RExecutionResult result, @NotNull final ROutputReceiver receiver) {
+        final TextRange range = result.getResultRange();
+
+        if (!range.isEmpty()) {
+            receiver.receiveOutput(
+                    range.substring(
+                            result.getOutput()
+                    )
+            );
+        }
     }
 
-    return current;
-  }
 
-  public static int findCurrentLineEnd(@NotNull final CharSequence sequence, final int index) {
-    int current = index;
+    public static int findNextLineBegin(@NotNull final CharSequence sequence, final int index) {
+        int current = index;
 
-    while (current < sequence.length() && !StringUtil.isLineBreak(sequence.charAt(current))) {
-      current++;
+        while (current < sequence.length() && !StringUtil.isLineBreak(sequence.charAt(current))) {
+            current++;
+        }
+
+        while (current < sequence.length() && StringUtil.isLineBreak(sequence.charAt(current))) {
+            current++;
+        }
+
+        return current;
     }
 
-    return current;
-  }
 
-  // TODO [dbg][test]
-  public static int findLastLineBegin(@NotNull final CharSequence sequence) {
-    int current = sequence.length() - 1;
+    public static int findCurrentLineEnd(@NotNull final CharSequence sequence, final int index) {
+        int current = index;
 
-    while (current > -1 && !StringUtil.isLineBreak(sequence.charAt(current))) {
-      current--;
+        while (current < sequence.length() && !StringUtil.isLineBreak(sequence.charAt(current))) {
+            current++;
+        }
+
+        return current;
     }
 
-    return current + 1;
-  }
 
-  // TODO [dbg][test]
-  public static int findLastButOneLineEnd(@NotNull final CharSequence sequence, final int lastLineBegin) {
-    int current = lastLineBegin - 1;
+    // TODO [dbg][test]
+    public static int findLastLineBegin(@NotNull final CharSequence sequence) {
+        int current = sequence.length() - 1;
 
-    while (current > -1 && StringUtil.isLineBreak(sequence.charAt(current))) {
-      current--;
+        while (current > -1 && !StringUtil.isLineBreak(sequence.charAt(current))) {
+            current--;
+        }
+
+        return current + 1;
     }
 
-    return current + 1;
-  }
+
+    // TODO [dbg][test]
+    public static int findLastButOneLineEnd(@NotNull final CharSequence sequence, final int lastLineBegin) {
+        int current = lastLineBegin - 1;
+
+        while (current > -1 && StringUtil.isLineBreak(sequence.charAt(current))) {
+            current--;
+        }
+
+        return current + 1;
+    }
 }

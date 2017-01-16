@@ -13,28 +13,30 @@ import org.jetbrains.annotations.NotNull;
 // TODO [run][test]
 public final class RProcessUtils {
 
-  public static void executeInitGraphicsCommands(@NotNull final Project project, @NotNull final RExecutor executor)
-    throws RDebuggerException {
-    final boolean is64Bit = is64Bit(loadArchitecture(executor));
+    public static void executeInitGraphicsCommands(@NotNull final Project project, @NotNull final RExecutor executor)
+            throws RDebuggerException {
+        final boolean is64Bit = is64Bit(loadArchitecture(executor));
 
-    for (final String command : RGraphicsUtils.calculateInitCommands(project, is64Bit)) {
-      executor.execute(command);
+        for (final String command : RGraphicsUtils.calculateInitCommands(project, is64Bit)) {
+            executor.execute(command);
+        }
     }
-  }
 
-  private static boolean is64Bit(@NotNull final String architecture) {
-    final int begin = RDebuggerStringUtils.findNextLineBegin(architecture, 0) + 5;
-    final int end = RDebuggerStringUtils.findCurrentLineEnd(architecture, begin) - 1;
 
-    return begin <= end && architecture.substring(begin, end).equals("x86_64");
-  }
+    private static boolean is64Bit(@NotNull final String architecture) {
+        final int begin = RDebuggerStringUtils.findNextLineBegin(architecture, 0) + 5;
+        final int end = RDebuggerStringUtils.findCurrentLineEnd(architecture, begin) - 1;
 
-  @NotNull
-  private static String loadArchitecture(@NotNull final RExecutor executor) throws RDebuggerException {
-    return RExecutorUtils.execute(
-      executor,
-      RCommands.rVersionCommand("arch"),
-      RExecutionResultType.RESPONSE
-    ).getOutput();
-  }
+        return begin <= end && architecture.substring(begin, end).equals("x86_64");
+    }
+
+
+    @NotNull
+    private static String loadArchitecture(@NotNull final RExecutor executor) throws RDebuggerException {
+        return RExecutorUtils.execute(
+                executor,
+                RCommands.rVersionCommand("arch"),
+                RExecutionResultType.RESPONSE
+        ).getOutput();
+    }
 }

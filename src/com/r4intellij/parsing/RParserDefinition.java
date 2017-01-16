@@ -18,72 +18,81 @@ import com.r4intellij.psi.RFileImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class RParserDefinition implements ParserDefinition {
-  private final TokenSet myWhitespaceTokens;
-  private final TokenSet myCommentTokens;
-  private final TokenSet myStringLiteralTokens;
+    private final TokenSet myWhitespaceTokens;
+    private final TokenSet myCommentTokens;
+    private final TokenSet myStringLiteralTokens;
 
-  public static IFileElementType FILE = new RFileElementType();
-  public static IElementType END_OF_LINE_COMMENT = new RElementType("END_OF_LINE_COMMENT");
-  public static IElementType BAD_CHARACTER = new RElementType("BAD_CHARACTER");
-  public static IElementType SPACE = new RElementType("SPACE");
-  public static IElementType TAB = new RElementType("TAB");
-  public static IElementType FORMFEED = new RElementType("FORMFEED");
+    public static IFileElementType FILE = new RFileElementType();
+    public static IElementType END_OF_LINE_COMMENT = new RElementType("END_OF_LINE_COMMENT");
+    public static IElementType BAD_CHARACTER = new RElementType("BAD_CHARACTER");
+    public static IElementType SPACE = new RElementType("SPACE");
+    public static IElementType TAB = new RElementType("TAB");
+    public static IElementType FORMFEED = new RElementType("FORMFEED");
 
 
-  public RParserDefinition() {
-    myWhitespaceTokens = TokenSet.create(SPACE, TAB, FORMFEED);
-    myCommentTokens = TokenSet.create(END_OF_LINE_COMMENT);
-      myStringLiteralTokens = TokenSet.create(RElementTypes.R_STRING);
-  }
+    public RParserDefinition() {
+        myWhitespaceTokens = TokenSet.create(SPACE, TAB, FORMFEED);
+        myCommentTokens = TokenSet.create(END_OF_LINE_COMMENT);
+        myStringLiteralTokens = TokenSet.create(RElementTypes.R_STRING);
+    }
 
-  @Override
-  @NotNull
-  public Lexer createLexer(Project project) {
-    return new RLexer();
-  }
 
-  @Override
-  public IFileElementType getFileNodeType() {
-    return FILE;
-  }
+    @Override
+    @NotNull
+    public Lexer createLexer(Project project) {
+        return new RLexer();
+    }
 
-  @Override
-  @NotNull
-  public TokenSet getWhitespaceTokens() {
-    return myWhitespaceTokens;
-  }
 
-  @Override
-  @NotNull
-  public TokenSet getCommentTokens() {
-    return myCommentTokens;
-  }
+    @Override
+    public IFileElementType getFileNodeType() {
+        return FILE;
+    }
 
-  @Override
-  @NotNull
-  public TokenSet getStringLiteralElements() {
-    return myStringLiteralTokens;
-  }
 
-  @Override
-  @NotNull
-  public PsiParser createParser(Project project) {
-    return new RParser();
-  }
+    @Override
+    @NotNull
+    public TokenSet getWhitespaceTokens() {
+        return myWhitespaceTokens;
+    }
 
-  @Override
-  @NotNull
-  public PsiElement createElement(@NotNull ASTNode node) {
-    return RElementTypes.Factory.createElement(node);
-  }
 
-  @Override
-  public PsiFile createFile(FileViewProvider viewProvider) {
-    return new RFileImpl(viewProvider);
-  }
+    @Override
+    @NotNull
+    public TokenSet getCommentTokens() {
+        return myCommentTokens;
+    }
 
-  @Override
-  public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
-    return SpaceRequirements.MAY;
-  }
+
+    @Override
+    @NotNull
+    public TokenSet getStringLiteralElements() {
+        return myStringLiteralTokens;
+    }
+
+
+    @Override
+    @NotNull
+    public PsiParser createParser(Project project) {
+        return new RParser();
+    }
+
+
+    @Override
+    @NotNull
+    public PsiElement createElement(@NotNull ASTNode node) {
+        return RElementTypes.Factory.createElement(node);
+    }
+
+
+    @Override
+    public PsiFile createFile(FileViewProvider viewProvider) {
+        return new RFileImpl(viewProvider);
+    }
+
+
+    @Override
+    public SpaceRequirements spaceExistanceTypeBetweenTokens(ASTNode left, ASTNode right) {
+        return SpaceRequirements.MAY;
+    }
 }

@@ -1,29 +1,29 @@
 <project name="Generate lexer from ther.flex" default="dist">
     <property name="jflex.dir" value="/Users/brandl/projects/rplugin/r4intellij_v2/misc/JFlex.jar"/>
 
-  <property name="lexer.dir" value="."/>
-  <property name="lexer.file" value="${lexer.dir}/_RLexer.java"/>
-  <property name="lexer.log" value="${lexer.dir}/jflex.log"/>
-  <property name="lexer.source" value="${lexer.dir}/R.flex"/>
-  <property name="lexer.skeleton" value="./idea-flex.skeleton"/>
-  <property name="compiler.max.memory" value="256m"/>
-  <property name="jflex.file" value="./JFlex.jar"/>
+    <property name="lexer.dir" value="."/>
+    <property name="lexer.file" value="${lexer.dir}/_RLexer.java"/>
+    <property name="lexer.log" value="${lexer.dir}/jflex.log"/>
+    <property name="lexer.source" value="${lexer.dir}/R.flex"/>
+    <property name="lexer.skeleton" value="./idea-flex.skeleton"/>
+    <property name="compiler.max.memory" value="256m"/>
+    <property name="jflex.file" value="./JFlex.jar"/>
 
-  <target name="clean">
-    <delete file="${lexer.file}~"/>
-    <delete file="${lexer.file}"/>
-    <delete file="${lexer.log}"/>
-  </target>
+    <target name="clean">
+        <delete file="${lexer.file}~"/>
+        <delete file="${lexer.file}"/>
+        <delete file="${lexer.log}"/>
+    </target>
 
-  <target name="jflex" description="Produces Jflex based lexer" depends="clean">
-    <java jar="${jflex.file}" output="${lexer.log}" fork="true" maxmemory="${compiler.max.memory}">
-      <arg value="--charat"/>
-      <arg value="-skel"/>
-      <arg value="${lexer.skeleton}"/>
-      <arg value="${lexer.source}"/>
-    </java>
-  </target>
+    <target name="jflex" description="Produces Jflex based lexer" depends="clean">
+        <java jar="${jflex.file}" output="${lexer.log}" fork="true" maxmemory="${compiler.max.memory}">
+            <arg value="--charat"/>
+            <arg value="-skel"/>
+            <arg value="${lexer.skeleton}"/>
+            <arg value="${lexer.source}"/>
+        </java>
+    </target>
 
-  <target name="dist" depends="clean, jflex" description="main target"/>
+    <target name="dist" depends="clean, jflex" description="main target"/>
 
 </project>
