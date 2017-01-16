@@ -2,6 +2,7 @@ package com.r4intellij.interpreter;
 
 import com.intellij.openapi.components.*;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.sun.javafx.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
 @State(
@@ -12,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
     )}
 )
 public class RInterpreterService implements PersistentStateComponent<RInterpreterService> {
-  public String INTERPRETER_PATH = "";
+  public String INTERPRETER_PATH = Utils.isMac() || Utils.isUnix() ? "/usr/local/bin/R" : "";
   public String INTERPRETER_SOURCES_PATH = "";
 
   public static RInterpreterService getInstance() {

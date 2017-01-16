@@ -22,8 +22,11 @@ import java.util.List;
 import static com.r4intellij.parsing.RElementTypes.*;
 
 
+
 /**
  * Defines how code folding should behave for R files
+ *
+ * For details see http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/folding_builder.html
  */
 public class RFoldingBuilder implements FoldingBuilder {
 
@@ -79,7 +82,7 @@ public class RFoldingBuilder implements FoldingBuilder {
 
             int lbraceStart = blockExpr.getLbrace().getTextRange().getStartOffset();
             int rbraceStart = blockExpr.getRbrace().getTextRange().getEndOffset();
-            System.err.println("adding descriptor for " + node.getText());
+
             descriptors.add(new FoldingDescriptor(node, new TextRange(lbraceStart, rbraceStart)));
         }
 

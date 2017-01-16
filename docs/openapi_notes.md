@@ -35,3 +35,9 @@ https://confluence.jetbrains.com/display/IDEADEV/Developing+Custom+Language+Plug
 skeltons are saved under  (see module deps --> libaries)
 /Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/-1481726564
 
+
+## Misc
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/207567045-How-to-get-the-parent-psi-element-outside-of-a-language-injection
+
+Invoking psi.getContext in a loop (orPsiTreeUtil.getContextOfType) will eventually switch from injected to host PSI.

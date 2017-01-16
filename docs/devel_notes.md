@@ -1,12 +1,5 @@
 ## Next steps
 
-### Port snippet evaluation
-
-### Migrate Folding from r4intllij
-
-http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/folding_builder.html
-
-
 ### Implement proper completion contributor
 
 * for installed and not installed packages

@@ -18,12 +18,17 @@ The following features were merged in from previous version of r4intellij
 * Live-templates
 * Structure view to jump to sections and functions
 * Code folding for function definitions, loops and if-else expressions 
-
+* Enhanced code completion 
+    * all identifiers in current document
+    * package names in `require` and `library`
+    * context aware method name completion for loaded packages 
 
 New Intentions and Inspections
 * incomplete parameter list warning when calling functions (from TheR)
 *
 
+Code Snippet Evaluation
+* refactored into separate [Send to Terminal](https://plugins.jetbrains.com/idea/plugin/9409-send-to-terminal) plugin. Code is available under https://github.com/holgerbrandl/send2terminal
 
 
 

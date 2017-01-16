@@ -82,21 +82,28 @@
         <fileTypeFactory implementation="com.r4intellij.RFileTypeFactory"/>
         <lang.syntaxHighlighterFactory key="R"
                                        implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
+
         <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>
         <lang.braceMatcher language="R" implementationClass="com.r4intellij.highlighting.RBraceMatcher"/>
+
         <projectConfigurable instance="com.r4intellij.interpreter.RInterpreterConfigurable"/>
+
         <applicationService serviceInterface="com.r4intellij.interpreter.RInterpreterService"
                             serviceImplementation="com.r4intellij.interpreter.RInterpreterService"/>
         <applicationService serviceInterface="com.r4intellij.packages.RPackageService"
                             serviceImplementation="com.r4intellij.packages.RPackageService"/>
+
         <directoryProjectConfigurator implementation="com.r4intellij.interpreter.RInterpreterConfigurator"
                                       id="interpreter"
                                       order="after PlatformProjectConfigurator"/>
+
         <stubIndex implementation="com.r4intellij.psi.stubs.RAssignmentNameIndex"/>
         <stubElementTypeHolder class="com.r4intellij.parsing.RElementTypes"/>
+
         <lang.commenter language="R" implementationClass="com.r4intellij.RCommenter"/>
 
         <treeStructureProvider implementation="com.r4intellij.projectView.RTreeStructureProvider"/>
+
         <lang.psiStructureViewFactory language="R"
                                       implementationClass="com.r4intellij.psi.RScriptStructureViewFactory"/>
 
@@ -106,13 +113,19 @@
         <!--<fileIconProvider implementation="com.r4intellij.RFileIconProvider"/>-->
 
         <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
+
         <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
+
+        <completion.contributor language="R" implementationClass="com.r4intellij.editor.RCompletionContributor"/>
+
 
         <configurationType implementation="com.r4intellij.run.configuration.RRunConfigurationType"/>
         <runConfigurationProducer implementation="com.r4intellij.run.configuration.RRunConfigurationProducer"/>
+
         <programRunner implementation="com.r4intellij.run.run.RRunRunner"/>
         <programRunner implementation="com.r4intellij.run.debug.RDebugRunner"/>
         <xdebugger.breakpointType implementation="com.r4intellij.run.debug.RLineBreakpointType"/>
+
         <toolWindow id="R Graphics" anchor="right"
                     factoryClass="com.r4intellij.run.graphics.RGraphicsToolWindowFactory"/>
 
@@ -136,6 +149,7 @@
         <lang.findUsagesProvider implementationClass="com.r4intellij.RFindUsagesProvider" language="R"/>
 
         <toolWindow id="R Packages" anchor="right" factoryClass="com.r4intellij.packages.RPackagesToolWindowFactory"/>
+
         <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
     </extensions>
 </idea-plugin>
