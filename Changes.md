@@ -17,7 +17,7 @@ The following features were merged in from previous version of r4intellij
 * More recent R logo
 * Live-templates
 * Structure view to jump to sections and functions
-* Folding of 
+* Code folding for function definitions, loops and if-else expressions 
 
 
 New Intentions and Inspections
