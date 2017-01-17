@@ -154,7 +154,7 @@
         <lang.findUsagesProvider implementationClass="com.r4intellij.RFindUsagesProvider" language="R"/>
 
         <toolWindow id="R Packages" anchor="right"
-                    factoryClass="com.r4intellij.packages.ui.RPackagesToolWindowFactory"/>
+                    factoryClass="com.r4intellij.packages.remote.ui.RPackagesToolWindowFactory"/>
         <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
     </extensions>
 </idea-plugin>

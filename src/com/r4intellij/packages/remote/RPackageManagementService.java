@@ -1,4 +1,4 @@
-package com.r4intellij.packages;
+package com.r4intellij.packages.remote;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -11,6 +11,9 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.PackageManagementService;
 import com.intellij.webcore.packaging.RepoPackage;
+import com.r4intellij.packages.LocalRUtil;
+import com.r4intellij.packages.RPackage;
+import com.r4intellij.packages.RPackageService;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

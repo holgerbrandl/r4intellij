@@ -1,4 +1,4 @@
-package com.r4intellij.packages;
+package com.r4intellij.packages.remote;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.notification.Notification;
@@ -27,11 +27,12 @@ import java.util.List;
  * @author avesloguzova
  */
 public class RPackageTaskManager {
+
     private final Project myProject;
     private final TaskListener myListener;
 
 
-    RPackageTaskManager(@NotNull final Project project, @NotNull final TaskListener listener) {
+    public RPackageTaskManager(@NotNull final Project project, @NotNull final TaskListener listener) {
         myProject = project;
         myListener = listener;
     }
@@ -164,7 +165,7 @@ public class RPackageTaskManager {
         protected List<ExecutionException> runTask(@NotNull ProgressIndicator indicator) {
             final List<ExecutionException> exceptions = new ArrayList<ExecutionException>();
             try {
-                PackageInstallUtils.installPackage(myPackage);
+                RepoUtils.installPackage(myPackage);
             } catch (ExecutionException e) {
                 exceptions.add(e);
             }
@@ -211,7 +212,7 @@ public class RPackageTaskManager {
         protected List<ExecutionException> runTask(@NotNull ProgressIndicator indicator) {
             final List<ExecutionException> exceptions = new ArrayList<ExecutionException>();
             try {
-                PackageInstallUtils.updatePackage(myPackage);
+                RepoUtils.updatePackage(myPackage);
             } catch (ExecutionException e) {
                 exceptions.add(e);
             }
@@ -258,7 +259,7 @@ public class RPackageTaskManager {
         protected List<ExecutionException> runTask(@NotNull ProgressIndicator indicator) {
             final List<ExecutionException> exceptions = new ArrayList<ExecutionException>();
             try {
-                PackageInstallUtils.uninstallPackage(myPackages);
+                RepoUtils.uninstallPackage(myPackages);
             } catch (ExecutionException e) {
                 exceptions.add(e);
             }

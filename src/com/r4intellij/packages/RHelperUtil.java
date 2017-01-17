@@ -16,11 +16,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-class RHelperUtil {
-    static final Logger LOG = Logger.getInstance(LocalRUtil.class.getName());
+public class RHelperUtil {
+
+    public static final Logger LOG = Logger.getInstance(LocalRUtil.class.getName());
 
 
-    static String getHelperOutput(String helper) {
+    public static String getHelperOutput(String helper) {
         final String path = RInterpreterService.getInstance().getInterpreterPath();
         if (StringUtil.isEmptyOrSpaces(path)) {
             LOG.info("Path to interpreter didn't set");
@@ -44,7 +45,7 @@ class RHelperUtil {
 
 
     @Nullable
-    static RRunResult runHelperWithArgs(@NotNull final String helper, @NotNull final String... args) {
+    public static RRunResult runHelperWithArgs(@NotNull final String helper, @NotNull final String... args) {
         final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
         if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
             LOG.info("Path to interpreter didn't set");

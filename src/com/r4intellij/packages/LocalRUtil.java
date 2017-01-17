@@ -7,6 +7,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.CatchingConsumer;
 import com.intellij.webcore.packaging.InstalledPackage;
+import com.r4intellij.packages.remote.RExecutionException;
+import com.r4intellij.packages.remote.RepoUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -18,7 +20,7 @@ public final class LocalRUtil {
 
     private static final String R_INSTALLED_PACKAGES = "r-packages/r-packages-installed.r";
 
-    static final String ARGUMENT_DELIMETER = " ";
+    public static final String ARGUMENT_DELIMETER = " ";
 
     private static final String R_PACKAGES_DETAILS = "r-packages/r-packages-details.r";
 
@@ -74,7 +76,7 @@ public final class LocalRUtil {
     }
 
 
-    static void fetchPackageDetails(@NotNull final String packageName, @NotNull final CatchingConsumer<String, Exception> consumer) {
+    public static void fetchPackageDetails(@NotNull final String packageName, @NotNull final CatchingConsumer<String, Exception> consumer) {
         ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
             @Override
             public void run() {
@@ -94,8 +96,8 @@ public final class LocalRUtil {
         StringBuilder builder = new StringBuilder("<html><head>    <style type=\"text/css\">        " +
                 "p {            font-family: Arial,serif; font-size: 12pt; margin: 2px 2px        }    " +
                 "</style></head><body style=\"font-family: Arial,serif; font-size: 12pt; margin: 5px 5px;\">");
-        if (RepoUtils.namesToDetails.containsKey(packageName)) {
-            builder.append(RepoUtils.namesToDetails.get(packageName));
+        if (RepoUtils.getPackageRepositoryDetails().containsKey(packageName)) {
+            builder.append(RepoUtils.getPackageRepositoryDetails().get(packageName));
             builder.append("<br/>");
         }
         if (splittedString.length == 3) {

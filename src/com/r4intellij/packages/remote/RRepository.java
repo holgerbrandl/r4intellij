@@ -1,4 +1,4 @@
-package com.r4intellij.packages;
+package com.r4intellij.packages.remote;
 
 
 public class RRepository {

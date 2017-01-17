@@ -23,7 +23,7 @@ public class Function implements Serializable {
 
     private final String funName;
 
-    private String funDesc;
+    private String description;
     private String funSignature;
     private String shortDesc;
 

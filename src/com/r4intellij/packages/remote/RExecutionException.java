@@ -1,4 +1,4 @@
-package com.r4intellij.packages;
+package com.r4intellij.packages.remote;
 
 import com.intellij.execution.ExecutionException;
 import org.jetbrains.annotations.NotNull;
@@ -15,8 +15,8 @@ public class RExecutionException extends ExecutionException {
     private final int myExitCode;
 
 
-    RExecutionException(@NotNull final String message, @NotNull final String command,
-                        @NotNull final String stdout, @NotNull final String stderr, int exitCode) {
+    public RExecutionException(@NotNull final String message, @NotNull final String command,
+                               @NotNull final String stdout, @NotNull final String stderr, int exitCode) {
         super(message);
         myCommand = command;
         myStdout = stdout;
