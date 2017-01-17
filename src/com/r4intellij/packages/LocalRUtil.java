@@ -2,27 +2,24 @@ package com.r4intellij.packages;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.execution.ExecutionException;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.CatchingConsumer;
 import com.intellij.webcore.packaging.InstalledPackage;
-import com.r4intellij.packages.remote.RExecutionException;
+import com.jgoodies.common.base.Preconditions;
 import com.r4intellij.packages.remote.RepoUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 /**
  * @author avesloguzova
+ * @author holgerbrandl
  */
 public final class LocalRUtil {
 
     private static final String R_INSTALLED_PACKAGES = "r-packages/r-packages-installed.r";
 
     public static final String ARGUMENT_DELIMETER = " ";
-
-    private static final String R_PACKAGES_DETAILS = "r-packages/r-packages-details.r";
 
     public static final Set<String> basePackages = Sets.newHashSet("stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base");
     //    public static final Set<String> basePackages = Sets.newHashSet("base", "utils", "stats", "datasets", "graphics",
@@ -43,12 +40,14 @@ public final class LocalRUtil {
         }
 
 
+        // todo remove this hack and fetch package description from local installation
         Map<String, String> repositoryDetails = RepoUtils.getPackageRepositoryDetails();
 
         final String[] splittedOutput = StringUtil.splitByLines(stdout);
 
         for (String line : splittedOutput) {
             final List<String> packageAttributes = StringUtil.split(line, ARGUMENT_DELIMETER);
+
             if (packageAttributes.size() == 4) {
                 RPackage rPackage = new RPackage(
                         packageAttributes.get(1).replace("\"", ""),
@@ -76,59 +75,48 @@ public final class LocalRUtil {
     }
 
 
-    public static void fetchPackageDetails(@NotNull final String packageName, @NotNull final CatchingConsumer<String, Exception> consumer) {
-        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final String details = loadPackageDetails(packageName);
-                    consumer.consume(formatDetails(packageName, details));
-                } catch (ExecutionException e) {
-                    consumer.consume(e);
-                }
-            }
-        });
+    static String getPackageVersion(String packageName) {
+        String s = RHelperUtil.evalRCommandCat("packageDescription('" + packageName + "')$Version");
+        Preconditions.checkNotBlank(s, "version is empty");
+        return s;
     }
 
 
-    private static String formatDetails(@NotNull final String packageName, @NotNull final String details) {
-        final String[] splittedString = details.split("\t");
-        StringBuilder builder = new StringBuilder("<html><head>    <style type=\"text/css\">        " +
-                "p {            font-family: Arial,serif; font-size: 12pt; margin: 2px 2px        }    " +
-                "</style></head><body style=\"font-family: Arial,serif; font-size: 12pt; margin: 5px 5px;\">");
-        if (RepoUtils.getPackageRepositoryDetails().containsKey(packageName)) {
-            builder.append(RepoUtils.getPackageRepositoryDetails().get(packageName));
-            builder.append("<br/>");
-        }
-        if (splittedString.length == 3) {
-            builder.append("<h4>Version</h4>");
-            builder.append(splittedString[0]);
-            builder.append("<br/>");
-            builder.append("<h4>Depends</h4>");
-            builder.append(splittedString[1]);
-            builder.append("<br/>");
-            builder.append("<h4>Repository</h4>");
-            builder.append(splittedString[2]);
-        }
-        return builder.toString();
-    }
+    public static List<Function> getFunctionByName(String funName, @Nullable Collection<RPackage> importedPackages) {
 
+        RPackageService packageService = RPackageService.getInstance();
 
-    private static String loadPackageDetails(@NotNull final String packageName) throws ExecutionException {
-        final List<String> args = RepoUtils.getHelperRepositoryArguments();
-        args.add(0, packageName);
+        if (packageService == null)
+            return Collections.emptyList();
 
-        final RHelperUtil.RRunResult result = RHelperUtil.runHelperWithArgs(R_PACKAGES_DETAILS, args.toArray(new String[args.size()]));
-        if (result != null && result.getExitCode() == 0) {
-            return result.getStdOut();
+        // if the user didn't import anything do a global search todo: does this make sense???
+        if (importedPackages == null) {
+            importedPackages = packageService.getPackages();
         } else {
-            if (result == null) {
-                throw new ExecutionException("Can't fetch package details.");
-            }
-            throw new RExecutionException("Can't fetch package details.", result.getCommand(), result.getStdOut(), result.getStdErr(),
-                    result.getExitCode());
+            importedPackages = addImportDependencies(importedPackages);
         }
+
+        List<Function> funs = new ArrayList<Function>();
+        for (RPackage importedPackage : importedPackages) {
+            if (importedPackage.hasFunction(funName))
+                funs.add(importedPackage.getFunction(funName));
+
+        }
+
+        return funs;
     }
 
 
+    private static Collection<RPackage> addImportDependencies(Collection<RPackage> importedPackages) {
+        RPackageService packageService = RPackageService.getInstance();
+
+        Collection<RPackage> imPckgsWithDeps = new HashSet<RPackage>();
+
+        for (RPackage importedPackage : importedPackages) {
+            imPckgsWithDeps.add(importedPackage);
+            imPckgsWithDeps.addAll(packageService.getDependencies(importedPackage));
+        }
+
+        return imPckgsWithDeps;
+    }
 }

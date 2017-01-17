@@ -6,7 +6,9 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.CatchingConsumer;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.RepoPackage;
 import com.r4intellij.RPsiUtils;
@@ -47,12 +49,13 @@ public class RepoUtils {
     private static final Pattern urlPattern = Pattern.compile("\".+\"");
     private static final String R_INSTALL_PACKAGE = "r-packages/r-packages-install.r";
     private static final String R_UPDATE_PACKAGE = "r-packages/r-packages-update.r";
+    private static final String R_PACKAGES_DETAILS = "r-packages/r-packages-details.r";
 
-    static TreeMap<String, String> namesToDetails;
+    private static TreeMap<String, String> namesToDetails;
 
 
     @NotNull
-    public static List<RDefaultRepository> getDefaultRepositories() {
+    static List<RDefaultRepository> getDefaultRepositories() {
         final String output = RHelperUtil.getHelperOutput(R_PACKAGES_DEFAULT_REPOS);
         if (output != null) {
             return toDefaultPackages((output));
@@ -72,7 +75,7 @@ public class RepoUtils {
 
 
     @NotNull
-    public static List<String> getCRANMirrors() {
+    static List<String> getCRANMirrors() {
         final ProcessOutput output = RUtils.getProcessOutput("getCRANmirrors()[,\"URL\"]");
         if (output != null && output.getExitCode() == 0) {
             return getURLs(output.getStdout());
@@ -93,7 +96,7 @@ public class RepoUtils {
 
 
     @NotNull
-    public static List<RepoPackage> loadAvailablePackages() {
+    static List<RepoPackage> loadAvailablePackages() {
         final List<String> args = getHelperRepositoryArguments();
 
         final RHelperUtil.RRunResult result = RHelperUtil.runHelperWithArgs(R_ALL_PACKAGES, args.toArray(new String[args.size()]));
@@ -124,7 +127,7 @@ public class RepoUtils {
 
 
     @NotNull
-    public static List<String> getHelperRepositoryArguments() {
+    static List<String> getHelperRepositoryArguments() {
         final RPackageService service = RPackageService.getInstance();
         final List<String> args = Lists.newArrayList();
 
@@ -247,6 +250,61 @@ public class RepoUtils {
         if (output.getExitCode() != 0) {
             throw new RExecutionException("Can't remove package", StringUtil.join(arguments, " "), output.getStdout(),
                     output.getStderr(), output.getExitCode());
+        }
+    }
+
+
+    public static void fetchPackageDetails(@NotNull final String packageName, @NotNull final CatchingConsumer<String, Exception> consumer) {
+        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final String details = loadPackageDetails(packageName);
+                    consumer.consume(formatDetails(packageName, details));
+                } catch (ExecutionException e) {
+                    consumer.consume(e);
+                }
+            }
+        });
+    }
+
+
+    private static String formatDetails(@NotNull final String packageName, @NotNull final String details) {
+        final String[] splittedString = details.split("\t");
+        StringBuilder builder = new StringBuilder("<html><head>    <style type=\"text/css\">        " +
+                "p {            font-family: Arial,serif; font-size: 12pt; margin: 2px 2px        }    " +
+                "</style></head><body style=\"font-family: Arial,serif; font-size: 12pt; margin: 5px 5px;\">");
+        if (getPackageRepositoryDetails().containsKey(packageName)) {
+            builder.append(getPackageRepositoryDetails().get(packageName));
+            builder.append("<br/>");
+        }
+        if (splittedString.length == 3) {
+            builder.append("<h4>Version</h4>");
+            builder.append(splittedString[0]);
+            builder.append("<br/>");
+            builder.append("<h4>Depends</h4>");
+            builder.append(splittedString[1]);
+            builder.append("<br/>");
+            builder.append("<h4>Repository</h4>");
+            builder.append(splittedString[2]);
+        }
+        return builder.toString();
+    }
+
+
+    private static String loadPackageDetails(@NotNull final String packageName) throws ExecutionException {
+        final List<String> args = getHelperRepositoryArguments();
+        args.add(0, packageName);
+
+        final RHelperUtil.RRunResult result = RHelperUtil.runHelperWithArgs(R_PACKAGES_DETAILS, args.toArray(new String[args.size()]));
+        if (result != null && result.getExitCode() == 0) {
+            return result.getStdOut();
+        } else {
+            if (result == null) {
+                throw new ExecutionException("Can't fetch package details.");
+            }
+            throw new RExecutionException("Can't fetch package details.", result.getCommand(), result.getStdOut(), result.getStdErr(),
+                    result.getExitCode());
         }
     }
 }

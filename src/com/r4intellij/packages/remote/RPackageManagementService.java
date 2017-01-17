@@ -203,6 +203,6 @@ public class RPackageManagementService extends PackageManagementService {
 
     @Override
     public void fetchPackageDetails(String packageName, CatchingConsumer<String, Exception> consumer) {
-        LocalRUtil.fetchPackageDetails(packageName, consumer);
+        RepoUtils.fetchPackageDetails(packageName, consumer);
     }
 }

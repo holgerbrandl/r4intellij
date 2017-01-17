@@ -13,7 +13,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -23,14 +23,14 @@ import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
 import com.jgoodies.common.base.Preconditions;
 import com.r4intellij.packages.Function;
+import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
+import com.r4intellij.packages.RPackageService;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -47,49 +47,13 @@ public class LibraryIndexFactory {
 
     private static final Logger log = Logger.getInstance("#PackageCache");
 
-    private static LibIndex LIB_INDEX;
+    private static final String R_HELPER_DPLYR = "install_dplyr_stringr.r";
 
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-//        System.err.println(getListOfInstalledPackages());
-//        RPackage plyrPckg = LibraryIndexFactory.buildPackageCache("base");
-//
-//        System.err.println(" plyrPckg");
-        HashSet<RPackage> libraryCache = LibraryIndexFactory.getLibraryCache();
-        System.err.println("cached " + libraryCache.size() + " packages!");
-
-//        PackageCache libraryCache = getLibraryCache();
-//        System.err.println(libraryCache.getPackagesOfFunction("a_ply"));
-
-//        File cacheFile = new File(System.getProperty("user.home") + File.separator + "r4i_libcache.dat");
-//        CachingUtils.saveObject(libraryCache, cacheFile);
-//        PackageCache cache = (PackageCache) CachingUtils.loadObject(cacheFile);
-    }
-
-
-    public static LibIndex getLibraryCache() {
-        if (LIB_INDEX == null) {
-
-            // try to load the index from the cache
-            LIB_INDEX = (LibIndex) CachingUtils.loadObject(getCacheFile());
-
-            if (LIB_INDEX == null) {
-                LIB_INDEX = new LibIndex();
-            }
-
-            LIB_INDEX = updateIndex(LIB_INDEX);
-        }
-
-        return LIB_INDEX;
-    }
-
-
-    private static LibIndex updateIndex(LibIndex libIndex) {
+    private static Map<String, RPackage> updateIndex() {
         // install dplyr and stringr
-        CachingUtils.evalRCmd(
-                "if(!require(dplyr)) install.packages('dplyr', repos='http://cran.us.r-project.org');" +
-                        "if(!require(stringr)) install.packages('stringr', repos='http://cran.us.r-project.org');"
-        );
+        RHelperUtil.runHelperWithArgs(R_HELPER_DPLYR);
+
         final boolean[] hasChanged = {false};
 
         final List<String> installedPackages = getListOfInstalledPackages();
@@ -105,17 +69,19 @@ public class LibraryIndexFactory {
             }
         };
 
-        libIndex = new LibIndex(Sets.newHashSet(Iterables.filter(libIndex, predicate)));
+//        libIndex = new LibIndex(Sets.newHashSet(Iterables.filter(libIndex, predicate)));
+        final Map<String, RPackage> libIndex = Maps.newHashMap();
 
 
         for (final String packageName : installedPackages) {
 
-            final LibIndex finalLibIndex = libIndex;
+//            final LibIndex finalLibIndex = libIndex;
 
+            // todo port this update loop
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
-                    RPackage indexedPckg = finalLibIndex.getByName(packageName);
+                    RPackage indexedPckg = libIndex.get(packageName);
                     String pckgVersion = getPackageVersion(packageName);
 
 
@@ -124,8 +90,8 @@ public class LibraryIndexFactory {
                     }
 
                     RPackage newPacakge = indexPackage(packageName);
-                    finalLibIndex.remove(indexedPckg);
-                    finalLibIndex.add(newPacakge);
+                    libIndex.remove(indexedPckg);
+                    libIndex.put(newPacakge.getName(), newPacakge);
 
                     hasChanged[0] = true;
                 }
@@ -138,24 +104,9 @@ public class LibraryIndexFactory {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        for (String packageName : installedPackages) {
-//            RPackage indexedPckg = libIndex.getByName(packageName);
-//            String pckgVersion = getPackageVersion(packageName);
-//
-//            if (indexedPckg != null && (indexedPckg.isDummy() || pckgVersion.equals(indexedPckg.getVersion()))) {
-//                continue;
-//            }
-//
-//            RPackage indexedPackage = indexPackage(packageName);
-//            libIndex.remove(libIndex.getByName(packageName));
-//            libIndex.add(indexedPackage);
-//
-//            hasChanged[0] = true;
-//        }
+
 
         if (hasChanged[0]) {
-            CachingUtils.saveObject(libIndex, getCacheFile());
-
             if (ApplicationManager.getApplication() != null)
                 ApplicationManager.getApplication().invokeLater(new Runnable() {
                     public void run() {
@@ -165,9 +116,9 @@ public class LibraryIndexFactory {
                                 SpellCheckerManager spellCheckerManager = SpellCheckerManager.getInstance(project);
                                 EditableDictionary dictionary = spellCheckerManager.getUserDictionary();
 
-                                for (RPackage rPackage : LIB_INDEX) {
+                                for (RPackage rPackage : RPackageService.getInstance().allPackages) {
                                     dictionary.addToDictionary(rPackage.getName());
-                                    dictionary.addToDictionary(IndexUtils.getFunctionNames(rPackage));
+                                    dictionary.addToDictionary(rPackage.getFunctionNames());
                                 }
 
                                 DaemonCodeAnalyzer.getInstance(project).restart();
@@ -198,10 +149,6 @@ public class LibraryIndexFactory {
     }
 
 
-    private static File getCacheFile() {
-        return new File(System.getProperty("user.home") + File.separator + ".r4i_libcache.dat");
-    }
-
 
     static RPackage buildPackageCache(final String packageName) {
         log.info("rebuilding cache of " + packageName);
@@ -210,7 +157,7 @@ public class LibraryIndexFactory {
         HashMap<String, Function> api = new HashMap<String, Function>();
         // note make sure to have a linebreak at the end of the output. otherwise the streamgobbler will not pick it up
 //        String allFunsConcat = CachingUtils.evalRCommandCat("ls(getNamespace(\"" + packageName + "\"), all.names=F)");
-        String allFunsConcat = CachingUtils.evalRCommandCat("getNamespaceExports('" + packageName + "')");
+        String allFunsConcat = RHelperUtil.evalRCommandCat("getNamespaceExports('" + packageName + "')");
 
         List<String> allFuns = Splitter.on("\n").trimResults().splitToList(allFunsConcat);
         allFuns = Lists.newArrayList(Iterables.filter(allFuns, new Predicate<String>() {
@@ -245,7 +192,7 @@ public class LibraryIndexFactory {
 
         for (List<String> funNamesBatch : Lists.partition(allFuns, 50)) {
             String getFunSigs = Joiner.on(";").join(Lists.transform(funNamesBatch, quoteFun));
-            String funSigs = CachingUtils.evalRCommand(getFunSigs);
+            String funSigs = RHelperUtil.evalRCommand(getFunSigs);
 
             List<String> strings = Splitter.on("\n").trimResults().splitToList(funSigs);
 
@@ -294,7 +241,7 @@ public class LibraryIndexFactory {
 //            api.put(funName, new Function(funName, funSignature));
 //        }
 
-        String[] rawDocStrings = CachingUtils.evalRCommand("pckgDocu <-library(help = " + packageName + "); pckgDocu$info[[2]]").split("\n");
+        String[] rawDocStrings = RHelperUtil.evalRCommand("pckgDocu <-library(help = " + packageName + "); pckgDocu$info[[2]]").split("\n");
         List<String> fusedDocStrings = new ArrayList<String>();
         String curGroup = null;
         for (int i = 0; i < rawDocStrings.length - 2; i++) {
@@ -398,20 +345,20 @@ public class LibraryIndexFactory {
 
 
     private static List<String> getDependencies(String packageName) {
-        String rawDeps = CachingUtils.evalRCommandCat("library(tools); paste(pkgDepends('" + packageName + "')$Depends, collapse='')");
+        String rawDeps = RHelperUtil.evalRCommandCat("library(tools); paste(pkgDepends('" + packageName + "')$Depends, collapse='')");
         return Lists.newArrayList(Splitter.on(" ").trimResults().splitToList(rawDeps));
     }
 
 
     static String getPackageVersion(String packageName) {
-        String s = CachingUtils.evalRCommandCat("packageDescription('" + packageName + "')$Version");
+        String s = RHelperUtil.evalRCommandCat("packageDescription('" + packageName + "')$Version");
         Preconditions.checkNotBlank(s, "version is empty");
         return s;
     }
 
 
     static List<String> getListOfInstalledPackages() {
-        String output = CachingUtils.evalRCommandCat("library()$results[,1]");
+        String output = RHelperUtil.evalRCommandCat("library()$results[,1]");
 
         assert !Strings.isNullOrEmpty(output);
 

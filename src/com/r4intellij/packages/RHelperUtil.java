@@ -21,6 +21,50 @@ public class RHelperUtil {
     public static final Logger LOG = Logger.getInstance(LocalRUtil.class.getName());
 
 
+    @Deprecated
+    public static String evalRCommand(String cmd) {
+        return runCommandWithArgs(cmd);
+    }
+
+
+    @Deprecated
+    public static String evalRCommandCat(String cmd) {
+        return runCommandWithArgs("cat(" + cmd + ", sep='\\\\n')");
+    }
+
+
+    @Deprecated
+    public static String runCommandWithArgs(String cmd) {
+//        cmd = Utils.isWindowsPlatform() ? cmd.replaceAll("[$]", "\\$") : cmd;
+        String[] getPckgsCmd = new String[]{RInterpreterService.getInstance().getInterpreterPath(), "--vanilla", "--quiet", "--slave", "-e", cmd};
+
+        return evalRInternal(getPckgsCmd);
+    }
+
+
+    private static String evalRInternal(String[] args) {
+
+        try {
+//        String osName = System.getProperty("os.name" );
+//        String[] cmd = new String[3];
+//        if( osName.equals( "Windows NT" ) )
+//        {
+//            cmd[0] = "cmd.exe" ;
+//            cmd[1] = "/C" ;
+//            cmd[2] = args[0];
+//        }
+
+            final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(args));
+            final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
+
+
+            return output.getStderr();
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
+
+
     public static String getHelperOutput(String helper) {
         final String path = RInterpreterService.getInstance().getInterpreterPath();
         if (StringUtil.isEmptyOrSpaces(path)) {
@@ -29,8 +73,7 @@ public class RHelperUtil {
         }
         final String helperPath = RHelpersLocator.getHelperPath(helper);
         try {
-            final Process process = new GeneralCommandLine(path, "--slave", "-f", helperPath).createProcess();
-            final CapturingProcessHandler processHandler = new CapturingProcessHandler(process);
+            final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(path, "--slave", "-f", helperPath));
             final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
             if (output.getExitCode() != 0) {
                 LOG.error("Failed to run script. Exit code: " + output.getExitCode());

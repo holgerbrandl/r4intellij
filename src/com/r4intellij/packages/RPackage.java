@@ -38,6 +38,16 @@ public class RPackage implements Serializable {
     }
 
 
+    public List<String> getFunctionNames() {
+        List<String> funNames = new ArrayList<String>();
+        for (Function function : getFunctions()) {
+            funNames.add(function.getFunName());
+        }
+
+        return funNames;
+    }
+
+
     public String getName() {
         return packageName;
     }
