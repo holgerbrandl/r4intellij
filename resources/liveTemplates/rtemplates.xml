@@ -88,7 +88,7 @@
     </template>
 
 
-    <template name="mut" value="mutate($VAR$ = $RULE$) $END" description="dplyr mutate" toReformat="true"
+    <template name="mut" value="mutate($VAR$ = $RULE$) $END$" description="dplyr mutate" toReformat="true"
               toShortenFQNames="true">
         <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="RULE" expression="" defaultValue="" alwaysStopAt="true"/>
