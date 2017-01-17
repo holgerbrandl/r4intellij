@@ -1,11 +1,10 @@
 package com.r4intellij.packages;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.jgoodies.common.base.Preconditions;
-import com.r4intellij.packages.remote.RepoUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,47 +30,28 @@ public final class LocalRUtil {
     }
 
 
-    public static List<RPackage> parseInstalledPackages() {
-        final ArrayList<RPackage> installedPackages = Lists.newArrayList();
-        final String stdout = RHelperUtil.getHelperOutput(R_INSTALLED_PACKAGES);
-
-        if (stdout == null) {
-            return installedPackages;
-        }
+    public static Set<RPackage> getInstalledPackages() {
+        ArrayList<String> helperOutput = Lists.newArrayList(RHelperUtil.getHelperOutput("package_summaries.r").split("\n"));
 
 
-        // todo remove this hack and fetch package description from local installation
-        Map<String, String> repositoryDetails = RepoUtils.getPackageRepositoryDetails();
+        return Sets.newHashSet(Iterables.transform(helperOutput, new com.google.common.base.Function<String, RPackage>() {
 
-        final String[] splittedOutput = StringUtil.splitByLines(stdout);
-
-        for (String line : splittedOutput) {
-            final List<String> packageAttributes = StringUtil.split(line, ARGUMENT_DELIMETER);
-
-            if (packageAttributes.size() == 4) {
-                RPackage rPackage = new RPackage(
-                        packageAttributes.get(1).replace("\"", ""),
-                        Lists.<Function>newArrayList(), packageAttributes.get(2).replace("\"", ""),
-                        Lists.<String>newArrayList()
-                );
-
-                if (repositoryDetails.containsKey(rPackage.getName())) {
-                    rPackage.setDescription(repositoryDetails.get(rPackage.getName()));
-                }
-
-                // add methods and dependencies
-                installedPackages.add(rPackage);
-            }
-        }
-
-        Collections.sort(installedPackages, new Comparator<RPackage>() {
             @Override
-            public int compare(RPackage o1, RPackage o2) {
-                return StringUtil.compare(o1.getName(), o2.getName(), true);
-            }
-        });
+            public RPackage apply(String s) {
+                String[] splitLine = s.split("\t");
 
-        return installedPackages;
+                ArrayList<String> dependencies = Lists.<String>newArrayList(splitLine[3].split(","));
+
+                List<Function> functions = Lists.transform(Lists.newArrayList(splitLine[4].split(",")), new com.google.common.base.Function<String, Function>() {
+                    @Override
+                    public Function apply(String s) {
+                        return new Function(s, "NA");
+                    }
+                });
+
+                return new RPackage(splitLine[0], splitLine[1], functions, splitLine[2], dependencies);
+            }
+        }));
     }
 
 

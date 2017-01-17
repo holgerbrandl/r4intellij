@@ -9,7 +9,7 @@
 <templateSet group="surround">
 
     <template name="fun" value="$FUN_NAME$ &lt;- function($FUN_ARGS$){&#10;    $SELECTION$ $END$&#10;}"
-              description="function definition with selection as body"
+              title="function definition with selection as body"
               toReformat="false" toShortenFQNames="true">
         <variable name="FUN_NAME" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="FUN_ARGS" expression="" defaultValue="" alwaysStopAt="true"/>

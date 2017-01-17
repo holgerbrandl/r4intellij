@@ -18,6 +18,9 @@ import java.util.Collections;
 
 public class RHelperUtil {
 
+    public static final String R_HELPER_INSTALL_TIDYVERSE = "install_tidyverse.r";
+
+
     public static final Logger LOG = Logger.getInstance(LocalRUtil.class.getName());
 
 

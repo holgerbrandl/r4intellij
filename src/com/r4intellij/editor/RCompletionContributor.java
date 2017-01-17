@@ -64,7 +64,7 @@ public class RCompletionContributor extends CompletionContributor {
 
             for (RPackage p : allPackages) {
                 plainResultSet.addElement(LookupElementBuilder.create(p.getName()).
-                        withTypeText(p.getDescription()));
+                        withTypeText(p.getTitle()));
             }
         } else {
             addWordFromDocument(result, parameters, excludes);

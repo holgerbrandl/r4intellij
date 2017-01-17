@@ -36,7 +36,7 @@ By default R4Intellij supports these file extensions: .R IntelliJ offers the pos
 
 The following features are supported 
 
-*   Go To --&gt; Declaration (of symbols and locally defined functions)*   View --&gt; Quick Definition Lookup (of functions): This will show the signature and a short description
+*   Go To --&gt; Declaration (of symbols and locally defined functions)*   View --&gt; Quick Definition Lookup (of functions): This will show the signature and a short title
 
 ![](docs/readme_images/r_help_integration.png) 
 

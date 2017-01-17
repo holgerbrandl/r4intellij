@@ -12,7 +12,7 @@ import java.util.*;
 
 
 /**
- * A cachable description of an r-package
+ * A cachable title of an r-package
  *
  * @author Holger Brandl
  */
@@ -21,7 +21,7 @@ public class RPackage implements Serializable {
     private static final long serialVersionUID = -55199278816509760L;
 
     private final String packageName;
-    private String description;
+    private String title;
     private final String packageVersion;
 
     private final Set<Function> functions;
@@ -29,11 +29,11 @@ public class RPackage implements Serializable {
     private String repoUrl;
 
 
-    public RPackage(String packageName, List<Function> functions, String packageVersion, List<String> dependencies) {
-
+    public RPackage(String packageName, String packageVersion, List<Function> functions, String title, List<String> dependencies) {
         this.packageName = packageName;
         this.functions = new HashSet<Function>(functions);
         this.packageVersion = packageVersion;
+        this.title = title;
         this.dependencies = dependencies;
     }
 
@@ -130,12 +130,7 @@ public class RPackage implements Serializable {
     }
 
 
-    public String getDescription() {
-        return description;
-    }
-
-
-    public void setDescription(String description) {
-        this.description = description;
+    public String getTitle() {
+        return title;
     }
 }

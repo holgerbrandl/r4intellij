@@ -137,7 +137,7 @@ public class RPackageManagementService extends PackageManagementService {
 
     @Override
     public Collection<InstalledPackage> getInstalledPackages() {
-        return Lists.newArrayList(Iterables.transform(LocalRUtil.parseInstalledPackages(), new Function<RPackage, InstalledPackage>() {
+        return Lists.newArrayList(Iterables.transform(RPackageService.getInstance().getPackages(), new Function<RPackage, InstalledPackage>() {
             @Override
             public InstalledPackage apply(RPackage rPackage) {
                 return new InstalledPackage(rPackage.getName(), rPackage.getVersion());

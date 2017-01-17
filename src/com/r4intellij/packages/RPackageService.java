@@ -1,5 +1,6 @@
 package com.r4intellij.packages;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.application.ApplicationManager;
@@ -17,6 +18,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author avesloguzova
@@ -46,24 +50,68 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    @Override
-    public void loadState(RPackageService state) {
-        XmlSerializerUtil.copyBean(state, this);
-    }
-
-
     public static RPackageService getInstance() {
         return ServiceManager.getService(RPackageService.class);
     }
 
 
-    public Set<RPackage> getPackages() {
-        if (allPackages.isEmpty()) {
-            allPackages.clear();
-            allPackages.addAll(LocalRUtil.parseInstalledPackages());
+    @Override
+    public void loadState(RPackageService state) {
+        XmlSerializerUtil.copyBean(state, this);
 
-//            if (hasChanged[0]) { // todo reestablish this
-            // update spell checker
+        // trigger update
+        updatePackages();
+    }
+
+
+    private void updatePackages() {
+
+        final Set<RPackage> installedPackages = LocalRUtil.getInstalledPackages();
+//        final Set<RPackage> indexPackages = getPackages();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
+
+        // remove packages that are no longer installed
+
+        Predicate<RPackage> isInstalled = new Predicate<RPackage>() {
+            @Override
+            public boolean apply(RPackage rPackage) {
+                return installedPackages.contains(rPackage);
+            }
+        };
+
+        final boolean[] hasChanged = {false};
+
+        for (final RPackage rPackage : installedPackages) {
+
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    RPackage indexedPckg = getByName(rPackage.getName());
+                    String pckgVersion = rPackage.getVersion();
+
+
+                    if (indexedPckg != null && pckgVersion.equals(indexedPckg.getVersion())) {
+                        return;
+                    }
+
+                    allPackages.remove(indexedPckg);
+                    allPackages.add(rPackage);
+
+                    hasChanged[0] = true;
+                }
+            });
+        }
+
+        executorService.shutdown();
+        try {
+            executorService.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        if (hasChanged[0]) {
             if (ApplicationManager.getApplication() != null)
                 ApplicationManager.getApplication().invokeLater(new Runnable() {
                     public void run() {
@@ -83,6 +131,17 @@ public class RPackageService implements PersistentStateComponent<RPackageService
                         }
                     }
                 });
+        }
+
+    }
+
+
+    public Set<RPackage> getPackages() {
+        if (allPackages.isEmpty()) {
+            RHelperUtil.runHelperWithArgs(RHelperUtil.R_HELPER_INSTALL_TIDYVERSE);
+
+            allPackages.clear();
+            updatePackages();
         }
 
         return getInstance().allPackages;
@@ -170,4 +229,6 @@ public class RPackageService implements PersistentStateComponent<RPackageService
             }
         });
     }
+
+
 }

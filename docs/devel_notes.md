@@ -26,12 +26,18 @@ intentions
 * auto-install missing packages in require
 
 
+## Known issues
+
+missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
+
 
 ## later features
 
 * implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
 
 shortcut to evaluate current expression and proceed
+
+
 
 
 Release Action List

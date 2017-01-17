@@ -8,7 +8,7 @@
 <templateSet group="R">
 
 
-    <template name="gt" value="+ ggtitle(&quot;$TITLE$&quot;)$END$" description="ggplot title" toReformat="false"
+    <template name="gt" value="+ ggtitle(&quot;$TITLE$&quot;)$END$" title="ggplot title" toReformat="false"
               toShortenFQNames="true">
         <variable name="TITLE" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
@@ -19,7 +19,7 @@
 
     <template name="sl"
               value="save($FILE$, file=&quot;$FILE$.RData&quot;)&#10;# $FILE$ &lt;- local(get(load(&quot;$FILE$.RData&quot;)))&#10;"
-              description="save and load a couple of variables" toReformat="false" toShortenFQNames="true">
+              title="save and load a couple of variables" toReformat="false" toShortenFQNames="true">
         <variable name="FILE" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
             <option name="R" value="true"/>
@@ -27,7 +27,7 @@
     </template>
 
 
-    <template name="tr" value="$df$ &lt;- transform($df$, $END$)" description="transform" toReformat="false"
+    <template name="tr" value="$df$ &lt;- transform($df$, $END$)" title="transform" toReformat="false"
               toShortenFQNames="true">
         <variable name="df" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
@@ -36,7 +36,7 @@
     </template>
 
 
-    <template name="tab" value="with($df$, as.data.frame(table($VARS$)))" description="table" toReformat="false"
+    <template name="tab" value="with($df$, as.data.frame(table($VARS$)))" title="table" toReformat="false"
               toShortenFQNames="true">
         <variable name="df" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="VARS" expression="" defaultValue="" alwaysStopAt="true"/>
@@ -47,7 +47,7 @@
 
 
     <template name="fun" value="$FUN_NAME$ &lt;- function($FUN_ARGS$){&#10;    $SELECTION$&#10;}&#10;$END$"
-              description="function definition" toReformat="true" toShortenFQNames="true">
+              title="function definition" toReformat="true" toShortenFQNames="true">
         <variable name="FUN_NAME" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="FUN_ARGS" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
@@ -55,7 +55,7 @@
         </context>
     </template>
 
-    <template name="sxl" value="+ scale_x_log10()" description="use log10 x-axis" toReformat="false"
+    <template name="sxl" value="+ scale_x_log10()" title="use log10 x-axis" toReformat="false"
               toShortenFQNames="true">
         <context>
             <option name="R" value="true"/>
@@ -63,7 +63,7 @@
     </template>
 
 
-    <template name="syl" value="+ scale_y_log10()" description="use log10 y-axis" toReformat="false"
+    <template name="syl" value="+ scale_y_log10()" title="use log10 y-axis" toReformat="false"
               toShortenFQNames="true">
         <context>
             <option name="R" value="true"/>
@@ -77,7 +77,7 @@
     </template>
 
 
-    <template name="dd" value="ddply($DATA_FRAME$, .($SPLIT_VARS$), $FUN$)" description="ddply template"
+    <template name="dd" value="ddply($DATA_FRAME$, .($SPLIT_VARS$), $FUN$)" title="ddply template"
               toReformat="false" toShortenFQNames="true">
         <variable name="DATA_FRAME" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="SPLIT_VARS" expression="" defaultValue="" alwaysStopAt="true"/>
@@ -88,7 +88,7 @@
     </template>
 
 
-    <template name="mut" value="mutate($VAR$ = $RULE$) $END$" description="dplyr mutate" toReformat="true"
+    <template name="mut" value="mutate($VAR$ = $RULE$) $END$" title="dplyr mutate" toReformat="true"
               toShortenFQNames="true">
         <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="RULE" expression="" defaultValue="" alwaysStopAt="true"/>
@@ -97,7 +97,7 @@
         </context>
     </template>
 
-    <template name="md" value="mutate($TRAFO$) $END$" description="dplyr mutate" toReformat="true"
+    <template name="md" value="mutate($TRAFO$) $END$" title="dplyr mutate" toReformat="true"
               toShortenFQNames="true">
         <variable name="TRAFO" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
