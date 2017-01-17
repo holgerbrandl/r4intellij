@@ -8,9 +8,16 @@ is.identifier <- function(str) {
 
 
 for (name in packageNames) {
+#name = "clusterProfiler"
+#name = "modeest"
     if (paste(name, "r", sep=".") %in% list.files(path=args[1])) {
         next
     }
+    if(dir.exists(file.path(args[1], name))){
+        print(paste("skipping package ", name))
+        next
+    }
+
     shouldLoadLibrary = FALSE
     pName = paste("package", name, sep=":")
     if (!pName %in% searchPath)
@@ -25,6 +32,7 @@ for (name in packageNames) {
     dir.create(dirName)
 
     for (symbol in functions) {
+        print(paste("processing symbol ", symbol))
     	obj <- get(symbol)
     	if (class(obj) != "function") {
     	    next

@@ -1,6 +1,9 @@
 package com.r4intellij.packages;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.intellij.execution.ExecutionException;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.CatchingConsumer;
@@ -11,8 +14,10 @@ import com.intellij.webcore.packaging.RepoPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author avesloguzova
@@ -59,12 +64,12 @@ public class RPackageManagementService extends PackageManagementService {
 
     @NotNull
     public List<RDefaultRepository> getDefaultRepositories() {
-        return Lists.newArrayList(RPackagesUtil.getDefaultRepositories()); //TODO Caching of this value
+        return Lists.newArrayList(RepoUtils.getDefaultRepositories()); //TODO Caching of this value
     }
 
 
     public List<String> getMirrors() {
-        return Lists.newArrayList(RPackagesUtil.getCRANMirrors());
+        return Lists.newArrayList(RepoUtils.getCRANMirrors());
     }
 
 
@@ -88,25 +93,53 @@ public class RPackageManagementService extends PackageManagementService {
                 userRepositories.add(repository.getUrl());
             }
         }
-        RPackagesUtil.setRepositories(defaultRepositories, userRepositories);
+        RPackageService.setRepositories(defaultRepositories, userRepositories);
     }
 
 
+    public static List<RepoPackage> getPckgNameVersionMap() {
+        Map<String, String> nameVersionMap = Maps.newHashMap();
+
+        for (RPackage rPackage : RPackageService.getInstance().getPackages()) {
+            nameVersionMap.put(rPackage.getName(), rPackage.getVersion());
+        }
+
+        return versionMapToPackageList(nameVersionMap);
+    }
+
+
+    private static List<RepoPackage> versionMapToPackageList(@NotNull final Map<String, String> packageToVersionMap) {
+        final List<RepoPackage> packages = new ArrayList<RepoPackage>();
+        for (Map.Entry<String, String> entry : packageToVersionMap.entrySet()) {
+            final String[] splitted = entry.getValue().split(LocalRUtil.ARGUMENT_DELIMETER);
+            // todo why this array fix
+            packages.add(new RepoPackage(entry.getKey(), splitted.length > 2 ? splitted[1] : "", splitted[0]));
+        }
+        return packages;
+    }
+
+
+    @Deprecated
     @Override
     public List<RepoPackage> getAllPackages() {
-        return RPackagesUtil.getOrLoadPackages();
+        return getPckgNameVersionMap();
     }
 
 
     @Override
     public List<RepoPackage> reloadAllPackages() {
-        return RPackagesUtil.loadAvailablePackages();
+        return RepoUtils.loadAvailablePackages();
     }
 
 
     @Override
     public Collection<InstalledPackage> getInstalledPackages() {
-        return RPackagesUtil.getInstalledPackages();
+        return Lists.newArrayList(Iterables.transform(LocalRUtil.parseInstalledPackages(), new Function<RPackage, InstalledPackage>() {
+            @Override
+            public InstalledPackage apply(RPackage rPackage) {
+                return new InstalledPackage(rPackage.getName(), rPackage.getVersion());
+            }
+        }));
     }
 
 
@@ -167,6 +200,6 @@ public class RPackageManagementService extends PackageManagementService {
 
     @Override
     public void fetchPackageDetails(String packageName, CatchingConsumer<String, Exception> consumer) {
-        RPackagesUtil.fetchPackageDetails(packageName, consumer);
+        LocalRUtil.fetchPackageDetails(packageName, consumer);
     }
 }

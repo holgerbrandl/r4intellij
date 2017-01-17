@@ -1,4 +1,4 @@
-package com.r4intellij.packages;
+package com.r4intellij.packages.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -6,6 +6,7 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.webcore.packaging.PackagesNotificationPanel;
+import com.r4intellij.packages.RPackageManagementService;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

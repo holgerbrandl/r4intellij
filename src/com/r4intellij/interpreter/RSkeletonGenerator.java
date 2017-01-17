@@ -43,7 +43,11 @@ public class RSkeletonGenerator {
 
     public static String getSkeletonsPath(@NotNull final String interpreterHome) {
         final String basePath = PathManager.getSystemPath();
-        return getSkeletonsRootPath(basePath) + File.separator + FileUtil.toSystemIndependentName(interpreterHome).hashCode() + File.separator;
+
+        // todo this should include the interpreter version as well
+        int interpreterHash = FileUtil.toSystemIndependentName(interpreterHome).hashCode();
+
+        return getSkeletonsRootPath(basePath) + File.separator + Math.abs(interpreterHash) + File.separator;
     }
 
 

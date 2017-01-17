@@ -1,10 +1,10 @@
-package com.r4intellij.packages;
+package com.r4intellij.packages.ui;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.webcore.packaging.*;
 import com.r4intellij.interpreter.RInterpreterService;
-import com.r4intellij.packages.ui.RManagePackagesDialog;
+import com.r4intellij.packages.LocalRUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,7 @@ public class RInstalledPackagesPanel extends InstalledPackagesPanel {
 
     @Override
     protected boolean canUninstallPackage(InstalledPackage aPackage) {
-        return hasInterpreterPath() && !RPackagesUtil.isPackageBase(aPackage);
+        return hasInterpreterPath() && !LocalRUtil.isPackageBase(aPackage);
     }
 
 
@@ -56,6 +56,6 @@ public class RInstalledPackagesPanel extends InstalledPackagesPanel {
 
     @Override
     protected boolean canUpgradePackage(InstalledPackage aPackage) {
-        return hasInterpreterPath() && !RPackagesUtil.isPackageBase(aPackage);
+        return hasInterpreterPath() && !LocalRUtil.isPackageBase(aPackage);
     }
 }

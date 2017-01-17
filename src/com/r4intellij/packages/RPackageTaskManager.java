@@ -164,7 +164,7 @@ public class RPackageTaskManager {
         protected List<ExecutionException> runTask(@NotNull ProgressIndicator indicator) {
             final List<ExecutionException> exceptions = new ArrayList<ExecutionException>();
             try {
-                RPackagesUtil.installPackage(myPackage);
+                PackageInstallUtils.installPackage(myPackage);
             } catch (ExecutionException e) {
                 exceptions.add(e);
             }
@@ -211,7 +211,7 @@ public class RPackageTaskManager {
         protected List<ExecutionException> runTask(@NotNull ProgressIndicator indicator) {
             final List<ExecutionException> exceptions = new ArrayList<ExecutionException>();
             try {
-                RPackagesUtil.updatePackage(myPackage);
+                PackageInstallUtils.updatePackage(myPackage);
             } catch (ExecutionException e) {
                 exceptions.add(e);
             }
@@ -258,7 +258,7 @@ public class RPackageTaskManager {
         protected List<ExecutionException> runTask(@NotNull ProgressIndicator indicator) {
             final List<ExecutionException> exceptions = new ArrayList<ExecutionException>();
             try {
-                RPackagesUtil.uninstallPackage(myPackages);
+                PackageInstallUtils.uninstallPackage(myPackages);
             } catch (ExecutionException e) {
                 exceptions.add(e);
             }

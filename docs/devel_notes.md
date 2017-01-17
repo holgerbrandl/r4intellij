@@ -78,3 +78,7 @@ Brainstorming  & Roadmap
 * Or white 
 * Or most promising, we could try to use the windows API via VBScript or C#
 
+
+## Enhanced code completion
+
+Make use of CompletionType enum to finetune/speed up auto-completion

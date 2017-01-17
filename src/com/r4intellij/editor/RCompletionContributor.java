@@ -17,12 +17,16 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.cache.impl.id.IdTableBuilding;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.webcore.packaging.RepoPackage;
-import com.r4intellij.packages.RPackagesUtil;
+import com.r4intellij.packages.RPackage;
+import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RCallExpression;
+import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 /**
@@ -37,34 +41,40 @@ public class RCompletionContributor extends CompletionContributor {
 //        }
     }
 
+
     // see http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
-
-
     private static void addWordCompletionVariants(CompletionResultSet result, CompletionParameters parameters, Set<String> excludes) {
-        addWordFromDocument(result, parameters, excludes);
 
-        // auto-completion for require and libary
         PsiElement insertedElement = parameters.getPosition();
-
         RCallExpression pp = PsiTreeUtil.getContextOfType(insertedElement, RCallExpression.class);
 
 
         boolean isPackageContext = pp != null && Lists.newArrayList("require", "library", "load_pack").
                 contains(pp.getExpression().getText());
 
-        if (isPackageContext) {
-//            List<RepoPackage> allPackages = new RPackageManagementService(insertedElement.getProject()).getAllPackages();
-//            List<RepoPackage> allPackages = RPackageService.getInstance().allPackages;
+        if (isPackageContext) {         // .. auto-completion for require and libary
 
-            List<RepoPackage> allPackages = RPackagesUtil.getOrLoadPackages();
+//            List<RepoPackage> allPackages = LocalRUtil.getPckgNameVersionMap();
+            Set<RPackage> allPackages = RPackageService.getInstance().getPackages();
+
+            // todo add completion for not-yet-installed packages
 
             final CompletionResultSet plainResultSet = result.
                     withPrefixMatcher(CompletionUtil.findAlphanumericPrefix(parameters));
 
-
-            for (RepoPackage allPackage : allPackages) {
-                plainResultSet.addElement(LookupElementBuilder.create(allPackage.getName()));
+            for (RPackage p : allPackages) {
+                plainResultSet.addElement(LookupElementBuilder.create(p.getName()).
+                        withTypeText(p.getDescription()));
             }
+        } else {
+            addWordFromDocument(result, parameters, excludes);
+
+            // also add function names of loaded packages
+//            if(parameters.isExtendedCompletion()){
+
+//            }
+
+            RFile rFile = PsiTreeUtil.getContextOfType(insertedElement, RFile.class);
         }
     }
 

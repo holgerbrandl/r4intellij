@@ -30,11 +30,33 @@ References
 https://confluence.jetbrains.com/display/IDEADEV/Developing+Custom+Language+Plugins+for+IntelliJ+IDEA
 
 
-## Skeletons
+Skeletons
+===========
 
 skeltons are saved under  (see module deps --> libaries)
 /Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/-1481726564
 
+to get paramter list of method see
+com.r4intellij.typing.RTypeChecker.getNamedArguments
+
+Seems built by manual invocation in
+`com.r4intellij.actions.RSkeletonsGeneratorAction.generateSkeletonsForPackage` which itself calls
+`com.r4intellij.interpreter.RSkeletonGenerator.runSkeletonGeneration`
+
+cmd to rebuild is
+```bash
+/Library/Frameworks/R.framework/Resources/bin/R --slave -f /Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/plugins/R4Intellij/classes/r-generator.r --args /Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/1842261700/
+```
+same but using source script from git
+```bash
+/Library/Frameworks/R.framework/Resources/bin/R --slave -f /Users/brandl/projects/rplugin/r4intellij_v2/r-helpers/r-generator.r --args /Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/1842261700/
+```
+
+tricky packages for skeletonizer
+* config
+* RGtk2
+
+see com.r4intellij.RPsiUtils.findCall
 
 ## Misc
 

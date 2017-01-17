@@ -138,6 +138,11 @@
                          enabledByDefault="true" level="WARNING"
                          implementationClass="com.r4intellij.inspections.RUnusedParameterInspection" groupKey=""/>
 
+        <localInspection language="R" shortName="MissingPackageImportInspection" displayName="Missing package import"
+                         groupName="R" enabledByDefault="true" level="WARNING"
+                         implementationClass="com.r4intellij.inspections.MissingImportInspection"/>
+
+
         <!--todo fix me or leave disabled-->
         <!--<localInspection language="R" shortName="RUnresolvedReferenceInspection"-->
         <!--enabledByDefault="true" level="WARNING"-->
@@ -148,8 +153,8 @@
 
         <lang.findUsagesProvider implementationClass="com.r4intellij.RFindUsagesProvider" language="R"/>
 
-        <toolWindow id="R Packages" anchor="right" factoryClass="com.r4intellij.packages.RPackagesToolWindowFactory"/>
-
+        <toolWindow id="R Packages" anchor="right"
+                    factoryClass="com.r4intellij.packages.ui.RPackagesToolWindowFactory"/>
         <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
     </extensions>
 </idea-plugin>
