@@ -5,7 +5,7 @@ import com.intellij.psi.PsiFile;
 import java.util.List;
 
 public interface RFile extends PsiFile {
-    List<RFunctionExpression> getPckgImportExpressions();
+    List<RCallExpression> getPckgImportExpressions();
 
 
     List<String> getImportedPackages();

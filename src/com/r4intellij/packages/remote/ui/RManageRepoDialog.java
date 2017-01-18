@@ -46,6 +46,7 @@ public class RManageRepoDialog extends DialogWrapper {
         myList.clear();
         final List<RDefaultRepository> repositories = myController.getDefaultRepositories();
         RPackageService service = RPackageService.getInstance();
+
         for (RDefaultRepository repository : repositories) {
             myList.addItem(repository, repository.getUrl(), service.enabledRepositories.contains(repository.getUrl()));
         }

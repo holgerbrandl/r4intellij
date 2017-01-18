@@ -21,12 +21,15 @@ public class Function implements Serializable {
 
     private static final long serialVersionUID = -61945361973531069L;
 
-    private final String funName;
+    private String funName;
 
     private String description;
     private String funSignature;
     private String shortDesc;
 
+
+    public Function() {
+    }
 
     public Function(@NotNull String funName, @NotNull String funSignature) {
         this.funName = funName;

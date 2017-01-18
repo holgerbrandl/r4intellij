@@ -130,13 +130,13 @@
                     factoryClass="com.r4intellij.run.graphics.RGraphicsToolWindowFactory"/>
 
         <!-- display names not needed if defined in impl-->
-        <localInspection language="R" shortName="RTypeCheckerInspection" displayName="Incomplete Function Parameters"
-                         enabledByDefault="true" level="WARNING"
-                         implementationClass="com.r4intellij.inspections.RTypeCheckerInspection" groupKey=""/>
+        <!--<localInspection language="R" shortName="RTypeCheckerInspection" displayName="Incomplete Function Parameters"-->
+        <!--enabledByDefault="true" level="WARNING"-->
+        <!--implementationClass="com.r4intellij.inspections.RTypeCheckerInspection" groupKey=""/>-->
 
-        <localInspection language="R" shortName="RUnusedInspection" displayName="Unused Function Parameter"
-                         enabledByDefault="true" level="WARNING"
-                         implementationClass="com.r4intellij.inspections.RUnusedParameterInspection" groupKey=""/>
+        <!--<localInspection language="R" shortName="RUnusedInspection" displayName="Unused Function Parameter"-->
+        <!--enabledByDefault="true" level="WARNING"-->
+        <!--implementationClass="com.r4intellij.inspections.RUnusedParameterInspection" groupKey=""/>-->
 
         <localInspection language="R" shortName="MissingPackageImportInspection" displayName="Missing package import"
                          groupName="R" enabledByDefault="true" level="WARNING"

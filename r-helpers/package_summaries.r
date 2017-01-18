@@ -1,31 +1,42 @@
 library(tools);
 library(tidyverse);
 library(stringr);
+library(magrittr);
 
 chooseCRANmirror(ind = 1)
 
 
 ## see http://stackoverflow.com/questions/9324869/how-do-i-determine-the-author-of-an-r-package
-get_title = function(packageName){
-    unlist(packageDescription(packageName)["Title"]) %>%   str_replace_all("[\r\n]" , "")
-}
-
-get_title = function(packageName){
-    unlist(packageDescription(packageName)["Title"]) %>%   str_replace_all("[\r\n]" , "")
+get_title = function(myPackage){
+    unlist(packageDescription(myPackage)["Title"]) %>%   str_replace_all("[\r\n]" , "")
 }
 
 ## example DESCRIPTION: https://github.com/hadley/dplyr/blob/master/DESCRIPTION
 
-pckgList = installed.packages()[,c("Package", "Version", "LibPath")] %>%
-    as.data.frame %>%
-    # add title and dependencies
-    mutate(dependencies=package_dependencies(Package)) %>%
-    rowwise() %>%
-    mutate(dependencies=paste(dependencies, collapse=",")) %>%
-    mutate(title=get_title(Package)) %>%
-    mutate(methods=getNamespaceExports(c("dplyr")) %>% paste(collapse=","))
+pckgList = installed.packages()[,c("Package", "Version", "LibPath")] %>% as.data.frame
 
-with(pckgList, paste(Package, Version, title, dependencies, methods, "\n", sep="\t")) %>% cat
+pckgDepends = package_dependencies(pckgList$Package, which="Depends") %>%
+    lapply(function(x)paste(x, collapse=",")) %$%
+    data_frame(Package=names(.), depends=unlist(.))
+
+pckgImports = package_dependencies(pckgList$Package, which="Imports") %>%
+    lapply(function(x)paste(x, collapse=",")) %$%
+    data_frame(Package=names(.), imports=unlist(.))
+
+pckgList %<>% left_join(pckgDepends)
+pckgList %<>% left_join(pckgImports)
+
+
+## also add short package description (aka title)
+pckgList %<>% rowwise() %>% mutate(title=get_title(Package))
+
+# if(F){
+# options(width=200)
+# filter(pckgList, Package=="tidyr")
+# }
+
+## dump in a format suitable for parsing
+with(pckgList, paste(Package, Version, title, depends, imports, "\n", sep="\t")) %>% cat
 
 ## todo also add doc-string here
 # pckgDocu <-library(help = "dplyr"); pckgDocu$info[[2]]

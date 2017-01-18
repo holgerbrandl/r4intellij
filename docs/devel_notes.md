@@ -30,6 +30,9 @@ intentions
 
 missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
 
+2017-01-18 11:31:43,875 [1353648]   INFO - r4intellij.typing.RTypeContext - Possible deadlock, break waiting 
+
+
 
 ## later features
 

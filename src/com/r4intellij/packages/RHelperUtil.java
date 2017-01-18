@@ -25,43 +25,22 @@ public class RHelperUtil {
 
 
     @Deprecated
-    public static String evalRCommand(String cmd) {
-        return runCommandWithArgs(cmd);
+    public static String runCommandWithCat(String cmd) {
+        return runCommand("cat(" + cmd + ", sep='\\\\n')").trim();
     }
 
 
     @Deprecated
-    public static String evalRCommandCat(String cmd) {
-        return runCommandWithArgs("cat(" + cmd + ", sep='\\\\n')");
-    }
-
-
-    @Deprecated
-    public static String runCommandWithArgs(String cmd) {
+    public static String runCommand(String cmd) {
 //        cmd = Utils.isWindowsPlatform() ? cmd.replaceAll("[$]", "\\$") : cmd;
+
         String[] getPckgsCmd = new String[]{RInterpreterService.getInstance().getInterpreterPath(), "--vanilla", "--quiet", "--slave", "-e", cmd};
 
-        return evalRInternal(getPckgsCmd);
-    }
-
-
-    private static String evalRInternal(String[] args) {
-
         try {
-//        String osName = System.getProperty("os.name" );
-//        String[] cmd = new String[3];
-//        if( osName.equals( "Windows NT" ) )
-//        {
-//            cmd[0] = "cmd.exe" ;
-//            cmd[1] = "/C" ;
-//            cmd[2] = args[0];
-//        }
-
-            final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(args));
+            final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(getPckgsCmd));
             final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
 
-
-            return output.getStderr();
+            return output.getStdout();
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -75,12 +54,13 @@ public class RHelperUtil {
             return null;
         }
         final String helperPath = RHelpersLocator.getHelperPath(helper);
+
         try {
             final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(path, "--slave", "-f", helperPath));
             final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
             if (output.getExitCode() != 0) {
-                LOG.error("Failed to run script. Exit code: " + output.getExitCode());
-                LOG.error(output.getStderrLines());
+                LOG.warn("Failed to run script. Exit code: " + output.getExitCode());
+                LOG.warn(output.getStderr());
             }
             return output.getStdout();
         } catch (ExecutionException e) {
@@ -105,8 +85,8 @@ public class RHelperUtil {
             final CapturingProcessHandler processHandler = new CapturingProcessHandler(process, null, StringUtil.join(command, " "));
             final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
             if (output.getExitCode() != 0) {
-                LOG.error("Failed to run script. Exit code: " + output.getExitCode());
-                LOG.error(output.getStderrLines());
+                LOG.warn("Failed to run script. Exit code: " + output.getExitCode());
+                LOG.warn(output.getStderr());
             }
             return new RRunResult(StringUtil.join(command, " "), output);
         } catch (ExecutionException e) {

@@ -21,7 +21,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RLanguage;
-import com.r4intellij.psi.api.RFunctionExpression;
+import com.r4intellij.psi.api.RCallExpression;
 
 
 /**
@@ -50,9 +50,9 @@ public class RElementFactory {
 
 
     //
-    public static RFunctionExpression createFuncallFromText(Project project, String text) {
+    public static RCallExpression createFuncallFromText(Project project, String text) {
         PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.getInstance(), text);
-        return (RFunctionExpression) fromText.getFirstChild().getChildren()[0];
+        return (RCallExpression) fromText.getFirstChild().getChildren()[0];
     }
 
 }

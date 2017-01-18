@@ -7,6 +7,8 @@
 
 package com.r4intellij.packages;
 
+import com.google.common.collect.Sets;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -18,23 +20,25 @@ import java.util.*;
  */
 public class RPackage implements Serializable {
 
-    private static final long serialVersionUID = -55199278816509760L;
+    private static final long serialVersionUID = -6424246043802526705L;
 
     private final String packageName;
-    private String title;
+    private final String title;
     private final String packageVersion;
+    private final Set<String> dependencies;
+    private final Set<String> imports;
 
-    private final Set<Function> functions;
-    private final Collection<String> dependencies;
+    private Set<Function> functions;
+
     private String repoUrl;
 
 
-    public RPackage(String packageName, String packageVersion, List<Function> functions, String title, List<String> dependencies) {
+    public RPackage(String packageName, String packageVersion, String title, Set<String> dependencies, Set<String> imports) {
         this.packageName = packageName;
-        this.functions = new HashSet<Function>(functions);
         this.packageVersion = packageVersion;
         this.title = title;
         this.dependencies = dependencies;
+        this.imports = imports;
     }
 
 
@@ -97,7 +101,7 @@ public class RPackage implements Serializable {
 
     @Override
     public String toString() {
-        return packageName + " (" + packageVersion + ")";
+        return packageName;
     }
 
 
@@ -108,15 +112,20 @@ public class RPackage implements Serializable {
 
         RPackage rPackage = (RPackage) o;
 
-        if (!packageName.equals(rPackage.packageName)) return false;
+        if (!Objects.equals(packageName, rPackage.packageName)) return false;
 
         return true;
     }
 
 
+    public Set<String> getImports() {
+        return imports;
+    }
+
+
     @Override
     public int hashCode() {
-        return packageName.hashCode();
+        return packageName == null ? -1 : packageName.hashCode();
     }
 
 
@@ -133,4 +142,15 @@ public class RPackage implements Serializable {
     public String getTitle() {
         return title;
     }
+
+
+    public void setFunctions(List<Function> functions) {
+        this.functions = Sets.newHashSet(functions);
+    }
+
+
+//    @Override
+//    public int compareTo(@NotNull Object o) {
+//        return Ordering.natural().compare(hashCode(), o.hashCode());
+//    }
 }

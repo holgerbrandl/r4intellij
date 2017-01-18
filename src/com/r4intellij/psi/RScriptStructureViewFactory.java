@@ -226,7 +226,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
         private boolean isSectionDivider(PsiElement myElement) {
             if (!(myElement instanceof PsiComment)) return false;
             if (myElement.getText().startsWith("#' #")) return true;
-            if (myElement.getText().matches("[#]{2,5} [^\\r\\n]*")) return true;
+            if (myElement.getText().matches("[#]{3,10} [^\\r\\n]*")) return true;
 
             return false;
         }

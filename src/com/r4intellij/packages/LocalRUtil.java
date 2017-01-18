@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author avesloguzova
@@ -31,32 +32,18 @@ public final class LocalRUtil {
 
 
     public static Set<RPackage> getInstalledPackages() {
+        RHelperUtil.runHelperWithArgs(RHelperUtil.R_HELPER_INSTALL_TIDYVERSE);
+
+
         ArrayList<String> helperOutput = Lists.newArrayList(RHelperUtil.getHelperOutput("package_summaries.r").split("\n"));
 
 
-        return Sets.newHashSet(Iterables.transform(helperOutput, new com.google.common.base.Function<String, RPackage>() {
-
-            @Override
-            public RPackage apply(String s) {
-                String[] splitLine = s.split("\t");
-
-                ArrayList<String> dependencies = Lists.<String>newArrayList(splitLine[3].split(","));
-
-                List<Function> functions = Lists.transform(Lists.newArrayList(splitLine[4].split(",")), new com.google.common.base.Function<String, Function>() {
-                    @Override
-                    public Function apply(String s) {
-                        return new Function(s, "NA");
-                    }
-                });
-
-                return new RPackage(splitLine[0], splitLine[1], functions, splitLine[2], dependencies);
-            }
-        }));
+        return Sets.newHashSet(Iterables.transform(helperOutput, new ParseDescriptorIntoPackage()));
     }
 
 
     static String getPackageVersion(String packageName) {
-        String s = RHelperUtil.evalRCommandCat("packageDescription('" + packageName + "')$Version");
+        String s = RHelperUtil.runCommand("cat(packageDescription('" + packageName + "')$Version)");
         Preconditions.checkNotBlank(s, "version is empty");
         return s;
     }
@@ -98,5 +85,26 @@ public final class LocalRUtil {
         }
 
         return imPckgsWithDeps;
+    }
+
+
+    private static class ParseDescriptorIntoPackage implements com.google.common.base.Function<String, RPackage> {
+
+        @Override
+        public RPackage apply(String s) {
+            String[] splitLine = s.split("\t");
+
+            Set<String> dependencies = Sets.<String>newHashSet((splitLine.length == 4 ? splitLine[3] : "").split(",")).
+                    stream().filter(f -> !f.isEmpty()).
+                    filter(f -> !Objects.equals(f, "NA")).
+                    collect(Collectors.toSet());
+
+            Set<String> imports = Sets.<String>newHashSet((splitLine.length == 5 ? splitLine[4] : "").split(",")).
+                    stream().filter(f -> !f.isEmpty()).
+                    filter(f -> !Objects.equals(f, "NA")).
+                    collect(Collectors.toSet());
+
+            return new RPackage(splitLine[0].trim(), splitLine[1].trim(), splitLine[2], dependencies, imports);
+        }
     }
 }

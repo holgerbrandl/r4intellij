@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static com.r4intellij.packages.LocalRUtil.basePackages;
 
@@ -100,11 +101,12 @@ public class MissingImportInspection extends LocalInspectionTool {
                     if (funPackageNames.isEmpty())
                         return;
 
-
                     // check if there's an import statement for any of them
                     List<String> importedPackages = ((RFile) psiElement.getContainingFile()).getImportedPackages();
+
                     // todo also include dependencies here
-//                    List<RPackage> importedWithDesps = Iterables.concat(Iterables.transform(importedPackages, new ))
+                    Set<RPackage> resolvedImports = RPackageService.getInstance().resolveDependencies(importedPackages);
+                    importedPackages = Lists.newArrayList(Iterables.transform(resolvedImports, Functions.toStringFunction()));
 
                     importedPackages = Lists.newArrayList(Iterables.concat(basePackages, importedPackages));
 

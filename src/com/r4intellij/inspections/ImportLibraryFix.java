@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.r4intellij.psi.RElementFactory;
 import com.r4intellij.psi.RFileImpl;
-import com.r4intellij.psi.api.RFunctionExpression;
+import com.r4intellij.psi.api.RCallExpression;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class ImportLibraryFix implements LocalQuickFix {
             final PsiElement element = descriptor.getPsiElement();
 //            final BnfRule insertAfter = PsiTreeUtil.getParentOfType(element, BnfRule.class);
             RFileImpl file = (RFileImpl) element.getContainingFile();
-            List<RFunctionExpression> importStatements = file.getPckgImportExpressions();
+            List<RCallExpression> importStatements = file.getPckgImportExpressions();
 
             PsiElement insertAfter = null;
             if (importStatements.size() > 0) {
@@ -76,6 +76,7 @@ public class ImportLibraryFix implements LocalQuickFix {
 
 
             PsiElement importStatement = RElementFactory.createFuncallFromText(project, "library(" + packageName + ");");
+
             if (insertAfter != null && insertAfter.getTextOffset() < element.getTextOffset()) {
                 importStatement = insertAfter.getParent().addAfter(importStatement, insertAfter);
                 insertAfter.getParent().addBefore(RElementFactory.createLeafFromText(project, "\n"), importStatement);
