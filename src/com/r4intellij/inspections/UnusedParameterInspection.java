@@ -12,7 +12,7 @@ import com.r4intellij.psi.api.RVisitor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class RUnusedParameterInspection extends RLocalInspection {
+public class UnusedParameterInspection extends RLocalInspection {
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session) {

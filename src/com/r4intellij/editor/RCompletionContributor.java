@@ -23,16 +23,16 @@ import com.r4intellij.psi.api.RCallExpression;
 import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 
 /**
  * This would be our hook into any special handling for code completion.
  */
 public class RCompletionContributor extends CompletionContributor {
+
+    public static ArrayList<String> PACKAGE_IMPORT_METHODS = Lists.newArrayList("require", "library", "load_pack");
+
 
     @Override
     public void fillCompletionVariants(final CompletionParameters parameters, final CompletionResultSet result) {
@@ -49,7 +49,7 @@ public class RCompletionContributor extends CompletionContributor {
         RCallExpression pp = PsiTreeUtil.getContextOfType(insertedElement, RCallExpression.class);
 
 
-        boolean isPackageContext = pp != null && Lists.newArrayList("require", "library", "load_pack").
+        boolean isPackageContext = pp != null && PACKAGE_IMPORT_METHODS.
                 contains(pp.getExpression().getText());
 
         if (isPackageContext) {         // .. auto-completion for require and libary

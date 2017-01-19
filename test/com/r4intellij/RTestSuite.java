@@ -17,7 +17,7 @@ import com.r4intellij.debugger.function.RTraceAndDebugUtilsTest;
 import com.r4intellij.debugger.function.RUnbraceFunctionDebuggerTest;
 import com.r4intellij.inspections.RTypeCheckerInspectionTest;
 import com.r4intellij.inspections.RUnresolvedReferenceInspectionTest;
-import com.r4intellij.inspections.RUnusedParameterInspectionTest;
+import com.r4intellij.inspections.UnusedParameterInspectionTest;
 import com.r4intellij.lexer.RHighlightingLexerTest;
 import com.r4intellij.parser.RParsingTest;
 import com.r4intellij.rename.RRenameTest;
@@ -52,7 +52,7 @@ public class RTestSuite extends TestCase {
 
     suite.addTestSuite(RTypeCheckerInspectionTest.class);
     suite.addTestSuite(RUnresolvedReferenceInspectionTest.class);
-    suite.addTestSuite(RUnusedParameterInspectionTest.class);
+      suite.addTestSuite(UnusedParameterInspectionTest.class);
     suite.addTestSuite(RHighlightingLexerTest.class);
     suite.addTestSuite(RParsingTest.class);
     suite.addTestSuite(RRenameTest.class);

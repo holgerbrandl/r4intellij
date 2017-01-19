@@ -60,14 +60,6 @@ public class MissingImportInspection extends LocalInspectionTool {
         return "Missing package import";
     }
 
-
-    @NotNull
-    @Override
-    public String getShortName() {
-        return "MissingPackageImportInspection";
-    }
-
-
     @Override
     public boolean isEnabledByDefault() {
         return true;

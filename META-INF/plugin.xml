@@ -5,7 +5,7 @@
     <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
 
     <idea-version since-build="145.258.11"/>
-    <title><![CDATA[
+    <description><![CDATA[
         <html>
         <h3>R support for IntelliJ</h3>
 
@@ -43,7 +43,7 @@
         Copyright (c) 2013-2017 Ekaterina Tuzova (ktisha)
 
         </html>
-        ]]></title>
+        ]]></description>
 
     <change-notes>
     <![CDATA[
@@ -61,22 +61,26 @@
     <project-components>
         <!-- Add your project components here -->
     </project-components>
+
+
     <actions>
         <action id="com.r4intellij.console.RConsoleAction" class="com.r4intellij.console.RConsoleAction"
-                text="Run R Console..." title="Starts R interactive console">
+                text="Run R Console..." description="Starts R interactive console">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
+
         <action id="RGenerateTypingReport" class="com.r4intellij.actions.RGenerateTypingReport"
-                text="Generate Typing Report"
-                title="Generate Typing Report">
+                text="Generate Typing Report">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
+
+        <!--TODO disable for release-->
         <action id="RSkeletonsGenerator" class="com.r4intellij.actions.RSkeletonsGeneratorAction"
-                text="Generate Skeletons"
-                title="Generate skeletons">
+                text="Generate Skeletons">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
     </actions>
+
 
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.r4intellij.RFileTypeFactory"/>
@@ -136,11 +140,13 @@
 
         <!--<localInspection language="R" shortName="RUnusedInspection" displayName="Unused Function Parameter"-->
         <!--enabledByDefault="true" level="WARNING"-->
-        <!--implementationClass="com.r4intellij.inspections.RUnusedParameterInspection" groupKey=""/>-->
+        <!--implementationClass="com.r4intellij.inspections.UnusedParameterInspection groupKey=""/>-->
 
-        <localInspection language="R" shortName="MissingPackageImportInspection" displayName="Missing package import"
-                         groupName="R" enabledByDefault="true" level="WARNING"
+        <localInspection language="R" level="WARNING"
                          implementationClass="com.r4intellij.inspections.MissingImportInspection"/>
+
+        <localInspection language="R" level="WARNING"
+                         implementationClass="com.r4intellij.inspections.MissingPackageInspection"/>
 
 
         <!--todo fix me or leave disabled-->

@@ -38,6 +38,7 @@ public class ImportLibraryFix implements LocalQuickFix {
     private final String packageName;
 
 
+    @SuppressWarnings("WeakerAccess")
     public ImportLibraryFix(String name) {
         packageName = name;
     }
@@ -53,7 +54,7 @@ public class ImportLibraryFix implements LocalQuickFix {
     @NotNull
     @Override
     public String getFamilyName() {
-        return "Create rule from usage";
+        return "Dependency management";
     }
 
 
