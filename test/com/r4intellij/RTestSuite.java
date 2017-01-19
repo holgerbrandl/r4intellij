@@ -100,7 +100,7 @@ public class RTestSuite extends TestCase {
     // debug package
     suite.addTestSuite(RLineBreakpointUtilsTest.class);
 
-      // debug.resolveDependencies package
+      // debug.resolveImports package
     addJUnit4Test(suite, RFunctionDefinitionProcessorTest.class);
     addJUnit4Test(suite, RResolvingSessionImplTest.class);
 

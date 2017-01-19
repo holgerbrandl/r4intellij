@@ -87,7 +87,9 @@ public class MissingImportInspection extends LocalInspectionTool {
 
                     // is is a locally defined function?
 //                    if (functionName.getReference() != functionName) {
-                    List<RPackage> funPackage = RPackageService.getInstance().getContainingPackages(functionName);
+                    RPackageService packageService = RPackageService.getInstance();
+
+                    List<RPackage> funPackage = packageService.getContainingPackages(functionName);
                     List<String> funPackageNames = Lists.newArrayList(Iterables.transform(funPackage, Functions.toStringFunction()));
 
                     if (funPackageNames.isEmpty())
@@ -97,7 +99,7 @@ public class MissingImportInspection extends LocalInspectionTool {
                     List<String> importedPackages = ((RFile) psiElement.getContainingFile()).getImportedPackages();
 
                     // todo also include dependencies here
-                    Set<RPackage> resolvedImports = RPackageService.getInstance().resolveDependencies(importedPackages);
+                    Set<RPackage> resolvedImports = packageService.resolveImports(importedPackages);
                     importedPackages = Lists.newArrayList(Iterables.transform(resolvedImports, Functions.toStringFunction()));
 
                     importedPackages = Lists.newArrayList(Iterables.concat(basePackages, importedPackages));
@@ -110,6 +112,16 @@ public class MissingImportInspection extends LocalInspectionTool {
 
 
                     // no overlap --> highlight as error and suggest to import one!
+
+
+                    // Also provide importing packages as options (like tidyverse for mutate)
+                    // DISABLED: works but is adding too many confusing options
+//                    Set<String> funPckgByImport = funPackageNames.stream().
+//                            flatMap(pName -> packageService.getImporting(packageService.getByName(pName)).stream()).
+//                            map(RPackage::getName).
+//                            collect(Collectors.toSet());
+//                    funPackageNames.addAll(funPckgByImport);
+
 
                     List<LocalQuickFix> fixes = new ArrayList<LocalQuickFix>();
                     for (String funPackageName : funPackageNames) {

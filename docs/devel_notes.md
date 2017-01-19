@@ -38,8 +38,9 @@ missing arg inspection does not recognize dplyr piping --> Ignore first arg if r
 
 * implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
 
-shortcut to evaluate current expression and proceed
+* shortcut to evaluate current expression and proceed
 
+* intention to replace tidyverse imports with library(tidyverse)
 
 
 

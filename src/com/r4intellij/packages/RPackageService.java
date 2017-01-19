@@ -326,23 +326,24 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    public Set<RPackage> resolveDependencies(Collection<String> packageNames) {
-        // remove empty and null package names from list
-//        if(packageNames==null) packageNames = Lists.newArrayList();
-
-//        packageNames = packageNames.stream().
-//                filter(Objects::nonNull).
-//                filter(f->!f.isEmpty()).collect(Collectors.toSet());
-
+    public Set<RPackage> resolveImports(Collection<String> packageNames) {
         Iterable<RPackage> packages = packageNames.stream().
                 map(this::getByName).
                 filter(Objects::nonNull).
                 collect(Collectors.toList());
 
         List<RPackage> dependencies = Lists.newArrayList(packages).stream().
-                flatMap(f -> resolveDependencies(f.getImports()).stream()).collect(Collectors.toList());
+                flatMap(f -> resolveImports(f.getImports()).stream()).collect(Collectors.toList());
 
 
         return Sets.newHashSet(Iterables.concat(packages, dependencies));
+    }
+
+
+    public Set<RPackage> getImporting(@NotNull RPackage rPackage) {
+        return allPackages.stream().
+                filter(p -> p.getImports().contains(rPackage.getName())).
+                collect(Collectors.toSet());
+
     }
 }
