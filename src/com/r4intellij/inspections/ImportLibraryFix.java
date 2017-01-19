@@ -69,9 +69,7 @@ public class ImportLibraryFix implements LocalQuickFix {
 
             PsiElement insertAfter = null;
             if (importStatements.size() > 0) {
-//                insertAfter = getCommandParent(importStatements.get(importStatements.size() - 1).getParent());
 //                insertAfter = PsiTreeUtil.getContextOfType(importStatements.get(importStatements.size() - 1), RExpression.class);
-                // todo why not just
                 insertAfter = importStatements.get(importStatements.size() - 1);
             }
 
@@ -87,12 +85,7 @@ public class ImportLibraryFix implements LocalQuickFix {
                 insertAfter.getParent().addAfter(RElementFactory.createLeafFromText(project, "\n"), importStatement);
             }
 
-//        if (endsWithSemicolon(inserAfter)) {
-//            addedImport.addBefore(BnfElementFactory.createLeafFromText(project, ";"), null);
-//            if (inserAfter.getNextSibling() instanceof PsiWhiteSpace) {
-//                inserAfter.getParent().addAfter(BnfElementFactory.createLeafFromText(project, "\n"), addedImport);
-//            }
-//        }
+            // move around the caret
             //            final FileEditor selectedEditor = FileEditorManager.getInstance(project).getSelectedEditor(insertAfter.getContainingFile().getVirtualFile());
 //            if (selectedEditor instanceof TextEditor) {
 //                final Editor editor = ((TextEditor) selectedEditor).getEditor();
@@ -103,13 +96,4 @@ public class ImportLibraryFix implements LocalQuickFix {
             token.finish();
         }
     }
-
-
-//    private PsiElement getCommandParent(PsiElement psiElement) {
-//        while (psiElement != null && !(psiElement instanceof RCommand))
-//            psiElement = psiElement.getParent();
-//
-//        return psiElement;
-//    }
-
 }
