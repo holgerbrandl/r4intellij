@@ -37,3 +37,8 @@ parser package for R
 * Uses almost identical version of R grammar
 * According to parser docu: created using bison
 * Source file creates c-parser
+
+
+## hydrogen
+
+* https://atom.io/packages/hydrogen

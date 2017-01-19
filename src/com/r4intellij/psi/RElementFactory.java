@@ -52,7 +52,8 @@ public class RElementFactory {
     //
     public static RCallExpression createFuncallFromText(Project project, String text) {
         PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.getInstance(), text);
-        return (RCallExpression) fromText.getFirstChild().getChildren()[0];
+//        return (RCallExpression) fromText.getFirstChild().getChildren()[0];
+        return (RCallExpression) fromText.getFirstChild();
     }
 
 }
