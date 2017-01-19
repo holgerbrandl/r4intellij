@@ -3,6 +3,11 @@
 build website
 
 See https://pages.github.com/
+https://github.com/pietromenna/jekyll-cayman-theme
+
+https://github.com/ktisha/TheRPlugin
+
+Use https://github.com/thlorenz/doctoc
 
 ## 0-day bugs
 

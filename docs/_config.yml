@@ -1,4 +1,5 @@
 theme: jekyll-theme-cayman
 
-title : Let data flow not stumble
-tagline: Meditations on Data, R, Kotlin and the universe
+title : R Language support for Intellij IDEA
+tagline: R syntax highlighting and scripting support including auto-imports, quickfixes and refactorings
+
