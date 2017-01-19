@@ -1,5 +1,13 @@
 ## Next steps
 
+build website
+
+See https://pages.github.com/
+
+## 0-day bugs
+
+skeleton action is broken
+
 ### Implement proper completion contributor
 
 * for installed and not installed packages
@@ -8,8 +16,17 @@ http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/com
 
     
 ### 1. Go to reference
+
 *  http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/reference_contributor.html
 * https://intellij-support.jetbrains.com/hc/en-us/community/posts/207250965-PsiReferenceContributor-Find-Usages-and-Go-to-Declaration
+
+* seems to work within a within project context even across files. 
+* FIXME does not work for library funcitons yet
+* 
+ 
+
+
+usage search works also across functions
 
 
 ## potential improvements and differences
@@ -36,12 +53,14 @@ missing arg inspection does not recognize dplyr piping --> Ignore first arg if r
 
 ## later features
 
+
 * implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
 
 * shortcut to evaluate current expression and proceed
 
 * intention to replace tidyverse imports with library(tidyverse)
 
+* highlight packages with naming conflicts (or indicate it visually in the IDE using virtual comment)
 
 
 Release Action List
