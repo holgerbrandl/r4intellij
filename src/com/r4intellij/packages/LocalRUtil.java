@@ -17,11 +17,13 @@ import java.util.stream.Collectors;
  */
 public final class LocalRUtil {
 
-    private static final String R_INSTALLED_PACKAGES = "r-packages/r-packages-installed.r";
 
     public static final String ARGUMENT_DELIMETER = " ";
 
+    private static final String RHELPER_PACKAGE_SUMMARIES = "package_summaries.r";
+
     public static final Set<String> basePackages = Sets.newHashSet("stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base");
+
     //    public static final Set<String> basePackages = Sets.newHashSet("base", "utils", "stats", "datasets", "graphics",
 //            "grDevices", "grid", "methods", "tools", "parallel", "compiler", "splines", "tcltk", "stats4");
 
@@ -31,14 +33,20 @@ public final class LocalRUtil {
     }
 
 
+    /**
+     * Fetch R package info including description and version.
+     */
     public static Set<RPackage> getInstalledPackages() {
         RHelperUtil.runHelperWithArgs(RHelperUtil.R_HELPER_INSTALL_TIDYVERSE);
 
 
-        ArrayList<String> helperOutput = Lists.newArrayList(RHelperUtil.getHelperOutput("package_summaries.r").split("\n"));
+        String helperOutput = RHelperUtil.getHelperOutput(RHELPER_PACKAGE_SUMMARIES);
 
-
-        return Sets.newHashSet(Iterables.transform(helperOutput, new ParseDescriptorIntoPackage()));
+        if (helperOutput != null) {
+            return Sets.newHashSet(Iterables.transform(Lists.newArrayList(helperOutput.split("\n")), new ParseDescriptorIntoPackage()));
+        } else {
+            return Sets.newHashSet();
+        }
     }
 
 

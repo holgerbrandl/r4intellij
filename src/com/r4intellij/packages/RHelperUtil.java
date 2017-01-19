@@ -49,18 +49,19 @@ public class RHelperUtil {
 
     public static String getHelperOutput(String helper) {
         final String path = RInterpreterService.getInstance().getInterpreterPath();
+
         if (StringUtil.isEmptyOrSpaces(path)) {
             LOG.info("Path to interpreter didn't set");
             return null;
         }
+
         final String helperPath = RHelpersLocator.getHelperPath(helper);
 
         try {
             final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(path, "--slave", "-f", helperPath));
             final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
             if (output.getExitCode() != 0) {
-                LOG.warn("Failed to run script. Exit code: " + output.getExitCode());
-                LOG.warn(output.getStderr());
+                LOG.error("Failed to run script: " + helper + "\nExit code: " + output.getExitCode() + "\nError Output: " + output.getStderr());
             }
             return output.getStdout();
         } catch (ExecutionException e) {

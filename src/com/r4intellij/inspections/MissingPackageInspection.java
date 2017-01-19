@@ -16,6 +16,7 @@
 
 package com.r4intellij.inspections;
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemDescriptor;
@@ -57,6 +58,13 @@ public class MissingPackageInspection extends LocalInspectionTool {
     @Override
     public boolean isEnabledByDefault() {
         return true;
+    }
+
+
+    @NotNull
+    @Override
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.ERROR;
     }
 
 

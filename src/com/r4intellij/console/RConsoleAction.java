@@ -21,7 +21,7 @@ public class RConsoleAction extends AnAction implements DumbAware {
         try {
             RConsoleRunner runner = new RConsoleRunner(project, project.getBasePath());
             runner.initAndRun();
-            runner.createConsoleView().setInputText("1+1");
+//            runner.createConsoleView().setInputText("1+1");
         } catch (ExecutionException ex) {
             ExecutionHelper.showErrors(project, Arrays.<Exception>asList(ex), "R Console", null);
         }

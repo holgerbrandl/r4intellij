@@ -50,7 +50,6 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     public List<String> userRepositories = Lists.newArrayList();
 
 
-
     @Nullable
     @Override
     public RPackageService getState() {
@@ -88,10 +87,12 @@ public class RPackageService implements PersistentStateComponent<RPackageService
                 if (allPackages == null) allPackages = Sets.newConcurrentHashSet();
 
 
-                boolean hasChanged = updatePackages();
+                boolean hasChanged = refreshIndex();
+
                 if (hasChanged) {
                     saveObject(allPackages, libIndexFile);
                 }
+
             }
         });
     }
@@ -134,10 +135,28 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    private boolean updatePackages() {
+    /**
+     * @param packageNames Packages to be reindexd if version has changed or package has been installed since last
+     *                     indexing run.If non are provided all packages will be refreshed.
+     */
+    public boolean refreshIndex(String... packageNames) {
         RHelperUtil.runHelperWithArgs(RHelperUtil.R_HELPER_INSTALL_TIDYVERSE);
 
         Set<RPackage> installedPackages = LocalRUtil.getInstalledPackages();
+
+        // remove packages from index that are no longer present
+        if (packageNames.length == 0) {
+            Sets.SetView<RPackage> noLongerInstalled = Sets.difference(allPackages, installedPackages);
+            allPackages.removeAll(noLongerInstalled);
+        }
+
+
+        // cut down packges to be refreshed to speed up calculations
+//        if(packageNames.length>0){
+//            installedPackages = installedPackages.stream().
+//                    filter(p -> Arrays.asList(packageNames).contains(p.getName())).
+//                    collect(Collectors.toSet());
+//        }
 
         ExecutorService executorService = Executors.newFixedThreadPool(8);
 
@@ -160,6 +179,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
             });
         }
 
+
         executorService.shutdown();
         try {
             executorService.awaitTermination(1, TimeUnit.DAYS);
@@ -170,68 +190,24 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 //        allPackages.addAll(installedPackages);
 
 
-//        if (hasChanged[0]) {
-        if (ApplicationManager.getApplication() != null) {
-            Project[] projects = ProjectManager.getInstance().getOpenProjects();
-            for (Project project : projects) {
-                if (project.isInitialized() && project.isOpen() && !project.isDefault()) {
-                    SpellCheckerManager spellCheckerManager = SpellCheckerManager.getInstance(project);
-                    EditableDictionary dictionary = spellCheckerManager.getUserDictionary();
+        if (hasChanged[0]) {
+            if (ApplicationManager.getApplication() != null) {
+                Project[] projects = ProjectManager.getInstance().getOpenProjects();
+                for (Project project : projects) {
+                    if (project.isInitialized() && project.isOpen() && !project.isDefault()) {
+                        SpellCheckerManager spellCheckerManager = SpellCheckerManager.getInstance(project);
+                        EditableDictionary dictionary = spellCheckerManager.getUserDictionary();
 
-                    for (RPackage rPackage : RPackageService.getInstance().allPackages) {
-                        dictionary.addToDictionary(rPackage.getName());
-                        dictionary.addToDictionary(rPackage.getFunctionNames());
+                        for (RPackage rPackage : RPackageService.getInstance().allPackages) {
+                            dictionary.addToDictionary(rPackage.getName());
+                            dictionary.addToDictionary(rPackage.getFunctionNames());
+                        }
+
+                        DaemonCodeAnalyzer.getInstance(project).restart();
                     }
-
-                    DaemonCodeAnalyzer.getInstance(project).restart();
                 }
             }
         }
-
-
-//        final Set<RPackage> indexPackages = getPackages();
-
-        // just takes 5 secs so why bother with syncing
-//        ExecutorService executorService = Executors.newFixedThreadPool(4);
-//
-//        // remove packages that are no longer installed
-//
-//        Predicate<RPackage> isInstalled = new Predicate<RPackage>() {
-//            @Override
-//            public boolean apply(RPackage rPackage) {
-//                return installedPackages.contains(rPackage);
-//            }
-//        };
-//
-//        final boolean[] hasChanged = {false};
-//
-//        for (final RPackage rPackage : installedPackages) {
-//
-//            executorService.submit(new Runnable() {
-//                @Override
-//                public void run() {
-//                    RPackage indexedPckg = getByName(rPackage.getName());
-//                    String pckgVersion = rPackage.getVersion();
-//
-//
-//                    if (indexedPckg != null && pckgVersion.equals(indexedPckg.getVersion())) {
-//                        return;
-//                    }
-//
-//                    allPackages.remove(indexedPckg);
-//                    allPackages.add(rPackage);
-//
-//                    hasChanged[0] = true;
-//                }
-//            });
-//        }
-//
-//        executorService.shutdown();
-//        try {
-//            executorService.awaitTermination(1, TimeUnit.MINUTES);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
 
         return hasChanged[0];
     }
