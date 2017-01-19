@@ -2,7 +2,7 @@
     <name>R Language Support</name>
     <id>R4Intellij</id>
     <version>1.0</version>
-    <vendor url="https://github.com/holgerbrandl/r4intellij">Holger Brandl</vendor>
+    <vendor url="http://holgerbrandl.github.io/r4intellij/">Holger Brandl</vendor>
 
     <idea-version since-build="145.258.11"/>
     <description><![CDATA[
@@ -32,7 +32,7 @@
             <li> Some (simple) live templates</li>
         </ul>
         <p/>
-        Read more about the features at <a href="https://github.com/holgerbrandl/r4intellij">project page</a>
+        Read more about the features at <a href="http://holgerbrandl.github.io/r4intellij">project page</a>
 
 
         The project was intially deveoped from scratch, but in 2017 we rebuilt it based on the more modern MIT-licensed
