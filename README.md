@@ -12,7 +12,7 @@ For project documentation see our **[project website](http://holgerbrandl.github
 * [development notes](docs/devel_notes.md) 
 * [Pointer into Intellij OpenApi](docs/openapi_notes.md) 
 * [Release History](Changes.md) 
-* [FAQ](docs/faq.md) 
+* [FAQ](docs/pages/faq.md) 
 
 Acknoledgements
 ----

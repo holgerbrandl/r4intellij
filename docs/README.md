@@ -1,6 +1,31 @@
+
+
 This project provides an integration of R, which is a language for statistical computing and graphics, into Intellij&nbsp;IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever. 
 
+![](.README_images/r4ij_example.png)
+
 By implementing a parser for R, the plugin allows for syntax highlighting, intelligent code folding and completion,&nbsp;refactorings, and more. 
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Content**
+
+- [Installation](#installation)
+- [Support](#support)
+- [Basic Usage](#basic-usage)
+  - [File extensions](#file-extensions)
+  - [Source code navigation](#source-code-navigation)
+- [Integration with R session](#integration-with-r-session)
+- [Code completion](#code-completion)
+- [Refactoring](#refactoring)
+- [Intentions](#intentions)
+- [Planned &amp; Coming soon](#planned-amp-coming-soon)
+- [Platform features](#platform-features)
+- [You're still not convinced? Try something else!](#youre-still-not-convinced-try-something-else)
+- [Further reading](#further-reading)
+- [Acknoledgements](#acknoledgements)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
 Installation
@@ -111,7 +136,7 @@ Further reading
 * [development notes](devel_notes.md) 
 * [Pointer into Intellij OpenApi](openapi_notes.md) 
 * [Release History](Changes.md) 
-* [FAQ](faq.md) 
+* [FAQ](pages/faq.md) 
 
 Acknoledgements
 ----

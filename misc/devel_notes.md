@@ -1,18 +1,35 @@
 ## Next steps
 
-build website
-
-See https://pages.github.com/
-https://github.com/pietromenna/jekyll-cayman-theme
-
-https://github.com/ktisha/TheRPlugin
-
-Use https://github.com/thlorenz/doctoc
 
 ## 0-day bugs
 
-skeleton action is broken
+* skeleton action is broken
 
+* fix naming in dialog
+
+* indexing fails
+```
+Failed to run script: package_summaries.r
+Exit code: 2
+Error Output: 
+java.lang.Throwable
+	at com.intellij.openapi.diagnostic.Logger.error(Logger.java:132)
+	at com.r4intellij.packages.RHelperUtil.getHelperOutput(RHelperUtil.java:64)
+	at com.r4intellij.packages.LocalRUtil.getInstalledPackages(LocalRUtil.java:43)
+	at com.r4intellij.packages.RPackageService.refreshIndex(RPackageService.java:145)
+	at com.r4intellij.packages.RPackageService$1.run(RPackageService.java:90)
+	at com.intellij.openapi.application.impl.ApplicationImpl$2.run(ApplicationImpl.java:309)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+
+```
+
+* import action does not work for chunks. (should package imports be extracpolated to the complete file?)
+ 
+ ![](.devel_notes_images/rename_naming.png)
 ### Implement proper completion contributor
 
 * for installed and not installed packages
@@ -27,11 +44,13 @@ http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/com
 
 * seems to work within a within project context even across files. 
 * FIXME does not work for library funcitons yet
-* 
+* TBD redeclaration of function with same name (prefer local over global; same dir over other dir)
  
 
 
 usage search works also across functions
+
+* improved dplyr life template
 
 
 ## potential improvements and differences
@@ -58,6 +77,7 @@ missing arg inspection does not recognize dplyr piping --> Ignore first arg if r
 
 ## later features
 
+* after function name completion, cursor should end up between brackets
 
 * implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
 
@@ -66,6 +86,44 @@ missing arg inspection does not recognize dplyr piping --> Ignore first arg if r
 * intention to replace tidyverse imports with library(tidyverse)
 
 * highlight packages with naming conflicts (or indicate it visually in the IDE using virtual comment)
+
+* path completion within strings. Regular completion provider seems to apply.
+    * support relative paths liks `test.txt`, `../foo.txt`
+    * warn about missing data; and 
+    
+```r
+# similar to type annotation
+# @type recursive : logical
+
+# Examples: 
+# @working-dir ../../
+# @working-dir ~/Users/
+# @working-dir ${FOO}/bar
+
+```
+* show library import suggestions also for infix operators (like %<>% --> magrittr)
+* also support rstudio like sectioning 
+
+* make sure all rstudio refactorings work as well
+
+![](.devel_notes_images/refactorings.png)
+
+---
+* add title to package view like in RS:
+
+![](.devel_notes_images/packages_rstudio.png)
+
+* also add links to package names to go to cran/bioconductor homepages
+
+---
+integrate with table editor in intellij
+
+* https://www.jetbrains.com/help/idea/2016.3/working-with-the-table-editor.html
+* Allow to open table by clicking (R Console session required)
+
+* warn if data-frame arguments are not declared in script (with comment annotation option to flag presence). Since this is not possible on a general we could/should provide it for certain APIs like tidyverse
+
+* intention in case of naming conflicts (same functions in imported packages) suggest to add prefix to method call (allow to override by annotation)
 
 
 Release Action List
@@ -113,6 +171,66 @@ Brainstorming  & Roadmap
 * Or most promising, we could try to use the windows API via VBScript or C#
 
 
+## Rnotebook support
+
+
+Direct md embedding like in Rstudio
+
+![](.devel_notes_images/embedded_images.png)
+
+are not possible in the intellij editor, see 
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206756045-Displaying-an-image-in-source-code-editor
+
+
+http://stackoverflow.com/questions/29718926/saving-the-state-of-a-webview-and-reloading-the-position
+
+http://rmarkdown.rstudio.com/r_notebook_format.html
+
+http://rmarkdown.rstudio.com/r_notebooks.html#output_storage
+
+![](.devel_notes_images/chunk_storage.png)
+
+The document’s chunk outputs are also stored in an internal RStudio folder beneath the project’s .Rproj.user folder. If you work with a notebook but don’t have a project open, the outputs are stored in the RStudio state folder in your home directory (the location of this folder varies between the desktop and the server).
+
+
+
 ## Enhanced code completion
 
 Make use of CompletionType enum to finetune/speed up auto-completion
+
+## Misc
+
+What about packrat? http://rstudio.github.io/packrat/walkthrough.html
+
+# Website
+
+
+See https://pages.github.com/
+https://github.com/pietromenna/jekyll-cayman-theme
+
+
+Expected site structure
+http://kbroman.org/simple_site/pages/overview.html
+
+
+Use https://github.com/thlorenz/doctoc
+
+```bash
+cd /Users/brandl/projects/rplugin/r4intellij_v2/docs
+doctoc .
+doctoc --title "**Content**" README.md
+
+```
+
+Local deployment with jekyll
+```bash
+# from http://kbroman.org/simple_site/pages/local_test.html
+# gem install github-pages
+# gem update github-pages
+# jekyll build
+bundle exec jekyll serve
+
+```
+
+Website todods
+* https://github.com/ktisha/TheRPlugin

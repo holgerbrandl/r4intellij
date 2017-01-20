@@ -1,3 +1,13 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [I've installed a new package. How can I force the index to be rebuild?](#ive-installed-a-new-package-how-can-i-force-the-index-to-be-rebuild)
+- [R4Intellij fails to index package XY. What can I do?](#r4intellij-fails-to-index-package-xy-what-can-i-do)
+- [Why doesn't R4Intellij provide R-Session aware completion?](#why-doesnt-r4intellij-provide-r-session-aware-completion)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## I've installed a new package. How can I force the index to be rebuild?
 The index will be updated when Intellij is restarted.
 

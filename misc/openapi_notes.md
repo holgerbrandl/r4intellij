@@ -58,6 +58,8 @@ tricky packages for skeletonizer
 
 see com.r4intellij.RPsiUtils.findCall
 
+In RS users can jump to library functions but can't go any further (like digging through the R API)
+
 ## Misc
 
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/207567045-How-to-get-the-parent-psi-element-outside-of-a-language-injection
