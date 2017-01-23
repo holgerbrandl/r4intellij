@@ -1,8 +1,7 @@
 
-
 This project provides an integration of R, which is a language for statistical computing and graphics, into Intellij&nbsp;IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever. 
 
-![](.README_images/r4ij_example.png)
+![](readme_images/r4ij_example.png)
 
 By implementing a parser for R, the plugin allows for syntax highlighting, intelligent code folding and completion,&nbsp;refactorings, and more. 
 
@@ -129,17 +128,17 @@ Give a try to [StatET](http://www.walware.de/goto/statet), [textmate](http://mac
 Feel welcome to report problems or suggest new features by adding an issue to our&nbsp;[tracker](https://code.google.com/p/r4intellij/issues/list). Or be a hero and send us a pull reuest
 
 
-
-Further reading
+Site navigation
 ---------------
 
-* [development notes](devel_notes.md) 
-* [Pointer into Intellij OpenApi](openapi_notes.md) 
-* [Release History](Changes.md) 
-* [FAQ](pages/faq.md) 
+* [Development notes](https://github.com/holgerbrandl/r4intellij/blob/master/misc/devel_notes.md) 
+* [Release History](https://github.com/holgerbrandl/r4intellij/blob/master/Changes.md) 
+
+* [FAQ](faq.html) 
+
 
 Acknoledgements
-----
+---------------
 
 This project was rebuilt by merging it's codebase with a fork of [The R plugin](https://github.com/ktisha/TheRPlugin). So most credits go to go [ktisha](https://github.com/ktisha).
   

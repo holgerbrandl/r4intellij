@@ -1,4 +1,11 @@
-## Next steps
+R4Intellij Development Notes
+----------------------------
+
+Also see [OpenApi notes](openapi_notes.md)
+
+
+Next steps
+----------
 
 
 ## 0-day bugs
@@ -202,16 +209,45 @@ Make use of CompletionType enum to finetune/speed up auto-completion
 
 What about packrat? http://rstudio.github.io/packrat/walkthrough.html
 
-# Website
 
 
-See https://pages.github.com/
-https://github.com/pietromenna/jekyll-cayman-theme
+
+Website
+=======
+
+Used theme https://github.com/pietromenna/jekyll-cayman-theme
+
+Main docs on github
+https://help.github.com/articles/using-jekyll-as-a-static-site-generator-with-github-pages/
+
+Local deployment with jekyll (see from https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll/)
 
 
-Expected site structure
-http://kbroman.org/simple_site/pages/overview.html
+setup
+```bash
 
+gem update --system  
+
+echo "
+source 'https://rubygems.org'
+gem 'github-pages', group: :jekyll_plugins
+" > Gemfile
+
+bundle install
+```
+
+to run:
+
+```bash
+# from http://kbroman.org/simple_site/pages/local_test.html
+# gem install github-pages
+# gem update github-pages
+# jekyll build
+
+bundle exec jekyll serve
+```
+
+### Table of contents
 
 Use https://github.com/thlorenz/doctoc
 
@@ -222,15 +258,13 @@ doctoc --title "**Content**" README.md
 
 ```
 
-Local deployment with jekyll
-```bash
-# from http://kbroman.org/simple_site/pages/local_test.html
-# gem install github-pages
-# gem update github-pages
-# jekyll build
-bundle exec jekyll serve
+### Website Todos
 
-```
-
-Website todods
 * https://github.com/ktisha/TheRPlugin
+
+
+### Misc
+
+* no automatic menu is possible without plugin: http://stackoverflow.com/questions/31194588/generate-a-menu-in-jekyll
+* don't use .-prefixes https://help.github.com/articles/files-that-start-with-an-underscore-are-missing/
+* add pages to jekyll site https://jekyllrb.com/docs/pages/
