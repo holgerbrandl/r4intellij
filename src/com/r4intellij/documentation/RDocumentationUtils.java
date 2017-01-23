@@ -39,6 +39,8 @@ public final class RDocumentationUtils {
 
     @NotNull
     public static String getFormattedString(@NotNull String docString) {
+        if (docString.isEmpty()) return "";
+
         final StringBuilder builder = new StringBuilder();
         final String[] strings = StringUtil.splitByLines(docString);
         for (String string : strings) {

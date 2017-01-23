@@ -134,24 +134,37 @@ public class RPsiUtils {
     /**
      * If packageName parameter equals null we do not load package
      */
-    public static String getHelpForFunction(@NotNull final PsiElement assignee, @Nullable final String packageName) {
+    @Nullable
+    public static String getHelpForFunction(@NotNull final String assignee, @Nullable final String packageName) {
         final String helpHelper = packageName != null ? "r-help.r" : "r-help-without-package.r";
         final File file = RHelpersLocator.getHelperFile(helpHelper);
+
         final String path = RInterpreterService.getInstance().getInterpreterPath();
+
         final String helperPath = file.getAbsolutePath();
+
+
         try {
-            final String assigneeText = assignee.getText().replaceAll("\"", "");
+
+            if (assignee.isEmpty()) {
+                return null;
+            }
+
             final ArrayList<String> arguments = Lists.newArrayList(path, "--slave", "-f ", helperPath, " --args ");
             if (packageName != null) {
                 arguments.add(packageName);
             }
-            arguments.add(assigneeText);
+            arguments.add(assignee);
 
             final GeneralCommandLine commandLine = new GeneralCommandLine(arguments);
-            final Process process = commandLine.createProcess();
-            final CapturingProcessHandler processHandler = new CapturingProcessHandler(process);
+
+            LOG.info("getting help for '" + assignee + "' with: " + commandLine.getCommandLineString());
+
+            final CapturingProcessHandler processHandler = new CapturingProcessHandler(commandLine);
             final ProcessOutput output = processHandler.runProcess(MINUTE * 5);
+
             String stdout = output.getStdout();
+
             if (stdout.startsWith("No documentation")) {
                 return null;
             }

@@ -223,8 +223,8 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
         List<Function> functions = Lists.transform(allFuns, new com.google.common.base.Function<String, Function>() {
             @Override
-            public Function apply(String s) {
-                return new Function(s, "NA");
+            public Function apply(String funName) {
+                return new Function(funName);
             }
         });
 

@@ -1,11 +1,14 @@
 package com.r4intellij.psi;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RElementGenerator;
+import com.r4intellij.documentation.RDocumentationUtils;
 import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.ROperatorReference;
@@ -200,6 +203,11 @@ public class RPsiImplUtil {
 
     @Nullable
     public static String getDocStringValue(@NotNull final RFunctionExpression functionExpression) {  //TODO: make stub-aware
+        String roxyComment = StringUtil.nullize(RPsiImplUtil.getRoxygenComment(functionExpression));
+        if (roxyComment != null) {
+            return roxyComment;
+        }
+
         final RBlockExpression blockExpression = PsiTreeUtil.findChildOfType(functionExpression, RBlockExpression.class);
         if (blockExpression == null) return null;
 
@@ -210,8 +218,42 @@ public class RPsiImplUtil {
                 comments.add((PsiComment) sibling);
             }
         }
-        if (comments.isEmpty()) return null;
-        return getCommentText(comments);
+
+        if (!comments.isEmpty()) {
+            return RDocumentationUtils.getFormattedString(getCommentText(comments));
+        } else {
+            return null;
+        }
+    }
+
+
+    @Nullable
+    public static String getRoxygenComment(RFunctionExpression functionExpression) {
+        List<String> detectObjectDocs = Lists.newArrayList();
+
+        int newLineCounter = 0;
+        for (PsiElement sibling = functionExpression.getParent().getPrevSibling(); sibling != null && (sibling instanceof PsiComment || sibling.getText().equals("\n")); ) {
+
+            if (sibling instanceof PsiComment && sibling.getText().startsWith("#'")) {
+                detectObjectDocs.add(trimCommentPrefix(sibling.getText()));
+                newLineCounter = 0;
+            } else {
+                // preserve single linebreaks
+                if (newLineCounter < 2) detectObjectDocs.add("");
+
+                newLineCounter++;
+
+                if (newLineCounter > 2) {
+                    break;
+                }
+            }
+            sibling = sibling.getPrevSibling();
+        }
+
+
+        boolean hasAnyContent = detectObjectDocs.stream().anyMatch(f -> !f.isEmpty());
+        return hasAnyContent ? Joiner.on("").join(Lists.reverse(detectObjectDocs)).trim().replace("\n", "<br>") : "";
+
     }
 
 
@@ -219,10 +261,21 @@ public class RPsiImplUtil {
     private static String getCommentText(@NotNull final List<PsiComment> comments) {
         final StringBuilder stringBuilder = new StringBuilder();
         for (PsiComment comment : comments) {
-            String string = comment.getText();
-            stringBuilder.append(StringUtil.trimStart(string, "#")).append("\n");
+            String string = trimCommentPrefix(comment.getText());
+
+            stringBuilder.append(string).append("\n");
         }
-        return stringBuilder.toString();
+        return stringBuilder.toString().trim();
+    }
+
+
+    @NotNull
+    public static String trimCommentPrefix(String text) {
+        String string = text;
+
+        string = StringUtil.trimStart(string, "#'"); // roxygen  style comment trimming
+        string = StringUtil.trimStart(string, "#'"); // regular comment style comment trimming
+        return string;
     }
 
 

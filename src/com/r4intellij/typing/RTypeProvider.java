@@ -22,6 +22,7 @@ public class RTypeProvider {
 
     public static RType getType(RPsiElement element) {
         return RTypeContext.getTypeFromCache(element);
+//        return RUnknownType.INSTANCE;
     }
 
 

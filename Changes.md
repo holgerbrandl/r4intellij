@@ -12,6 +12,9 @@ Restarted devlopment by forking. This gives the following feature set
 * Debugger
 * Run configurations
 
+Improved features
+* [roxygen](http://r-pkgs.had.co.nz/man.html) documentation lookup for library development
+ 
 
 The following features were merged in from previous version of r4intellij
 * More recent R logo
