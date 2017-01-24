@@ -144,6 +144,17 @@ for (name in packageNames) {
 
 * offer quickfix to surround if expression with curly brackets
 
+
+* necessity of 
+```
+application.invokeLater(new Runnable() {
+    @Override
+    public void run() {
+
+        application.runWriteAction(new Runnable() {
+        ....
+```
+
 Release Action List
 ===================
 

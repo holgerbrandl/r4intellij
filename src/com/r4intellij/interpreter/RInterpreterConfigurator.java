@@ -34,7 +34,4 @@ public class RInterpreterConfigurator implements DirectoryProjectConfigurator {
             });
         }
     }
-
-
-
 }

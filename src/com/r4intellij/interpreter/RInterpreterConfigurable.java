@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.impl.OrderEntryUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
@@ -86,7 +87,6 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
         myMainPanel.add(mySourcesField, c);
     }
 
-
     @NotNull
     @Override
     public String getId() {
@@ -137,14 +137,15 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
         final String sourcesPath = mySourcesField.getText();
 
         final String oldSourcesPath = interpreterService.getSourcesPath();
+
         if (!sourcesPath.equals(oldSourcesPath)) {
             if (!StringUtil.isEmptyOrSpaces(oldSourcesPath)) {
-                detachLibrary();
+                detachLibrary(myProject);
             }
             if (!StringUtil.isEmptyOrSpaces(sourcesPath)) {
                 final ArrayList<String> paths = getSourcePaths(sourcesPath);
                 if (!paths.isEmpty()) {
-                    attachLibrary(paths);
+                    createLibrary(R_LIBRARY, paths, myProject);
                 }
             }
         }
@@ -189,17 +190,68 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
     }
 
 
-    public void detachLibrary() {
+    public static void createLibrary(final String name, @NotNull final java.util.List<String> paths, @NotNull final Project project) {
+        ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
+
+//        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+//            @Override
+//            public void run() {
+        // add all paths to library
+
+        LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
+        Library library = model.getLibraryByName(name);
+
+        if (library == null) {
+            library = model.createLibrary(name);
+        }
+
+        fillLibrary(library, paths);
+        model.commit();
+
+        Library.ModifiableModel libModel = library.getModifiableModel();
+        libModel.commit();
+
+        Module[] modules = ModuleManager.getInstance(project).getModules();
+        for (Module module : modules) {
+            final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
+            modifiableModel.addLibraryEntry(library);
+            modelsProvider.commitModuleModifiableModel(modifiableModel);
+        }
+
+        //        });
+//    }
+    }
+
+
+    private static void fillLibrary(@NotNull final Library lib, @NotNull final List<String> paths) {
+        Library.ModifiableModel modifiableModel = lib.getModifiableModel();
+        for (String root : lib.getUrls(OrderRootType.CLASSES)) {
+            modifiableModel.removeRoot(root, OrderRootType.CLASSES);
+        }
+        for (String dir : paths) {
+            final VirtualFile pathEntry = LocalFileSystem.getInstance().findFileByPath(dir);
+            if (pathEntry != null) {
+                modifiableModel.addRoot(pathEntry, OrderRootType.CLASSES);
+            } else {
+                modifiableModel.addRoot("file://" + dir, OrderRootType.CLASSES);
+            }
+        }
+        modifiableModel.commit();
+    }
+
+
+    private static void detachLibrary(final Project project) {
         final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
+
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
                 // add all paths to library
-                final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(myProject);
+                final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
                 final Library library = model.getLibraryByName(R_LIBRARY);
                 if (library != null) {
 
-                    final Module[] modules = ModuleManager.getInstance(myProject).getModules();
+                    final Module[] modules = ModuleManager.getInstance(project).getModules();
                     for (Module module : modules) {
                         final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
                         OrderEntry entry = OrderEntryUtil.findLibraryOrderEntry(modifiableModel, R_LIBRARY);
@@ -212,32 +264,6 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
                     }
                     model.removeLibrary(library);
                     model.commit();
-                }
-            }
-        });
-    }
-
-
-    public void attachLibrary(@NotNull final List<String> paths) {
-        final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                // add all paths to library
-                final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(myProject);
-                Library library = model.getLibraryByName(R_LIBRARY);
-                if (library == null) {
-                    library = model.createLibrary(R_LIBRARY);
-                }
-                RSkeletonGenerator.fillLibrary(library, paths);
-                model.commit();
-                final Library.ModifiableModel libModel = library.getModifiableModel();
-                libModel.commit();
-                final Module[] modules = ModuleManager.getInstance(myProject).getModules();
-                for (Module module : modules) {
-                    final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
-                    modifiableModel.addLibraryEntry(library);
-                    modelsProvider.commitModuleModifiableModel(modifiableModel);
                 }
             }
         });
