@@ -15,7 +15,6 @@ import com.intellij.util.IncorrectOperationException;
 import com.r4intellij.RElementGenerator;
 import com.r4intellij.RPsiUtils;
 import com.r4intellij.interpreter.RInterpreterConfigurable;
-import com.r4intellij.interpreter.RInterpreterService;
 import com.r4intellij.interpreter.RSkeletonGenerator;
 import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.*;
@@ -168,14 +167,18 @@ public class RReferenceImpl implements PsiPolyVariantReference {
     private void addVariantsFromSkeletons(@NotNull final List<LookupElement> result) {
         final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
         final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(myElement.getProject());
+
         if (model != null) {
             final Library library = model.getLibraryByName(RInterpreterConfigurable.R_SKELETONS);
-            final String skeletonsDir = RSkeletonGenerator.getSkeletonsPath(RInterpreterService.getInstance().getInterpreterPath());
+
+            final String skeletonsDir = RSkeletonGenerator.getSkeletonsPath();
             if (library != null) {
                 final Collection<String> assignmentStatements = RAssignmentNameIndex.allKeys(myElement.getProject());
+
                 for (String statement : assignmentStatements) {
                     final Collection<RAssignmentStatement> statements =
                             RAssignmentNameIndex.find(statement, myElement.getProject(), new LibraryScope(myElement.getProject(), library));
+
                     for (RAssignmentStatement assignmentStatement : statements) {
                         final PsiDirectory directory = assignmentStatement.getContainingFile().getParent();
                         assert directory != null;

@@ -14,6 +14,7 @@ import com.intellij.openapi.project.ProjectManager;
 import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.r4intellij.interpreter.RSkeletonGenerator;
 import org.apache.commons.lang.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,7 +104,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    private File libIndexFile = new File("libindex.dat");
+    private File libIndexFile = new File(RSkeletonGenerator.getSkeletonsPath(), "libindex.dat");
 
 
     static Object loadObject(File f) {
