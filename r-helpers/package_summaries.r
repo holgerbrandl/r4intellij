@@ -26,6 +26,7 @@ pckgImports = package_dependencies(pckgList$Package, which="Imports") %>%
 pckgList %<>% left_join(pckgDepends)
 pckgList %<>% left_join(pckgImports)
 
+# See  http://stackoverflow.com/questions/8637993/better-explanation-of-when-to-use-imports-depends
 
 ## also add short package description (aka title)
 pckgList %<>% rowwise() %>% mutate(title=get_title(Package))
@@ -33,6 +34,9 @@ pckgList %<>% rowwise() %>% mutate(title=get_title(Package))
 # if(F){
 # options(width=200)
 # filter(pckgList, Package=="tidyr")
+# filter(pckgList, Package=="ggplot2") %>% knitr::kable()
+# filter(pckgDepends, Package=="ggplot2") %>% knitr::kable()
+# filter(pckgImports, Package=="ggplot2") %>% knitr::kable()
 # }
 
 ## dump in a format suitable for parsing

@@ -22,6 +22,23 @@ public class RTypeContext {
     private long myModificationCount = -1;
 
 
+//    private final Cache<RPsiElement, RType> cache = initializeCache();
+//
+//
+//    private Cache<RPsiElement, RType> initializeCache() {
+//        return CacheBuilder.newBuilder().
+//                concurrencyLevel(4).
+//                maximumSize(100000).
+//                softValues().
+//                expireAfterWrite(Integer.MAX_VALUE, TimeUnit.SECONDS).
+//                build(new CacheLoader<RPsiElement, RType>() {
+//                    @Override
+//                    public RType load(RPsiElement k1) throws Exception {
+//                        return null;
+//                    }
+//                });
+//    }
+
     private RTypeContext(long modificationCount) {
         myModificationCount = modificationCount;
     }

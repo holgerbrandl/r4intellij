@@ -89,10 +89,6 @@ public class RPackage implements Serializable {
     }
 
 
-    public Collection<String> getDependencyNames() {
-        return dependencies;
-    }
-
 
     public boolean isDummy() {
         return functions.isEmpty();
@@ -121,6 +117,12 @@ public class RPackage implements Serializable {
     public Set<String> getImports() {
         return imports;
     }
+
+
+    public Collection<String> getDependencies() {
+        return dependencies;
+    }
+
 
 
     @Override

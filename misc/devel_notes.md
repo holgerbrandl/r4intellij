@@ -132,6 +132,17 @@ integrate with table editor in intellij
 
 * intention in case of naming conflicts (same functions in imported packages) suggest to add prefix to method call (allow to override by annotation)
 
+* bug: renaming for loop variables is broken
+
+```r
+for (name in packageNames) {
+    if (paste(name, "r", sep=".") %in% list.files(path=args[1])) {
+        next
+    }
+}
+```
+
+* offer quickfix to surround if expression with curly brackets
 
 Release Action List
 ===================

@@ -34,9 +34,19 @@ sum(2,3)
 
 
 
+Missing Unit Tests
+------------------
+
+resolveDependencies
+
+* namespace preferences
+* duplication
+
 
 
 TODO
 ----
 
 Write unit tests for all this if possilbe :-)
+
+

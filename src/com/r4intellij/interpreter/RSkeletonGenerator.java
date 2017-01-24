@@ -1,6 +1,8 @@
 package com.r4intellij.interpreter;
 
 import com.google.common.collect.Lists;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.Application;
@@ -24,17 +26,19 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.r4intellij.RHelpersLocator;
+import com.r4intellij.RPsiUtils;
+import com.r4intellij.packages.RPackage;
+import com.r4intellij.packages.RPackageService;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 
 public class RSkeletonGenerator {
     protected static final Logger LOG = Logger.getInstance("#" + RSkeletonGenerator.class.getName());
 
-    protected static final String R_GENERATOR = "r-generator.r";
+    protected static final String R_HELPER_SKELETONIZE_PACKAGE = "skeletonize_package.R";
 
     public static final String SKELETON_DIR_NAME = "r_skeletons";
 
@@ -57,25 +61,37 @@ public class RSkeletonGenerator {
 
 
     public static void runSkeletonGeneration() {
-        final String path = RInterpreterService.getInstance().getInterpreterPath();
-        if (StringUtil.isEmptyOrSpaces(path)) return;
-        final String helperPath = RHelpersLocator.getHelperPath(R_GENERATOR);
-        try {
-            final String skeletonsPath = getSkeletonsPath(path);
+        final String interpreter = RInterpreterService.getInstance().getInterpreterPath();
+
+        if (StringUtil.isEmptyOrSpaces(interpreter)) return;
+
+
+        for (RPackage rPackage : RPackageService.getInstance().getPackages()) {
+            LOG.info("building skeleton for " + rPackage.getName());
+            final String helperPath = RHelpersLocator.getHelperPath(R_HELPER_SKELETONIZE_PACKAGE);
+
+            final String skeletonsPath = getSkeletonsPath(interpreter);
             final File skeletonsDir = new File(skeletonsPath);
+
             if (!skeletonsDir.exists() && !skeletonsDir.mkdirs()) {
                 LOG.error("Can't create skeleton dir " + String.valueOf(skeletonsPath));
             }
-            final String commandLine = path + " --slave -f " + helperPath + " --args " + skeletonsPath;
-            final Process process = Runtime.getRuntime().exec(commandLine);
-            final CapturingProcessHandler processHandler = new CapturingProcessHandler(process, null, commandLine);
-            final ProcessOutput output = processHandler.runProcess(MINUTE * 5);
-            if (output.getExitCode() != 0) {
-                LOG.error("Failed to generate skeletons. Exit code: " + output.getExitCode());
-                LOG.error(output.getStderrLines());
+
+            try {
+                GeneralCommandLine gcl = new GeneralCommandLine().
+                        withExePath(interpreter).
+                        withParameters("--slave", "-f", helperPath, "--args", skeletonsPath, rPackage.getName());
+
+                final CapturingProcessHandler processHandler = new CapturingProcessHandler(gcl);
+                final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
+
+                if (output.getExitCode() != 0) {
+                    LOG.error("Failed to generate skeleton for '" + rPackage.getName() + "'. Exit code: " + output.getExitCode());
+                    LOG.error(output.getStderrLines());
+                }
+            } catch (ExecutionException e) {
+                LOG.error(e);
             }
-        } catch (IOException e) {
-            LOG.error(e);
         }
     }
 
@@ -100,20 +116,22 @@ public class RSkeletonGenerator {
                                 LOG.warn("Failed to create skeleton dir");
                             }
                         }
-                        String skeletons = RHelpersLocator.getHelperPath("r-skeletons");
-                        File pregeneratedSkeletonsDir = new File(skeletons);
-                        if (!pregeneratedSkeletonsDir.exists()) {
-                            LOG.info("Pre-generated skeletons not found");
-                        } else {
-                            try {
-                                FileUtil.copyDirContent(pregeneratedSkeletonsDir, skeletonLibDir);
-                            } catch (IOException e) {
-                                LOG.error(e);
-                            }
-                        }
+//                        String skeletons = RHelpersLocator.getHelperPath("r-skeletons");
+//                        File pregeneratedSkeletonsDir = new File(skeletons);
+//                        if (!pregeneratedSkeletonsDir.exists()) {
+//                            LOG.info("Pre-generated skeletons not found");
+//                        } else {
+//                            try {
+//                                FileUtil.copyDirContent(pregeneratedSkeletonsDir, skeletonLibDir);
+//                            } catch (IOException e) {
+//                                LOG.error(e);
+//                            }
+//                        }
                         generateLibrary(RInterpreterConfigurable.R_SKELETONS, skeletonLibraryPath, project);
-                        final String userSkeletonsPath = RHelpersLocator.getHelperPath("r-user-skeletons");
-                        generateLibrary(RInterpreterConfigurable.The_R_USER_SKELETONS, userSkeletonsPath, project);
+
+                        //TODO still needed?
+//                        final String userSkeletonsPath = RHelpersLocator.getHelperPath("r-user-skeletons");
+//                        generateLibrary(RInterpreterConfigurable.The_R_USER_SKELETONS, userSkeletonsPath, project);
                     }
                 });
 
@@ -132,17 +150,21 @@ public class RSkeletonGenerator {
 
 
     private static void generateLibrary(final String name, final String path, @NotNull final Project project) {
-        final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
-        final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
+        ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
+        LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
         Library library = model.getLibraryByName(name);
+
         if (library == null) {
             library = model.createLibrary(name);
         }
+
         fillLibrary(library, Lists.newArrayList(path));
         model.commit();
-        final Library.ModifiableModel libModel = library.getModifiableModel();
+
+        Library.ModifiableModel libModel = library.getModifiableModel();
         libModel.commit();
-        final Module[] modules = ModuleManager.getInstance(project).getModules();
+
+        Module[] modules = ModuleManager.getInstance(project).getModules();
         for (Module module : modules) {
             final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
             modifiableModel.addLibraryEntry(library);

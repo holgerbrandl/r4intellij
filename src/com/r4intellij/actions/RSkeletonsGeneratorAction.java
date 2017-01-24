@@ -20,25 +20,23 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.DocumentUtil;
-import com.intellij.util.FileContentUtil;
 import com.r4intellij.RHelp;
-import com.r4intellij.RPsiUtils;
 import com.r4intellij.RStaticAnalyzerHelper;
 import com.r4intellij.RUtils;
 import com.r4intellij.interpreter.RInterpreterService;
 import com.r4intellij.interpreter.RSkeletonGenerator;
 import com.r4intellij.psi.RRecursiveElementVisitor;
 import com.r4intellij.psi.api.*;
-import com.r4intellij.typing.*;
+import com.r4intellij.typing.MatchingException;
+import com.r4intellij.typing.RSkeletonGeneratorHelper;
+import com.r4intellij.typing.RTypeChecker;
 import com.r4intellij.typing.types.RType;
 import com.r4intellij.typing.types.RUnknownType;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -62,16 +60,23 @@ public class RSkeletonsGeneratorAction extends AnAction {
                             LOG.info("Failed to locate skeletons directory");
                             return;
                         }
+                        int processed = 0;
                         for (final VirtualFile packageDir : skeletonDir.getChildren()) {
-                            if (!packageDir.isDirectory()) {
+
+                            if (packageDir.isDirectory()) {
                                 continue;
                             }
+
                             ApplicationManager.getApplication().invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     ApplicationManager.getApplication().runWriteAction(new Runnable() {
                                         @Override
+
                                         public void run() {
+                                            indicator.setFraction((double) processed / skeletonDir.getChildren().length);
+                                            indicator.setText2("Indexing " + packageDir.getName());
+
                                             generateSkeletonsForPackage(packageDir, project);
                                             try {
                                                 packageDir.delete(this);
@@ -113,9 +118,9 @@ public class RSkeletonsGeneratorAction extends AnAction {
     private static void generateSkeletonsForPackage(@NotNull final VirtualFile packageDir, @NotNull final Project project) {
         String packageName = packageDir.getName();
         //TODO: DELETE THIS CHECK!!! it is here only for speeding checks while developing
-        if (!packageName.equals("base") && !packageName.equals("codetools")) {
-            return;
-        }
+//        if (!packageName.equals("base") && !packageName.equals("codetools")) {
+//            return;
+//        }
         VirtualFile skeletonsDir = packageDir.getParent();
         try {
             VirtualFile packageFile = skeletonsDir.findOrCreateChildData(project, packageName + ".r");
@@ -181,63 +186,65 @@ public class RSkeletonsGeneratorAction extends AnAction {
                 if (assignee.getText().equals("all")) {
                     System.out.println();
                 }
-                String helpText = RPsiUtils.getHelpForFunction(assignee, myPackageName);
-                if (helpText != null) {
-                    final RHelp help;
-                    help = new RHelp(helpText);
-                    final Map<RParameter, RType> parsedTypes = RSkeletonGeneratorHelper.guessArgsTypeFromHelp(help,
-                            (RFunctionExpression) assignedValue);
-                    if (parsedTypes != null && !parsedTypes.isEmpty()) {
-                        String tempFileName = myFile.getNameWithoutExtension() + "temp.r";
-                        try {
-                            VirtualFile tempFile = myFile.getParent().findOrCreateChildData(this, tempFileName);
-                            final Document tempDocument = FileDocumentManager.getInstance().getDocument(tempFile);
-                            if (tempDocument != null) {
-                                final List<String> annotations = new ArrayList<String>();
-                                for (Map.Entry<RParameter, RType> entry : parsedTypes.entrySet()) {
-                                    String typeAnnotation = DocStringUtil.generateTypeAnnotation(entry.getKey(), entry.getValue());
-                                    RUtils.appendToDocument(tempDocument, typeAnnotation);
-                                    annotations.add(typeAnnotation);
-                                }
-                                RUtils.appendToDocument(tempDocument, o.getText() + "\n");
-
-                                if (help.myExamples != null && !help.myExamples.isEmpty()) {
-                                    RUtils.appendToDocument(tempDocument, "\n" + help.myExamples + "\n");
-                                }
-
-                                if (help.myUsage != null && !help.myUsage.isEmpty()) {
-                                    RUtils.appendToDocument(tempDocument, "\n" + help.myUsage + "\n");
-                                }
-                                RUtils.saveDocument(tempDocument);
-                                PsiDocumentManager.getInstance(myProject).commitDocument(tempDocument);
-                                Visitor visitor = new Visitor();
-                                FileContentUtil.reparseFiles(tempFile);
-                                PsiFile psiFile = PsiManager.getInstance(myProject).findFile(tempFile);
-                                if (psiFile != null && psiFile.isValid()) {
-                                    psiFile.acceptChildren(visitor);
-                                }
-                                if (!visitor.hasErrors()) {
-                                    RUtils.appendToDocument(myPackageDocument, "\n\n");
-                                    for (String typeAnnotation : annotations) {
-                                        RUtils.appendToDocument(myPackageDocument, typeAnnotation);
-                                    }
-                                }
-
-                                tempFile.delete(this);
-
-
-                                RType type = RTypeProvider.guessReturnValueTypeFromBody((RFunctionExpression) assignedValue);
-                                if (!RUnknownType.class.isInstance(type)) {
-                                    RUtils.appendToDocument(myPackageDocument, "## @return " + type.toString() + "\n");
-                                } else {
-                                    insertTypeFromHelp(assignee, help);
-                                }
-                            }
-                        } catch (IOException e) {
-                            LOG.error(e);
-                        }
-                    }
-                }
+//                String helpText = RPsiUtils.getHelpForFunction(assignee.getText(), myPackageName);
+                // todo uncomment once skeletoniziation is more stable and speedy
+//                if (helpText != null) {
+//                    RHelp help = new RHelp(helpText);
+//
+//                    final Map<RParameter, RType> parsedTypes = RSkeletonGeneratorHelper.guessArgsTypeFromHelp(help,
+//                            (RFunctionExpression) assignedValue);
+//
+//                    if (parsedTypes != null && !parsedTypes.isEmpty()) {
+//                        String tempFileName = myFile.getNameWithoutExtension() + "temp.r";
+//                        try {
+//                            VirtualFile tempFile = myFile.getParent().findOrCreateChildData(this, tempFileName);
+//                            final Document tempDocument = FileDocumentManager.getInstance().getDocument(tempFile);
+//                            if (tempDocument != null) {
+//                                final List<String> annotations = new ArrayList<String>();
+//                                for (Map.Entry<RParameter, RType> entry : parsedTypes.entrySet()) {
+//                                    String typeAnnotation = DocStringUtil.generateTypeAnnotation(entry.getKey(), entry.getValue());
+//                                    RUtils.appendToDocument(tempDocument, typeAnnotation);
+//                                    annotations.add(typeAnnotation);
+//                                }
+//                                RUtils.appendToDocument(tempDocument, o.getText() + "\n");
+//
+//                                if (help.myExamples != null && !help.myExamples.isEmpty()) {
+//                                    RUtils.appendToDocument(tempDocument, "\n" + help.myExamples + "\n");
+//                                }
+//
+//                                if (help.myUsage != null && !help.myUsage.isEmpty()) {
+//                                    RUtils.appendToDocument(tempDocument, "\n" + help.myUsage + "\n");
+//                                }
+//                                RUtils.saveDocument(tempDocument);
+//                                PsiDocumentManager.getInstance(myProject).commitDocument(tempDocument);
+//                                Visitor visitor = new Visitor();
+//                                FileContentUtil.reparseFiles(tempFile);
+//                                PsiFile psiFile = PsiManager.getInstance(myProject).findFile(tempFile);
+//                                if (psiFile != null && psiFile.isValid()) {
+//                                    psiFile.acceptChildren(visitor);
+//                                }
+//                                if (!visitor.hasErrors()) {
+//                                    RUtils.appendToDocument(myPackageDocument, "\n\n");
+//                                    for (String typeAnnotation : annotations) {
+//                                        RUtils.appendToDocument(myPackageDocument, typeAnnotation);
+//                                    }
+//                                }
+//
+//                                tempFile.delete(this);
+//
+//
+//                                RType type = RTypeProvider.guessReturnValueTypeFromBody((RFunctionExpression) assignedValue);
+//                                if (!RUnknownType.class.isInstance(type)) {
+//                                    RUtils.appendToDocument(myPackageDocument, "## @return " + type.toString() + "\n");
+//                                } else {
+//                                    insertTypeFromHelp(assignee, help);
+//                                }
+//                            }
+//                        } catch (IOException e) {
+//                            LOG.error(e);
+//                        }
+//                    }
+//                }
 
                 Set<String> unusedParameters = RStaticAnalyzerHelper.optionalParameters((RFunctionExpression) assignedValue);
 
@@ -311,13 +318,15 @@ public class RSkeletonsGeneratorAction extends AnAction {
                     gcl.addParameter("--slave");
                     gcl.addParameter("-e");
                     gcl.addParameter(programString);
-                    Process rProcess = gcl.createProcess();
-                    final CapturingProcessHandler processHandler = new CapturingProcessHandler(rProcess);
+
+                    final CapturingProcessHandler processHandler = new CapturingProcessHandler(gcl);
                     final ProcessOutput output = processHandler.runProcess(20000);
+
                     String stdout = output.getStdout();
+
                     RType evaluatedType = RSkeletonGeneratorHelper.findType(stdout);
                     myOk = RTypeChecker.matchTypes(myCandidate, evaluatedType);
-                } catch (ExecutionException e) {
+                } catch (ExecutionException | IllegalArgumentException e) {
                     e.printStackTrace();
                 }
             }

@@ -1,5 +1,7 @@
 package com.r4intellij.psi;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 import com.intellij.openapi.fileTypes.FileType;
@@ -22,6 +24,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.r4intellij.editor.RCompletionContributor.PACKAGE_IMPORT_METHODS;
+import static com.r4intellij.packages.LocalRUtil.basePackages;
 
 public class RFileImpl extends PsiFileBase implements RFile {
 
@@ -64,7 +67,7 @@ public class RFileImpl extends PsiFileBase implements RFile {
 
     @Override
     public List<String> getImportedPackages() {
-        return getPckgImportExpressions().stream().map(rCall -> {
+        List<String> imports = getPckgImportExpressions().stream().map(rCall -> {
             List<RExpression> args = rCall.getArgumentList().getExpressionList();
 
             if (!args.isEmpty())
@@ -73,6 +76,9 @@ public class RFileImpl extends PsiFileBase implements RFile {
                 return null;
 
         }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        // prefix with default libraries
+        return Lists.newArrayList(Iterables.concat(basePackages, imports));
     }
 
 

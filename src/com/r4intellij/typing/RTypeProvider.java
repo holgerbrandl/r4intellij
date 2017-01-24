@@ -21,8 +21,9 @@ public class RTypeProvider {
 
 
     public static RType getType(RPsiElement element) {
-        return RTypeContext.getTypeFromCache(element);
-//        return RUnknownType.INSTANCE;
+        // disabled because cache implementation is buggy
+//        return RTypeContext.getTypeFromCache(element);
+        return RUnknownType.INSTANCE;
     }
 
 

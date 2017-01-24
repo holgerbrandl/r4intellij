@@ -1,7 +1,6 @@
 package com.r4intellij.packages;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -261,7 +260,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     public Collection<RPackage> getDependencies(RPackage somePckge) {
         Collection<RPackage> deps = new HashSet<RPackage>();
 
-        for (String dep : somePckge.getDependencyNames()) {
+        for (String dep : somePckge.getDependencies()) {
             RPackage depPckg = getByName(dep);
             if (depPckg == null)
                 continue;
@@ -326,17 +325,21 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    public Set<RPackage> resolveImports(Collection<String> packageNames) {
+    public List<RPackage> resolveDependencies(Collection<String> packageNames) {
         Iterable<RPackage> packages = packageNames.stream().
                 map(this::getByName).
                 filter(Objects::nonNull).
                 collect(Collectors.toList());
 
         List<RPackage> dependencies = Lists.newArrayList(packages).stream().
-                flatMap(f -> resolveImports(f.getImports()).stream()).collect(Collectors.toList());
+                flatMap(f -> {
+                    List<RPackage> resolvedImports = resolveDependencies(f.getDependencies());
+                    resolvedImports.add(0, f);
+                    return resolvedImports.stream();
+                }).collect(Collectors.toList());
 
 
-        return Sets.newHashSet(Iterables.concat(packages, dependencies));
+        return dependencies;
     }
 
 

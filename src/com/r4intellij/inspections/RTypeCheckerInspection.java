@@ -20,11 +20,18 @@ import java.util.List;
 import java.util.Map;
 
 public class RTypeCheckerInspection extends RLocalInspection {
+
     @Nls
     @NotNull
     @Override
     public String getDisplayName() {
         return "R Type Checker";
+    }
+
+
+    @Override
+    public boolean isEnabledByDefault() {
+        return false;
     }
 
 
@@ -50,6 +57,8 @@ public class RTypeCheckerInspection extends RLocalInspection {
             List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
             checkFunctionCall(callExpression, referenceToFunction, arguments);
             visitExpression(callExpression);
+
+            // all disabled because unclear need (sideeffects) and creates dead-lock
             RTypeProvider.getType(callExpression);
         }
 
@@ -102,12 +111,6 @@ public class RTypeCheckerInspection extends RLocalInspection {
                 }
             }
         }
-    }
-
-
-    @Override
-    public boolean isEnabledByDefault() {
-        return false;
     }
 
 

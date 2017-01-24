@@ -82,6 +82,8 @@ public final class LocalRUtil {
     }
 
 
+    @Deprecated
+    // use com.r4intellij.packages.RPackageService.resolveDependencies instead
     private static Collection<RPackage> addImportDependencies(Collection<RPackage> importedPackages) {
         RPackageService packageService = RPackageService.getInstance();
 
