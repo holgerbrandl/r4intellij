@@ -31,7 +31,7 @@ public class RResolver {
                                                    @NotNull final String... names) {
         for (String name : names) {
             RResolver.addFromProject(name, element.getProject(), result);
-            RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.The_R_USER_SKELETONS);
+            RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.USER_SKELETONS);
             RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.R_SKELETONS);
             RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.R_LIBRARY);
         }
