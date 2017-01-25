@@ -15,7 +15,7 @@
         <delete file="${lexer.log}"/>
     </target>
 
-    <target name="jflex" title="Produces Jflex based lexer" depends="clean">
+    <target name="jflex" description="Produces Jflex based lexer" depends="clean">
         <java jar="${jflex.file}" output="${lexer.log}" fork="true" maxmemory="${compiler.max.memory}">
             <arg value="--charat"/>
             <arg value="-skel"/>
@@ -24,6 +24,6 @@
         </java>
     </target>
 
-    <target name="dist" depends="clean, jflex" title="main target"/>
+    <target name="dist" depends="clean, jflex" description="main target"/>
 
 </project>
