@@ -81,7 +81,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
             public void run() {
 
                 // also load index
-                allPackages = (Set<RPackage>) loadObject(libIndexFile);
+                allPackages = (Set<RPackage>) loadObject(getLibIndexFile());
 
 //        http://stackoverflow.com/questions/6992608/why-there-is-no-concurrenthashset-against-concurrenthashmap
                 if (allPackages == null) allPackages = Sets.newConcurrentHashSet();
@@ -90,7 +90,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
                 boolean hasChanged = refreshIndex();
 
                 if (hasChanged) {
-                    saveObject(allPackages, libIndexFile);
+                    saveObject(allPackages, getLibIndexFile());
                 }
 
             }
@@ -98,13 +98,20 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
+    private File getLibIndexFile() {
+        String skeletonsPath = RSkeletonGenerator.getSkeletonsPath();
+        if (!new File(skeletonsPath).exists()) {
+            new File(skeletonsPath).mkdir();
+        }
+
+        return new File(skeletonsPath, "libindex.dat");
+    }
+
+
     @Override
     public void loadState(RPackageService state) {
         XmlSerializerUtil.copyBean(state, this);
     }
-
-
-    private File libIndexFile = new File(RSkeletonGenerator.getSkeletonsPath(), "libindex.dat");
 
 
     static Object loadObject(File f) {
@@ -162,6 +169,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
         final boolean[] hasChanged = {false};
 
+        // todo use ProgressManager.getInstance().run(new Task.Backgroundable ...
 
         for (final RPackage rPackage : installedPackages) {
             final RPackage indexPackage = getByName(rPackage.getName());
@@ -349,5 +357,10 @@ public class RPackageService implements PersistentStateComponent<RPackageService
                 filter(p -> p.getImports().contains(rPackage.getName())).
                 collect(Collectors.toSet());
 
+    }
+
+
+    public boolean isReady() {
+        return !allPackages.isEmpty();
     }
 }

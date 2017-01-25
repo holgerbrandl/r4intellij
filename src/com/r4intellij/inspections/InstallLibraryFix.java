@@ -70,8 +70,8 @@ public class InstallLibraryFix implements LocalQuickFix {
 
             // see ?install.packages
 //            runner.getConsoleExecuteActionHandler().processLine("options(install.packages.check.source = \"no\")");
-//            runner.getConsoleExecuteActionHandler().processLine("install.packages('" + packageName + "')");
-            runner.getConsoleExecuteActionHandler().processLine("install.packages('" + packageName + "',  type=\"source\")");
+            runner.getConsoleExecuteActionHandler().processLine("install.packages('" + packageName + "')");
+//            runner.getConsoleExecuteActionHandler().processLine("install.packages('" + packageName + "',  type=\"source\")");
 
             // test installation was successful
             runner.getConsoleExecuteActionHandler().processLine("require(" + packageName + ")");
@@ -90,7 +90,16 @@ public class InstallLibraryFix implements LocalQuickFix {
                         // todo quit console session and close the tool winodw tab
 //                        runner.getConsoleExecuteActionHandler().processLine("quit(\"no\")");
 //                        runner.getConsoleView().
+
                     }
+
+//                    ExecutionManager executionManager = ExecutionManager.getInstance(project);
+//                    RunContentDescriptor descriptor = executionManager.getContentManager().getSelectedContent();
+//                    Set<Executor> executors = ((ExecutionManagerImpl) executionManager).getExecutors(descriptor);
+//
+////                    // excutors is always empty!?
+//                    executionManager.getContentManager().removeRunContent(DefaultRunExecutor.getRunExecutorInstance(), descriptor);
+
                 }
             });
 

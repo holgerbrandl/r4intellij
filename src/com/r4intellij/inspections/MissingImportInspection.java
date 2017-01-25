@@ -85,6 +85,7 @@ public class MissingImportInspection extends LocalInspectionTool {
                     // is is a locally defined function?
 //                    if (functionName.getReference() != functionName) {
                     RPackageService packageService = RPackageService.getInstance();
+                    if (!packageService.isReady()) return;
 
                     List<RPackage> funPackage = packageService.getContainingPackages(functionName);
                     List<String> funPackageNames = Lists.newArrayList(Iterables.transform(funPackage, Functions.toStringFunction()));
