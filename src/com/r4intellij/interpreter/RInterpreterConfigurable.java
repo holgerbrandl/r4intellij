@@ -38,7 +38,7 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
 
     public static final String R_LIBRARY = "R Library";
     public static final String R_SKELETONS = "R Skeletons";
-    public static final String The_R_USER_SKELETONS = "R User Skeletons";
+    public static final String USER_SKELETONS = "R User Skeletons";
 
 
     RInterpreterConfigurable(Project project) {

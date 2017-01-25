@@ -1,38 +1,14 @@
 R4Intellij Development Notes
 ----------------------------
 
-Also see [OpenApi notes](openapi_notes.md)
-
-
-Next steps
-----------
-
 
 ## 0-day bugs
 
-* skeleton action is broken
+
+* make parser aware of %||% which is used in ggplot and dplyr --> parser errors make stub generation to fail
+* fix skeletonization of base-r --> this will fix code navigation in library 
 
 * fix naming in dialog
-
-* indexing fails
-```
-Failed to run script: package_summaries.r
-Exit code: 2
-Error Output: 
-java.lang.Throwable
-	at com.intellij.openapi.diagnostic.Logger.error(Logger.java:132)
-	at com.r4intellij.packages.RHelperUtil.getHelperOutput(RHelperUtil.java:64)
-	at com.r4intellij.packages.LocalRUtil.getInstalledPackages(LocalRUtil.java:43)
-	at com.r4intellij.packages.RPackageService.refreshIndex(RPackageService.java:145)
-	at com.r4intellij.packages.RPackageService$1.run(RPackageService.java:90)
-	at com.intellij.openapi.application.impl.ApplicationImpl$2.run(ApplicationImpl.java:309)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-
-```
 
 * import action does not work for chunks. (should package imports be extracpolated to the complete file?)
  
@@ -155,6 +131,11 @@ application.invokeLater(new Runnable() {
         ....
 ```
 
+* inline variable refactoring
+
+* knit button
+    * use `ExecutionManager.getInstance(project).startRunProfile();`
+
 Release Action List
 ===================
 
@@ -269,6 +250,8 @@ to run:
 bundle exec jekyll serve
 ```
 
+See https://support.rstudio.com/hc/en-us/articles/200710523-Navigating-Code
+
 ### Table of contents
 
 Use https://github.com/thlorenz/doctoc
@@ -290,3 +273,7 @@ doctoc --title "**Content**" README.md
 * no automatic menu is possible without plugin: http://stackoverflow.com/questions/31194588/generate-a-menu-in-jekyll
 * don't use .-prefixes https://help.github.com/articles/files-that-start-with-an-underscore-are-missing/
 * add pages to jekyll site https://jekyllrb.com/docs/pages/
+
+
+Also see [OpenApi notes](openapi_notes.md)
+

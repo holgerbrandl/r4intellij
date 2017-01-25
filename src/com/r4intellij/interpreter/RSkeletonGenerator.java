@@ -18,7 +18,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.DocumentUtil;
@@ -51,22 +50,18 @@ public class RSkeletonGenerator {
 
         final Application application = ApplicationManager.getApplication();
 
-        application.invokeLater(new Runnable() {
+        application.runWriteAction(new Runnable() {
             @Override
             public void run() {
+                // add all paths to library
+                final String skeletonLibraryPath = RSkeletonGenerator.getSkeletonsPath();
 
-                application.runWriteAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        // add all paths to library
-                        final String skeletonLibraryPath = RSkeletonGenerator.getSkeletonsPath();
-
-                        File skeletonLibDir = new File(skeletonLibraryPath);
-                        if (!skeletonLibDir.exists()) {
-                            if (!skeletonLibDir.mkdir()) {
-                                LOG.warn("Failed to create skeleton dir");
-                            }
-                        }
+                File skeletonLibDir = new File(skeletonLibraryPath);
+                if (!skeletonLibDir.exists()) {
+                    if (!skeletonLibDir.mkdir()) {
+                        LOG.warn("Failed to create skeleton dir");
+                    }
+                }
 
 //                        String skeletons = RHelpersLocator.getHelperPath("r-skeletons");
 //                        File pregeneratedSkeletonsDir = new File(skeletons);
@@ -79,18 +74,17 @@ public class RSkeletonGenerator {
 //                                LOG.error(e);
 //                            }
 //                        }
-                        createLibrary(R_SKELETONS, Collections.singletonList(skeletonLibraryPath), project);
+                createLibrary(R_SKELETONS, Collections.singletonList(skeletonLibraryPath), project);
 
-                        //TODO still needed?
+                //TODO still needed?
 //                        final String userSkeletonsPath = RHelpersLocator.getHelperPath("r-user-skeletons");
-//                        createLibrary(RInterpreterConfigurable.The_R_USER_SKELETONS, userSkeletonsPath, project);
-                    }
-                });
-
-                // now do the actual work
-                generateSmartSkeletons(project);
+//                        createLibrary(RInterpreterConfigurable.USER_SKELETONS, userSkeletonsPath, project);
             }
         });
+
+        // now do the actual work
+        generateSmartSkeletons(project);
+        ;
     }
 
 
@@ -105,7 +99,8 @@ public class RSkeletonGenerator {
                     public void run() {
                         RSkeletonGenerator.runSkeletonGeneration(indicator);
 
-                        PsiDocumentManager.getInstance(project).commitAllDocuments();
+                        // TBD seems to cause thread exeception. Needed?
+//                        PsiDocumentManager.getInstance(project).commitAllDocuments();
 
                         String path = RSkeletonGenerator.getSkeletonsPath();
 
@@ -116,34 +111,35 @@ public class RSkeletonGenerator {
                             return;
                         }
 
-                        int processed = 0;
-                        for (final VirtualFile packageDir : skeletonDir.getChildren()) {
-
-                            if (packageDir.isDirectory()) {
-                                continue;
-                            }
-//                            ApplicationManager.getApplication().invokeLater(
-                            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                                        @Override
-
-                                        public void run() {
-                                            indicator.setFraction((double) processed / skeletonDir.getChildren().length);
-                                            indicator.setText("Indexing " + packageDir.getName());
-
-                                            generateSkeletonsForPackage(packageDir, project);
-                                            try {
-                                                packageDir.delete(this);
-                                            } catch (IOException e) {
-                                                LOG.error("Failed to delete " + packageDir.getPath());
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                        }
+//                        int processed = 0;
+//                        for (final VirtualFile packageDir : skeletonDir.getChildren()) {
+//
+//                            if (!packageDir.isDirectory()) {
+//                                continue;
+//                            }
+//
+//                            ApplicationManager.getApplication().invokeLater(new Runnable() {
+////                            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+//                                        @Override
+//
+//                                        public void run() {
+//                                            indicator.setFraction((double) processed / skeletonDir.getChildren().length);
+//                                            indicator.setText("Indexing " + packageDir.getName());
+//
+//                                            generateSkeletonsForPackage(packageDir, project);
+//                                            try {
+//                                                packageDir.delete(this);
+//                                            } catch (IOException e) {
+//                                                LOG.error("Failed to delete " + packageDir.getPath());
+//                                            }
+//                                        }
+//                                    });
+//                                }
+//                            });
+//                        }
                     }
                 });
             }
@@ -157,6 +153,7 @@ public class RSkeletonGenerator {
 //        if (!packageName.equals("base") && !packageName.equals("codetools")) {
 //            return;
 //        }
+
         VirtualFile skeletonsDir = packageDir.getParent();
         try {
             VirtualFile packageFile = skeletonsDir.findOrCreateChildData(project, packageName + ".r");
@@ -174,7 +171,10 @@ public class RSkeletonGenerator {
                 LOG.info("start processing " + file.getPath());
                 PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
                 assert psiFile != null;
-                psiFile.acceptChildren(new TypedFunctionVisitor(packageDocument, file, project, packageName));
+
+                // todo reenable typing
+                psiFile.acceptChildren(new SimpleFunctionVisitor(packageDocument, file, project, packageName));
+//                psiFile.acceptChildren(new TypedFunctionVisitor(packageDocument, file, project, packageName));
             }
 
         } catch (IOException e) {
@@ -220,24 +220,38 @@ public class RSkeletonGenerator {
                 LOG.error("Can't create skeleton dir " + String.valueOf(skeletonsPath));
             }
 
-            // skip existing skeletons
-            if (skeletonsDir.exists() && skeletonsDir.listFiles().length > 0) continue;
-
-            try {
-                GeneralCommandLine gcl = new GeneralCommandLine().
-                        withExePath(interpreter).
-                        withParameters("--slave", "-f", helperPath, "--args", skeletonsPath, rPackage.getName());
-
-                final CapturingProcessHandler processHandler = new CapturingProcessHandler(gcl);
-                final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
-
-                if (output.getExitCode() != 0) {
-                    LOG.error("Failed to generate skeleton for '" + rPackage.getName() + "'. Exit code: " + output.getExitCode());
-                    LOG.error(output.getStderrLines());
-                }
-            } catch (ExecutionException e) {
-                LOG.error(e);
+            // skip if smart skeleton existis already
+            if (new File(skeletonsDir, rPackage.getName() + ".r").exists()) {
+                continue;
             }
+
+//            // skip existing skeleton dir exists already
+//            File packageSkelDir = new File(skeletonsDir, rPackage.getName());
+//            //noinspection ConstantConditions
+//            if (packageSkelDir.exists() && packageSkelDir.listFiles().length > 0) {
+//                continue;
+//            }
+            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        GeneralCommandLine gcl = new GeneralCommandLine().
+                                withExePath(interpreter).
+                                withParameters("--slave", "-f", helperPath, "--args", skeletonsPath, rPackage.getName());
+
+                        final CapturingProcessHandler processHandler = new CapturingProcessHandler(gcl);
+                        final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
+
+                        if (output.getExitCode() != 0) {
+                            LOG.error("Failed to generate skeleton for '" + rPackage.getName() + "'. Exit code: " + output.getExitCode());
+                            LOG.error(output.getStderrLines());
+                        }
+                    } catch (ExecutionException e) {
+                        LOG.error(e);
+                    }
+                }
+            });
         }
     }
 
