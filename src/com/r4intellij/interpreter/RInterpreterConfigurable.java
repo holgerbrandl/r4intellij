@@ -190,7 +190,7 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
     }
 
 
-    public static void createLibrary(final String name, @NotNull final java.util.List<String> paths, @NotNull final Project project) {
+    public static void createLibrary(final String libraryName, @NotNull final java.util.List<String> paths, @NotNull final Project project) {
         ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
 
 //        ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -199,10 +199,10 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
         // add all paths to library
 
         LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
-        Library library = model.getLibraryByName(name);
+        Library library = model.getLibraryByName(libraryName);
 
         if (library == null) {
-            library = model.createLibrary(name);
+            library = model.createLibrary(libraryName);
         }
 
         fillLibrary(library, paths);
@@ -211,9 +211,14 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
         Library.ModifiableModel libModel = library.getModifiableModel();
         libModel.commit();
 
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
+        // attach to modules if not yet present
+        for (Module module : ModuleManager.getInstance(project).getModules()) {
             final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
+            Library libraryByName = modifiableModel.getModuleLibraryTable().getLibraryByName(libraryName);
+
+            if (libraryByName != null)
+                continue;
+
             modifiableModel.addLibraryEntry(library);
             modelsProvider.commitModuleModifiableModel(modifiableModel);
         }
