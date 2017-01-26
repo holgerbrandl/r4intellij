@@ -9,3 +9,10 @@
 **/_site
 **/.sass-cache
 
+**/*.lock
+**/*.log
+
+## never add builds
+
+R4Intellij.jar
+R4Intellij.zip

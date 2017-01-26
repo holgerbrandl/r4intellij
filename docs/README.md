@@ -65,6 +65,12 @@ The following features are supported
 
 Most of these functions use the default shortcuts of the Intellij platform. Custom shortcuts can be inferred from the&nbsp;menu entries. 
 
+
+Working with the console
+----
+
+For a more genearl overview see https://www.jetbrains.com/help/idea/2016.3/working-with-embedded-local-terminal.html
+
 Integration with R session
 ----
 

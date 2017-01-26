@@ -43,6 +43,24 @@ cool
 * extract function,
 * Generate Element Comment
  
+### RStudio
+
+
+#### Extract function
+
+just limited support (bug?) in RS
+```r
+orthoGroups = data_frame(contig=V(orthoGraph)$name) %>% inner_join(vec_as_df(clusters(orthoGraphNoSmes)$membership, "contig", "ortho_group"))
+
+## becomes
+orthoGroups = data_frame(contig=V(orthoGraph)$name) %>% inner_join(
+extract_group_model <- function(orthoGraphNoSmes) {
+  vec_as_df(clusters(orthoGraphNoSmes)$membership, "contig", "ortho_group")
+})
+
+```
+
+
 
 ### Parser packages
 
@@ -55,3 +73,64 @@ parser package for R
 ## hydrogen
 
 * https://atom.io/packages/hydrogen
+
+
+Website Admin
+=============
+
+Used theme https://github.com/pietromenna/jekyll-cayman-theme
+
+Main docs on github
+https://help.github.com/articles/using-jekyll-as-a-static-site-generator-with-github-pages/
+
+Local deployment with jekyll (see from https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll/)
+
+
+setup
+```bash
+
+gem update --system  
+
+echo "
+source 'https://rubygems.org'
+gem 'github-pages', group: :jekyll_plugins
+" > Gemfile
+
+bundle install
+```
+
+to run:
+
+```bash
+# from http://kbroman.org/simple_site/pages/local_test.html
+# gem install github-pages
+# gem update github-pages
+# jekyll build
+
+bundle exec jekyll serve
+```
+
+See https://support.rstudio.com/hc/en-us/articles/200710523-Navigating-Code
+
+### Table of contents
+
+Use https://github.com/thlorenz/doctoc
+
+```bash
+cd /Users/brandl/projects/rplugin/r4intellij_v2/docs
+doctoc .
+doctoc --title "**Content**" README.md
+
+```
+
+### Website Todos
+
+* https://github.com/ktisha/TheRPlugin
+
+
+### Misc
+
+* no automatic menu is possible without plugin: http://stackoverflow.com/questions/31194588/generate-a-menu-in-jekyll
+* don't use .-prefixes https://help.github.com/articles/files-that-start-with-an-underscore-are-missing/
+* add pages to jekyll site https://jekyllrb.com/docs/pages/
+
