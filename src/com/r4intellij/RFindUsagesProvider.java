@@ -9,7 +9,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.r4intellij.lexer.RLexer;
 import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.parsing.RParserDefinition;
-import com.r4intellij.psi.api.RReferenceExpression;
+import com.r4intellij.psi.api.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +25,7 @@ public class RFindUsagesProvider implements FindUsagesProvider {
 
     @Override
     public boolean canFindUsagesFor(@NotNull PsiElement psiElement) {
+//        isLibraryFile(psiElement.getContainingFile())
         return psiElement instanceof PsiNamedElement || psiElement instanceof RReferenceExpression;
     }
 
@@ -39,14 +40,28 @@ public class RFindUsagesProvider implements FindUsagesProvider {
     @NotNull
     @Override
     public String getType(@NotNull PsiElement element) {
-        return "RElement";
+        if (element instanceof RAssignmentStatement) {
+            RPsiElement assignedValue = ((RAssignmentStatement) element).getAssignedValue();
+            if (assignedValue instanceof RFunctionExpression) {
+                return "function";
+            }
+        }
+
+        if (element instanceof RParameter) return "function parameter";
+
+        return "variable";
     }
 
 
     @NotNull
     @Override
     public String getDescriptiveName(@NotNull PsiElement element) {
-        return "THeRElement";
+        if (element instanceof RAssignmentStatement) {
+            PsiElement assginee = ((RAssignmentStatement) element).getAssignee();
+            return assginee.getText();
+        }
+
+        return element.getText();
     }
 
 

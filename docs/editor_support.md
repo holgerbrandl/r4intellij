@@ -2,6 +2,15 @@ Editor support
 ===============
 
 
+Refactoring
+------------
+
+Renaming Support for
+* function parameters: Renaming is applied within function defintion and call-sites (for named parameters)
+* local variables
+* functions
+
+
 Code completion
 ------------
 

@@ -43,6 +43,8 @@ resolveDependencies
 * duplication
 
 
+* renaming of function parameter: is the renaming also applied at the callsite? Yes
+
 
 TODO
 ----

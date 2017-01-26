@@ -3,7 +3,47 @@ R4Intellij Development Notes
 
 
 ## 0-day bugs
-
+```text
+2017-01-25 13:22:05,927 [ 134068]  ERROR - r4intellij.packages.LocalRUtil - Failed to run script: package_summaries.r
+Exit code: 2
+Error Output:  
+java.lang.Throwable
+	at com.intellij.openapi.diagnostic.Logger.error(Logger.java:132)
+	at com.r4intellij.packages.RHelperUtil.getHelperOutput(RHelperUtil.java:64)
+	at com.r4intellij.packages.LocalRUtil.getInstalledPackages(LocalRUtil.java:43)
+	at com.r4intellij.packages.RPackageService.refreshIndex(RPackageService.java:152)
+	at com.r4intellij.packages.RPackageService$1.run(RPackageService.java:90)
+	at com.intellij.openapi.application.impl.ApplicationImpl$2.run(ApplicationImpl.java:309)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - IntelliJ IDEA 2016.3.3  Build #IU-163.11103.6 
+2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - JDK: 1.8.0_112-release 
+2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - VM: OpenJDK 64-Bit Server VM 
+2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - Vendor: JetBrains s.r.o 
+2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - OS: Mac OS X 
+2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - Last Action: RSkeletonsGenerator 
+2017-01-25 13:22:05,947 [ 134088]  ERROR - plication.impl.ApplicationImpl - 1 
+java.lang.ArrayIndexOutOfBoundsException: 1
+	at com.r4intellij.packages.LocalRUtil$ParseDescriptorIntoPackage.apply(LocalRUtil.java:117)
+	at com.r4intellij.packages.LocalRUtil$ParseDescriptorIntoPackage.apply(LocalRUtil.java:101)
+	at com.google.common.collect.Iterators$8.transform(Iterators.java:799)
+	at com.google.common.collect.TransformedIterator.next(TransformedIterator.java:48)
+	at com.google.common.collect.Iterators.addAll(Iterators.java:362)
+	at com.google.common.collect.Sets.newHashSet(Sets.java:238)
+	at com.google.common.collect.Sets.newHashSet(Sets.java:218)
+	at com.r4intellij.packages.LocalRUtil.getInstalledPackages(LocalRUtil.java:46)
+	at com.r4intellij.packages.RPackageService.refreshIndex(RPackageService.java:152)
+	at com.r4intellij.packages.RPackageService$1.run(RPackageService.java:90)
+	at com.intellij.openapi.application.impl.ApplicationImpl$2.run(ApplicationImpl.java:309)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+```
 
 * make parser aware of %||% which is used in ggplot and dplyr --> parser errors make stub generation to fail
 * fix skeletonization of base-r --> this will fix code navigation in library 
@@ -38,6 +78,8 @@ usage search works also across functions
 
 ## potential improvements and differences
 
+* inline variable refactoring
+
 general
 * auto-detect R and do not force user to specify installation location
 * function help should be context aware
@@ -46,7 +88,7 @@ general
 * run does not work for macos
 
 intentions
-* auto-import missing packages (use com.jetbrains.ther.packages.TheRPackagesUtil#getInstalledPackages)
+* auto-import missing packages (use com.jetbrains.the`r.packages.TheRPackagesUtil#getInstalledPackages)
 * auto-install missing packages in require
 
 
@@ -131,7 +173,7 @@ application.invokeLater(new Runnable() {
         ....
 ```
 
-* inline variable refactoring
+
 
 * knit button
     * use `ExecutionManager.getInstance(project).startRunProfile();`
@@ -181,6 +223,7 @@ Brainstorming  & Roadmap
 * Or most promising, we could try to use the windows API via VBScript or C#
 
 
+* add warning when using T/F https://www.r-bloggers.com/r-tip-avoid-using-t-and-f-as-synonyms-for-true-and-false/
 ## Rnotebook support
 
 
