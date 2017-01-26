@@ -58,7 +58,9 @@ public class RHelperUtil {
         final String helperPath = RHelpersLocator.getHelperPath(helper);
 
         try {
-            final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(path, "--slave", "-f", helperPath));
+            GeneralCommandLine commandLine = new GeneralCommandLine(path, "--slave", "-f", helperPath);
+            LOG.info("running helper with:" + commandLine.getCommandLineString());
+            final CapturingProcessHandler processHandler = new CapturingProcessHandler(commandLine);
             final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
             if (output.getExitCode() != 0) {
                 LOG.error("Failed to run script: " + helper + "\nExit code: " + output.getExitCode() + "\nError Output: " + output.getStderr());

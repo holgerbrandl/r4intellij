@@ -39,16 +39,6 @@ public class RElementFactory {
     }
 
 
-//    public static RStringLiteralExpression createExpressionFromText(Project project, String text) {
-////        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", "\"" + text + "\";");
-//        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.getInstance(), text + ";");
-//        if ((fromText.getFirstChild()) != null) {
-////            return (RStringLiteralExpression) ((RExpression) fromText.getFirstChild()).getExprOrAssign().getExpr().getStringLiteral();
-//        }
-//        return null;
-//    }
-
-
     //
     public static RCallExpression createFuncallFromText(Project project, String text) {
         PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.getInstance(), text);

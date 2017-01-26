@@ -156,6 +156,8 @@
 
         <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
 
+        <lang.elementManipulator forClass="com.r4intellij.psi.api.RStringLiteralExpression"
+                                 implementationClass="com.r4intellij.psi.RStringManipulator"/>
 
         <lang.findUsagesProvider implementationClass="com.r4intellij.RFindUsagesProvider" language="R"/>
 

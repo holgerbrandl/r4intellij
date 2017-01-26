@@ -3,17 +3,13 @@ Version History
 
 ## Changeshanges in v1.0*
 
-Restarted devlopment by forking. This gives the following feature set
-* Lexer-based syntax highlighting
-* Parser
+Restarted devlopment by forking [TheR](https://github.com/ktisha/TheRPlugin). This adds the following additional features
 * Interactive console
 * Builtin help
 * Package manager
 * Debugger
 * Run configurations
 
-Improved features
-* [roxygen](http://r-pkgs.had.co.nz/man.html) documentation lookup for library development
  
 
 The following features were merged in from previous version of r4intellij
@@ -25,10 +21,18 @@ The following features were merged in from previous version of r4intellij
     * all identifiers in current document
     * package names in `require` and `library`
     * context aware method name completion for loaded packages 
+* language injection into string literals
+
+
+Other improvements
+* more robust skeletonization
+* various parser enhancements
 
 New Intentions and Inspections
 * incomplete parameter list warning when calling functions (from TheR)
 *
+
+
 
 Code Snippet Evaluation
 * refactored into separate [Send to Terminal](https://plugins.jetbrains.com/idea/plugin/9409-send-to-terminal) plugin. Code is available under https://github.com/holgerbrandl/send2terminal

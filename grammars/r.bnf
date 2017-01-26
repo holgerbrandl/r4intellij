@@ -61,6 +61,8 @@
   extends(".*statement|.*expression")=expression
   implements("assignment_statement|parameter")="com.r4intellij.psi.api.RNamedElement"
 
+  mixin("string_literal_expression")="com.r4intellij.psi.RStringInjectHost"
+
   generateTokenAccessors=true
 }
 
@@ -131,8 +133,7 @@ unary_plusminus_expression ::= plusminus_operator nl* expression { elementType=o
 exp_expression ::= expression exp_operator nl* expression { elementType=operator_expression }
 
 private member_tag ::= identifier | string | '...'
-member_expression ::= expression '$' nl* member_tag {
-  methods = [ getTag ]
+member_expression ::= expression '$' nl* member_tag {  methods = [ getTag ]
 }
 
 at_expression ::= expression '@' nl* member_tag {

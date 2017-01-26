@@ -16,16 +16,6 @@ API Doc Comments
 
 ![](.openapi_notes_images/language_api.png)
 
-## Intentions vs. Inspections
-
-* Inspections: Error warning + fix
-    * Error/warning indicators in code and at the right side
-* Local refactorings (like expression conversion)
-    * More hidden: just show up when using Alt-Enter
-
-
-In openapi.jar there is a com.intellij.refactoring.util.RefactoringMessageDialog which seems to be extended only by com.intellij.refactoring.inline.InlineParameterDialog in idea.jar, so all the other refactorings are using a different base for their dialogs.
-
 ## External jars
 
 https://confluence.jetbrains.com/display/IDEADEV/Getting+Started+with+Plugin+Development
@@ -71,6 +61,19 @@ In openapi.jar there is a com.intellij.refactoring.util.RefactoringMessageDialog
 http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
 
 
+Intentions vs. Inspections
+=========================
+ 
+
+* Inspections: Error warning + fix
+    * Error/warning indicators in code and at the right side
+* Local refactorings (like expression conversion)
+    * More hidden: just show up when using Alt-Enter
+
+
+In openapi.jar there is a com.intellij.refactoring.util.RefactoringMessageDialog which seems to be extended only by com.intellij.refactoring.inline.InlineParameterDialog in idea.jar, so all the other refactorings are using a different base for their dialogs.
+
+
 Skeletons
 ===========
 
@@ -92,8 +95,13 @@ see com.r4intellij.RPsiUtils.findCall
 
 In RS users can jump to library functions but can't go any further (like digging through the R API)
 
-## Misc
+Misc
+=====
 
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/207567045-How-to-get-the-parent-psi-element-outside-of-a-language-injection
 
 Invoking psi.getContext in a loop (orPsiTreeUtil.getContextOfType) will eventually switch from injected to host PSI.
+
+### Language injection
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206778055-language-injection-into-string-literals

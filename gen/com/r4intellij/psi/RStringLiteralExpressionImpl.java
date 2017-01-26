@@ -10,7 +10,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.r4intellij.parsing.RElementTypes.*;
 import com.r4intellij.psi.api.*;
 
-public class RStringLiteralExpressionImpl extends RExpressionImpl implements RStringLiteralExpression {
+public class RStringLiteralExpressionImpl extends RStringInjectHost implements RStringLiteralExpression {
 
   public RStringLiteralExpressionImpl(ASTNode node) {
     super(node);
