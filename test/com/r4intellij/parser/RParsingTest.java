@@ -201,6 +201,11 @@ public class RParsingTest extends ParsingTestCase {
     doTest();
   }
 
+
+    public void testMemberAccess() {
+        doTest();
+    }
+
   public void doTest() {
     doTest(true);
   }
