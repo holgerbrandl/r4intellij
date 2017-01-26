@@ -129,13 +129,16 @@ user_defined_expression ::= expression infix_operator nl* expression { elementTy
 slice_expression ::= expression slice_operator nl* expression
 unary_plusminus_expression ::= plusminus_operator nl* expression { elementType=operator_expression }
 exp_expression ::= expression exp_operator nl* expression { elementType=operator_expression }
+
 private member_tag ::= identifier | string | '...'
 member_expression ::= expression '$' nl* member_tag {
   methods = [ getTag ]
 }
+
 at_expression ::= expression '@' nl* member_tag {
   methods = [ getTag ]
 }
+
 namespace_access_expression ::= expression ('::' | ':::') identifier { elementType=reference_expression }
 
 //statements
