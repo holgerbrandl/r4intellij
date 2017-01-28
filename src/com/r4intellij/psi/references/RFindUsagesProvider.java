@@ -1,4 +1,4 @@
-package com.r4intellij;
+package com.r4intellij.psi.references;
 
 import com.intellij.lang.cacheBuilder.DefaultWordsScanner;
 import com.intellij.lang.cacheBuilder.WordsScanner;
