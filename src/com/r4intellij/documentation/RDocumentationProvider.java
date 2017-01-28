@@ -6,24 +6,27 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.r4intellij.RHelp;
-import com.r4intellij.RPsiUtils;
+import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RCallExpression;
 import com.r4intellij.psi.api.RFile;
 import com.r4intellij.psi.api.RFunctionExpression;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.r4intellij.interpreter.RSkeletonGenerator.SKELETON_DIR_NAME;
+import static com.r4intellij.packages.RHelperUtil.runHelperWithArgs;
 
 /**
  * For local function definitions provide doc string documentation (using docstring)
  * For library functions use R help.
  */
 public class RDocumentationProvider extends AbstractDocumentationProvider {
+
 
     @Nullable
     @Override
@@ -47,7 +50,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
             }
 
 
-            String helpText = RPsiUtils.getHelpForFunction(elementText, packageName);
+            String helpText = getHelpForFunction(elementText, packageName);
 
             if (helpText == null) {
                 return null;
@@ -66,6 +69,31 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
 
         return null;
+    }
+
+
+    /**
+     * If packageName parameter equals null we do not load package
+     */
+    @Nullable
+    public static String getHelpForFunction(@NotNull final String assignee, @Nullable final String packageName) {
+        if (assignee.isEmpty()) {
+            return null;
+        }
+
+        final RHelperUtil.PluginResourceFile helpHelper = new RHelperUtil.PluginResourceFile(packageName != null ? "r-help.r" : "r-help-without-package.r");
+
+        String[] args = packageName != null ? new String[]{packageName, assignee} : new String[]{assignee};
+        RHelperUtil.RRunResult runResult = runHelperWithArgs(helpHelper, args);
+        if (runResult == null) return null;
+
+        String stdout = runResult.getStdOut();
+
+        if (stdout.startsWith("No documentation")) {
+            return null;
+        }
+
+        return stdout;
     }
 
 

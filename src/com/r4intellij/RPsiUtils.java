@@ -1,10 +1,5 @@
 package com.r4intellij;
 
-import com.google.common.collect.Lists;
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -16,7 +11,6 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Predicate;
-import com.r4intellij.interpreter.RInterpreterService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
 import com.r4intellij.typing.MatchingException;
@@ -27,11 +21,12 @@ import com.r4intellij.typing.types.RType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.*;
 
 public class RPsiUtils {
+
     private static final Logger LOG = Logger.getInstance(RPsiUtils.class);
+
     public static final int MINUTE = 60 * 1000;
 
 
@@ -126,51 +121,6 @@ public class RPsiUtils {
         PsiElement assignmentStatement = expression.getParent();
         if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
             return (RAssignmentStatement) assignmentStatement;
-        }
-        return null;
-    }
-
-
-    /**
-     * If packageName parameter equals null we do not load package
-     */
-    @Nullable
-    public static String getHelpForFunction(@NotNull final String assignee, @Nullable final String packageName) {
-        final String helpHelper = packageName != null ? "r-help.r" : "r-help-without-package.r";
-        final File file = RHelpersLocator.getHelperFile(helpHelper);
-
-        final String path = RInterpreterService.getInstance().getInterpreterPath();
-
-        final String helperPath = file.getAbsolutePath();
-
-
-        try {
-
-            if (assignee.isEmpty()) {
-                return null;
-            }
-
-            final ArrayList<String> arguments = Lists.newArrayList(path, "--slave", "-f ", helperPath, " --args ");
-            if (packageName != null) {
-                arguments.add(packageName);
-            }
-            arguments.add(assignee);
-
-            final GeneralCommandLine commandLine = new GeneralCommandLine(arguments);
-
-            LOG.info("getting help for '" + assignee + "' with: " + commandLine.getCommandLineString());
-
-            final CapturingProcessHandler processHandler = new CapturingProcessHandler(commandLine);
-            final ProcessOutput output = processHandler.runProcess(MINUTE * 5);
-
-            String stdout = output.getStdout();
-
-            if (stdout.startsWith("No documentation")) {
-                return null;
-            }
-            return stdout;
-        } catch (ExecutionException e) {
-            LOG.error(e);
         }
         return null;
     }
