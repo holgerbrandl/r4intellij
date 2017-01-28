@@ -11,6 +11,12 @@ Renaming Support for
 * functions
 
 
+Intentions
+----------
+
+
+For general introduction see https://www.jetbrains.com/idea/docs/Programming_by_Intention.pdf
+
 Code completion
 ------------
 

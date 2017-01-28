@@ -3,15 +3,13 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
-* language injection into R scripts in broken
- 
 * helper scripts are not runnable from jar and don't seem to be extracted
 
 * libraries are attached as duplicates
 ```
      <orderEntry type="library" name="R Skeletons" level="project" />
      <orderEntry type="library" name="R Skeletons" level="project" />
-     <orderEntry type="library" name="R Skeletons" level="project" />
+     <orderEntry type="librar]y" name="R Skeletons" level="project" />
      <orderEntry type="library" name="R Skeletons" level="project" />
      <orderEntry type="library" name="R Skeletons" level="project" />
      <orderEntry type="library" name="R Skeletons" level="project" />
@@ -61,13 +59,10 @@ java.lang.ArrayIndexOutOfBoundsException: 1
 	at java.lang.Thread.run(Thread.java:745)
 ```
 
-* make parser aware of %||% which is used in ggplot and dplyr --> parser errors make stub generation to fail
-* fix skeletonization of base-r --> this will fix code navigation in library 
 
+* import action does not work for chunks. (should package imports be extrapolated to the complete file?)
 
-* import action does not work for chunks. (should package imports be extracpolated to the complete file?)
-
-* make sure that renaming does not apply to installed packages/library
+* 
 
 http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
 

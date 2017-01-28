@@ -19,15 +19,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/guava-18.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module-library" scope="TEST">
       <library>
         <CLASSES>
@@ -39,5 +30,25 @@
         </SOURCES>
       </library>
     </orderEntry>
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="module-library" scope="PROVIDED">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/guava-19.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
   </component>
 </module>

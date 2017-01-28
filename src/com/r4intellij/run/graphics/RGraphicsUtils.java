@@ -9,7 +9,6 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.r4intellij.RHelpersLocator;
 import com.r4intellij.debugger.data.RCommands;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +18,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.r4intellij.debugger.data.RFunctionConstants.SERVICE_FUNCTION_PREFIX;
+import static com.r4intellij.packages.RHelperUtil.PluginResourceFile;
 
 public final class RGraphicsUtils {
 
@@ -65,6 +65,7 @@ public final class RGraphicsUtils {
     @NotNull
     public static List<String> calculateInitCommands(@NotNull final Project project, final boolean is64Bit) {
         final String libPath = getLibPath(calculateLibName(is64Bit));
+
 
         if (libPath != null) {
             final VirtualFile snapshotDir = getSnapshotDir(project);
@@ -115,7 +116,8 @@ public final class RGraphicsUtils {
 
     @Nullable
     private static String getLibPath(@NotNull final String libName) {
-        final File libFile = RHelpersLocator.getHelperFile(libName);
+        final File libFile = new PluginResourceFile(libName).getFile();
+
         final String absolutePath = FileUtil.toSystemIndependentName(libFile.getAbsolutePath());
 
         if (!libFile.exists()) {

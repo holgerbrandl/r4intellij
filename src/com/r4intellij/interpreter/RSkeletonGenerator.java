@@ -1,9 +1,5 @@
 package com.r4intellij.interpreter;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
@@ -21,8 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.DocumentUtil;
-import com.r4intellij.RHelpersLocator;
-import com.r4intellij.RPsiUtils;
+import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import org.jetbrains.annotations.NotNull;
@@ -35,12 +30,14 @@ import java.util.Set;
 
 import static com.r4intellij.interpreter.RInterpreterConfigurable.R_SKELETONS;
 import static com.r4intellij.interpreter.RInterpreterConfigurable.createLibrary;
+import static com.r4intellij.packages.RHelperUtil.PluginResourceFile;
+import static com.r4intellij.packages.RHelperUtil.RRunResult;
 
 
 public class RSkeletonGenerator {
     protected static final Logger LOG = Logger.getInstance("#" + RSkeletonGenerator.class.getName());
 
-    private static final String R_HELPER_SKELETONIZE_PACKAGE = "skeletonize_package.R";
+    private static final PluginResourceFile SKELETONIZE_PACKAGE = new PluginResourceFile("skeletonize_package.R");
 
     public static final String SKELETON_DIR_NAME = "r_skeletons";
 
@@ -211,8 +208,6 @@ public class RSkeletonGenerator {
                 indicator.setText2("Indexing " + rPackage);
             }
 
-            final String helperPath = RHelpersLocator.getHelperPath(R_HELPER_SKELETONIZE_PACKAGE);
-
             final String skeletonsPath = getSkeletonsPath();
             final File skeletonsDir = new File(skeletonsPath);
 
@@ -235,20 +230,10 @@ public class RSkeletonGenerator {
 
                 @Override
                 public void run() {
-                    try {
-                        GeneralCommandLine gcl = new GeneralCommandLine().
-                                withExePath(interpreter).
-                                withParameters("--slave", "-f", helperPath, "--args", skeletonsPath, rPackage.getName());
-
-                        final CapturingProcessHandler processHandler = new CapturingProcessHandler(gcl);
-                        final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
-
-                        if (output.getExitCode() != 0) {
-                            LOG.error("Failed to generate skeleton for '" + rPackage.getName() + "'. Exit code: " + output.getExitCode());
-                            LOG.error(output.getStderrLines());
-                        }
-                    } catch (ExecutionException e) {
-                        LOG.error(e);
+                    RRunResult output = RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, skeletonsPath, rPackage.getName());
+                    if (output.getExitCode() != 0) {
+                        LOG.error("Failed to generate skeleton for '" + rPackage.getName() + "'. Exit code: " + output.getExitCode());
+                        LOG.error(output.getStdErr());
                     }
                 }
             });

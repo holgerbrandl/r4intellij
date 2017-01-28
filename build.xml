@@ -1,88 +1,97 @@
-<project name="RPlugin" default="plugin.zip">
+<project name="R4Intellij" default="plugin.zip">
 
-  <!--dependencies-->
-  <property name="dep.idea.lib.dir" value="${idea.home}/lib"/>
+    <!--dependencies-->
+    <property name="dep.idea.lib.dir" value="${idea.home}/lib"/>
 
-  <path id="dep.plugin.classpath">
-    <fileset dir="${dep.idea.lib.dir}">
-      <include name="annotations.jar"/>
-      <include name="extensions.jar"/>
-      <include name="forms_rt.jar"/>
-      <include name="guava-*.jar"/>
-      <include name="idea.jar"/>
-      <include name="jdom.jar"/>
-      <include name="openapi.jar"/>
-      <include name="rt.jar"/>
-      <include name="trove4j.jar"/>
-      <include name="util.jar"/>
-      <include name="winp-*.jar"/>
-    </fileset>
-  </path>
+    <path id="dep.plugin.classpath">
+        <fileset dir="${dep.idea.lib.dir}">
+            <include name="annotations.jar"/>
+            <include name="extensions.jar"/>
+            <include name="forms_rt.jar"/>
+            <include name="guava-*.jar"/>
+            <include name="idea.jar"/>
+            <include name="jdom.jar"/>
+            <include name="openapi.jar"/>
+            <include name="rt.jar"/>
+            <include name="trove4j.jar"/>
+            <include name="util.jar"/>
+            <include name="winp-*.jar"/>
+        </fileset>
+    </path>
 
-  <path id="dep.javac2.classpath">
-    <fileset dir="${dep.idea.lib.dir}">
-      <include name="javac2.jar"/>
-      <include name="jdom.jar"/>
-      <include name="asm-all.jar"/>
-      <include name="jgoodies-forms.jar"/>
-    </fileset>
-  </path>
+    <path id="dep.javac2.classpath">
+        <fileset dir="${dep.idea.lib.dir}">
+            <include name="javac2.jar"/>
+            <include name="jdom.jar"/>
+            <include name="asm-all.jar"/>
+            <include name="jgoodies-forms.jar"/>
+        </fileset>
+    </path>
 
-  <!--input-->
-  <property name="in.meta-inf.dir" value="META-INF"/>
+    <!--input-->
+    <property name="in.meta-inf.dir" value="META-INF"/>
 
-  <property name="in.sources.dir" value="src"/>
-  <property name="in.generated.sources.dir" value="gen"/>
+    <property name="in.sources.dir" value="src"/>
+    <property name="in.generated.sources.dir" value="gen"/>
 
-  <property name="in.resources.dir" value="resources"/>
-  <property name="in.r-helpers.dir" value="r-helpers"/>
+    <property name="in.resources.dir" value="resources"/>
+    <property name="in.r-helpers.dir" value="r-helpers"/>
 
-  <!--output-->
-  <property name="out.dir" value="out/ant"/>
+    <!--output-->
+    <property name="out.dir" value="out/ant"/>
 
-  <property name="out.classes.dir" value="${out.dir}/classes"/>
-  <property name="out.jar.dir" value="${out.dir}/jar"/>
-  <property name="out.zip.dir" value="${out.dir}/zip"/>
+    <property name="out.classes.dir" value="${out.dir}/classes"/>
+    <property name="out.jar.dir" value="${out.dir}/jar"/>
+    <property name="out.zip.dir" value="${out.dir}/zip"/>
 
-  <property name="out.jar" value="${out.jar.dir}/${ant.project.name}.jar"/>
-  <property name="out.zip" value="${out.zip.dir}/${ant.project.name}.zip"/>
+    <property name="out.jar" value="${out.jar.dir}/${ant.project.name}.jar"/>
+    <property name="out.zip" value="${out.zip.dir}/${ant.project.name}.zip"/>
 
-  <!--tasks-->
-  <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="dep.javac2.classpath"/>
+    <!--tasks-->
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="dep.javac2.classpath"/>
 
-  <!--targets-->
-  <target name="clean">
-    <delete dir="${out.dir}"/>
-  </target>
+    <!--targets-->
+    <target name="clean">
+        <delete dir="${out.dir}"/>
+    </target>
 
-  <target name="init">
-    <mkdir dir="${out.classes.dir}"/>
-    <mkdir dir="${out.jar.dir}"/>
-    <mkdir dir="${out.zip.dir}"/>
-  </target>
+    <target name="init">
+        <mkdir dir="${out.classes.dir}"/>
+        <mkdir dir="${out.jar.dir}"/>
+        <mkdir dir="${out.zip.dir}"/>
+    </target>
 
-  <target name="compile" depends="init">
-    <javac2 srcdir="${in.sources.dir}:${in.generated.sources.dir}"
-            destdir="${out.classes.dir}"
-            classpathref="dep.plugin.classpath"
-            source="1.6"
-            target="1.6"
-            includeantruntime="false"
-    />
-  </target>
+    <target name="compile" depends="init">
+        <javac2 srcdir="${in.sources.dir}:${in.generated.sources.dir}"
+                destdir="${out.classes.dir}"
+                classpathref="dep.plugin.classpath"
+                source="1.8"
+                target="1.8"
+                includeantruntime="false"
+        />
+    </target>
 
-  <target name="plugin.zip" depends="clean, compile">
-    <jar destfile="${out.jar}">
-      <zipfileset dir="${out.classes.dir}"/>
-      <zipfileset dir="${in.resources.dir}/icons" prefix="icons"/>
-      <zipfileset dir="${in.resources.dir}/inspectionDescriptions" prefix="inspectionDescriptions"/>
-      <zipfileset dir="${in.meta-inf.dir}" prefix="${in.meta-inf.dir}"/>
-    </jar>
+    <target name="plugin.zip" depends="clean, compile"
+            description="create plugin bundle for upload to jetbrains repository">
+        <jar destfile="${out.jar}">
+            <zipfileset dir="${out.classes.dir}"/>
+            <zipfileset dir="${in.resources.dir}/icons" prefix="icons"/>
+            <zipfileset dir="${in.resources.dir}/inspectionDescriptions" prefix="inspectionDescriptions"/>
+            <zipfileset dir="${in.meta-inf.dir}" prefix="${in.meta-inf.dir}"/>
+        </jar>
 
-    <zip destfile="${out.zip}">
-      <zipfileset file="${out.jar}" prefix="${ant.project.name}/lib"/>
-      <zipfileset dir="${in.r-helpers.dir}" prefix="${ant.project.name}"/>
-    </zip>
-  </target>
+        <zip destfile="${out.zip}">
+            <zipfileset file="${out.jar}" prefix="${ant.project.name}/lib"/>
+            <zipfileset dir="${in.r-helpers.dir}" prefix="${ant.project.name}"/>
+        </zip>
+    </target>
+
+
+    <!-- todo still needed??-->
+    <target name="include_helpers">
+        <zip destfile="R4Intellij.zip" update="true">
+            <zipfileset dir="${in.r-helpers.dir}" prefix="${ant.project.name}"/>
+        </zip>
+    </target>
 
 </project>

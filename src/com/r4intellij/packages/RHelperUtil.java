@@ -7,21 +7,47 @@ import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
-import com.r4intellij.RHelpersLocator;
+import com.intellij.util.PathUtil;
 import com.r4intellij.RPsiUtils;
 import com.r4intellij.interpreter.RInterpreterService;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class RHelperUtil {
 
-    public static final String R_HELPER_INSTALL_TIDYVERSE = "install_tidyverse.r";
+    public static final PluginResourceFile INSTALL_TIDYVERSE = new PluginResourceFile("install_tidyverse.r");
+
+    public static final Logger LOG = Logger.getInstance(RHelperUtil.class.getName());
 
 
-    public static final Logger LOG = Logger.getInstance(LocalRUtil.class.getName());
+    @Nullable
+    public static ProcessOutput getProcessOutput(@NotNull final String scriptText) {
+        String interpreter = RInterpreterService.getInstance().getInterpreterPath();
+
+        final String path = interpreter;
+        if (path == null) {
+            return null;
+        }
+
+
+        String[] getPckgsCmd = new String[]{interpreter, "--vanilla", "--quiet", "--slave", "-e", scriptText};
+
+        try {
+            final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(getPckgsCmd));
+            return processHandler.runProcess(5 * RPsiUtils.MINUTE);
+        } catch (Throwable e) {
+            LOG.info("Failed to run R executable: \n" +
+                    "Interpreter path " + path + "0\n" +
+                    "Exception occurred: " + e.getMessage());
+        }
+
+        return null;
+    }
 
 
     @Deprecated
@@ -30,72 +56,92 @@ public class RHelperUtil {
     }
 
 
-    @Deprecated
     public static String runCommand(String cmd) {
-//        cmd = Utils.isWindowsPlatform() ? cmd.replaceAll("[$]", "\\$") : cmd;
+        ProcessOutput processOutput = getProcessOutput(cmd);
+        if (processOutput != null && processOutput.getExitCode() == 0)
+            return processOutput.getStdout();
 
-        String[] getPckgsCmd = new String[]{RInterpreterService.getInstance().getInterpreterPath(), "--vanilla", "--quiet", "--slave", "-e", cmd};
-
-        try {
-            final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(getPckgsCmd));
-            final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
-
-            return output.getStdout();
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
-    }
-
-
-    public static String getHelperOutput(String helper) {
-        final String path = RInterpreterService.getInstance().getInterpreterPath();
-
-        if (StringUtil.isEmptyOrSpaces(path)) {
-            LOG.info("Path to interpreter didn't set");
-            return null;
-        }
-
-        final String helperPath = RHelpersLocator.getHelperPath(helper);
-
-        try {
-            GeneralCommandLine commandLine = new GeneralCommandLine(path, "--slave", "-f", helperPath);
-            LOG.info("running helper with:" + commandLine.getCommandLineString());
-            final CapturingProcessHandler processHandler = new CapturingProcessHandler(commandLine);
-            final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
-            if (output.getExitCode() != 0) {
-                LOG.error("Failed to run script: " + helper + "\nExit code: " + output.getExitCode() + "\nError Output: " + output.getStderr());
-            }
-            return output.getStdout();
-        } catch (ExecutionException e) {
-            LOG.error(e.getMessage());
-        }
-        return null;
+        else return "";
     }
 
 
     @Nullable
-    public static RRunResult runHelperWithArgs(@NotNull final String helper, @NotNull final String... args) {
+    public static String getHelperOutput(PluginResourceFile helper, String... args) {
+        RRunResult rRunResult = runHelperWithArgs(helper, args);
+        return rRunResult != null ? rRunResult.getStdOut() : null;
+    }
+
+
+    @Nullable
+    public static RRunResult runHelperWithArgs(@NotNull final PluginResourceFile helper, @NotNull final String... args) {
         final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
+
         if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
             LOG.info("Path to interpreter didn't set");
             return null;
         }
-        final ArrayList<String> command = Lists.newArrayList(interpreterPath, " --slave", "-f ", RHelpersLocator.getHelperPath(helper),
-                " --args");
+
+        final ArrayList<String> command = Lists.newArrayList(
+                interpreterPath,
+                "--slave",
+                "-f", helper.getFile().getAbsolutePath(),
+                "--args");
+
         Collections.addAll(command, args);
+
+
         try {
-            final Process process = new GeneralCommandLine(command).createProcess();
+            GeneralCommandLine gcl = new GeneralCommandLine(command);
+            LOG.info("running helper with: " + gcl.getCommandLineString());
+            final Process process = gcl.createProcess();
             final CapturingProcessHandler processHandler = new CapturingProcessHandler(process, null, StringUtil.join(command, " "));
+
             final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
+
             if (output.getExitCode() != 0) {
                 LOG.warn("Failed to run script. Exit code: " + output.getExitCode());
                 LOG.warn(output.getStderr());
             }
+
             return new RRunResult(StringUtil.join(command, " "), output);
         } catch (ExecutionException e) {
             LOG.error(e.getMessage());
         }
+
         return null;
+    }
+
+
+    private static File getHelpersRoot() {
+        @NonNls String jarPath = PathUtil.getJarPathForClass(RHelperUtil.class);
+        if (jarPath.endsWith(".jar")) {
+            final File jarFile = new File(jarPath);
+
+            LOG.assertTrue(jarFile.exists(), "jar file cannot be null");
+            return jarFile.getParentFile().getParentFile();
+        }
+
+        return new File(jarPath);
+    }
+
+
+    public static File getResourceFile(String resourceName) {
+        return new File(getHelpersRoot(), resourceName);
+    }
+
+
+    public static class PluginResourceFile {
+        private final String relativePath;
+
+
+        public PluginResourceFile(String fileName) {
+            this.relativePath = fileName;
+        }
+
+
+        public File getFile() {
+            return getResourceFile(relativePath);
+        }
     }
 
 

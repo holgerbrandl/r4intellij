@@ -1,15 +1,17 @@
 package com.r4intellij.packages;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.webcore.packaging.InstalledPackage;
-import com.jgoodies.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.r4intellij.packages.RHelperUtil.*;
 
 /**
  * @author avesloguzova
@@ -20,7 +22,7 @@ public final class LocalRUtil {
 
     public static final String ARGUMENT_DELIMETER = " ";
 
-    private static final String RHELPER_PACKAGE_SUMMARIES = "package_summaries.r";
+    private static final PluginResourceFile RHELPER_PACKAGE_SUMMARIES = new PluginResourceFile("package_summaries.r");
 
     public static final Set<String> basePackages = Sets.newHashSet("stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base");
 
@@ -37,10 +39,10 @@ public final class LocalRUtil {
      * Fetch R package info including description and version.
      */
     public static Set<RPackage> getInstalledPackages() {
-        RHelperUtil.runHelperWithArgs(RHelperUtil.R_HELPER_INSTALL_TIDYVERSE);
+        runHelperWithArgs(INSTALL_TIDYVERSE);
 
 
-        String helperOutput = RHelperUtil.getHelperOutput(RHELPER_PACKAGE_SUMMARIES);
+        String helperOutput = getHelperOutput(RHELPER_PACKAGE_SUMMARIES);
 
         if (helperOutput != null) {
             return Sets.newHashSet(Iterables.transform(Lists.newArrayList(helperOutput.split("\n")), new ParseDescriptorIntoPackage()));
@@ -51,9 +53,15 @@ public final class LocalRUtil {
 
 
     static String getPackageVersion(String packageName) {
-        String s = RHelperUtil.runCommand("cat(packageDescription('" + packageName + "')$Version)");
-        Preconditions.checkNotBlank(s, "version is empty");
-        return s;
+        String version = runCommand("cat(packageDescription('" + packageName + "')$Version)");
+
+        assert !isBlank(version) : "package version is empty";
+        return version;
+    }
+
+
+    private static boolean isBlank(String s) {
+        return Strings.nullToEmpty(s).trim().isEmpty();
     }
 
 

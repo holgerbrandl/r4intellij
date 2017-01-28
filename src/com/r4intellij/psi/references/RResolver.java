@@ -26,9 +26,9 @@ import java.util.List;
 
 public class RResolver {
 
-    public static void addFromSkeletonsAndRLibrary(@NotNull final PsiElement element,
-                                                   @NotNull final List<ResolveResult> result,
-                                                   @NotNull final String... names) {
+    static void addFromSkeletonsAndRLibrary(@NotNull final PsiElement element,
+                                            @NotNull final List<ResolveResult> result,
+                                            @NotNull final String... names) {
         for (String name : names) {
             RResolver.addFromProject(name, element.getProject(), result);
             RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.USER_SKELETONS);
@@ -38,10 +38,10 @@ public class RResolver {
     }
 
 
-    public static void addFromLibrary(@NotNull final PsiElement element,
-                                      @NotNull final List<ResolveResult> result,
-                                      @NotNull final String name,
-                                      @NotNull final String libraryName) {
+    private static void addFromLibrary(@NotNull final PsiElement element,
+                                       @NotNull final List<ResolveResult> result,
+                                       @NotNull final String name,
+                                       @NotNull final String libraryName) {
         Project project = element.getProject();
         LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
         final Library library = libraryTable.getLibraryByName(libraryName);
@@ -59,9 +59,9 @@ public class RResolver {
     }
 
 
-    public static void addFromProject(String name,
-                                      @NotNull final Project project,
-                                      @NotNull final List<ResolveResult> results) {
+    private static void addFromProject(String name,
+                                       @NotNull final Project project,
+                                       @NotNull final List<ResolveResult> results) {
         Collection<RAssignmentStatement> statements =
                 RAssignmentNameIndex.find(name, project,
                         new ProjectScopeImpl(project, FileIndexFacade
@@ -160,9 +160,9 @@ public class RResolver {
     }
 
 
-    public static void resolveNameArgument(@NotNull final PsiElement element,
-                                           String elementName,
-                                           @NotNull final List<ResolveResult> result) {
+    static void resolveNameArgument(@NotNull final PsiElement element,
+                                    String elementName,
+                                    @NotNull final List<ResolveResult> result) {
         RCallExpression callExpression = PsiTreeUtil.getParentOfType(element, RCallExpression.class);
         if (callExpression != null) {
             RFunctionExpression functionExpression = RPsiUtils.getFunction(callExpression);
@@ -181,7 +181,7 @@ public class RResolver {
 
 
     // TODO: massive refactoring awaits!!!
-    public static void resolveFunction(PsiElement myElement, String name, List<ResolveResult> result) {
+    static void resolveFunction(PsiElement myElement, String name, List<ResolveResult> result) {
         PsiElement parent = myElement.getParent();
         if (parent != null && parent instanceof RCallExpression) {
             RCallExpression call = ((RCallExpression) parent);

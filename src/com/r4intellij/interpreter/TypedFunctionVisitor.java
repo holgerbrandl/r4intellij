@@ -1,9 +1,6 @@
 package com.r4intellij.interpreter;
 
-import com.intellij.execution.ExecutionException;
-import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.process.CapturingProcessHandler;
-import com.intellij.execution.process.ProcessOutput;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -11,11 +8,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.util.DocumentUtil;
 import com.intellij.util.FileContentUtil;
 import com.r4intellij.RHelp;
-import com.r4intellij.RPsiUtils;
 import com.r4intellij.RStaticAnalyzerHelper;
-import com.r4intellij.RUtils;
+import com.r4intellij.documentation.RDocumentationProvider;
+import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.psi.RRecursiveElementVisitor;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.typing.*;
@@ -50,6 +48,26 @@ class TypedFunctionVisitor extends RVisitor {
     }
 
 
+    public static void appendToDocument(@NotNull final Document document, final String text) {
+        DocumentUtil.writeInRunUndoTransparentAction(new Runnable() {
+            @Override
+            public void run() {
+                document.insertString(document.getTextLength(), text);
+            }
+        });
+    }
+
+
+    public static void saveDocument(@NotNull final Document document) {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                FileDocumentManager.getInstance().saveDocument(document);
+            }
+        });
+    }
+
+
     @Override
     public void visitAssignmentStatement(@NotNull final RAssignmentStatement o) {
         RPsiElement assignedValue = o.getAssignedValue();
@@ -70,7 +88,7 @@ class TypedFunctionVisitor extends RVisitor {
                 System.out.println();
             }
 
-            String helpText = RPsiUtils.getHelpForFunction(assignee.getText(), myPackageName);
+            String helpText = RDocumentationProvider.getHelpForFunction(assignee.getText(), myPackageName);
             // todo uncomment once skeletoniziation is more stable and speedy
             if (helpText != null) {
                 RHelp help = new RHelp(helpText);
@@ -87,19 +105,19 @@ class TypedFunctionVisitor extends RVisitor {
                             final List<String> annotations = new ArrayList<String>();
                             for (Map.Entry<RParameter, RType> entry : parsedTypes.entrySet()) {
                                 String typeAnnotation = DocStringUtil.generateTypeAnnotation(entry.getKey(), entry.getValue());
-                                RUtils.appendToDocument(tempDocument, typeAnnotation);
+                                appendToDocument(tempDocument, typeAnnotation);
                                 annotations.add(typeAnnotation);
                             }
-                            RUtils.appendToDocument(tempDocument, o.getText() + "\n");
+                            appendToDocument(tempDocument, o.getText() + "\n");
 
                             if (help.myExamples != null && !help.myExamples.isEmpty()) {
-                                RUtils.appendToDocument(tempDocument, "\n" + help.myExamples + "\n");
+                                appendToDocument(tempDocument, "\n" + help.myExamples + "\n");
                             }
 
                             if (help.myUsage != null && !help.myUsage.isEmpty()) {
-                                RUtils.appendToDocument(tempDocument, "\n" + help.myUsage + "\n");
+                                appendToDocument(tempDocument, "\n" + help.myUsage + "\n");
                             }
-                            RUtils.saveDocument(tempDocument);
+                            saveDocument(tempDocument);
                             PsiDocumentManager.getInstance(myProject).commitDocument(tempDocument);
                             Visitor visitor = new Visitor();
                             FileContentUtil.reparseFiles(tempFile);
@@ -108,9 +126,9 @@ class TypedFunctionVisitor extends RVisitor {
                                 psiFile.acceptChildren(visitor);
                             }
                             if (!visitor.hasErrors()) {
-                                RUtils.appendToDocument(myPackageDocument, "\n\n");
+                                appendToDocument(myPackageDocument, "\n\n");
                                 for (String typeAnnotation : annotations) {
-                                    RUtils.appendToDocument(myPackageDocument, typeAnnotation);
+                                    appendToDocument(myPackageDocument, typeAnnotation);
                                 }
                             }
 
@@ -119,7 +137,7 @@ class TypedFunctionVisitor extends RVisitor {
 
                             RType type = RTypeProvider.guessReturnValueTypeFromBody((RFunctionExpression) assignedValue);
                             if (!RUnknownType.class.isInstance(type)) {
-                                RUtils.appendToDocument(myPackageDocument, "## @return " + type.toString() + "\n");
+                                appendToDocument(myPackageDocument, "## @return " + type.toString() + "\n");
                             } else {
                                 insertTypeFromHelp(assignee, help);
                             }
@@ -133,10 +151,10 @@ class TypedFunctionVisitor extends RVisitor {
             Set<String> unusedParameters = RStaticAnalyzerHelper.optionalParameters((RFunctionExpression) assignedValue);
 
             if (!unusedParameters.isEmpty()) {
-                RUtils.appendToDocument(myPackageDocument, "## @optional " + StringUtil.join(unusedParameters, ", ") + "\n");
+                appendToDocument(myPackageDocument, "## @optional " + StringUtil.join(unusedParameters, ", ") + "\n");
             }
-            RUtils.appendToDocument(myPackageDocument, o.getText() + "\n\n");
-            RUtils.saveDocument(myPackageDocument);
+            appendToDocument(myPackageDocument, o.getText() + "\n\n");
+            saveDocument(myPackageDocument);
             RSkeletonGenerator.LOG.info("end processing " + myFile.getPath());
         }
     }
@@ -149,15 +167,15 @@ class TypedFunctionVisitor extends RVisitor {
             VirtualFile valueTempFile = myFile.getParent().findOrCreateChildData(this, valueTempFileName);
             final Document valueTempDocument = FileDocumentManager.getInstance().getDocument(valueTempFile);
             if (valueTempDocument != null && help.myExamples != null) {
-                RUtils.appendToDocument(valueTempDocument, help.myExamples);
-                RUtils.saveDocument(valueTempDocument);
+                appendToDocument(valueTempDocument, help.myExamples);
+                saveDocument(valueTempDocument);
                 PsiDocumentManager.getInstance(myProject).commitDocument(valueTempDocument);
                 ValueVisitor valueVisitor = new ValueVisitor(valueType, valueTempFile, assignee.getText());
                 PsiFile valuePsiFile = PsiManager.getInstance(myProject).findFile(valueTempFile);
                 if (valuePsiFile != null && valuePsiFile.isValid()) {
                     valuePsiFile.acceptChildren(valueVisitor);
                     if (valueVisitor.isOk()) {
-                        RUtils.appendToDocument(myPackageDocument, "## @return " + valueType.toString() + "\n");
+                        appendToDocument(myPackageDocument, "## @return " + valueType.toString() + "\n");
                     }
                 }
             }
@@ -194,25 +212,13 @@ class TypedFunctionVisitor extends RVisitor {
                     + "source(\"" + myExamplesFile + "\");"
                     + "myValueType<-class(" + o.getText() + ");"
                     + "print(myValueType)";
+
+            String stdout = RHelperUtil.runCommand(programString);
             String rPath = RInterpreterService.getInstance().getInterpreterPath();
-            try {
-                GeneralCommandLine gcl = new GeneralCommandLine();
-                gcl.withWorkDirectory(myExamplesFile.getParent().getPath());
-                gcl.setExePath(rPath);
-                gcl.addParameter("--slave");
-                gcl.addParameter("-e");
-                gcl.addParameter(programString);
 
-                final CapturingProcessHandler processHandler = new CapturingProcessHandler(gcl);
-                final ProcessOutput output = processHandler.runProcess(20000);
+            RType evaluatedType = RSkeletonGeneratorHelper.findType(stdout);
+            myOk = RTypeChecker.matchTypes(myCandidate, evaluatedType);
 
-                String stdout = output.getStdout();
-
-                RType evaluatedType = RSkeletonGeneratorHelper.findType(stdout);
-                myOk = RTypeChecker.matchTypes(myCandidate, evaluatedType);
-            } catch (ExecutionException | IllegalArgumentException e) {
-                e.printStackTrace();
-            }
         }
 
 

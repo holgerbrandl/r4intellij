@@ -6,7 +6,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.r4intellij.RStaticAnalyzerHelper;
-import com.r4intellij.RUtils;
 import com.r4intellij.psi.api.RAssignmentStatement;
 import com.r4intellij.psi.api.RFunctionExpression;
 import com.r4intellij.psi.api.RPsiElement;
@@ -57,10 +56,10 @@ public class SimpleFunctionVisitor extends RVisitor {
             Set<String> unusedParameters = RStaticAnalyzerHelper.optionalParameters((RFunctionExpression) assignedValue);
 
             if (!unusedParameters.isEmpty()) {
-                RUtils.appendToDocument(myPackageDocument, "## @optional " + StringUtil.join(unusedParameters, ", ") + "\n");
+                TypedFunctionVisitor.appendToDocument(myPackageDocument, "## @optional " + StringUtil.join(unusedParameters, ", ") + "\n");
             }
-            RUtils.appendToDocument(myPackageDocument, o.getText() + "\n\n");
-            RUtils.saveDocument(myPackageDocument);
+            TypedFunctionVisitor.appendToDocument(myPackageDocument, o.getText() + "\n\n");
+            TypedFunctionVisitor.saveDocument(myPackageDocument);
             RSkeletonGenerator.LOG.info("end processing " + myFile.getPath());
         }
     }

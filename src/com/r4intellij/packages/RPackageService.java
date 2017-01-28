@@ -15,7 +15,6 @@ import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.r4intellij.interpreter.RSkeletonGenerator;
-import org.apache.commons.lang.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -147,7 +146,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
      *                     indexing run.If non are provided all packages will be refreshed.
      */
     public boolean refreshIndex(String... packageNames) {
-        RHelperUtil.runHelperWithArgs(RHelperUtil.R_HELPER_INSTALL_TIDYVERSE);
+        RHelperUtil.runHelperWithArgs(RHelperUtil.INSTALL_TIDYVERSE);
 
         Set<RPackage> installedPackages = LocalRUtil.getInstalledPackages();
 
@@ -174,7 +173,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
         for (final RPackage rPackage : installedPackages) {
             final RPackage indexPackage = getByName(rPackage.getName());
 
-            if (indexPackage != null && ObjectUtils.equals(indexPackage.getVersion(), rPackage.getVersion())) {
+            if (indexPackage != null && Objects.equals(indexPackage.getVersion(), rPackage.getVersion())) {
                 continue;
             }
 

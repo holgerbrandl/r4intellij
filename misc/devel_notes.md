@@ -29,6 +29,11 @@ http://stackoverflow.com/questions/11492301/how-does-intellij-idea-manage-plugin
 
 IDEA uses custom classloader, if it doesn't find the required class in the plugin distribution, it's searched in all the jars located in IDEA_HOME/lib directory.
 
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206104839-Access-Resources-bundled-within-Plugin
+
+The debug environment unpacks the jar while the deployed environment does not. So the resources are not available in deployed version same as in debug. I would prefer that the debug version mimicked the deployed one, otherwise it makes it harder to debug.  --> copy stream to file
+
+
 Reference Provider
 ----------
 
@@ -59,6 +64,9 @@ In openapi.jar there is a com.intellij.refactoring.util.RefactoringMessageDialog
 
 
 http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
+
+
+To make sure that renaming does not apply to installed packages/library --> https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000062144-How-to-prevent-renaming-of-library-functions-
 
 
 Intentions vs. Inspections

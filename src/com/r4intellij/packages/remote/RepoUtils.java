@@ -12,10 +12,10 @@ import com.intellij.util.CatchingConsumer;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.RepoPackage;
 import com.r4intellij.RPsiUtils;
-import com.r4intellij.RUtils;
 import com.r4intellij.interpreter.RInterpreterService;
 import com.r4intellij.packages.LocalRUtil;
 import com.r4intellij.packages.RHelperUtil;
+import com.r4intellij.packages.RHelperUtil.PluginResourceFile;
 import com.r4intellij.packages.RPackageService;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -36,20 +36,22 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("WeakerAccess")
 public class RepoUtils {
-
-    private static final String R_PACKAGES_DEFAULT_REPOS = "r-packages/r-packages-default-repos.r";
-
-    private static final String R_ALL_PACKAGES = "r-packages/r-packages-all.r";
 
 
     @NonNls
     private static final String CRAN_URL = "https://cran.r-project.org/web/packages/available_packages_by_name.html";
 
+    private static final PluginResourceFile R_PACKAGES_DEFAULT_REPOS = new PluginResourceFile("r-packages/r-packages-default-repos.r");
+    private static final PluginResourceFile R_ALL_PACKAGES = new PluginResourceFile("r-packages/r-packages-all.r");
+
+    private static final PluginResourceFile R_INSTALL_PACKAGE = new PluginResourceFile("r-packages/r-packages-install.r");
+    private static final PluginResourceFile R_UPDATE_PACKAGE = new PluginResourceFile("r-packages/r-packages-update.r");
+    private static final PluginResourceFile R_PACKAGES_DETAILS = new PluginResourceFile("r-packages/r-packages-details.r");
+
     private static final Pattern urlPattern = Pattern.compile("\".+\"");
-    private static final String R_INSTALL_PACKAGE = "r-packages/r-packages-install.r";
-    private static final String R_UPDATE_PACKAGE = "r-packages/r-packages-update.r";
-    private static final String R_PACKAGES_DETAILS = "r-packages/r-packages-details.r";
+
 
     private static TreeMap<String, String> namesToDetails;
 
@@ -76,7 +78,7 @@ public class RepoUtils {
 
     @NotNull
     static List<String> getCRANMirrors() {
-        final ProcessOutput output = RUtils.getProcessOutput("getCRANmirrors()[,\"URL\"]");
+        final ProcessOutput output = RHelperUtil.getProcessOutput("getCRANmirrors()[,\"URL\"]");
         if (output != null && output.getExitCode() == 0) {
             return getURLs(output.getStdout());
         }
