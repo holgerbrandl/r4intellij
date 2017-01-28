@@ -39,9 +39,6 @@ public final class LocalRUtil {
      * Fetch R package info including description and version.
      */
     public static Set<RPackage> getInstalledPackages() {
-        runHelperWithArgs(INSTALL_TIDYVERSE);
-
-
         String helperOutput = getHelperOutput(RHELPER_PACKAGE_SUMMARIES);
 
         if (helperOutput != null) {

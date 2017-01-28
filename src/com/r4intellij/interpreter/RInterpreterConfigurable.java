@@ -87,6 +87,7 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
         myMainPanel.add(mySourcesField, c);
     }
 
+
     @NotNull
     @Override
     public String getId() {
@@ -193,38 +194,37 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
     public static void createLibrary(final String libraryName, @NotNull final java.util.List<String> paths, @NotNull final Project project) {
         ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
 
-//        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-//            @Override
-//            public void run() {
-        // add all paths to library
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                // add all paths to library
+                LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
+                Library library = model.getLibraryByName(libraryName);
 
-        LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
-        Library library = model.getLibraryByName(libraryName);
+                if (library == null) {
+                    library = model.createLibrary(libraryName);
+                }
 
-        if (library == null) {
-            library = model.createLibrary(libraryName);
-        }
+                fillLibrary(library, paths);
+                model.commit();
 
-        fillLibrary(library, paths);
-        model.commit();
+                Library.ModifiableModel libModel = library.getModifiableModel();
+                libModel.commit();
 
-        Library.ModifiableModel libModel = library.getModifiableModel();
-        libModel.commit();
+                // attach to modules if not yet present
+                for (Module module : ModuleManager.getInstance(project).getModules()) {
+                    final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
+                    Library libraryByName = modifiableModel.getModuleLibraryTable().getLibraryByName(libraryName);
 
-        // attach to modules if not yet present
-        for (Module module : ModuleManager.getInstance(project).getModules()) {
-            final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
-            Library libraryByName = modifiableModel.getModuleLibraryTable().getLibraryByName(libraryName);
+                    if (libraryByName != null)
+                        continue;
 
-            if (libraryByName != null)
-                continue;
+                    modifiableModel.addLibraryEntry(library);
+                    modelsProvider.commitModuleModifiableModel(modifiableModel);
+                }
 
-            modifiableModel.addLibraryEntry(library);
-            modelsProvider.commitModuleModifiableModel(modifiableModel);
-        }
-
-        //        });
-//    }
+            }
+        });
     }
 
 

@@ -95,16 +95,11 @@ public class MissingImportInspection extends LocalInspectionTool {
 
                     // check if there's an import statement for any of them
                     List<String> importedPackages = ((RFile) psiElement.getContainingFile()).getImportedPackages();
-//                    importedPackages = Lists.newArrayList(Iterables.concat(basePackages, importedPackages));
 
-                    // todo also include dependencies here
                     List<RPackage> resolvedImports = packageService.resolveDependencies(importedPackages);
                     importedPackages = Lists.newArrayList(Iterables.transform(resolvedImports, Functions.toStringFunction()));
 
-//                    importedPackages = Lists.newArrayList(Iterables.concat(basePackages, importedPackages));
-
                     // check whether the import list contains any of the packages
-
                     if (!Sets.intersection(Sets.newHashSet(importedPackages), Sets.newHashSet(funPackageNames)).isEmpty()) {
                         return;
                     }

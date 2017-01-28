@@ -19,8 +19,13 @@ package com.r4intellij.inspections;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.execution.ExecutionException;
+import com.intellij.execution.ExecutionManager;
+import com.intellij.execution.Executor;
+import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.r4intellij.console.RConsoleRunner;
@@ -30,12 +35,12 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Also see http://stackoverflow.com/questions/4090169/elegant-way-to-check-for-missing-packages-and-install-them
- * @author Holger Brandl
  *
+ * @author Holger Brandl
  */
 public class InstallLibraryFix implements LocalQuickFix {
 
-    private final String packageName;
+    final private String packageName;
 
 
     public InstallLibraryFix(String name) {
@@ -66,41 +71,57 @@ public class InstallLibraryFix implements LocalQuickFix {
             runner.getConsoleExecuteActionHandler().processLine("chooseCRANmirror(ind = 1)");
 
             // TODO detect repository here to do biocite instead of install.packages if needed
-            // see com.r4intellij.packages.remote.RepoUtils.loadAvailablePackages()
 
-            // see ?install.packages
+//            packageName = "docopt";
+
 //            runner.getConsoleExecuteActionHandler().processLine("options(install.packages.check.source = \"no\")");
             runner.getConsoleExecuteActionHandler().processLine("install.packages('" + packageName + "')");
 //            runner.getConsoleExecuteActionHandler().processLine("install.packages('" + packageName + "',  type=\"source\")");
 
             // test installation was successful
-            runner.getConsoleExecuteActionHandler().processLine("require(" + packageName + ")");
+//            runner.getConsoleExecuteActionHandler().processLine("require(" + packageName + ")");
+            runner.getConsoleExecuteActionHandler().processLine(
+                    "cat(\"" + packageName + " installed:\", \"" + packageName + "\" %in% rownames(installed.packages()), '\\n')"
+            );
 
-            // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/206148229-Force-inspection-rerun-
+            // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000038590-How-to-close-Run-console-tab-window-programmatically-
             runner.getProcessHandler().addProcessListener(new ProcessAdapter() {
+
                 @Override
                 public void onTextAvailable(ProcessEvent event, Key outputType) {
-                    String expected = "Loading required package: " + packageName;
-                    String expectedFailed = "there is no package called ‘" + packageName + "’";
+                    String expected = packageName + " installed: TRUE";
 
                     if (event.getText().trim().equals(expected)) {
                         // update package index
                         RPackageService.getInstance().refreshIndex();
 
-                        // todo quit console session and close the tool winodw tab
-//                        runner.getConsoleExecuteActionHandler().processLine("quit(\"no\")");
-//                        runner.getConsoleView().
-
+                        // installation looks good, so lets close the window
+                        runner.getConsoleExecuteActionHandler().processLine("quit(\"no\")");
                     }
-
-//                    ExecutionManager executionManager = ExecutionManager.getInstance(project);
-//                    RunContentDescriptor descriptor = executionManager.getContentManager().getSelectedContent();
-//                    Set<Executor> executors = ((ExecutionManagerImpl) executionManager).getExecutors(descriptor);
-//
-////                    // excutors is always empty!?
-//                    executionManager.getContentManager().removeRunContent(DefaultRunExecutor.getRunExecutorInstance(), descriptor);
-
                 }
+
+
+                @Override
+                public void processTerminated(ProcessEvent event) {
+                    ExecutionManager executionManager = ExecutionManager.getInstance(project);
+                    RunContentDescriptor descriptor = executionManager.getContentManager().getSelectedContent();
+//                    Set<Executor> executors = ((ExecutionManagerImpl) executionManager).getExecutors(descriptor);
+
+                    ApplicationManager.getApplication().invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Executor exec = DefaultRunExecutor.getRunExecutorInstance();
+                                    executionManager.getContentManager().removeRunContent(exec, descriptor);
+                                }
+                            });
+                        }
+                    });
+                }
+
+
             });
 
         } catch (ExecutionException e) {

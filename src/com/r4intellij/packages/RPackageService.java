@@ -146,8 +146,6 @@ public class RPackageService implements PersistentStateComponent<RPackageService
      *                     indexing run.If non are provided all packages will be refreshed.
      */
     public boolean refreshIndex(String... packageNames) {
-        RHelperUtil.runHelperWithArgs(RHelperUtil.INSTALL_TIDYVERSE);
-
         Set<RPackage> installedPackages = LocalRUtil.getInstalledPackages();
 
         // remove packages from index that are no longer present

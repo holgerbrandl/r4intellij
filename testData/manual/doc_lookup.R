@@ -10,7 +10,7 @@ require(plyr)
 arrange(iris)
 
 
-# 3) example without docstring that override package
+# 3) example without docstring that override package (should provide help also for assignment)
 
 
 #' This function mutates the argument into an alien with sharp teeth

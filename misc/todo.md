@@ -3,70 +3,8 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
-* helper scripts are not runnable from jar and don't seem to be extracted
 
-* libraries are attached as duplicates
-```
-     <orderEntry type="library" name="R Skeletons" level="project" />
-     <orderEntry type="library" name="R Skeletons" level="project" />
-     <orderEntry type="librar]y" name="R Skeletons" level="project" />
-     <orderEntry type="library" name="R Skeletons" level="project" />
-     <orderEntry type="library" name="R Skeletons" level="project" />
-     <orderEntry type="library" name="R Skeletons" level="project" />
-     <orderEntry type="library" name="R Skeletons" level="project" />
-
-```
-
-```text
-2017-01-25 13:22:05,927 [ 134068]  ERROR - r4intellij.packages.LocalRUtil - Failed to run script: package_summaries.r
-Exit code: 2
-Error Output:  
-java.lang.Throwable
-	at com.intellij.openapi.diagnostic.Logger.error(Logger.java:132)
-	at com.r4intellij.packages.RHelperUtil.getHelperOutput(RHelperUtil.java:64)
-	at com.r4intellij.packages.LocalRUtil.getInstalledPackages(LocalRUtil.java:43)
-	at com.r4intellij.packages.RPackageService.refreshIndex(RPackageService.java:152)
-	at com.r4intellij.packages.RPackageService$1.run(RPackageService.java:90)
-	at com.intellij.openapi.application.impl.ApplicationImpl$2.run(ApplicationImpl.java:309)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - IntelliJ IDEA 2016.3.3  Build #IU-163.11103.6 
-2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - JDK: 1.8.0_112-release 
-2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - VM: OpenJDK 64-Bit Server VM 
-2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - Vendor: JetBrains s.r.o 
-2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - OS: Mac OS X 
-2017-01-25 13:22:05,934 [ 134075]  ERROR - r4intellij.packages.LocalRUtil - Last Action: RSkeletonsGenerator 
-2017-01-25 13:22:05,947 [ 134088]  ERROR - plication.impl.ApplicationImpl - 1 
-java.lang.ArrayIndexOutOfBoundsException: 1
-	at com.r4intellij.packages.LocalRUtil$ParseDescriptorIntoPackage.apply(LocalRUtil.java:117)
-	at com.r4intellij.packages.LocalRUtil$ParseDescriptorIntoPackage.apply(LocalRUtil.java:101)
-	at com.google.common.collect.Iterators$8.transform(Iterators.java:799)
-	at com.google.common.collect.TransformedIterator.next(TransformedIterator.java:48)
-	at com.google.common.collect.Iterators.addAll(Iterators.java:362)
-	at com.google.common.collect.Sets.newHashSet(Sets.java:238)
-	at com.google.common.collect.Sets.newHashSet(Sets.java:218)
-	at com.r4intellij.packages.LocalRUtil.getInstalledPackages(LocalRUtil.java:46)
-	at com.r4intellij.packages.RPackageService.refreshIndex(RPackageService.java:152)
-	at com.r4intellij.packages.RPackageService$1.run(RPackageService.java:90)
-	at com.intellij.openapi.application.impl.ApplicationImpl$2.run(ApplicationImpl.java:309)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-```
-
-
-* import action does not work for chunks. (should package imports be extrapolated to the complete file?)
-
-* 
-
-http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
-
-* improved dplyr life template
+* improved dplyr life templates
 
 
 ## potential improvements and differences
@@ -253,6 +191,8 @@ http://rmarkdown.rstudio.com/r_notebooks.html#output_storage
 
 The document’s chunk outputs are also stored in an internal RStudio folder beneath the project’s .Rproj.user folder. If you work with a notebook but don’t have a project open, the outputs are stored in the RStudio state folder in your home directory (the location of this folder varies between the desktop and the server).
 
+* chunks. (should package imports be extrapolated to the complete file to work accross chungs?
+
 
 ## Markdown impro wishlist
 
@@ -300,3 +240,4 @@ Brainstorming  & Roadmap
 * ColorSettingsPage (see Bash implementation)
 * Show parameter info
 * BnfAnnotator: psi-aware highlightling of syntax elements
+

@@ -1,3 +1,5 @@
+if(!require(tidyverse)) install.packages('tidyverse', repos='http://cran.us.r-project.org');
+
 library(tools);
 library(tidyverse);
 library(stringr);
