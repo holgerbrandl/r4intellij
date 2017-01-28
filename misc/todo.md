@@ -241,3 +241,12 @@ Brainstorming  & Roadmap
 * Show parameter info
 * BnfAnnotator: psi-aware highlightling of syntax elements
 
+* resolver should allow to avoid renaming of locally overloaded libray methods
+```r
+require(dplyr)
+
+require = function(a) a+1
+
+require(a) ## rename this to foo --> should not touch first import statment
+
+```

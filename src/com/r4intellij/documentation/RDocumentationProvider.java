@@ -82,7 +82,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     }
 
 
-    private boolean isLibraryElement(PsiElement element) {
+    public static boolean isLibraryElement(PsiElement element) {
         return element != null && element.getContainingFile().getVirtualFile().getCanonicalPath().contains(SKELETON_DIR_NAME);
     }
 

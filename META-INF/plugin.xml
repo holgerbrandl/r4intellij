@@ -133,6 +133,8 @@
         <toolWindow id="R Graphics" anchor="right"
                     factoryClass="com.r4intellij.run.graphics.RGraphicsToolWindowFactory"/>
 
+        <vetoRenameCondition implementation="com.r4intellij.psi.references.RenamingVetoCondition"/>
+
         <!-- display names not needed if defined in impl-->
         <localInspection language="R" shortName="RTypeCheckerInspection" displayName="Incomplete Function Parameters"
                          enabledByDefault="true" level="WARNING"
