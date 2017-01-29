@@ -4,9 +4,6 @@ R4Intellij Development Notes
 ## 0-day bugs
 
 
-* improved dplyr life templates
-
-
 ## potential improvements and differences
 
 * inline variable refactoring

@@ -7,8 +7,19 @@
 
 <templateSet group="R">
 
+    <!--ggplot specific life templates-->
 
-    <template name="gt" value="+ ggtitle(&quot;$TITLE$&quot;)$END$" title="ggplot title" toReformat="false"
+    <template name="gg" value="ggplot(aes($AES$)) + $LAYER$" toReformat="false" title="ggplot: New plot"
+              toShortenFQNames="true">
+        <variable name="AES" expression="" defaultValue="" alwaysStopAt="true"/>
+        <variable name="LAYER" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+
+    <template name="gt" value="+ ggtitle(&quot;$TITLE$&quot;)$END$" title="ggplot2: Add title" toReformat="false"
               toShortenFQNames="true">
         <variable name="TITLE" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
@@ -17,9 +28,34 @@
     </template>
 
 
+    <template name="sxl" value="+ scale_x_log10()" title="ggplot2: Use log10 x-axis" toReformat="false"
+              toShortenFQNames="true">
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+
+    <template name="syl" value="+ scale_y_log10()" title="ggplot2: Use log10 y-axis" toReformat="false"
+              toShortenFQNames="true">
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+
+    <template name="si" value="stat=&quot;identity&quot;" title="ggplot2: use 'identity' as stat" toReformat="false"
+              toShortenFQNames="true">
+        <context>
+            <option name="R" value="true"/>
+        </context>
+    </template>
+
+    <!-- misc-->
+
     <template name="sl"
               value="save($FILE$, file=&quot;$FILE$.RData&quot;)&#10;# $FILE$ &lt;- local(get(load(&quot;$FILE$.RData&quot;)))&#10;"
-              title="save and load a couple of variables" toReformat="false" toShortenFQNames="true">
+              title="save and load a current environment" toReformat="false" toShortenFQNames="true">
         <variable name="FILE" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
             <option name="R" value="true"/>
@@ -27,24 +63,22 @@
     </template>
 
 
-    <template name="tr" value="$df$ &lt;- transform($df$, $END$)" title="transform" toReformat="false"
+    <template name="lgl" value="local(get(load($END$)))" description="local get load" toReformat="false"
               toShortenFQNames="true">
-        <variable name="df" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
             <option name="R" value="true"/>
         </context>
     </template>
 
 
-    <template name="tab" value="with($df$, as.data.frame(table($VARS$)))" title="table" toReformat="false"
-              toShortenFQNames="true">
-        <variable name="df" expression="" defaultValue="" alwaysStopAt="true"/>
-        <variable name="VARS" expression="" defaultValue="" alwaysStopAt="true"/>
+    <template name="ses"
+              value="session::save.session(&quot;.$NAME$.dat&quot;);&#10;# session::restore.session(&quot;.$NAME$.dat&quot;);&#10;"
+              toReformat="false" toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
             <option name="R" value="true"/>
         </context>
     </template>
-
 
     <template name="fun" value="$FUN_NAME$ &lt;- function($FUN_ARGS$){&#10;    $SELECTION$&#10;}&#10;$END$"
               title="function definition" toReformat="true" toShortenFQNames="true">
@@ -55,40 +89,10 @@
         </context>
     </template>
 
-    <template name="sxl" value="+ scale_x_log10()" title="use log10 x-axis" toReformat="false"
-              toShortenFQNames="true">
-        <context>
-            <option name="R" value="true"/>
-        </context>
-    </template>
 
+    <!-- dplyr templates-->
 
-    <template name="syl" value="+ scale_y_log10()" title="use log10 y-axis" toReformat="false"
-              toShortenFQNames="true">
-        <context>
-            <option name="R" value="true"/>
-        </context>
-    </template>
-
-    <template name="si" value="stat=&quot;identity&quot;" toReformat="false" toShortenFQNames="true">
-        <context>
-            <option name="R" value="true"/>
-        </context>
-    </template>
-
-
-    <template name="dd" value="ddply($DATA_FRAME$, .($SPLIT_VARS$), $FUN$)" title="ddply template"
-              toReformat="false" toShortenFQNames="true">
-        <variable name="DATA_FRAME" expression="" defaultValue="" alwaysStopAt="true"/>
-        <variable name="SPLIT_VARS" expression="" defaultValue="" alwaysStopAt="true"/>
-        <variable name="FUN" expression="" defaultValue="" alwaysStopAt="true"/>
-        <context>
-            <option name="R" value="true"/>
-        </context>
-    </template>
-
-
-    <template name="mut" value="mutate($VAR$ = $RULE$) $END$" title="dplyr mutate" toReformat="true"
+    <template name="mut" value="mutate($VAR$ = $RULE$) $END$" title="dplyr: mutate" toReformat="true"
               toShortenFQNames="true">
         <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true"/>
         <variable name="RULE" expression="" defaultValue="" alwaysStopAt="true"/>
@@ -97,11 +101,15 @@
         </context>
     </template>
 
-    <template name="md" value="mutate($TRAFO$) $END$" title="dplyr mutate" toReformat="true"
-              toShortenFQNames="true">
-        <variable name="TRAFO" expression="" defaultValue="" alwaysStopAt="true"/>
+    <!-- readr-->
+
+    <template name="wri"
+              value="write_tsv($FILE$, path=&quot;$FILE$.txt&quot;)&#10;# $FILE$ &lt;- read_tsv(&quot;$FILE$.txt&quot;)&#10;"
+              description="readr: Save a table as tsv-file" toReformat="false" toShortenFQNames="true">
+        <variable name="FILE" expression="" defaultValue="" alwaysStopAt="true"/>
         <context>
             <option name="R" value="true"/>
         </context>
     </template>
+
 </templateSet>

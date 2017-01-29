@@ -113,3 +113,8 @@ Invoking psi.getContext in a loop (orPsiTreeUtil.getContextOfType) will eventual
 ### Language injection
 
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/206778055-language-injection-into-string-literals
+
+### Templates
+
+* /Users/brandl/Library/Preferences/IntelliJIdea2016.3/templates/R.xml
+* /Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/config/templates/R.xm
