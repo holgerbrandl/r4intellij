@@ -17,7 +17,7 @@
       <excludeFolder url="file://$MODULE_DIR$/r-helpers/r-skeletons" />
       <excludeFolder url="file://$MODULE_DIR$/r-helpers/r-user-skeletons" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="IntelliJ IDEA IU-163.11103.6" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" scope="TEST">
       <library>
@@ -40,15 +40,14 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/httpclient.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>

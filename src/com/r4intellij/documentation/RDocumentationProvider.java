@@ -1,5 +1,6 @@
 package com.r4intellij.documentation;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
@@ -83,7 +84,10 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
 
     public static boolean isLibraryElement(PsiElement element) {
-        return element != null && element.getContainingFile().getVirtualFile().getCanonicalPath().contains(SKELETON_DIR_NAME);
+        return element != null &&
+                Strings.nullToEmpty(
+                        element.getContainingFile().getVirtualFile().getCanonicalPath()
+                ).contains(SKELETON_DIR_NAME);
     }
 
 

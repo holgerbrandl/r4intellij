@@ -37,10 +37,18 @@ sum(2,3)
 Missing Unit Tests
 ------------------
 
+Nice docs
+http://www.jetbrains.org/intellij/sdk/docs/basics/testing_plugins.html
+
 resolveDependencies
 
 * namespace preferences
 * duplication
+
+
+### Refactorings
+
+Inlining: See org.intellij.grammar.BnfInlineRuleTest
 
 
 * renaming of function parameter: is the renaming also applied at the callsite? Yes
