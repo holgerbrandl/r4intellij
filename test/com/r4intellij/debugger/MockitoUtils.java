@@ -15,34 +15,34 @@ import static org.mockito.Mockito.when;
 
 public class MockitoUtils {
 
-  @NotNull
-  public static RExecutor setupExecutor(@NotNull final Map<String, List<RExecutionResult>> commandsAndResults)
-    throws RDebuggerException {
-    final RExecutor result = Mockito.mock(RExecutor.class);
+    @NotNull
+    public static RExecutor setupExecutor(@NotNull final Map<String, List<RExecutionResult>> commandsAndResults)
+            throws RDebuggerException {
+        final RExecutor result = Mockito.mock(RExecutor.class);
 
-    for (Map.Entry<String, List<RExecutionResult>> commandAndResult : commandsAndResults.entrySet()) {
-      final List<RExecutionResult> value = commandAndResult.getValue();
+        for (Map.Entry<String, List<RExecutionResult>> commandAndResult : commandsAndResults.entrySet()) {
+            final List<RExecutionResult> value = commandAndResult.getValue();
 
-      if (value.size() == 1) {
-        when(result.execute(commandAndResult.getKey())).thenReturn(value.get(0));
-      }
-      else {
-        final RExecutionResult firstResult = value.get(0);
-        final RExecutionResult[] otherResults = value.subList(1, value.size()).toArray(new RExecutionResult[value.size() - 1]);
+            if (value.size() == 1) {
+                when(result.execute(commandAndResult.getKey())).thenReturn(value.get(0));
+            } else {
+                final RExecutionResult firstResult = value.get(0);
+                final RExecutionResult[] otherResults = value.subList(1, value.size()).toArray(new RExecutionResult[value.size() - 1]);
 
-        when(result.execute(commandAndResult.getKey())).thenReturn(firstResult, otherResults);
-      }
+                when(result.execute(commandAndResult.getKey())).thenReturn(firstResult, otherResults);
+            }
+        }
+
+        return result;
     }
 
-    return result;
-  }
 
-  public static void verifyExecutor(@NotNull final RExecutor executor, @NotNull final List<String> commands)
-    throws RDebuggerException {
-    final InOrder inOrder = inOrder(executor);
+    public static void verifyExecutor(@NotNull final RExecutor executor, @NotNull final List<String> commands)
+            throws RDebuggerException {
+        final InOrder inOrder = inOrder(executor);
 
-    for (final String command : commands) {
-      inOrder.verify(executor).execute(command);
+        for (final String command : commands) {
+            inOrder.verify(executor).execute(command);
+        }
     }
-  }
 }

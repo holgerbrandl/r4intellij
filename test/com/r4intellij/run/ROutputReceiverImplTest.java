@@ -10,57 +10,60 @@ import static org.mockito.Mockito.*;
 
 public class ROutputReceiverImplTest {
 
-  @Test
-  public void outputWithoutLineBreak() {
-    final ProcessHandler processHandler = mock(ProcessHandler.class);
-    final ROutputReceiverImpl outputReceiver = new ROutputReceiverImpl(processHandler);
-    final String output = "output";
+    @Test
+    public void outputWithoutLineBreak() {
+        final ProcessHandler processHandler = mock(ProcessHandler.class);
+        final ROutputReceiverImpl outputReceiver = new ROutputReceiverImpl(processHandler);
+        final String output = "output";
 
-    outputReceiver.receiveOutput(output);
+        outputReceiver.receiveOutput(output);
 
-    final InOrder inOrder = inOrder(processHandler);
-    inOrder.verify(processHandler).notifyTextAvailable(output, ProcessOutputTypes.STDOUT);
-    inOrder.verify(processHandler).notifyTextAvailable(RLanguageConstants.LINE_SEPARATOR, ProcessOutputTypes.STDOUT);
+        final InOrder inOrder = inOrder(processHandler);
+        inOrder.verify(processHandler).notifyTextAvailable(output, ProcessOutputTypes.STDOUT);
+        inOrder.verify(processHandler).notifyTextAvailable(RLanguageConstants.LINE_SEPARATOR, ProcessOutputTypes.STDOUT);
 
-    verifyNoMoreInteractions(processHandler);
-  }
+        verifyNoMoreInteractions(processHandler);
+    }
 
-  @Test
-  public void outputWithLineBreak() {
-    final ProcessHandler processHandler = mock(ProcessHandler.class);
-    final ROutputReceiverImpl outputReceiver = new ROutputReceiverImpl(processHandler);
-    final String output = "output" + RLanguageConstants.LINE_SEPARATOR;
 
-    outputReceiver.receiveOutput(output);
+    @Test
+    public void outputWithLineBreak() {
+        final ProcessHandler processHandler = mock(ProcessHandler.class);
+        final ROutputReceiverImpl outputReceiver = new ROutputReceiverImpl(processHandler);
+        final String output = "output" + RLanguageConstants.LINE_SEPARATOR;
 
-    verify(processHandler).notifyTextAvailable(output, ProcessOutputTypes.STDOUT);
-    verifyNoMoreInteractions(processHandler);
-  }
+        outputReceiver.receiveOutput(output);
 
-  @Test
-  public void errorWithoutLineBreak() {
-    final ProcessHandler processHandler = mock(ProcessHandler.class);
-    final ROutputReceiverImpl outputReceiver = new ROutputReceiverImpl(processHandler);
-    final String error = "error";
+        verify(processHandler).notifyTextAvailable(output, ProcessOutputTypes.STDOUT);
+        verifyNoMoreInteractions(processHandler);
+    }
 
-    outputReceiver.receiveError(error);
 
-    final InOrder inOrder = inOrder(processHandler);
-    inOrder.verify(processHandler).notifyTextAvailable(error, ProcessOutputTypes.STDERR);
-    inOrder.verify(processHandler).notifyTextAvailable(RLanguageConstants.LINE_SEPARATOR, ProcessOutputTypes.STDERR);
+    @Test
+    public void errorWithoutLineBreak() {
+        final ProcessHandler processHandler = mock(ProcessHandler.class);
+        final ROutputReceiverImpl outputReceiver = new ROutputReceiverImpl(processHandler);
+        final String error = "error";
 
-    verifyNoMoreInteractions(processHandler);
-  }
+        outputReceiver.receiveError(error);
 
-  @Test
-  public void errorWithLineBreak() {
-    final ProcessHandler processHandler = mock(ProcessHandler.class);
-    final ROutputReceiverImpl outputReceiver = new ROutputReceiverImpl(processHandler);
-    final String error = "error" + RLanguageConstants.LINE_SEPARATOR;
+        final InOrder inOrder = inOrder(processHandler);
+        inOrder.verify(processHandler).notifyTextAvailable(error, ProcessOutputTypes.STDERR);
+        inOrder.verify(processHandler).notifyTextAvailable(RLanguageConstants.LINE_SEPARATOR, ProcessOutputTypes.STDERR);
 
-    outputReceiver.receiveError(error);
+        verifyNoMoreInteractions(processHandler);
+    }
 
-    verify(processHandler).notifyTextAvailable(error, ProcessOutputTypes.STDERR);
-    verifyNoMoreInteractions(processHandler);
-  }
+
+    @Test
+    public void errorWithLineBreak() {
+        final ProcessHandler processHandler = mock(ProcessHandler.class);
+        final ROutputReceiverImpl outputReceiver = new ROutputReceiverImpl(processHandler);
+        final String error = "error" + RLanguageConstants.LINE_SEPARATOR;
+
+        outputReceiver.receiveError(error);
+
+        verify(processHandler).notifyTextAvailable(error, ProcessOutputTypes.STDERR);
+        verifyNoMoreInteractions(processHandler);
+    }
 }

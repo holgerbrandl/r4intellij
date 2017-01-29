@@ -10,38 +10,44 @@ import static org.junit.Assert.assertEquals;
 
 public class MockXFullValueEvaluationCallback implements XFullValueEvaluator.XFullValueEvaluationCallback {
 
-  @NotNull
-  private final String myExpected;
+    @NotNull
+    private final String myExpected;
 
-  private int myCounter = 0;
+    private int myCounter = 0;
 
-  public MockXFullValueEvaluationCallback(@NotNull final String expected) {
-    myExpected = expected;
-  }
 
-  @Override
-  public void evaluated(@NotNull final String fullValue) {
-    myCounter++;
+    public MockXFullValueEvaluationCallback(@NotNull final String expected) {
+        myExpected = expected;
+    }
 
-    assertEquals(myExpected, fullValue);
-  }
 
-  @Override
-  public void evaluated(@NotNull final String fullValue, @Nullable final Font font) {
-    throw new IllegalStateException("Evaluated shouldn't be called");
-  }
+    @Override
+    public void evaluated(@NotNull final String fullValue) {
+        myCounter++;
 
-  @Override
-  public boolean isObsolete() {
-    throw new IllegalStateException("IsObsolete shouldn't be called");
-  }
+        assertEquals(myExpected, fullValue);
+    }
 
-  @Override
-  public void errorOccurred(@NotNull final String errorMessage) {
-    throw new IllegalStateException("ErrorOccurred shouldn't be called");
-  }
 
-  public int getCounter() {
-    return myCounter;
-  }
+    @Override
+    public void evaluated(@NotNull final String fullValue, @Nullable final Font font) {
+        throw new IllegalStateException("Evaluated shouldn't be called");
+    }
+
+
+    @Override
+    public boolean isObsolete() {
+        throw new IllegalStateException("IsObsolete shouldn't be called");
+    }
+
+
+    @Override
+    public void errorOccurred(@NotNull final String errorMessage) {
+        throw new IllegalStateException("ErrorOccurred shouldn't be called");
+    }
+
+
+    public int getCounter() {
+        return myCounter;
+    }
 }

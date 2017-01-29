@@ -7,13 +7,13 @@ import static org.junit.Assert.assertTrue;
 
 public class RValueModifierHandlerImplTest {
 
-  @Test
-  public void ordinary() {
-    final RValueModifierHandlerImpl handler = new RValueModifierHandlerImpl();
+    @Test
+    public void ordinary() {
+        final RValueModifierHandlerImpl handler = new RValueModifierHandlerImpl();
 
-    handler.setLastFrameNumber(2);
+        handler.setLastFrameNumber(2);
 
-    assertTrue(handler.isModificationAvailable(2));
-    assertFalse(handler.isModificationAvailable(1));
-  }
+        assertTrue(handler.isModificationAvailable(2));
+        assertFalse(handler.isModificationAvailable(1));
+    }
 }

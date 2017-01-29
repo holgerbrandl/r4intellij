@@ -7,57 +7,62 @@ import java.io.IOException;
 
 public class RLineBreakpointUtilsTest extends PlatformTestCase {
 
-  public void testNotRFile() throws IOException {
-    final VirtualFile file = getVirtualFile(createTempFile("script.s", "print(\"ok\")"));
-    assert file != null;
+    public void testNotRFile() throws IOException {
+        final VirtualFile file = getVirtualFile(createTempFile("script.s", "print(\"ok\")"));
+        assert file != null;
 
-    assertFalse(
-      RLineBreakpointUtils.canPutAt(getProject(), file, 0)
-    );
-  }
+        assertFalse(
+                RLineBreakpointUtils.canPutAt(getProject(), file, 0)
+        );
+    }
 
-  public void testWhitespaces() throws IOException {
-    final VirtualFile file = getVirtualFile(createTempFile("script.r", "   "));
-    assert file != null;
 
-    assertFalse(
-      RLineBreakpointUtils.canPutAt(getProject(), file, 0)
-    );
-  }
+    public void testWhitespaces() throws IOException {
+        final VirtualFile file = getVirtualFile(createTempFile("script.r", "   "));
+        assert file != null;
 
-  public void testComment() throws IOException {
-    final VirtualFile file = getVirtualFile(createTempFile("script.r", "# comment"));
-    assert file != null;
+        assertFalse(
+                RLineBreakpointUtils.canPutAt(getProject(), file, 0)
+        );
+    }
 
-    assertFalse(
-      RLineBreakpointUtils.canPutAt(getProject(), file, 0)
-    );
-  }
 
-  public void testLeftBrace() throws IOException {
-    final VirtualFile file = getVirtualFile(createTempFile("script.r", "{"));
-    assert file != null;
+    public void testComment() throws IOException {
+        final VirtualFile file = getVirtualFile(createTempFile("script.r", "# comment"));
+        assert file != null;
 
-    assertFalse(
-      RLineBreakpointUtils.canPutAt(getProject(), file, 0)
-    );
-  }
+        assertFalse(
+                RLineBreakpointUtils.canPutAt(getProject(), file, 0)
+        );
+    }
 
-  public void testRightBrace() throws IOException {
-    final VirtualFile file = getVirtualFile(createTempFile("script.r", "}"));
-    assert file != null;
 
-    assertFalse(
-      RLineBreakpointUtils.canPutAt(getProject(), file, 0)
-    );
-  }
+    public void testLeftBrace() throws IOException {
+        final VirtualFile file = getVirtualFile(createTempFile("script.r", "{"));
+        assert file != null;
 
-  public void testOk() throws IOException {
-    final VirtualFile file = getVirtualFile(createTempFile("script.r", "print(\"ok\")"));
-    assert file != null;
+        assertFalse(
+                RLineBreakpointUtils.canPutAt(getProject(), file, 0)
+        );
+    }
 
-    assertTrue(
-      RLineBreakpointUtils.canPutAt(getProject(), file, 0)
-    );
-  }
+
+    public void testRightBrace() throws IOException {
+        final VirtualFile file = getVirtualFile(createTempFile("script.r", "}"));
+        assert file != null;
+
+        assertFalse(
+                RLineBreakpointUtils.canPutAt(getProject(), file, 0)
+        );
+    }
+
+
+    public void testOk() throws IOException {
+        final VirtualFile file = getVirtualFile(createTempFile("script.r", "print(\"ok\")"));
+        assert file != null;
+
+        assertTrue(
+                RLineBreakpointUtils.canPutAt(getProject(), file, 0)
+        );
+    }
 }

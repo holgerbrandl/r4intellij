@@ -9,65 +9,76 @@ import static org.junit.Assert.assertEquals;
 
 public class MockXValueTextRenderer implements XValuePresentation.XValueTextRenderer {
 
-  @NotNull
-  private final String myExpected;
+    @NotNull
+    private final String myExpected;
 
-  private int myCounter = 0;
+    private int myCounter = 0;
 
-  public MockXValueTextRenderer(@NotNull final String expected) {
-    myExpected = expected;
-  }
 
-  @Override
-  public void renderValue(@NotNull final String value) {
-    myCounter++;
+    public MockXValueTextRenderer(@NotNull final String expected) {
+        myExpected = expected;
+    }
 
-    assertEquals(myExpected, value);
-  }
 
-  @Override
-  public void renderStringValue(@NotNull final String value) {
-    throw new IllegalStateException("RenderStringValue shouldn't be called");
-  }
+    @Override
+    public void renderValue(@NotNull final String value) {
+        myCounter++;
 
-  @Override
-  public void renderNumericValue(@NotNull final String value) {
-    throw new IllegalStateException("RenderNumericValue shouldn't be called");
-  }
+        assertEquals(myExpected, value);
+    }
 
-  @Override
-  public void renderKeywordValue(@NotNull final String value) {
-    throw new IllegalStateException("RenderKeywordValue shouldn't be called");
-  }
 
-  @Override
-  public void renderValue(@NotNull final String value, @NotNull final TextAttributesKey key) {
-    throw new IllegalStateException("RenderValue shouldn't be called");
-  }
+    @Override
+    public void renderStringValue(@NotNull final String value) {
+        throw new IllegalStateException("RenderStringValue shouldn't be called");
+    }
 
-  @Override
-  public void renderStringValue(@NotNull final String value,
-                                @Nullable final String additionalSpecialCharsToHighlight,
-                                final int maxLength) {
-    throw new IllegalStateException("RenderStringValue shouldn't be called");
-  }
 
-  @Override
-  public void renderComment(@NotNull final String comment) {
-    throw new IllegalStateException("RenderComment shouldn't be called");
-  }
+    @Override
+    public void renderNumericValue(@NotNull final String value) {
+        throw new IllegalStateException("RenderNumericValue shouldn't be called");
+    }
 
-  @Override
-  public void renderSpecialSymbol(@NotNull final String symbol) {
-    throw new IllegalStateException("RenderSpecialSymbol shouldn't be called");
-  }
 
-  @Override
-  public void renderError(@NotNull final String error) {
-    throw new IllegalStateException("RenderError shouldn't be called");
-  }
+    @Override
+    public void renderKeywordValue(@NotNull final String value) {
+        throw new IllegalStateException("RenderKeywordValue shouldn't be called");
+    }
 
-  public int getCounter() {
-    return myCounter;
-  }
+
+    @Override
+    public void renderValue(@NotNull final String value, @NotNull final TextAttributesKey key) {
+        throw new IllegalStateException("RenderValue shouldn't be called");
+    }
+
+
+    @Override
+    public void renderStringValue(@NotNull final String value,
+                                  @Nullable final String additionalSpecialCharsToHighlight,
+                                  final int maxLength) {
+        throw new IllegalStateException("RenderStringValue shouldn't be called");
+    }
+
+
+    @Override
+    public void renderComment(@NotNull final String comment) {
+        throw new IllegalStateException("RenderComment shouldn't be called");
+    }
+
+
+    @Override
+    public void renderSpecialSymbol(@NotNull final String symbol) {
+        throw new IllegalStateException("RenderSpecialSymbol shouldn't be called");
+    }
+
+
+    @Override
+    public void renderError(@NotNull final String error) {
+        throw new IllegalStateException("RenderError shouldn't be called");
+    }
+
+
+    public int getCounter() {
+        return myCounter;
+    }
 }

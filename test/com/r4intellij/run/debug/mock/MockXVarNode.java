@@ -12,59 +12,64 @@ import static org.junit.Assert.assertFalse;
 
 public class MockXVarNode extends IllegalXValueNode {
 
-  @NotNull
-  private final String myType;
+    @NotNull
+    private final String myType;
 
-  @NotNull
-  private final String myShortValue;
+    @NotNull
+    private final String myShortValue;
 
-  @Nullable
-  private final String myFullValue;
+    @Nullable
+    private final String myFullValue;
 
-  private int myPres;
-  private int myEval;
+    private int myPres;
+    private int myEval;
 
-  public MockXVarNode(@NotNull final String type, @NotNull final String shortValue, @Nullable final String fullValue) {
-    myType = type;
-    myShortValue = shortValue;
-    myFullValue = fullValue;
 
-    myPres = 0;
-    myEval = 0;
-  }
+    public MockXVarNode(@NotNull final String type, @NotNull final String shortValue, @Nullable final String fullValue) {
+        myType = type;
+        myShortValue = shortValue;
+        myFullValue = fullValue;
 
-  @Override
-  public void setPresentation(@Nullable final Icon icon,
-                              @Nullable final String type,
-                              @NotNull final String value,
-                              final boolean hasChildren) {
-    myPres++;
-
-    assertEquals(AllIcons.Debugger.Value, icon);
-    assertEquals(myType, type);
-    assertEquals(myShortValue, value);
-    assertFalse(hasChildren);
-  }
-
-  @Override
-  public void setFullValueEvaluator(@NotNull final XFullValueEvaluator fullValueEvaluator) {
-    if (myFullValue == null) {
-      throw new IllegalStateException("SetFullValueEvaluator shouldn't be called");
+        myPres = 0;
+        myEval = 0;
     }
 
-    myEval++;
 
-    final MockXFullValueEvaluationCallback callback = new MockXFullValueEvaluationCallback(myFullValue);
-    fullValueEvaluator.startEvaluation(callback);
+    @Override
+    public void setPresentation(@Nullable final Icon icon,
+                                @Nullable final String type,
+                                @NotNull final String value,
+                                final boolean hasChildren) {
+        myPres++;
 
-    assertEquals(1, callback.getCounter());
-  }
+        assertEquals(AllIcons.Debugger.Value, icon);
+        assertEquals(myType, type);
+        assertEquals(myShortValue, value);
+        assertFalse(hasChildren);
+    }
 
-  public int getPres() {
-    return myPres;
-  }
 
-  public int getEval() {
-    return myEval;
-  }
+    @Override
+    public void setFullValueEvaluator(@NotNull final XFullValueEvaluator fullValueEvaluator) {
+        if (myFullValue == null) {
+            throw new IllegalStateException("SetFullValueEvaluator shouldn't be called");
+        }
+
+        myEval++;
+
+        final MockXFullValueEvaluationCallback callback = new MockXFullValueEvaluationCallback(myFullValue);
+        fullValueEvaluator.startEvaluation(callback);
+
+        assertEquals(1, callback.getCounter());
+    }
+
+
+    public int getPres() {
+        return myPres;
+    }
+
+
+    public int getEval() {
+        return myEval;
+    }
 }

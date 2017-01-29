@@ -89,7 +89,6 @@ public class RPackage implements Serializable {
     }
 
 
-
     public boolean isDummy() {
         return functions.isEmpty();
     }
@@ -122,7 +121,6 @@ public class RPackage implements Serializable {
     public Collection<String> getDependencies() {
         return dependencies;
     }
-
 
 
     @Override

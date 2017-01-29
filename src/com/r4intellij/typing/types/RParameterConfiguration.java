@@ -4,22 +4,22 @@ import com.r4intellij.psi.api.RExpression;
 
 public class RParameterConfiguration {
 
-  private RType myType;
-  private RExpression myValue;
+    private RType myType;
+    private RExpression myValue;
 
 
-  public RParameterConfiguration(RType type, RExpression value) {
-    myType = type;
-    myValue = value;
-  }
+    public RParameterConfiguration(RType type, RExpression value) {
+        myType = type;
+        myValue = value;
+    }
 
 
-  public RType getType() {
-    return myType;
-  }
+    public RType getType() {
+        return myType;
+    }
 
 
-  public RExpression getValue() {
-    return myValue;
-  }
+    public RExpression getValue() {
+        return myValue;
+    }
 }

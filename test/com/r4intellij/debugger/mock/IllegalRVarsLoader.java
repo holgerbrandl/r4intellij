@@ -9,9 +9,9 @@ import java.util.List;
 
 public class IllegalRVarsLoader implements RVarsLoader {
 
-  @NotNull
-  @Override
-  public List<RVar> load() throws RDebuggerException {
-    throw new IllegalStateException("Load shouldn't be called");
-  }
+    @NotNull
+    @Override
+    public List<RVar> load() throws RDebuggerException {
+        throw new IllegalStateException("Load shouldn't be called");
+    }
 }

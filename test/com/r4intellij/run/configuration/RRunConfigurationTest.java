@@ -20,123 +20,128 @@ import static org.mockito.Mockito.mock;
 
 public class RRunConfigurationTest extends PlatformTestCase {
 
-  @NotNull
-  private static final String SCRIPT_PATH = "s_path";
+    @NotNull
+    private static final String SCRIPT_PATH = "s_path";
 
-  @NotNull
-  private static final String SCRIPT_ARGS = "s_args";
+    @NotNull
+    private static final String SCRIPT_ARGS = "s_args";
 
-  @NotNull
-  private static final String WORKING_DIRECTORY_PATH = "w_path";
+    @NotNull
+    private static final String WORKING_DIRECTORY_PATH = "w_path";
 
-  @NotNull
-  private static final Map<String, String> ENVS = calculateEnvs();
+    @NotNull
+    private static final Map<String, String> ENVS = calculateEnvs();
 
-  private static final boolean PASS_PARENT_ENVS = true;
+    private static final boolean PASS_PARENT_ENVS = true;
 
-  @NotNull
-  private static final String ELEMENT_NAME = "CONFIGURATION";
+    @NotNull
+    private static final String ELEMENT_NAME = "CONFIGURATION";
 
-  @NotNull
-  private static final String SCRIPT_PATH_OPTION = "SCRIPT_PATH";
+    @NotNull
+    private static final String SCRIPT_PATH_OPTION = "SCRIPT_PATH";
 
-  @NotNull
-  private static final String SCRIPT_ARGS_OPTION = "SCRIPT_ARGS";
+    @NotNull
+    private static final String SCRIPT_ARGS_OPTION = "SCRIPT_ARGS";
 
-  @NotNull
-  private static final String WORKING_DIRECTORY_PATH_OPTION = "WORKING_DIRECTORY_PATH";
+    @NotNull
+    private static final String WORKING_DIRECTORY_PATH_OPTION = "WORKING_DIRECTORY_PATH";
 
-  @NotNull
-  private static final String PASS_PARENT_ENVS_OPTION = "PASS_PARENT_ENVS";
+    @NotNull
+    private static final String PASS_PARENT_ENVS_OPTION = "PASS_PARENT_ENVS";
 
-  private static final String ENVS_ELEMENT = "<envs><env name=\"k1\" value=\"v\" /></envs>";
+    private static final String ENVS_ELEMENT = "<envs><env name=\"k1\" value=\"v\" /></envs>";
 
-  @NotNull
-  private static final ConfigurationFactory CONFIGURATION_FACTORY = mock(ConfigurationFactory.class);
+    @NotNull
+    private static final ConfigurationFactory CONFIGURATION_FACTORY = mock(ConfigurationFactory.class);
 
-  public void testEnvsImmutability() {
-    final HashMap<String, String> envsCopy = new HashMap<String, String>(ENVS);
-    final RRunConfiguration runConfiguration = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
 
-    runConfiguration.setEnvs(envsCopy);
-    assertEquals(envsCopy, runConfiguration.getEnvs());
+    public void testEnvsImmutability() {
+        final HashMap<String, String> envsCopy = new HashMap<String, String>(ENVS);
+        final RRunConfiguration runConfiguration = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
 
-    envsCopy.put("k2", "v");
-    assertEquals(ENVS, runConfiguration.getEnvs());
-  }
+        runConfiguration.setEnvs(envsCopy);
+        assertEquals(envsCopy, runConfiguration.getEnvs());
 
-  public void testReadExternal() throws JDOMException, IOException, InvalidDataException {
-    final RRunConfiguration runConfiguration = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
+        envsCopy.put("k2", "v");
+        assertEquals(ENVS, runConfiguration.getEnvs());
+    }
 
-    final Element element = new SAXBuilder().build(
-      new StringReader(
-        "<" + ELEMENT_NAME + ">" +
-        "<option name=\"" + SCRIPT_PATH_OPTION + "\" value=\"" + SCRIPT_PATH + "\" />" +
-        "<option name=\"" + SCRIPT_ARGS_OPTION + "\" value=\"" + SCRIPT_ARGS + "\" />" +
-        "<option name=\"" + WORKING_DIRECTORY_PATH_OPTION + "\" value=\"" + WORKING_DIRECTORY_PATH + "\" />" +
-        "<option name=\"" + PASS_PARENT_ENVS_OPTION + "\" value=\"" + PASS_PARENT_ENVS + "\" />" +
-        ENVS_ELEMENT +
-        "</" + ELEMENT_NAME + ">"
-      )
-    ).getRootElement();
 
-    runConfiguration.readExternal(element);
+    public void testReadExternal() throws JDOMException, IOException, InvalidDataException {
+        final RRunConfiguration runConfiguration = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
 
-    assertEquals(SCRIPT_PATH, runConfiguration.getScriptPath());
-    assertEquals(SCRIPT_ARGS, runConfiguration.getScriptArgs());
-    assertEquals(WORKING_DIRECTORY_PATH, runConfiguration.getWorkingDirectoryPath());
-    assertEquals(ENVS, runConfiguration.getEnvs());
-    assertEquals(PASS_PARENT_ENVS, runConfiguration.isPassParentEnvs());
-  }
+        final Element element = new SAXBuilder().build(
+                new StringReader(
+                        "<" + ELEMENT_NAME + ">" +
+                                "<option name=\"" + SCRIPT_PATH_OPTION + "\" value=\"" + SCRIPT_PATH + "\" />" +
+                                "<option name=\"" + SCRIPT_ARGS_OPTION + "\" value=\"" + SCRIPT_ARGS + "\" />" +
+                                "<option name=\"" + WORKING_DIRECTORY_PATH_OPTION + "\" value=\"" + WORKING_DIRECTORY_PATH + "\" />" +
+                                "<option name=\"" + PASS_PARENT_ENVS_OPTION + "\" value=\"" + PASS_PARENT_ENVS + "\" />" +
+                                ENVS_ELEMENT +
+                                "</" + ELEMENT_NAME + ">"
+                )
+        ).getRootElement();
 
-  public void testWriteExternal() throws WriteExternalException {
-    final RRunConfiguration runConfiguration = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
-    runConfiguration.setScriptPath(SCRIPT_PATH);
-    runConfiguration.setScriptArgs(SCRIPT_ARGS);
-    runConfiguration.setWorkingDirectoryPath(WORKING_DIRECTORY_PATH);
-    runConfiguration.setEnvs(ENVS);
-    runConfiguration.setPassParentEnvs(PASS_PARENT_ENVS);
+        runConfiguration.readExternal(element);
 
-    final Element element = new Element(ELEMENT_NAME);
+        assertEquals(SCRIPT_PATH, runConfiguration.getScriptPath());
+        assertEquals(SCRIPT_ARGS, runConfiguration.getScriptArgs());
+        assertEquals(WORKING_DIRECTORY_PATH, runConfiguration.getWorkingDirectoryPath());
+        assertEquals(ENVS, runConfiguration.getEnvs());
+        assertEquals(PASS_PARENT_ENVS, runConfiguration.isPassParentEnvs());
+    }
 
-    runConfiguration.writeExternal(element);
 
-    assertEquals(
-      "<" + ELEMENT_NAME + ">" +
-      "<option name=\"" + SCRIPT_PATH_OPTION + "\" value=\"" + SCRIPT_PATH + "\" />" +
-      "<option name=\"" + SCRIPT_ARGS_OPTION + "\" value=\"" + SCRIPT_ARGS + "\" />" +
-      "<option name=\"" + WORKING_DIRECTORY_PATH_OPTION + "\" value=\"" + WORKING_DIRECTORY_PATH + "\" />" +
-      "<option name=\"" + PASS_PARENT_ENVS_OPTION + "\" value=\"" + PASS_PARENT_ENVS + "\" />" +
-      ENVS_ELEMENT +
-      "</" + ELEMENT_NAME + ">",
-      new XMLOutputter().outputString(element)
-    );
-  }
+    public void testWriteExternal() throws WriteExternalException {
+        final RRunConfiguration runConfiguration = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
+        runConfiguration.setScriptPath(SCRIPT_PATH);
+        runConfiguration.setScriptArgs(SCRIPT_ARGS);
+        runConfiguration.setWorkingDirectoryPath(WORKING_DIRECTORY_PATH);
+        runConfiguration.setEnvs(ENVS);
+        runConfiguration.setPassParentEnvs(PASS_PARENT_ENVS);
 
-  public void testCopyParams() {
-    final RRunConfiguration runConfiguration1 = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
-    runConfiguration1.setScriptPath(SCRIPT_PATH);
-    runConfiguration1.setScriptArgs(SCRIPT_ARGS);
-    runConfiguration1.setWorkingDirectoryPath(WORKING_DIRECTORY_PATH);
-    runConfiguration1.setEnvs(ENVS);
-    runConfiguration1.setPassParentEnvs(PASS_PARENT_ENVS);
+        final Element element = new Element(ELEMENT_NAME);
 
-    final RRunConfiguration runConfiguration2 = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
+        runConfiguration.writeExternal(element);
 
-    RRunConfiguration.copyParams(runConfiguration1, runConfiguration2);
+        assertEquals(
+                "<" + ELEMENT_NAME + ">" +
+                        "<option name=\"" + SCRIPT_PATH_OPTION + "\" value=\"" + SCRIPT_PATH + "\" />" +
+                        "<option name=\"" + SCRIPT_ARGS_OPTION + "\" value=\"" + SCRIPT_ARGS + "\" />" +
+                        "<option name=\"" + WORKING_DIRECTORY_PATH_OPTION + "\" value=\"" + WORKING_DIRECTORY_PATH + "\" />" +
+                        "<option name=\"" + PASS_PARENT_ENVS_OPTION + "\" value=\"" + PASS_PARENT_ENVS + "\" />" +
+                        ENVS_ELEMENT +
+                        "</" + ELEMENT_NAME + ">",
+                new XMLOutputter().outputString(element)
+        );
+    }
 
-    assertEquals(SCRIPT_PATH, runConfiguration2.getScriptPath());
-    assertEquals(SCRIPT_ARGS, runConfiguration2.getScriptArgs());
-    assertEquals(WORKING_DIRECTORY_PATH, runConfiguration2.getWorkingDirectoryPath());
-    assertEquals(ENVS, runConfiguration2.getEnvs());
-    assertEquals(true, runConfiguration2.isPassParentEnvs());
-  }
 
-  @NotNull
-  private static Map<String, String> calculateEnvs() {
-    final Map<String, String> envs = new HashMap<String, String>();
-    envs.put("k1", "v");
+    public void testCopyParams() {
+        final RRunConfiguration runConfiguration1 = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
+        runConfiguration1.setScriptPath(SCRIPT_PATH);
+        runConfiguration1.setScriptArgs(SCRIPT_ARGS);
+        runConfiguration1.setWorkingDirectoryPath(WORKING_DIRECTORY_PATH);
+        runConfiguration1.setEnvs(ENVS);
+        runConfiguration1.setPassParentEnvs(PASS_PARENT_ENVS);
 
-    return Collections.unmodifiableMap(envs);
-  }
+        final RRunConfiguration runConfiguration2 = new RRunConfiguration(getProject(), CONFIGURATION_FACTORY);
+
+        RRunConfiguration.copyParams(runConfiguration1, runConfiguration2);
+
+        assertEquals(SCRIPT_PATH, runConfiguration2.getScriptPath());
+        assertEquals(SCRIPT_ARGS, runConfiguration2.getScriptArgs());
+        assertEquals(WORKING_DIRECTORY_PATH, runConfiguration2.getWorkingDirectoryPath());
+        assertEquals(ENVS, runConfiguration2.getEnvs());
+        assertEquals(true, runConfiguration2.isPassParentEnvs());
+    }
+
+
+    @NotNull
+    private static Map<String, String> calculateEnvs() {
+        final Map<String, String> envs = new HashMap<String, String>();
+        envs.put("k1", "v");
+
+        return Collections.unmodifiableMap(envs);
+    }
 }

@@ -1,4 +1,3 @@
-
 package com.r4intellij.inspections;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;

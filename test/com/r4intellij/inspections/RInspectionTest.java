@@ -5,12 +5,13 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class RInspectionTest extends RTestCase {
 
-  protected void doTest(@NotNull String filename) {
-    myFixture.configureByFile(filename);
-    myFixture.enableInspections(getInspection());
-    myFixture.testHighlighting(true, false, false, filename);
-  }
+    protected void doTest(@NotNull String filename) {
+        myFixture.configureByFile(filename);
+        myFixture.enableInspections(getInspection());
+        myFixture.testHighlighting(true, false, false, filename);
+    }
 
-  @NotNull
-  abstract Class<? extends RLocalInspection> getInspection();
+
+    @NotNull
+    abstract Class<? extends RLocalInspection> getInspection();
 }

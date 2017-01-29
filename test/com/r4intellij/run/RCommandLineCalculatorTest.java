@@ -17,78 +17,82 @@ import static org.mockito.Mockito.when;
 
 public class RCommandLineCalculatorTest {
 
-  @NotNull
-  private static final String INTERPRETER_PATH = "/usr/bin/R";
+    @NotNull
+    private static final String INTERPRETER_PATH = "/usr/bin/R";
 
-  @NotNull
-  private static final String WORKING_DIRECTORY_PATH = "/home/user";
+    @NotNull
+    private static final String WORKING_DIRECTORY_PATH = "/home/user";
 
-  @NotNull
-  private static final Map<String, String> ENVS = calculateEnvs();
+    @NotNull
+    private static final Map<String, String> ENVS = calculateEnvs();
 
-  @Test
-  public void ordinary() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    final String arg1 = "ARG1";
-    final String arg2 = "ARG2";
+    @Test
+    public void ordinary() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    when(runConfiguration.getScriptArgs()).thenReturn(arg1 + " " + arg2);
-    when(runConfiguration.getWorkingDirectoryPath()).thenReturn(WORKING_DIRECTORY_PATH);
-    when(runConfiguration.getEnvs()).thenReturn(ENVS);
-    when(runConfiguration.isPassParentEnvs()).thenReturn(true);
+        final String arg1 = "ARG1";
+        final String arg2 = "ARG2";
 
-    final GeneralCommandLine commandLine = RCommandLineCalculator.calculateCommandLine(INTERPRETER_PATH, runConfiguration);
+        when(runConfiguration.getScriptArgs()).thenReturn(arg1 + " " + arg2);
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn(WORKING_DIRECTORY_PATH);
+        when(runConfiguration.getEnvs()).thenReturn(ENVS);
+        when(runConfiguration.isPassParentEnvs()).thenReturn(true);
 
-    assertEquals(
-      Arrays.asList(NO_SAVE_PARAMETER, QUIET_PARAMETER, ARGS_PARAMETER, arg1, arg2),
-      commandLine.getParametersList().getList()
-    );
-    assertEquals(WORKING_DIRECTORY_PATH, commandLine.getWorkDirectory().getAbsolutePath());
-    assertEquals(ENVS, commandLine.getEnvironment());
-    assertEquals(ParentEnvironmentType.CONSOLE, commandLine.getParentEnvironmentType());
-  }
+        final GeneralCommandLine commandLine = RCommandLineCalculator.calculateCommandLine(INTERPRETER_PATH, runConfiguration);
 
-  @Test
-  public void disableScriptArgs() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+        assertEquals(
+                Arrays.asList(NO_SAVE_PARAMETER, QUIET_PARAMETER, ARGS_PARAMETER, arg1, arg2),
+                commandLine.getParametersList().getList()
+        );
+        assertEquals(WORKING_DIRECTORY_PATH, commandLine.getWorkDirectory().getAbsolutePath());
+        assertEquals(ENVS, commandLine.getEnvironment());
+        assertEquals(ParentEnvironmentType.CONSOLE, commandLine.getParentEnvironmentType());
+    }
 
-    when(runConfiguration.getScriptArgs()).thenReturn("");
-    when(runConfiguration.getWorkingDirectoryPath()).thenReturn(WORKING_DIRECTORY_PATH);
-    when(runConfiguration.getEnvs()).thenReturn(ENVS);
-    when(runConfiguration.isPassParentEnvs()).thenReturn(true);
 
-    final GeneralCommandLine commandLine = RCommandLineCalculator.calculateCommandLine(INTERPRETER_PATH, runConfiguration);
+    @Test
+    public void disableScriptArgs() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    assertEquals(DEFAULT_PARAMETERS, commandLine.getParametersList().getList());
-    assertEquals(WORKING_DIRECTORY_PATH, commandLine.getWorkDirectory().getAbsolutePath());
-    assertEquals(ENVS, commandLine.getEnvironment());
-    assertEquals(ParentEnvironmentType.CONSOLE, commandLine.getParentEnvironmentType());
-  }
+        when(runConfiguration.getScriptArgs()).thenReturn("");
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn(WORKING_DIRECTORY_PATH);
+        when(runConfiguration.getEnvs()).thenReturn(ENVS);
+        when(runConfiguration.isPassParentEnvs()).thenReturn(true);
 
-  @Test
-  public void disableParentEnvs() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+        final GeneralCommandLine commandLine = RCommandLineCalculator.calculateCommandLine(INTERPRETER_PATH, runConfiguration);
 
-    when(runConfiguration.getScriptArgs()).thenReturn("");
-    when(runConfiguration.getWorkingDirectoryPath()).thenReturn(WORKING_DIRECTORY_PATH);
-    when(runConfiguration.getEnvs()).thenReturn(ENVS);
-    when(runConfiguration.isPassParentEnvs()).thenReturn(false);
+        assertEquals(DEFAULT_PARAMETERS, commandLine.getParametersList().getList());
+        assertEquals(WORKING_DIRECTORY_PATH, commandLine.getWorkDirectory().getAbsolutePath());
+        assertEquals(ENVS, commandLine.getEnvironment());
+        assertEquals(ParentEnvironmentType.CONSOLE, commandLine.getParentEnvironmentType());
+    }
 
-    final GeneralCommandLine commandLine = RCommandLineCalculator.calculateCommandLine(INTERPRETER_PATH, runConfiguration);
 
-    assertEquals(DEFAULT_PARAMETERS, commandLine.getParametersList().getList());
-    assertEquals(WORKING_DIRECTORY_PATH, commandLine.getWorkDirectory().getAbsolutePath());
-    assertEquals(ENVS, commandLine.getEnvironment());
-    assertEquals(ParentEnvironmentType.NONE, commandLine.getParentEnvironmentType());
-  }
+    @Test
+    public void disableParentEnvs() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-  @NotNull
-  private static Map<String, String> calculateEnvs() {
-    final Map<String, String> envs = new HashMap<String, String>();
-    envs.put("K1", "V1");
-    envs.put("K2", "V2");
+        when(runConfiguration.getScriptArgs()).thenReturn("");
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn(WORKING_DIRECTORY_PATH);
+        when(runConfiguration.getEnvs()).thenReturn(ENVS);
+        when(runConfiguration.isPassParentEnvs()).thenReturn(false);
 
-    return envs;
-  }
+        final GeneralCommandLine commandLine = RCommandLineCalculator.calculateCommandLine(INTERPRETER_PATH, runConfiguration);
+
+        assertEquals(DEFAULT_PARAMETERS, commandLine.getParametersList().getList());
+        assertEquals(WORKING_DIRECTORY_PATH, commandLine.getWorkDirectory().getAbsolutePath());
+        assertEquals(ENVS, commandLine.getEnvironment());
+        assertEquals(ParentEnvironmentType.NONE, commandLine.getParentEnvironmentType());
+    }
+
+
+    @NotNull
+    private static Map<String, String> calculateEnvs() {
+        final Map<String, String> envs = new HashMap<String, String>();
+        envs.put("K1", "V1");
+        envs.put("K2", "V2");
+
+        return envs;
+    }
 }

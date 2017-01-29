@@ -16,138 +16,143 @@ import java.util.Map;
 
 public class RFunctionDefinitionProcessorTest extends PlatformTestCase {
 
-  public void testNotFunction() throws IOException {
-    final String text = "x <- c(1:3)";
-    final RFunctionDescriptor root = calculateRootDescriptor(text);
+    public void testNotFunction() throws IOException {
+        final String text = "x <- c(1:3)";
+        final RFunctionDescriptor root = calculateRootDescriptor(text);
 
-    assertTrue(root.getChildren().isEmpty());
-  }
+        assertTrue(root.getChildren().isEmpty());
+    }
 
-  public void testFunction() throws IOException {
-    final String text = "f <- function() {\nprint(\"ok\")\n}";
-    final RFunctionDescriptor root = calculateRootDescriptor(text);
-    final Map<String, List<RFunctionDescriptor>> rootChildren = root.getChildren();
 
-    assertEquals(1, rootChildren.size());
-    assertEquals(1, rootChildren.get("f").size());
+    public void testFunction() throws IOException {
+        final String text = "f <- function() {\nprint(\"ok\")\n}";
+        final RFunctionDescriptor root = calculateRootDescriptor(text);
+        final Map<String, List<RFunctionDescriptor>> rootChildren = root.getChildren();
 
-    final RFunctionDescriptor f = rootChildren.get("f").get(0);
+        assertEquals(1, rootChildren.size());
+        assertEquals(1, rootChildren.get("f").size());
 
-    assertEquals("f", f.getName());
-    assertEquals(root, f.getParent());
-    assertEquals(0, f.getStartLine());
-    assertEquals(2, f.getEndLine());
-    assertTrue(f.getChildren().isEmpty());
-  }
+        final RFunctionDescriptor f = rootChildren.get("f").get(0);
 
-  public void testInnerFunction() throws IOException {
-    final String text = "f <- function() {\nd <- function(x) {\nx\n}\nprint(\"ok\")\n}";
-    final RFunctionDescriptor root = calculateRootDescriptor(text);
-    final Map<String, List<RFunctionDescriptor>> rootChildren = root.getChildren();
+        assertEquals("f", f.getName());
+        assertEquals(root, f.getParent());
+        assertEquals(0, f.getStartLine());
+        assertEquals(2, f.getEndLine());
+        assertTrue(f.getChildren().isEmpty());
+    }
 
-    assertEquals(1, rootChildren.size());
-    assertEquals(1, rootChildren.get("f").size());
 
-    final RFunctionDescriptor f = rootChildren.get("f").get(0);
+    public void testInnerFunction() throws IOException {
+        final String text = "f <- function() {\nd <- function(x) {\nx\n}\nprint(\"ok\")\n}";
+        final RFunctionDescriptor root = calculateRootDescriptor(text);
+        final Map<String, List<RFunctionDescriptor>> rootChildren = root.getChildren();
 
-    assertEquals("f", f.getName());
-    assertEquals(root, f.getParent());
-    assertEquals(0, f.getStartLine());
-    assertEquals(5, f.getEndLine());
-    assertEquals(1, f.getChildren().size());
-    assertEquals(1, f.getChildren().get("d").size());
+        assertEquals(1, rootChildren.size());
+        assertEquals(1, rootChildren.get("f").size());
 
-    final RFunctionDescriptor d = f.getChildren().get("d").get(0);
+        final RFunctionDescriptor f = rootChildren.get("f").get(0);
 
-    assertEquals("d", d.getName());
-    assertEquals(f, d.getParent());
-    assertEquals(1, d.getStartLine());
-    assertEquals(3, d.getEndLine());
-    assertTrue(d.getChildren().isEmpty());
-  }
+        assertEquals("f", f.getName());
+        assertEquals(root, f.getParent());
+        assertEquals(0, f.getStartLine());
+        assertEquals(5, f.getEndLine());
+        assertEquals(1, f.getChildren().size());
+        assertEquals(1, f.getChildren().get("d").size());
 
-  public void testInnerInnerFunction() throws IOException {
-    final String text = "f <- function() {\nd <- function(x) {\ng <- function(x) {\nx + 1\n}\nx\n}\nprint(\"ok\")\n}";
-    final RFunctionDescriptor root = calculateRootDescriptor(text);
-    final Map<String, List<RFunctionDescriptor>> rootChildren = root.getChildren();
+        final RFunctionDescriptor d = f.getChildren().get("d").get(0);
 
-    assertEquals(1, rootChildren.size());
-    assertEquals(1, rootChildren.get("f").size());
+        assertEquals("d", d.getName());
+        assertEquals(f, d.getParent());
+        assertEquals(1, d.getStartLine());
+        assertEquals(3, d.getEndLine());
+        assertTrue(d.getChildren().isEmpty());
+    }
 
-    final RFunctionDescriptor f = rootChildren.get("f").get(0);
 
-    assertEquals("f", f.getName());
-    assertEquals(root, f.getParent());
-    assertEquals(0, f.getStartLine());
-    assertEquals(8, f.getEndLine());
-    assertEquals(1, f.getChildren().size());
-    assertEquals(1, f.getChildren().get("d").size());
+    public void testInnerInnerFunction() throws IOException {
+        final String text = "f <- function() {\nd <- function(x) {\ng <- function(x) {\nx + 1\n}\nx\n}\nprint(\"ok\")\n}";
+        final RFunctionDescriptor root = calculateRootDescriptor(text);
+        final Map<String, List<RFunctionDescriptor>> rootChildren = root.getChildren();
 
-    final RFunctionDescriptor d = f.getChildren().get("d").get(0);
+        assertEquals(1, rootChildren.size());
+        assertEquals(1, rootChildren.get("f").size());
 
-    assertEquals("d", d.getName());
-    assertEquals(f, d.getParent());
-    assertEquals(1, d.getStartLine());
-    assertEquals(6, d.getEndLine());
-    assertEquals(1, d.getChildren().size());
-    assertEquals(1, d.getChildren().get("g").size());
+        final RFunctionDescriptor f = rootChildren.get("f").get(0);
 
-    final RFunctionDescriptor g = d.getChildren().get("g").get(0);
+        assertEquals("f", f.getName());
+        assertEquals(root, f.getParent());
+        assertEquals(0, f.getStartLine());
+        assertEquals(8, f.getEndLine());
+        assertEquals(1, f.getChildren().size());
+        assertEquals(1, f.getChildren().get("d").size());
 
-    assertEquals("g", g.getName());
-    assertEquals(d, g.getParent());
-    assertEquals(2, g.getStartLine());
-    assertEquals(4, g.getEndLine());
-    assertTrue(g.getChildren().isEmpty());
-  }
+        final RFunctionDescriptor d = f.getChildren().get("d").get(0);
 
-  public void testOverriddenFunction() throws IOException {
-    final String text = "f <- function() {\nprint(\"ok\")\n}\n\nf <- function() {\nprint(\"ok\")\n}";
-    final RFunctionDescriptor root = calculateRootDescriptor(text);
-    final Map<String, List<RFunctionDescriptor>> rootChildren = root.getChildren();
+        assertEquals("d", d.getName());
+        assertEquals(f, d.getParent());
+        assertEquals(1, d.getStartLine());
+        assertEquals(6, d.getEndLine());
+        assertEquals(1, d.getChildren().size());
+        assertEquals(1, d.getChildren().get("g").size());
 
-    assertEquals(1, rootChildren.size());
-    assertEquals(2, rootChildren.get("f").size());
+        final RFunctionDescriptor g = d.getChildren().get("g").get(0);
 
-    final RFunctionDescriptor f1 = rootChildren.get("f").get(0);
+        assertEquals("g", g.getName());
+        assertEquals(d, g.getParent());
+        assertEquals(2, g.getStartLine());
+        assertEquals(4, g.getEndLine());
+        assertTrue(g.getChildren().isEmpty());
+    }
 
-    assertEquals("f", f1.getName());
-    assertEquals(root, f1.getParent());
-    assertEquals(0, f1.getStartLine());
-    assertEquals(2, f1.getEndLine());
-    assertTrue(f1.getChildren().isEmpty());
 
-    final RFunctionDescriptor f2 = rootChildren.get("f").get(1);
+    public void testOverriddenFunction() throws IOException {
+        final String text = "f <- function() {\nprint(\"ok\")\n}\n\nf <- function() {\nprint(\"ok\")\n}";
+        final RFunctionDescriptor root = calculateRootDescriptor(text);
+        final Map<String, List<RFunctionDescriptor>> rootChildren = root.getChildren();
 
-    assertEquals("f", f2.getName());
-    assertEquals(root, f2.getParent());
-    assertEquals(4, f2.getStartLine());
-    assertEquals(6, f2.getEndLine());
-    assertTrue(f2.getChildren().isEmpty());
-  }
+        assertEquals(1, rootChildren.size());
+        assertEquals(2, rootChildren.get("f").size());
 
-  @NotNull
-  private RFunctionDescriptor calculateRootDescriptor(@NotNull final String text) throws IOException {
-    final VirtualFile virtualFile = getVirtualFile(createTempFile("script.r", text));
-    assert virtualFile != null;
+        final RFunctionDescriptor f1 = rootChildren.get("f").get(0);
 
-    final PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(virtualFile);
-    assert psiFile != null;
+        assertEquals("f", f1.getName());
+        assertEquals(root, f1.getParent());
+        assertEquals(0, f1.getStartLine());
+        assertEquals(2, f1.getEndLine());
+        assertTrue(f1.getChildren().isEmpty());
 
-    final Document document = PsiDocumentManager.getInstance(getProject()).getDocument(psiFile);
-    assert document != null;
+        final RFunctionDescriptor f2 = rootChildren.get("f").get(1);
 
-    final RFunctionDefinitionProcessor processor = new RFunctionDefinitionProcessor(document);
+        assertEquals("f", f2.getName());
+        assertEquals(root, f2.getParent());
+        assertEquals(4, f2.getStartLine());
+        assertEquals(6, f2.getEndLine());
+        assertTrue(f2.getChildren().isEmpty());
+    }
 
-    PsiTreeUtil.processElements(processor, psiFile);
 
-    final RFunctionDescriptor root = processor.getRoot();
+    @NotNull
+    private RFunctionDescriptor calculateRootDescriptor(@NotNull final String text) throws IOException {
+        final VirtualFile virtualFile = getVirtualFile(createTempFile("script.r", text));
+        assert virtualFile != null;
 
-    assertEquals(RFunctionConstants.MAIN_FUNCTION_NAME, root.getName());
-    assertEquals(null, root.getParent());
-    assertEquals(0, root.getStartLine());
-    assertEquals(Integer.MAX_VALUE, root.getEndLine());
+        final PsiFile psiFile = PsiManager.getInstance(getProject()).findFile(virtualFile);
+        assert psiFile != null;
 
-    return root;
-  }
+        final Document document = PsiDocumentManager.getInstance(getProject()).getDocument(psiFile);
+        assert document != null;
+
+        final RFunctionDefinitionProcessor processor = new RFunctionDefinitionProcessor(document);
+
+        PsiTreeUtil.processElements(processor, psiFile);
+
+        final RFunctionDescriptor root = processor.getRoot();
+
+        assertEquals(RFunctionConstants.MAIN_FUNCTION_NAME, root.getName());
+        assertEquals(null, root.getParent());
+        assertEquals(0, root.getStartLine());
+        assertEquals(Integer.MAX_VALUE, root.getEndLine());
+
+        return root;
+    }
 }

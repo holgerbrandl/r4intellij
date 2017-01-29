@@ -9,136 +9,146 @@ import static org.mockito.Mockito.*;
 
 public class RRunConfigurationUtilsTest {
 
-  @Test(expected = ConfigurationException.class)
-  public void checkConfigurationWithoutScriptPath() throws ConfigurationException {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+    @Test(expected = ConfigurationException.class)
+    public void checkConfigurationWithoutScriptPath() throws ConfigurationException {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    when(runConfiguration.getScriptPath()).thenReturn("");
+        when(runConfiguration.getScriptPath()).thenReturn("");
 
-    RRunConfigurationUtils.checkConfiguration(runConfiguration);
-  }
+        RRunConfigurationUtils.checkConfiguration(runConfiguration);
+    }
 
-  @Test(expected = ConfigurationException.class)
-  public void checkConfigurationWithoutWorkingDirectoryPath() throws ConfigurationException {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    when(runConfiguration.getWorkingDirectoryPath()).thenReturn("");
+    @Test(expected = ConfigurationException.class)
+    public void checkConfigurationWithoutWorkingDirectoryPath() throws ConfigurationException {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    RRunConfigurationUtils.checkConfiguration(runConfiguration);
-  }
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn("");
 
-  @Test
-  public void checkConfiguration() throws ConfigurationException {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+        RRunConfigurationUtils.checkConfiguration(runConfiguration);
+    }
 
-    when(runConfiguration.getScriptPath()).thenReturn("s_p");
-    when(runConfiguration.getWorkingDirectoryPath()).thenReturn("w_d_p");
 
-    RRunConfigurationUtils.checkConfiguration(runConfiguration);
+    @Test
+    public void checkConfiguration() throws ConfigurationException {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    verify(runConfiguration, times(1)).getScriptPath();
-    verify(runConfiguration, times(1)).getWorkingDirectoryPath();
-    verifyNoMoreInteractions(runConfiguration);
-  }
+        when(runConfiguration.getScriptPath()).thenReturn("s_p");
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn("w_d_p");
 
-  @Test
-  public void suggestedNameForUnknownScriptPath() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+        RRunConfigurationUtils.checkConfiguration(runConfiguration);
 
-    when(runConfiguration.getScriptPath()).thenReturn("");
+        verify(runConfiguration, times(1)).getScriptPath();
+        verify(runConfiguration, times(1)).getWorkingDirectoryPath();
+        verifyNoMoreInteractions(runConfiguration);
+    }
 
-    assertNull(RRunConfigurationUtils.suggestedName(runConfiguration));
 
-    verify(runConfiguration, times(1)).getScriptPath();
-    verifyNoMoreInteractions(runConfiguration);
-  }
+    @Test
+    public void suggestedNameForUnknownScriptPath() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-  @Test
-  public void suggestedNameForNotRScript() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+        when(runConfiguration.getScriptPath()).thenReturn("");
 
-    when(runConfiguration.getScriptPath()).thenReturn("script.s");
+        assertNull(RRunConfigurationUtils.suggestedName(runConfiguration));
 
-    assertEquals("script.s", RRunConfigurationUtils.suggestedName(runConfiguration));
+        verify(runConfiguration, times(1)).getScriptPath();
+        verifyNoMoreInteractions(runConfiguration);
+    }
 
-    verify(runConfiguration, times(1)).getScriptPath();
-    verifyNoMoreInteractions(runConfiguration);
-  }
 
-  @Test
-  public void suggestedNameForRScript() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+    @Test
+    public void suggestedNameForNotRScript() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    when(runConfiguration.getScriptPath()).thenReturn("script.r");
+        when(runConfiguration.getScriptPath()).thenReturn("script.s");
 
-    assertEquals("script", RRunConfigurationUtils.suggestedName(runConfiguration));
+        assertEquals("script.s", RRunConfigurationUtils.suggestedName(runConfiguration));
 
-    verify(runConfiguration, times(1)).getScriptPath();
-    verifyNoMoreInteractions(runConfiguration);
-  }
+        verify(runConfiguration, times(1)).getScriptPath();
+        verifyNoMoreInteractions(runConfiguration);
+    }
 
-  @Test
-  public void suggestedWorkingDirectoryPathForUnknownScriptPath() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    when(runConfiguration.getScriptPath()).thenReturn("");
+    @Test
+    public void suggestedNameForRScript() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    assertNull(RRunConfigurationUtils.suggestedWorkingDirectoryPath(runConfiguration));
+        when(runConfiguration.getScriptPath()).thenReturn("script.r");
 
-    verify(runConfiguration, times(1)).getScriptPath();
-    verifyNoMoreInteractions(runConfiguration);
-  }
+        assertEquals("script", RRunConfigurationUtils.suggestedName(runConfiguration));
 
-  @Test
-  public void suggestedWorkingDirectoryPath() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+        verify(runConfiguration, times(1)).getScriptPath();
+        verifyNoMoreInteractions(runConfiguration);
+    }
 
-    when(runConfiguration.getScriptPath()).thenReturn("home/script.r");
 
-    assertEquals("home", RRunConfigurationUtils.suggestedWorkingDirectoryPath(runConfiguration));
+    @Test
+    public void suggestedWorkingDirectoryPathForUnknownScriptPath() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    verify(runConfiguration, times(1)).getScriptPath();
-    verifyNoMoreInteractions(runConfiguration);
-  }
+        when(runConfiguration.getScriptPath()).thenReturn("");
 
-  @Test
-  public void setSuggestedWorkingDirectoryPathWhenNotSpecified() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+        assertNull(RRunConfigurationUtils.suggestedWorkingDirectoryPath(runConfiguration));
 
-    when(runConfiguration.getScriptPath()).thenReturn("home/script.r");
-    when(runConfiguration.getWorkingDirectoryPath()).thenReturn("");
+        verify(runConfiguration, times(1)).getScriptPath();
+        verifyNoMoreInteractions(runConfiguration);
+    }
 
-    RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(runConfiguration);
 
-    verify(runConfiguration, times(1)).getScriptPath();
-    verify(runConfiguration, times(1)).getWorkingDirectoryPath();
-    verify(runConfiguration, times(1)).setWorkingDirectoryPath("home");
-    verifyNoMoreInteractions(runConfiguration);
-  }
+    @Test
+    public void suggestedWorkingDirectoryPath() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-  @Test
-  public void setSuggestedWorkingDirectoryPathWhenSpecified() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+        when(runConfiguration.getScriptPath()).thenReturn("home/script.r");
 
-    when(runConfiguration.getWorkingDirectoryPath()).thenReturn("home");
+        assertEquals("home", RRunConfigurationUtils.suggestedWorkingDirectoryPath(runConfiguration));
 
-    RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(runConfiguration);
+        verify(runConfiguration, times(1)).getScriptPath();
+        verifyNoMoreInteractions(runConfiguration);
+    }
 
-    verify(runConfiguration, times(1)).getWorkingDirectoryPath();
-    verifyNoMoreInteractions(runConfiguration);
-  }
 
-  @Test
-  public void setSuggestedWorkingDirectoryPathWhenCouldNotBeSuggested() {
-    final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+    @Test
+    public void setSuggestedWorkingDirectoryPathWhenNotSpecified() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
 
-    when(runConfiguration.getScriptPath()).thenReturn("");
-    when(runConfiguration.getWorkingDirectoryPath()).thenReturn("");
+        when(runConfiguration.getScriptPath()).thenReturn("home/script.r");
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn("");
 
-    RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(runConfiguration);
+        RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(runConfiguration);
 
-    verify(runConfiguration, times(1)).getScriptPath();
-    verify(runConfiguration, times(1)).getWorkingDirectoryPath();
-    verifyNoMoreInteractions(runConfiguration);
-  }
+        verify(runConfiguration, times(1)).getScriptPath();
+        verify(runConfiguration, times(1)).getWorkingDirectoryPath();
+        verify(runConfiguration, times(1)).setWorkingDirectoryPath("home");
+        verifyNoMoreInteractions(runConfiguration);
+    }
+
+
+    @Test
+    public void setSuggestedWorkingDirectoryPathWhenSpecified() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn("home");
+
+        RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(runConfiguration);
+
+        verify(runConfiguration, times(1)).getWorkingDirectoryPath();
+        verifyNoMoreInteractions(runConfiguration);
+    }
+
+
+    @Test
+    public void setSuggestedWorkingDirectoryPathWhenCouldNotBeSuggested() {
+        final RRunConfiguration runConfiguration = mock(RRunConfiguration.class);
+
+        when(runConfiguration.getScriptPath()).thenReturn("");
+        when(runConfiguration.getWorkingDirectoryPath()).thenReturn("");
+
+        RRunConfigurationUtils.setSuggestedWorkingDirectoryPathIfNotSpecified(runConfiguration);
+
+        verify(runConfiguration, times(1)).getScriptPath();
+        verify(runConfiguration, times(1)).getWorkingDirectoryPath();
+        verifyNoMoreInteractions(runConfiguration);
+    }
 }

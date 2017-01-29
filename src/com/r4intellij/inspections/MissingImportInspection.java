@@ -1,4 +1,3 @@
-
 package com.r4intellij.inspections;
 
 import com.google.common.base.Functions;
@@ -41,6 +40,7 @@ public class MissingImportInspection extends LocalInspectionTool {
     public String getDisplayName() {
         return "Missing package import";
     }
+
 
     @Override
     public boolean isEnabledByDefault() {

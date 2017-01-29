@@ -10,31 +10,35 @@ import static com.r4intellij.debugger.function.RTraceAndDebugUtilsTest.NO_FUNCTI
 
 public abstract class MockRExecutor implements RExecutor {
 
-  @NotNull
-  public static final String LS_FUNCTIONS_ERROR = "error_ls";
+    @NotNull
+    public static final String LS_FUNCTIONS_ERROR = "error_ls";
 
-  private int myCounter = 0;
+    private int myCounter = 0;
 
-  @NotNull
-  @Override
-  public RExecutionResult execute(@NotNull final String command) throws RDebuggerException {
-    myCounter++;
 
-    if (useNoFunctionsResult() && command.equals(LS_FUNCTIONS_COMMAND)) {
-      return NO_FUNCTIONS_RESULT;
+    @NotNull
+    @Override
+    public RExecutionResult execute(@NotNull final String command) throws RDebuggerException {
+        myCounter++;
+
+        if (useNoFunctionsResult() && command.equals(LS_FUNCTIONS_COMMAND)) {
+            return NO_FUNCTIONS_RESULT;
+        }
+
+        return doExecute(command);
     }
 
-    return doExecute(command);
-  }
 
-  public int getCounter() {
-    return myCounter;
-  }
+    public int getCounter() {
+        return myCounter;
+    }
 
-  protected boolean useNoFunctionsResult() {
-    return true;
-  }
 
-  @NotNull
-  protected abstract RExecutionResult doExecute(@NotNull final String command) throws RDebuggerException;
+    protected boolean useNoFunctionsResult() {
+        return true;
+    }
+
+
+    @NotNull
+    protected abstract RExecutionResult doExecute(@NotNull final String command) throws RDebuggerException;
 }

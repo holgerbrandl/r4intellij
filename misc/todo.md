@@ -3,31 +3,11 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+* fix all unit tests
+
+* remove deprecated api usage
 
 ## potential improvements and differences
-
-* inline variable refactoring
-```text
-How to implement variable inline refactoring for custom language?
-
-Hello,
-
-Is there a recommended pattern (like an abstract class) to provide a variable inlining refactoring for a custom language? For the r4intellij plugin I'm working on, usage search and the reference provider work well, so I'd think/hope that reference inlining should not be too hard.
-
-
-
-I've found the thread https://intellij-support.jetbrains.com/hc/en-us/community/posts/206783125-Refactoring-Architecture-for-Plugins which is mentioning `com.intellij.refactoring.inline.InlineParameterDialog`, and I've also discovered "refactoring.inlineHandler" to register my inline refactoring but it's still a bit unclear to me how to proceed.
-
-Thanks,
-```
-
-Examples 
-```text
-/Applications/IntelliJ IDEA.app/Contents/lib/idea.jar!/com/intellij/xml/refactoring/XmlInlineHandler.class:14
-com.intellij.lang.refactoring.InlineActionHandler
-<extensionPoint name="inlineActionHandler" interface="com.intellij.lang.refactoring.InlineActionHandler"/>
-
-```
 
 
 * mandatory dependency on Send2Console / or add suggestion balloon
@@ -37,8 +17,6 @@ Send to Console improvement:
     * eval current top-level expression (option?)
     * also add options to send line to current run console instead 
     * later: potentially add separate impl for R4intellij for more smooth integration
-
-
 
 
 ### General 
@@ -52,16 +30,8 @@ Send to Console improvement:
 
 ### intentions & inspections
 
-* auto-import missing packages (use com.jetbrains.the`r.packages.TheRPackagesUtil#getInstalledPackages)
-* auto-install missing packages in require
 * missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
 * quick fix to simplify/ remove the dot in  `filtGraphData %>% graph.data.frame(., directed=TRUE)` if first arg
-
-* 
-
-
-
-
 
 ## later features
 

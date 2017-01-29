@@ -7,34 +7,39 @@ import static org.junit.Assert.assertEquals;
 
 public class RDebuggerEvaluatorReceiver implements RDebuggerEvaluator.Receiver {
 
-  @NotNull
-  private final String myExpectedResult;
+    @NotNull
+    private final String myExpectedResult;
 
-  private int myCounter;
+    private int myCounter;
 
-  public RDebuggerEvaluatorReceiver(@NotNull final String expectedResult) {
-    myExpectedResult = expectedResult;
-    myCounter = 0;
-  }
 
-  @Override
-  public void receiveResult(@NotNull final String result) {
-    myCounter++;
+    public RDebuggerEvaluatorReceiver(@NotNull final String expectedResult) {
+        myExpectedResult = expectedResult;
+        myCounter = 0;
+    }
 
-    assertEquals(myExpectedResult, result);
-  }
 
-  @Override
-  public void receiveError(@NotNull final Exception e) {
-    throw new IllegalStateException("ReceiveError shouldn't be called");
-  }
+    @Override
+    public void receiveResult(@NotNull final String result) {
+        myCounter++;
 
-  @Override
-  public void receiveError(@NotNull final String error) {
-    throw new IllegalStateException("ReceiveError shouldn't be called");
-  }
+        assertEquals(myExpectedResult, result);
+    }
 
-  public int getCounter() {
-    return myCounter;
-  }
+
+    @Override
+    public void receiveError(@NotNull final Exception e) {
+        throw new IllegalStateException("ReceiveError shouldn't be called");
+    }
+
+
+    @Override
+    public void receiveError(@NotNull final String error) {
+        throw new IllegalStateException("ReceiveError shouldn't be called");
+    }
+
+
+    public int getCounter() {
+        return myCounter;
+    }
 }

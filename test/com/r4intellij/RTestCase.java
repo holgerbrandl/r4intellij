@@ -11,33 +11,38 @@ import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
 import java.io.File;
 
 public class RTestCase extends UsefulTestCase {
-  public static final String TEST_DATA_PATH = new File("testData").getAbsolutePath().replace(File.pathSeparatorChar, '/');
-  protected CodeInsightTestFixture myFixture;
 
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    initPlatformPrefix();
-    IdeaTestFixtureFactory factory = IdeaTestFixtureFactory.getFixtureFactory();
-    TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder();
-    final IdeaProjectTestFixture fixture = fixtureBuilder.getFixture();
-    myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(fixture, new LightTempDirTestFixtureImpl(true));
-    myFixture.setUp();
-    myFixture.setTestDataPath(getTestDataPath());
-  }
+    public static final String TEST_DATA_PATH = new File("testData").getAbsolutePath().replace(File.pathSeparatorChar, '/');
+    protected CodeInsightTestFixture myFixture;
 
-  protected String getTestDataPath() {
-    return TEST_DATA_PATH;
-  }
 
-  private static void initPlatformPrefix() {
-    PlatformTestCase.autodetectPlatformPrefix();
-  }
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        initPlatformPrefix();
+        IdeaTestFixtureFactory factory = IdeaTestFixtureFactory.getFixtureFactory();
+        TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder();
+        final IdeaProjectTestFixture fixture = fixtureBuilder.getFixture();
+        myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(fixture, new LightTempDirTestFixtureImpl(true));
+        myFixture.setUp();
+        myFixture.setTestDataPath(getTestDataPath());
+    }
 
-  @Override
-  public void tearDown() throws Exception {
-    myFixture.tearDown();
-    super.tearDown();
-  }
+
+    protected String getTestDataPath() {
+        return TEST_DATA_PATH;
+    }
+
+
+    private static void initPlatformPrefix() {
+        PlatformTestCase.autodetectPlatformPrefix();
+    }
+
+
+    @Override
+    public void tearDown() throws Exception {
+        myFixture.tearDown();
+        super.tearDown();
+    }
 }
 

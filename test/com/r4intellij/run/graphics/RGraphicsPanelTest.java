@@ -14,83 +14,84 @@ import static org.mockito.Mockito.*;
 
 public class RGraphicsPanelTest {
 
-  @Test
-  public void refreshNonexistent() throws FileNotFoundException {
-    final RGraphicsState state = mock(RGraphicsState.class);
+    @Test
+    public void refreshNonexistent() throws FileNotFoundException {
+        final RGraphicsState state = mock(RGraphicsState.class);
 
-    when(state.current()).thenThrow(FileNotFoundException.class);
+        when(state.current()).thenThrow(FileNotFoundException.class);
 
-    final RGraphicsPanel panel = new RGraphicsPanel(state);
+        final RGraphicsPanel panel = new RGraphicsPanel(state);
 
-    try {
-      panel.refresh();
-    }
-    catch (final AssertionError ignore) {
+        try {
+            panel.refresh();
+        } catch (final AssertionError ignore) {
       /*
       state.current() generates FileNotFoundException,
       panel catches it and logs as error,
       but logger generates AssertionError with FileNotFoundException as a cause
       */
+        }
+
+        verify(state, times(1)).current();
+        verifyNoMoreInteractions(state);
     }
 
-    verify(state, times(1)).current();
-    verifyNoMoreInteractions(state);
-  }
 
-  @Test
-  public void refreshInvalid() throws FileNotFoundException {
-    final RGraphicsState state = mock(RGraphicsState.class);
+    @Test
+    public void refreshInvalid() throws FileNotFoundException {
+        final RGraphicsState state = mock(RGraphicsState.class);
 
-    when(state.current()).thenReturn(new TextVirtualFile("abc.txt", "text"));
+        when(state.current()).thenReturn(new TextVirtualFile("abc.txt", "text"));
 
-    final RGraphicsPanel panel = new RGraphicsPanel(state);
+        final RGraphicsPanel panel = new RGraphicsPanel(state);
 
-    try {
-      panel.refresh();
+        try {
+            panel.refresh();
 
-      fail();
+            fail();
+        } catch (final IllegalStateException e) {
+            verify(state, times(1)).current();
+            verifyNoMoreInteractions(state);
+        }
     }
-    catch (final IllegalStateException e) {
-      verify(state, times(1)).current();
-      verifyNoMoreInteractions(state);
-    }
-  }
 
-  @Test
-  public void reset() throws FileNotFoundException {
-    final RGraphicsState state = mock(RGraphicsState.class);
 
-    when(state.current()).thenThrow(FileNotFoundException.class);
+    @Test
+    public void reset() throws FileNotFoundException {
+        final RGraphicsState state = mock(RGraphicsState.class);
 
-    final RGraphicsPanel panel = new RGraphicsPanel(state);
+        when(state.current()).thenThrow(FileNotFoundException.class);
 
-    try {
-      panel.refresh();
-    }
-    catch (final AssertionError ignore) {
+        final RGraphicsPanel panel = new RGraphicsPanel(state);
+
+        try {
+            panel.refresh();
+        } catch (final AssertionError ignore) {
       /*
       state.current() generates FileNotFoundException,
       panel catches it and logs as error,
       but logger generates AssertionError with FileNotFoundException as a cause
       */
+        }
+
+        verify(state, times(1)).current();
+
+        panel.reset();
+
+        verifyNoMoreInteractions(state);
     }
 
-    verify(state, times(1)).current();
 
-    panel.reset();
+    private static class TextVirtualFile extends MockVirtualFile {
 
-    verifyNoMoreInteractions(state);
-  }
+        public TextVirtualFile(@NotNull final String name, @NotNull final String text) {
+            super(name, text);
+        }
 
-  private static class TextVirtualFile extends MockVirtualFile {
 
-    public TextVirtualFile(@NotNull final String name, @NotNull final String text) {
-      super(name, text);
+        @Override
+        public InputStream getInputStream() throws IOException {
+            return new ByteArrayInputStream(contentsToByteArray());
+        }
     }
-
-    @Override
-    public InputStream getInputStream() throws IOException {
-      return new ByteArrayInputStream(contentsToByteArray());
-    }
-  }
 }

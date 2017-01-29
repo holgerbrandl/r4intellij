@@ -11,33 +11,36 @@ import org.jetbrains.annotations.Nullable;
 
 public class MockRFunctionDebuggerFactory implements RFunctionDebuggerFactory {
 
-  @Nullable
-  private final MockRFunctionDebugger myDebugger;
+    @Nullable
+    private final MockRFunctionDebugger myDebugger;
 
-  private int myCounter;
+    private int myCounter;
 
-  public MockRFunctionDebuggerFactory(@Nullable final MockRFunctionDebugger debugger) {
-    myDebugger = debugger;
-    myCounter = 0;
-  }
 
-  @NotNull
-  @Override
-  public RFunctionDebugger getFunctionDebugger(@NotNull final RExecutor executor,
-                                               @NotNull final RFunctionDebuggerHandler debuggerHandler,
-                                               @NotNull final ROutputReceiver outputReceiver) throws RDebuggerException {
-    if (myDebugger == null) {
-      throw new IllegalStateException("GetFunctionDebugger shouldn't be called");
+    public MockRFunctionDebuggerFactory(@Nullable final MockRFunctionDebugger debugger) {
+        myDebugger = debugger;
+        myCounter = 0;
     }
 
-    myCounter++;
 
-    myDebugger.setHandler(debuggerHandler);
+    @NotNull
+    @Override
+    public RFunctionDebugger getFunctionDebugger(@NotNull final RExecutor executor,
+                                                 @NotNull final RFunctionDebuggerHandler debuggerHandler,
+                                                 @NotNull final ROutputReceiver outputReceiver) throws RDebuggerException {
+        if (myDebugger == null) {
+            throw new IllegalStateException("GetFunctionDebugger shouldn't be called");
+        }
 
-    return myDebugger;
-  }
+        myCounter++;
 
-  public int getCounter() {
-    return myCounter;
-  }
+        myDebugger.setHandler(debuggerHandler);
+
+        return myDebugger;
+    }
+
+
+    public int getCounter() {
+        return myCounter;
+    }
 }
