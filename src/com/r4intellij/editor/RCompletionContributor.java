@@ -14,13 +14,14 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.patterns.PlatformPatterns;
+import com.intellij.patterns.PsiJavaPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.cache.impl.id.IdTableBuilding;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RCallExpression;
-import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -33,13 +34,28 @@ public class RCompletionContributor extends CompletionContributor {
 
     public static ArrayList<String> PACKAGE_IMPORT_METHODS = Lists.newArrayList("require", "library", "load_pack");
 
+    public static final String ss = "huhu.txt";
+
+
+    public RCompletionContributor() {
+        // also allow for within string completion
+        // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/206114249-How-to-complete-string-literal-expressions-
+
+        // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/206756005-Is-There-A-Standard-CompletionContributor-Which-Provides-Path-File-Completion
+//        extend(PlatformPatterns.psiElement().inside(PsiJavaPatterns.literalExpression()));
+    }
+
+    //    public static final String test = new File("");
 
     @Override
     public void fillCompletionVariants(final CompletionParameters parameters, final CompletionResultSet result) {
 //        if (parameters.getCompletionType() == CompletionType.BASIC && shouldPerformWordCompletion(parameters)) {
         addWordCompletionVariants(result, parameters, Collections.<String>emptySet());
+        PlatformPatterns.psiElement().inside(PsiJavaPatterns.literalExpression());
+
 //        }
     }
+
 
 
     // see http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
@@ -74,7 +90,7 @@ public class RCompletionContributor extends CompletionContributor {
 
 //            }
 
-            RFile rFile = PsiTreeUtil.getContextOfType(insertedElement, RFile.class);
+//            RFile rFile = PsiTreeUtil.getContextOfType(insertedElement, RFile.class);
         }
     }
 
@@ -91,7 +107,7 @@ public class RCompletionContributor extends CompletionContributor {
         int startOffset = parameters.getOffset();
         PsiElement insertedElement = parameters.getPosition();
 
-        RCallExpression pp = PsiTreeUtil.getContextOfType(insertedElement, RCallExpression.class);
+//        RCallExpression pp = PsiTreeUtil.getContextOfType(insertedElement, RCallExpression.class);
 
         final CompletionResultSet plainResultSet = result.
                 withPrefixMatcher(CompletionUtil.findAlphanumericPrefix(parameters));

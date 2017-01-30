@@ -121,6 +121,7 @@
         <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
 
         <completion.contributor language="R" implementationClass="com.r4intellij.editor.RCompletionContributor"/>
+        <psi.referenceContributor implementation="com.r4intellij.editor.ResourceFileReferenceProvider"/>
 
 
         <configurationType implementation="com.r4intellij.run.configuration.RRunConfigurationType"/>

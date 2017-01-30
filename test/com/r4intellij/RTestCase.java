@@ -29,6 +29,11 @@ public class RTestCase extends UsefulTestCase {
     }
 
 
+    public void testDummy() {
+
+    }
+
+
     protected String getTestDataPath() {
         return TEST_DATA_PATH;
     }

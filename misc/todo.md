@@ -3,6 +3,29 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+
+```
+method not implemented
+java.lang.Throwable
+	at com.intellij.openapi.diagnostic.Logger.error(Logger.java:132)
+	at com.intellij.psi.impl.file.PsiPackageBase.getChildren(PsiPackageBase.java:157)
+	at com.r4intellij.documentation.RDocumentationProvider.generateDoc(Unknown Source)
+	at com.intellij.lang.documentation.CompositeDocumentationProvider.generateDoc(CompositeDocumentationProvider.java:144)
+	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:661)
+	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:884)
+	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:658)
+	at com.intellij.util.concurrency.QueueProcessor.runSafely(QueueProcessor.java:223)
+	at com.intellij.util.Alarm$Request$1.run(Alarm.java:387)
+	at com.intellij.util.Alarm$Request.run(Alarm.java:398)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at com.intellij.util.concurrency.SchedulingWrapper$MyScheduledFutureTask.run(SchedulingWrapper.java:237)
+	at com.intellij.util.concurrency.BoundedTaskExecutor$2.run(BoundedTaskExecutor.java:210)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+```
+
 * fix all unit tests
 
 * remove deprecated api usage
@@ -33,6 +56,9 @@ Send to Console improvement:
 * missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
 * quick fix to simplify/ remove the dot in  `filtGraphData %>% graph.data.frame(., directed=TRUE)` if first arg
 
+* check if urls and strings that are arguments of readr methods exist (allow to add working dir annotation to configure this locally)
+    * http://stackoverflow.com/questions/18134718/java-quickest-way-to-check-if-url-exists
+    
 ## later features
 
 * after function name completion, cursor should end up between brackets
@@ -161,6 +187,12 @@ The document’s chunk outputs are also stored in an internal RStudio folder ben
 * chunks. (should package imports be extrapolated to the complete file to work accross chungs?
 
 
+https://slides.yihui.name/2017-rstudio-conf-ext-rmd-Yihui-Xie.html#5
+
+https://slides.yihui.name/2017-rstudio-conf-rmarkdown-Yihui-Xie.html#1
+
+http://ijlyttle.github.io/bsplus/
+
 ## Markdown impro wishlist
 
 * aligned cursor with preview
@@ -217,3 +249,11 @@ require = function(a) a+1
 require(a) ## rename this to foo --> should not touch first import statment
 
 ```
+
+Misc
+=====
+
+See how it compares to
+https://rawgit.com/kevinushey/2017-rstudio-conf/master/slides.html
+
+https://www.rstudio.com/rviews/2017/01/27/january-17-tips-and-tricks/

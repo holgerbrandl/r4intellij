@@ -61,9 +61,6 @@ https://intellij-support.jetbrains.com/hc/en-us/community/posts/206783125-Refact
 In openapi.jar there is a com.intellij.refactoring.util.RefactoringMessageDialog which seems to be extended only by com.intellij.refactoring.inline.InlineParameterDialog in idea.jar, so all the other refactorings are using a different base for their dialogs.
 
 
-http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
-
-
 To make sure that renaming does not apply to installed packages/library --> https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000062144-How-to-prevent-renaming-of-library-functions-
 
 
@@ -78,6 +75,32 @@ Intentions vs. Inspections
 
 
 In openapi.jar there is a com.intellij.refactoring.util.RefactoringMessageDialog which seems to be extended only by com.intellij.refactoring.inline.InlineParameterDialog in idea.jar, so all the other refactorings are using a different base for their dialogs.
+
+
+Completion Provider
+==================
+
+make sure to match https://rawgit.com/kevinushey/2017-rstudio-conf/master/slides.html#9
+
+
+for path completion see https://www.jetbrains.com/help/idea/2016.3/completing-path.html
+
+
+http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
+
+
+https://www.jetbrains.com/help/idea/2016.3/auto-completing-code.html
+
+https://dzone.com/articles/top-20-code-completions-in-intellij-idea
+
+https://confluence.jetbrains.com/display/IDEADEV/Completion+features
+
+**[todo]** v1.0: Ideas for better completion
+* method names after <package>:: 
+
+### Path completion
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206114249-How-to-complete-string-literal-expressions-
 
 
 Skeletons
@@ -110,7 +133,7 @@ Invoking psi.getContext in a loop (orPsiTreeUtil.getContextOfType) will eventual
 
 ### Language injection
 
-https://intellij-support.jetbrains.com/hc/en-us/community/posts/206778055-language-injection-into-string-literals
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206778055-language-injection-into-string-litehttps://www.rstudio.com/rviews/2017/01/27/january-17-tips-and-tricks/rals
 
 ### Templates
 

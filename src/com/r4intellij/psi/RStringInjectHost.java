@@ -3,10 +3,8 @@ package com.r4intellij.psi;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.LiteralTextEscaper;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiFileFactory;
-import com.intellij.psi.PsiLanguageInjectionHost;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.r4intellij.RLanguage;
 import com.r4intellij.psi.api.RStringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +35,14 @@ public abstract class RStringInjectHost extends ASTWrapperPsiElement implements 
         final RStringLiteralExpression expression = createExpressionFromText(getProject(), text);
         assert expression instanceof RStringLiteralExpression : text + "-->" + expression;
         return (RStringInjectHost) this.replace(expression);
+    }
+
+
+    @NotNull
+    @Override
+    // provide path completion. see ResourceFileRefernceProvider
+    public PsiReference[] getReferences() {
+        return ReferenceProvidersRegistry.getReferencesFromProviders(this);
     }
 
 
