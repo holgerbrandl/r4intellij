@@ -5,67 +5,67 @@ import org.jetbrains.annotations.NotNull;
 public class RTypeCheckerInspectionTest extends RInspectionTest {
 
     public void testNoWarnings() {
-        doTest("test.R");
+        doTest("NoWarnings.R");
     }
 
 
     public void testWrongTypeParameter() {
-        doTest("test1.R");
+        doTest("WrongTypeParameter.R");
     }
 
 
     public void testArgumentsMatching() {
-        doTest("test2.R");
+        doTest("ArgumentsMatching.R");
     }
 
 
     public void testTripleDot() {
-        doTest("test3.R");
+        doTest("TripleDot.R");
     }
 
 
     public void testRule() {
-        doTest("test4.R");
+        doTest("Rule.R");
     }
 
 
     public void testGuessReturnFromBody() {
-        doTest("test5.r");
+        doTest("GuessReturnFromBody.R");
     }
 
 
     public void testIfElseType() {
-        doTest("test6.r");
+        doTest("IfElseType.R");
     }
 
 
     public void testOptional() {
-        doTest("test-optional.r");
+        doTest("TestOptional.R");
     }
 
 
     public void testList() {
-        doTest("list.r");
+        doTest("List.R");
     }
 
 
     public void testBinary() {
-        doTest("binary.r");
+        doTest("Binary.R");
     }
 
 
     public void testSlice() {
-        doTest("slice.r");
+        doTest("Slice.R");
     }
 
 
     public void testVector() {
-        doTest("vector.r");
+        doTest("Vector.R");
     }
 
 
     public void testDefaultValue() {
-        doTest("default-value.r");
+        doTest("DefaultValue.R");
     }
 
 
