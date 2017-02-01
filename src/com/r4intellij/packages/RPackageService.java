@@ -63,35 +63,42 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
+    public static RPackageService getTestInstance(File indexFile) {
+        RPackageService service = ServiceManager.getService(RPackageService.class);
+        if (indexFile.exists()) {
+            service.allPackages = (Set<RPackage>) loadObject(indexFile);
+        }
+
+        if (service.allPackages == null) {
+            System.err.println("building package index for testing ");
+            service.allPackages = Sets.newConcurrentHashSet();
+            service.refreshIndex();
+            saveObject(service.allPackages, indexFile);
+        }
+
+        return service;
+    }
+
+
     // or use startupactivity https://www.cqse.eu/en/blog/intellij-plugin-tutorial/
     private void loadPcgIndex() {
         if (allPackages != null) {
             return;
         }
 
+        //noinspection unchecked
+        allPackages = (Set<RPackage>) loadObject(getLibIndexFile());
 
-        allPackages = Sets.newConcurrentHashSet();
+        //        http://stackoverflow.com/questions/6992608/why-there-is-no-concurrenthashset-against-concurrenthashmap
+        if (allPackages == null) allPackages = Sets.newConcurrentHashSet();
 
-        // trigger index update
+
         // update index (no fancy sync anymore because it's superfast anyway)
-        ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+        ApplicationManager.getApplication().executeOnPooledThread(() -> {
+            boolean hasChanged = refreshIndex();
 
-            @Override
-            public void run() {
-
-                // also load index
-                allPackages = (Set<RPackage>) loadObject(getLibIndexFile());
-
-//        http://stackoverflow.com/questions/6992608/why-there-is-no-concurrenthashset-against-concurrenthashmap
-                if (allPackages == null) allPackages = Sets.newConcurrentHashSet();
-
-
-                boolean hasChanged = refreshIndex();
-
-                if (hasChanged) {
-                    saveObject(allPackages, getLibIndexFile());
-                }
-
+            if (hasChanged) {
+                saveObject(allPackages, getLibIndexFile());
             }
         });
     }
@@ -100,7 +107,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     private File getLibIndexFile() {
         String skeletonsPath = RSkeletonGenerator.getSkeletonsPath();
         if (!new File(skeletonsPath).exists()) {
-            new File(skeletonsPath).mkdir();
+            new File(skeletonsPath).mkdirs();
         }
 
         return new File(skeletonsPath, "libindex.dat");

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
                 )}
 )
 public class RInterpreterService implements PersistentStateComponent<RInterpreterService> {
+
     public String INTERPRETER_PATH = RInterpreterUtil.suggestHomePath();
     public String INTERPRETER_SOURCES_PATH = "";
 

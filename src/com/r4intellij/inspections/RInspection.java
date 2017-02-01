@@ -12,4 +12,5 @@ public abstract class RInspection extends LocalInspectionTool {
     public String getGroupDisplayName() {
         return "R inspections";
     }
+
 }
