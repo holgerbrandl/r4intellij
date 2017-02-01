@@ -35,7 +35,7 @@ public class MissingPackageInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Missing Package";
+        return "Missing package";
     }
 
 
