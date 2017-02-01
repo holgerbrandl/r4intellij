@@ -35,52 +35,71 @@ Type Tests:
 
 * remove deprecated api usage
 
+
 ## potential improvements and differences
 
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
-
-* mandatory dependency on Send2Console / or add suggestion balloon
-
-Send to Console improvement:
-    * send to console: jump to next line after eval (option?) 
-    * eval current top-level expression (option?)
-    * also add options to send line to current run console instead 
-    * later: potentially add separate impl for R4intellij for more smooth integration
 
 
 ### General 
 
 * auto-detect R and do not force user to specify installation location
 * function help should be context aware
-* no live-templates
-* structure view
-* run does not work for macos
 
 
-### intentions & inspections
+intentions & inspections
+------------------------
 
 * missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
+
 * quick fix to simplify/ remove the dot in  `filtGraphData %>% graph.data.frame(., directed=TRUE)` if first arg
 
 * check if urls and strings that are arguments of readr methods exist (allow to add working dir annotation to configure this locally)
     * http://stackoverflow.com/questions/18134718/java-quickest-way-to-check-if-url-exists
-    
-## later features
-
-* after function name completion, cursor should end up between brackets
-
-* implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
-
-* shortcut to evaluate current expression and proceed
-
+   
 * intention to replace tidyverse imports with library(tidyverse)
+* intention
+
 
 * highlight packages with naming conflicts (or indicate it visually in the IDE using virtual comment)
 
-* path completion within strings. Regular completion provider seems to apply.
-    * support relative paths liks `test.txt`, `../foo.txt`
-    * warn about missing data; and 
     
+## Formatter
+
+see `CodeStyleManager.adjustLineIndent()`
+
+* break lines and indent properly in long ggplot commands like
+```
+    ggplot(aes(fct_revfreq(mpi_lab), fill=labtype)) + geom_bar() + coord_flip() + ggtitle("pd lab publications") + facet_wrap(~pub_time_category, ncol=3)
+```
+
+* ensure proper check indentation when using as pipe sink
+```r
+
+pdStories %>%
+    filter(!is.na(pub_time_category)) %>%
+    group_by(labtype, pub_time_category) %>% summarize(
+        total_pubs=n(),
+        num_postdocs=unlen(full_name),
+        pubs_pdcount_norm=total_pubs/num_postdocs
+    ) %>%
+    ggplot(aes(labtype, pubs_pdcount_norm)) + geom_bar(stat="identity") + coord_flip() + ggtitle("pd lab publications normalized by total postdocs in categories") + facet_wrap(~pub_time_category, ncol=3)
+
+```
+
+
+Completion Provider
+-------------------
+
+
+* method names after <package>:: 
+* after function name completion, cursor should end up between brackets
+
+
+Later features
+==============
+
+
 ```r
 # similar to type annotation
 # @type recursive : logical
@@ -151,26 +170,15 @@ application.invokeLater(new Runnable() {
 ```
 
 
+Refactorings
+------------
 
 
-## Send To Console Improvmentns
 
-* R Session has almost complete implementation for console, objects, etc
-* TextMate bundle
-    * Start R in special mode that reads all input from file and writes all output to another one which then somehow imported into textmate
-* I think FindWindow and SendMessage are the functions you want to use, in general.
-* Use the clipboard
-* Tinn-R: It also pops up additional menu and toolbar when it detects Rgui running on the same computer. These addons interact with the R console and allow to submit code in part or in whole and to control R directly. 
-    * It seems to have some limitations
-* Maybe DOM is a solution: rdom, RDCOMClient
-* Or white 
-* Or most promising, we could try to use the windows API via VBScript or C#
+Rnotebook support
+-----------------
 
-
-* add warning when using T/F https://www.r-bloggers.com/r-tip-avoid-using-t-and-f-as-synonyms-for-true-and-false/
-
-###  Rnotebook support
-
+* implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
 
 Direct md embedding like in Rstudio
 
@@ -205,6 +213,8 @@ http://ijlyttle.github.io/bsplus/
 * highlight search results in preview
 * search in preview
 * jump to code from preview
+* intention to unify header styles
+
 
 
 ## Enhanced code completion
@@ -228,44 +238,18 @@ What about packrat? http://rstudio.github.io/packrat/walkthrough.html
 Also see [OpenApi notes](openapi_notes.md)
 
 
-# Formatter
-
-see `CodeStyleManager.adjustLineIndent()`
-
-* break lines and indent properly in long ggplot commands like
-```
-    ggplot(aes(fct_revfreq(mpi_lab), fill=labtype)) + geom_bar() + coord_flip() + ggtitle("pd lab publications") + facet_wrap(~pub_time_category, ncol=3)
-```
-
-* ensure proper check indentation when using as pipe sink
-```r
-
-pdStories %>%
-    filter(!is.na(pub_time_category)) %>%
-    group_by(labtype, pub_time_category) %>% summarize(
-        total_pubs=n(),
-        num_postdocs=unlen(full_name),
-        pubs_pdcount_norm=total_pubs/num_postdocs
-    ) %>%
-    ggplot(aes(labtype, pubs_pdcount_norm)) + geom_bar(stat="identity") + coord_flip() + ggtitle("pd lab publications normalized by total postdocs in categories") + facet_wrap(~pub_time_category, ncol=3)
-
-```
-
 
 Brainstorming  & Roadmap
 =======
 
-* Basic refactorings to match StatET ()
 
-* File path completion (learn from bash plugin)
-* Already possible by injecting bash into literal
+* better File path completion for nested directories
 * Better highlighting of syntax errors
 * Intention to add roxygen docu + code basic tag completion for roxygen comments
 * Intention to change function to S4 function
 * Connectors for xterm and Rgui on windows
 
 
-* Check that function is available and provide import library statement if necessary
 * More context-aware auto-completion for variables, functions and file paths
 * Push to R also for windows
 * Example? Arc:ReplToolWindow
@@ -282,6 +266,40 @@ require = function(a) a+1
 require(a) ## rename this to foo --> should not touch first import statment
 
 ```
+
+
+Send To Console Improvements
+============================
+
+* mandatory dependency on Send2Console / or add suggestion balloon
+
+Send to Console improvement:
+    * send to console: jump to next line after eval (option?) 
+    * eval current top-level expression (option?)
+    * also add options to send line to current run console instead 
+    * later: potentially add separate impl for R4intellij for more smooth integration
+    
+* shortcut to evaluate current expression and proceed
+
+
+* R Session has almost complete implementation for console, objects, etc
+
+Windows Support
+* I think FindWindow and SendMessage are the functions you want to use, in general.
+* Tinn-R: It also pops up additional menu and toolbar when it detects Rgui running on the same computer. These addons interact with the R console and allow to submit code in part or in whole and to control R directly. 
+    * It seems to have some limitations
+* Maybe DOM is a solution: rdom, RDCOMClient
+* Or most promising, we could try to use the windows API via VBScript or C#
+
+
+
+Markdown plugin
+==============
+
+* Useful structure view
+* Click to to jump to code
+* synced scrolling
+
 
 IDE Comparison
 =====

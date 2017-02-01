@@ -12,6 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
+import com.r4intellij.intentions.ImportLibraryFix;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RCallExpression;

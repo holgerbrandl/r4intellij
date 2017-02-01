@@ -1,4 +1,4 @@
-package com.r4intellij.inspections;
+package com.r4intellij.intentions;
 
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemDescriptor;

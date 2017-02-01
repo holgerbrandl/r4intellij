@@ -2,12 +2,12 @@ package com.r4intellij.inspections;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
+import com.r4intellij.intentions.InstallLibraryFix;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RCallExpression;
@@ -21,7 +21,7 @@ import static com.r4intellij.editor.RCompletionContributor.PACKAGE_IMPORT_METHOD
 /**
  * @author Holger Brandl
  */
-public class MissingPackageInspection extends LocalInspectionTool {
+public class MissingPackageInspection extends RInspection {
 
     @Nls
     @NotNull
@@ -38,11 +38,6 @@ public class MissingPackageInspection extends LocalInspectionTool {
         return "Missing package";
     }
 
-
-    @Override
-    public boolean isEnabledByDefault() {
-        return true;
-    }
 
 
     @NotNull

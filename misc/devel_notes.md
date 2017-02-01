@@ -53,7 +53,7 @@ Documentation Provider
 ======================
 
 
-Refactorings
+Refactoring API
 ============
 
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/206783125-Refactoring-Architecture-for-Plugins
@@ -62,6 +62,8 @@ In openapi.jar there is a com.intellij.refactoring.util.RefactoringMessageDialog
 
 
 To make sure that renaming does not apply to installed packages/library --> https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000062144-How-to-prevent-renaming-of-library-functions-
+
+* Basic refactorings to match StatET ()
 
 
 Intentions vs. Inspections
@@ -95,8 +97,6 @@ https://dzone.com/articles/top-20-code-completions-in-intellij-idea
 
 https://confluence.jetbrains.com/display/IDEADEV/Completion+features
 
-**[todo]** v1.0: Ideas for better completion
-* method names after <package>:: 
 
 ### Path completion
 

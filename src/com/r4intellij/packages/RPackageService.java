@@ -169,7 +169,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 //                    collect(Collectors.toSet());
 //        }
 
-        ExecutorService executorService = Executors.newFixedThreadPool(8);
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
 
         final boolean[] hasChanged = {false};
 

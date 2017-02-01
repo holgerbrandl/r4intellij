@@ -10,7 +10,12 @@ public abstract class RInspection extends LocalInspectionTool {
     @NotNull
     @Override
     public String getGroupDisplayName() {
-        return "R inspections";
+        return "R";
     }
 
+
+    @Override
+    public boolean isEnabledByDefault() {
+        return true;
+    }
 }
