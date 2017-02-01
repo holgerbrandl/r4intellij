@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class RUnresolvedReferenceInspection extends RLocalInspection {
+public class UnresolvedReferenceInspection extends RInspection {
     @Nls
     @NotNull
     @Override
@@ -36,7 +36,7 @@ public class RUnresolvedReferenceInspection extends RLocalInspection {
         private final ProblemsHolder myProblemHolder;
 
 
-        public Visitor(ProblemsHolder holder) {
+        public Visitor(@NotNull ProblemsHolder holder) {
             myProblemHolder = holder;
         }
 
@@ -67,7 +67,7 @@ public class RUnresolvedReferenceInspection extends RLocalInspection {
             if (reference != null) {
                 PsiElement resolve = reference.resolve();
                 if (resolve == null) {
-                    registerProblem(myProblemHolder, element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         }

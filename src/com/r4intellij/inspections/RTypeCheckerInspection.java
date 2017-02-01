@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-public class RTypeCheckerInspection extends RLocalInspection {
+public class RTypeCheckerInspection extends RInspection {
 
     @Nls
     @NotNull
@@ -46,7 +46,7 @@ public class RTypeCheckerInspection extends RLocalInspection {
         private final ProblemsHolder myProblemHolder;
 
 
-        public Visitor(ProblemsHolder holder) {
+        public Visitor(@NotNull ProblemsHolder holder) {
             myProblemHolder = holder;
         }
 
@@ -105,7 +105,7 @@ public class RTypeCheckerInspection extends RLocalInspection {
                         try {
                             RTypeChecker.checkTypes(arguments, function);
                         } catch (MatchingException e) {
-                            registerProblem(myProblemHolder, callSite, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                            myProblemHolder.registerProblem(callSite, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                         }
                     }
                 }
@@ -118,7 +118,7 @@ public class RTypeCheckerInspection extends RLocalInspection {
     public void inspectionFinished(@NotNull LocalInspectionToolSession session, @NotNull ProblemsHolder problemsHolder) {
         Map<RPsiElement, RErrorType> errors = RTypeContext.getExpressionsWithError(problemsHolder.getProject());
         for (Map.Entry<RPsiElement, RErrorType> error : errors.entrySet()) {
-            registerProblem(problemsHolder, error.getKey(), error.getValue().getErrorMessage(), ProblemHighlightType.GENERIC_ERROR);
+            problemsHolder.registerProblem(error.getKey(), error.getValue().getErrorMessage(), ProblemHighlightType.GENERIC_ERROR);
         }
     }
 }

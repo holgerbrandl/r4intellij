@@ -2,7 +2,7 @@ package com.r4intellij.inspections;
 
 import org.jetbrains.annotations.NotNull;
 
-public class RUnresolvedReferenceInspectionTest extends RInspectionTest {
+public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     @Override
     protected String getTestDataPath() {
         return super.getTestDataPath() + "/inspections";
@@ -10,13 +10,13 @@ public class RUnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testUnresolvedReferenceInspection() {
-        doTest("unresolvedReferenceInspection.R");
+        doTest(getTestName(true) + ".R");
     }
 
 
     @NotNull
     @Override
-    Class<? extends RLocalInspection> getInspection() {
-        return RUnresolvedReferenceInspection.class;
+    Class<? extends RInspection> getInspection() {
+        return UnresolvedReferenceInspection.class;
     }
 }

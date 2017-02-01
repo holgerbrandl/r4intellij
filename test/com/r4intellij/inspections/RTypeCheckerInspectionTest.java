@@ -77,7 +77,7 @@ public class RTypeCheckerInspectionTest extends RInspectionTest {
 
     @NotNull
     @Override
-    Class<? extends RLocalInspection> getInspection() {
+    Class<? extends RInspection> getInspection() {
         return RTypeCheckerInspection.class;
     }
 }

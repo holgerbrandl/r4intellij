@@ -12,7 +12,7 @@ import com.r4intellij.psi.api.RVisitor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class UnusedParameterInspection extends RLocalInspection {
+public class UnusedParameterInspection extends RInspection {
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session) {
@@ -44,7 +44,7 @@ public class UnusedParameterInspection extends RLocalInspection {
             Query<PsiReference> search = ReferencesSearch.search(o);
             PsiReference first = search.findFirst();
             if (first == null) {
-                registerProblem(myProblemHolder, o, "Unused parameter " + o.getText(), ProblemHighlightType.WEAK_WARNING);
+                myProblemHolder.registerProblem(o, "Unused parameter " + o.getText(), ProblemHighlightType.WEAK_WARNING);
             }
         }
     }

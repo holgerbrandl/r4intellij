@@ -2,15 +2,18 @@ package com.r4intellij.inspections;
 
 import org.jetbrains.annotations.NotNull;
 
-public class UnusedParameterInspectionTest extends RInspectionTest {
+/**
+ * @author Holger Brandl
+ */
+public class MissingImportInspectionTest extends RInspectionTest {
 
     @Override
     protected String getTestDataPath() {
-        return super.getTestDataPath() + "/inspections/" + getTestName(true);
+        return super.getTestDataPath() + "/inspections/MissingImport";
     }
 
 
-    public void testUnusedParameterInspection() {
+    public void testTidyrMissing() {
         doTest(getTestName(true) + ".R");
     }
 
@@ -18,6 +21,6 @@ public class UnusedParameterInspectionTest extends RInspectionTest {
     @NotNull
     @Override
     Class<? extends RInspection> getInspection() {
-        return UnusedParameterInspection.class;
+        return MissingImportInspection.class;
     }
 }

@@ -5,7 +5,10 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.intellij.codeInspection.*;
+import com.intellij.codeInspection.InspectionManager;
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
@@ -24,7 +27,7 @@ import java.util.List;
 /**
  * @author Holger Brandl
  */
-public class MissingImportInspection extends LocalInspectionTool {
+public class MissingImportInspection extends RInspection {
 
     @Nls
     @NotNull
@@ -108,7 +111,7 @@ public class MissingImportInspection extends LocalInspectionTool {
                     }
 
                     String descriptionTemplate = "'" + functionName + "' has been detected in a package (" +
-                            Joiner.on(", ").join(funPackageNames) + ") which doesn't seem to be imported yet.";
+                            Joiner.on(", ").join(funPackageNames) + ") which does not seem to be imported yet.";
                     problemsHolder.registerProblem(funExpr, descriptionTemplate, fixes.toArray(new LocalQuickFix[0]));
                 }
 

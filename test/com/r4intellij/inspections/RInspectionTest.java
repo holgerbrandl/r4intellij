@@ -13,5 +13,5 @@ public abstract class RInspectionTest extends RTestCase {
 
 
     @NotNull
-    abstract Class<? extends RLocalInspection> getInspection();
+    abstract Class<? extends RInspection> getInspection();
 }
