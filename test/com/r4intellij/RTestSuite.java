@@ -44,6 +44,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 
+//http://stackoverflow.com/questions/457276/junit4-test-suites
 public class RTestSuite extends TestCase {
 
     @NotNull

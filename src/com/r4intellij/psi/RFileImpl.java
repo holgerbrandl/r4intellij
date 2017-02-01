@@ -41,6 +41,13 @@ public class RFileImpl extends PsiFileBase implements RFile {
     }
 
 
+    // just needed to for compatibility with exsting test-results. Should be removed and results should be updated
+    @Override
+    public String toString() {
+        return "RFile:" + getName();
+    }
+
+
     @Override
     public void accept(@NotNull final PsiElementVisitor visitor) {
         visitor.visitFile(this);

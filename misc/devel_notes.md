@@ -110,7 +110,7 @@ skeletons are saved under  (see module deps --> libaries)
 `/Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/-1481726564`
 
 Among other used to get paramter list of method see
-com.r4intellij.typing.RTypeChecker.getNamedArguments
+com.r4intellij.inspections.typing.RTypeChecker.getNamedArguments
 
 Seems built by manual invocation in
 `com.r4intellij.actions.RSkeletonsGeneratorAction.generateSkeletonsForPackage` which itself calls

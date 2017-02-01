@@ -6,12 +6,12 @@ public class UnusedParameterInspectionTest extends RInspectionTest {
 
     @Override
     protected String getTestDataPath() {
-        return super.getTestDataPath() + "/inspections/unusedParameterInspection";
+        return super.getTestDataPath() + "/inspections";
     }
 
 
-    public void test() {
-        doTest("main.R");
+    public void testUnusedParameterInspection() {
+        doTest("unusedParameterInspection.R");
     }
 
 

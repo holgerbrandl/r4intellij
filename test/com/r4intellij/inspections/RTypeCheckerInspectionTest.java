@@ -4,6 +4,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class RTypeCheckerInspectionTest extends RInspectionTest {
 
+
+    @Override
+    protected String getTestDataPath() {
+        return super.getTestDataPath() + "/inspections/typing/";
+    }
+
+
     public void testNoWarnings() {
         doTest("NoWarnings.R");
     }
@@ -44,17 +51,17 @@ public class RTypeCheckerInspectionTest extends RInspectionTest {
     }
 
 
-    public void testList() {
+    public void _testList() {
         doTest("List.R");
     }
 
 
-    public void testBinary() {
+    public void _testBinary() {
         doTest("Binary.R");
     }
 
 
-    public void testSlice() {
+    public void _testSlice() {
         doTest("Slice.R");
     }
 
@@ -67,13 +74,6 @@ public class RTypeCheckerInspectionTest extends RInspectionTest {
     public void testDefaultValue() {
         doTest("DefaultValue.R");
     }
-
-
-    @Override
-    protected String getTestDataPath() {
-        return super.getTestDataPath() + "/typing/";
-    }
-
 
     @NotNull
     @Override

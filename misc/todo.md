@@ -4,6 +4,7 @@ R4Intellij Development Notes
 ## 0-day bugs
 
 
+usually after startup
 ```
 method not implemented
 java.lang.Throwable
@@ -27,11 +28,16 @@ java.lang.Throwable
 ```
 
 * fix all unit tests
+    * UnusedParameterInspectionTest
+Type Tests:
+    * ArgumentsMatching
+    * TripleDot
 
 * remove deprecated api usage
 
 ## potential improvements and differences
 
+* add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
 
 * mandatory dependency on Send2Console / or add suggestion balloon
 
@@ -208,6 +214,11 @@ http://ijlyttle.github.io/bsplus/
 * provide completion for named function parameters
 * help for function parameter should open function help
 
+* general method name completion with autoimpart
+```
+com<complete> # show all methods which start with com including their packacke prefix --> autoimport if not done is completion is accepted 
+```
+    * preference schemes for certain packages (dplyr, ggplot, etc)
 
 ## Misc
 
@@ -217,6 +228,28 @@ What about packrat? http://rstudio.github.io/packrat/walkthrough.html
 Also see [OpenApi notes](openapi_notes.md)
 
 
+# Formatter
+
+see `CodeStyleManager.adjustLineIndent()`
+
+* break lines and indent properly in long ggplot commands like
+```
+    ggplot(aes(fct_revfreq(mpi_lab), fill=labtype)) + geom_bar() + coord_flip() + ggtitle("pd lab publications") + facet_wrap(~pub_time_category, ncol=3)
+```
+
+* ensure proper check indentation when using as pipe sink
+```r
+
+pdStories %>%
+    filter(!is.na(pub_time_category)) %>%
+    group_by(labtype, pub_time_category) %>% summarize(
+        total_pubs=n(),
+        num_postdocs=unlen(full_name),
+        pubs_pdcount_norm=total_pubs/num_postdocs
+    ) %>%
+    ggplot(aes(labtype, pubs_pdcount_norm)) + geom_bar(stat="identity") + coord_flip() + ggtitle("pd lab publications normalized by total postdocs in categories") + facet_wrap(~pub_time_category, ncol=3)
+
+```
 
 
 Brainstorming  & Roadmap
@@ -250,10 +283,29 @@ require(a) ## rename this to foo --> should not touch first import statment
 
 ```
 
-Misc
+IDE Comparison
 =====
 
 See how it compares to
 https://rawgit.com/kevinushey/2017-rstudio-conf/master/slides.html
 
 https://www.rstudio.com/rviews/2017/01/27/january-17-tips-and-tricks/
+
+Pros
+* fast incremental updates (backed by exhaustive unit-test suites)
+* better scm (reformat, inlined change annotation)
+* more efficient parser & inspections (runs permanently)
+
+Cons
+* intial setup 
+* IDE complexity
+
+Still missing
+* radiant integration
+* jsonedit integration 
+* open table in idea support (differnt modes: internal, DT)
+
+
+environment view? 
+![](.todo_images/environment_view.png)
+

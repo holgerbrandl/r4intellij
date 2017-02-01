@@ -5,9 +5,9 @@ import com.r4intellij.RTestCase;
 public class RRenameTest extends RTestCase {
 
     private void doTestWithProject(String newName) {
-        myFixture.configureByFile("rename/" + getTestName(true) + "/main.R");
+        myFixture.configureByFile("rename/" + getTestName(true) + ".R");
         myFixture.renameElementAtCaret(newName);
-        myFixture.checkResultByFile("rename/" + getTestName(true) + "/main.after.R", true);
+        myFixture.checkResultByFile("rename/" + getTestName(true) + ".after.R", true);
     }
 
 

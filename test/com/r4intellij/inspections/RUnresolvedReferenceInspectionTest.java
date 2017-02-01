@@ -5,12 +5,12 @@ import org.jetbrains.annotations.NotNull;
 public class RUnresolvedReferenceInspectionTest extends RInspectionTest {
     @Override
     protected String getTestDataPath() {
-        return super.getTestDataPath() + "/inspections/unresolvedReferenceInspection";
+        return super.getTestDataPath() + "/inspections";
     }
 
 
-    public void test() {
-        doTest("main.R");
+    public void testUnresolvedReferenceInspection() {
+        doTest("unresolvedReferenceInspection.R");
     }
 
 
