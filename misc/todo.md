@@ -3,6 +3,74 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+* library("randomForest") quickfix does not work
+* formula show up ans non-resolvable: `pw_present~.`
+
+right-click on scratches
+```
+update failed for AnAction with ID=ProjectViewPopupMenuRefactoringGroup
+java.lang.NullPointerException
+	at com.r4intellij.documentation.RDocumentationProvider.isLibraryElement(RDocumentationProvider.java:89)
+	at com.r4intellij.psi.references.RenamingVetoCondition.value(RenamingVetoCondition.java:19)
+	at com.r4intellij.psi.references.RenamingVetoCondition.value(RenamingVetoCondition.java:15)
+	at com.intellij.refactoring.rename.PsiElementRenameHandler.isVetoed(PsiElementRenameHandler.java:210)
+	at com.intellij.refactoring.rename.PsiElementRenameHandler.isAvailableOnDataContext(PsiElementRenameHandler.java:204)
+	at com.intellij.refactoring.rename.RenameHandlerRegistry.hasAvailableHandler(RenameHandlerRegistry.java:69)
+	at com.intellij.refactoring.actions.RenameElementAction.isEnabledOnDataContext(RenameElementAction.java:64)
+	at com.intellij.refactoring.actions.BaseRefactoringAction.update(BaseRefactoringAction.java:166)
+	at com.intellij.openapi.actionSystem.ex.ActionUtil.performDumbAwareUpdate(ActionUtil.java:122)
+	at com.intellij.openapi.actionSystem.ActionGroupUtil.isActionEnabledAndVisible(ActionGroupUtil.java:98)
+	at com.intellij.openapi.actionSystem.ActionGroupUtil.isGroupEmpty(ActionGroupUtil.java:43)
+	at com.intellij.openapi.actionSystem.ActionGroupUtil.isGroupEmpty(ActionGroupUtil.java:45)
+	at com.intellij.openapi.actionSystem.ActionGroupUtil.isGroupEmpty(ActionGroupUtil.java:34)
+	at com.intellij.ide.actions.NonTrivialActionGroup.update(NonTrivialActionGroup.java:37)
+	at com.intellij.openapi.actionSystem.ex.ActionUtil.performDumbAwareUpdate(ActionUtil.java:122)
+	at com.intellij.openapi.actionSystem.impl.Utils.a(Utils.java:188)
+	at com.intellij.openapi.actionSystem.impl.Utils.expandActionGroup(Utils.java:139)
+	at com.intellij.openapi.actionSystem.impl.Utils.expandActionGroup(Utils.java:86)
+	at com.intellij.openapi.actionSystem.impl.Utils.fillMenu(Utils.java:280)
+	at com.intellij.openapi.actionSystem.impl.ActionPopupMenuImpl$MyMenu.show(ActionPopupMenuImpl.java:95)
+	at com.intellij.ide.ui.customization.CustomizationUtil$2.invokePopup(CustomizationUtil.java:290)
+	at com.intellij.ui.PopupHandler.mousePressed(PopupHandler.java:48)
+	at java.awt.AWTEventMulticaster.mousePressed(AWTEventMulticaster.java:280)
+	at java.awt.AWTEventMulticaster.mousePressed(AWTEventMulticaster.java:279)
+	at java.awt.Component.processMouseEvent(Component.java:6532)
+	at javax.swing.JComponent.processMouseEvent(JComponent.java:3324)
+	at com.intellij.ui.treeStructure.Tree.processMouseEvent(Tree.java:410)
+	at com.intellij.ide.dnd.aware.DnDAwareTree.processMouseEvent(DnDAwareTree.java:59)
+	at java.awt.Component.processEvent(Component.java:6300)
+	at java.awt.Container.processEvent(Container.java:2236)
+	at java.awt.Component.dispatchEventImpl(Component.java:4891)
+	at java.awt.Container.dispatchEventImpl(Container.java:2294)
+	at java.awt.Component.dispatchEvent(Component.java:4713)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4888)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4522)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4466)
+	at java.awt.Container.dispatchEventImpl(Container.java:2280)
+	at java.awt.Window.dispatchEventImpl(Window.java:2750)
+	at java.awt.Component.dispatchEvent(Component.java:4713)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:758)
+	at java.awt.EventQueue.access$500(EventQueue.java:97)
+	at java.awt.EventQueue$3.run(EventQueue.java:709)
+	at java.awt.EventQueue$3.run(EventQueue.java:703)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
+	at java.awt.EventQueue$4.run(EventQueue.java:731)
+	at java.awt.EventQueue$4.run(EventQueue.java:729)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:76)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:728)
+	at com.intellij.ide.IdeEventQueue.b(IdeEventQueue.java:843)
+	at com.intellij.ide.IdeEventQueue._dispatchEvent(IdeEventQueue.java:675)
+	at com.intellij.ide.IdeEventQueue.dispatchEvent(IdeEventQueue.java:391)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:201)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:116)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:105)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:93)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
+```
 
 usually after startup
 ```
@@ -29,6 +97,8 @@ java.lang.Throwable
 
 * fix all unit tests
     * UnusedParameterInspectionTest
+    * UnresolvedReferenceInspectionTest
+    
 Type Tests:
     * ArgumentsMatching
     * TripleDot
@@ -36,18 +106,20 @@ Type Tests:
 * remove deprecated api usage
 
 
-## potential improvements and differences
+## Next Steps
 
+v1.0
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
+    * templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
+* backport colorscheme
+* bring back formatter
+* fix threading issues when doing indexing 
+* release
 
 
-### General 
-
-* auto-detect R and do not force user to specify installation location
-* function help should be context aware
 
 
-intentions & inspections
+Intentions & inspections
 ------------------------
 
 * missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
@@ -91,7 +163,8 @@ Documentation provider
 
 * also add links to package names to go to cran/bioconductor homepages
 * Show parameter info
- 
+* function help should be context aware
+
 Formatter
 ---------
 
@@ -140,6 +213,9 @@ com<complete> # show all methods which start with com including their packacke p
     * preference schemes for certain packages (dplyr, ggplot, etc)
 * better File path completion for nested directories
 
+* if running with console
+    * complete environment variables
+    * filter(iris, Species=="<complete here>")
 
 Refactorings
 ------------

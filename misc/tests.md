@@ -1,3 +1,13 @@
+
+General
+--------
+
+http://stackoverflow.com/questions/1861875/upgrading-to-junit4-and-keeping-legacy-junit-3-tests-and-test-suites-by-running
+
+
+
+
+
 From https://www.practicereproducibleresearch.org/core-chapters/7-glossary.html
 
 There are several types of testing to be considered:
@@ -10,9 +20,34 @@ There are several types of testing to be considered:
 
 * End-to-end testing: This type of testing verifies if the operations of an entire system, under realistic conditions, produce desired results. For example, an analysis pipeline that starts with raw experimental data (considered representative of the actual data that the system is designed to analyze) transforms and munges this data, and results in some statistical analysis. Testing an entire workflows is considered end-to-end testing (see also continuous integration, below).
 
-Documentation Provider
-----------------------
 
+
+Missing Unit Tests
+------------------
+
+autocompletion unit-tests?
+
+Nice docs
+http://www.jetbrains.org/intellij/sdk/docs/basics/testing_plugins.html
+
+resolveDependencies
+
+* namespace preferences
+* duplication
+
+
+### Refactorings
+
+Inlining: See org.intellij.grammar.BnfInlineRuleTest
+
+
+* renaming of function parameter: is the renaming also applied at the callsite? Yes
+
+
+End2End Tests
+-------------
+
+* Documentation Provider [test cases](testData/end_to_end/doc_lookup.R)
 
 * for library method
 * for local function in the same file --> show doc-string
@@ -43,28 +78,6 @@ sum(2,3)
 
 * for naming conflicted method --> show correct doc-string
 
-
-
-Missing Unit Tests
-------------------
-
-autocompletion unit-tests?
-
-Nice docs
-http://www.jetbrains.org/intellij/sdk/docs/basics/testing_plugins.html
-
-resolveDependencies
-
-* namespace preferences
-* duplication
-
-
-### Refactorings
-
-Inlining: See org.intellij.grammar.BnfInlineRuleTest
-
-
-* renaming of function parameter: is the renaming also applied at the callsite? Yes
 
 
 TODO

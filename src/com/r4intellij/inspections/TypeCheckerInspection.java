@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Map;
 
-public class RTypeCheckerInspection extends RInspection {
+public class TypeCheckerInspection extends RInspection {
 
     @Nls
     @NotNull

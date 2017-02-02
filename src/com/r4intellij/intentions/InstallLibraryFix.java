@@ -89,6 +89,11 @@ public class InstallLibraryFix implements LocalQuickFix {
                 public void processTerminated(ProcessEvent event) {
                     ExecutionManager executionManager = ExecutionManager.getInstance(project);
                     RunContentDescriptor descriptor = executionManager.getContentManager().getSelectedContent();
+
+                    // don't do nothing if user has terminated console window
+                    if (descriptor == null) {
+                        return;
+                    }
 //                    Set<Executor> executors = ((ExecutionManagerImpl) executionManager).getExecutors(descriptor);
 
                     ApplicationManager.getApplication().invokeLater(new Runnable() {

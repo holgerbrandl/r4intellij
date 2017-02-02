@@ -9,7 +9,7 @@ Release Action List
 
 API Doc Comments
 ================
-
+* visitor pattern pretty powerful allows for type specific visiting. see com.r4intellij.psi.api.RVisitor
 * necessity of 
 ```
 application.invokeLater(new Runnable() {
@@ -20,6 +20,8 @@ application.invokeLater(new Runnable() {
         ....
 ```
 
+
+* option panels for inspections: com.r4intellij.inspections.MissingPackageInspection.createOptionsPanel
 
 ## custom language support
 

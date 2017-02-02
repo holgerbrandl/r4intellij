@@ -10,7 +10,7 @@ import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
 
 import java.io.File;
 
-public class RTestCase extends UsefulTestCase {
+public abstract class RTestCase extends UsefulTestCase {
 
     public static final String TEST_DATA_PATH = new File("testData").getAbsolutePath().replace(File.pathSeparatorChar, '/');
     protected CodeInsightTestFixture myFixture;
@@ -28,10 +28,10 @@ public class RTestCase extends UsefulTestCase {
         myFixture.setTestDataPath(getTestDataPath());
     }
 
-
-    public void testDummy() {
-
-    }
+//
+//    public void testDummy() {
+//
+//    }
 
 
     protected String getTestDataPath() {

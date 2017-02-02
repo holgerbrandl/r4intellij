@@ -8,19 +8,20 @@ import java.io.File;
 /**
  * @author Holger Brandl
  */
-public class MissingImportInspectionTest extends RInspectionTest {
+public class MissingPackageInspectionTest extends RInspectionTest {
+
 
     @Override
-    protected String getTestDataPath() {
-        return super.getTestDataPath() + "/inspections/MissingImport";
+    public void setUp() throws Exception {
+        super.setUp();
+
+        // inject stub index here for more reproducible testing
+        RPackageService.getTestInstance(new File(TEST_DATA_PATH, "libindex.dat"));
+//        RPackageService.getInstance().refreshIndex();
     }
 
 
-    public void testTidyrImportMissing() {
-        // inject stub index here for more reproducible testing
-        RPackageService.getTestInstance(new File(super.getTestDataPath(), "libindex.dat"));
-//        RPackageService.getInstance().refreshIndex();
-
+    public void testMissingFoobarPackage() {
         doTest(getTestName(true) + ".R");
     }
 
@@ -28,6 +29,6 @@ public class MissingImportInspectionTest extends RInspectionTest {
     @NotNull
     @Override
     Class<? extends RInspection> getInspection() {
-        return MissingImportInspection.class;
+        return MissingPackageInspection.class;
     }
 }

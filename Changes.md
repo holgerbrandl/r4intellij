@@ -1,7 +1,7 @@
 Version History
 ===============
 
-## Changeshanges in v1.0*
+## Changeshanges in v1.0
 
 Restarted devlopment by forking [TheR](https://github.com/ktisha/TheRPlugin). This adds the following additional features
 * Interactive console
@@ -9,7 +9,8 @@ Restarted devlopment by forking [TheR](https://github.com/ktisha/TheRPlugin). Th
 * Package manager
 * Debugger
 * Run configurations
-
+* incomplete parameter list inspection
+* unused method parameter inspection
  
 
 The following features were merged in from previous version of r4intellij
@@ -22,21 +23,20 @@ The following features were merged in from previous version of r4intellij
     * package names in `require` and `library`
     * context aware method name completion for loaded packages 
 * language injection into string literals
-
+* code formatter
+* missing import inspection & quickfix
+* different color-schemes
 
 Other improvements
 * more robust skeletonization
 * various parser enhancements
 
-New Intentions and Inspections
-* incomplete parameter list warning when calling functions (from TheR)
-*
-
+New Quickfixes (aka intention) and Inspections
+* install missing library intention
 
 
 Code Snippet Evaluation
 * refactored into separate [Send to Terminal](https://plugins.jetbrains.com/idea/plugin/9409-send-to-terminal) plugin. Code is available under https://github.com/holgerbrandl/send2terminal
-
 
 
 ## Changeshanges in v0.12

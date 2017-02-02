@@ -6,4 +6,5 @@ test_function <- function(x, y, z, d) {
 }
 
 # z <- "dsds"
+# although z shows up in the function body above, it should be detected as unresovled because the scope is different
 test_function(<warning descr="Unresolved reference">z</warning>, 2, 1, 1)

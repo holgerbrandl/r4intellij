@@ -142,17 +142,13 @@
         <inlineActionHandler implementation="com.r4intellij.refactoring.RInlineActionHandler"/>
 
         <!-- note: display names not needed if defined in impl-->
+        <localInspection language="R"
+                         implementationClass="com.r4intellij.inspections.TypeCheckerInspection"/>
 
-        <localInspection language="R" level="WARNING"
-                         implementationClass="com.r4intellij.inspections.RTypeCheckerInspection"/>
-
-        <localInspection language="R" level="WARNING"
+        <localInspection language="R"
                          implementationClass="com.r4intellij.inspections.UnusedParameterInspection"/>
 
-        <localInspection language="R" level="WARNING"
-                         implementationClass="com.r4intellij.inspections.MissingImportInspection"/>
-
-        <localInspection language="R" level="WARNING"
+        <localInspection language="R"
                          implementationClass="com.r4intellij.inspections.MissingPackageInspection"/>
 
         <!--todo fix me or leave disabled-->

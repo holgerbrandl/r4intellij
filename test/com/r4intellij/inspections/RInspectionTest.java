@@ -5,6 +5,12 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class RInspectionTest extends RTestCase {
 
+    @Override
+    protected String getTestDataPath() {
+        return super.getTestDataPath() + "/inspections/" + getClass().getSimpleName().replace("Test", "");
+    }
+
+
     protected void doTest(@NotNull String filename) {
         myFixture.configureByFile(filename);
         myFixture.enableInspections(getInspection());

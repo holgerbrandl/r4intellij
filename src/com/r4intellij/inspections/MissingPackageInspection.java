@@ -11,9 +11,13 @@ import com.r4intellij.intentions.InstallLibraryFix;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RCallExpression;
+import com.r4intellij.psi.api.RExpression;
 import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 import static com.r4intellij.editor.RCompletionContributor.PACKAGE_IMPORT_METHODS;
 
@@ -23,11 +27,19 @@ import static com.r4intellij.editor.RCompletionContributor.PACKAGE_IMPORT_METHOD
  */
 public class MissingPackageInspection extends RInspection {
 
+    @Nullable
+    @Override
+    public JComponent createOptionsPanel() {
+        return super.createOptionsPanel();
+    }
+
+
     @Nls
     @NotNull
     @Override
     public String getGroupDisplayName() {
         return "R";
+
     }
 
 
@@ -68,13 +80,14 @@ public class MissingPackageInspection extends RInspection {
                     if (PACKAGE_IMPORT_METHODS.contains(methodName) &&
                             !((RCallExpression) psiElement).getArgumentList().getExpressionList().isEmpty()) {
 
-                        String packageName = ((RCallExpression) psiElement).getArgumentList().getExpressionList().get(0).getText();
+                        RExpression packageExpression = ((RCallExpression) psiElement).getArgumentList().getExpressionList().get(0);
 
+                        String packageName = packageExpression.getText();
                         RPackage byName = RPackageService.getInstance().getByName(packageName);
 
                         if (byName == null) {
                             String descriptionTemplate = "'" + packageName + "' is not yet installed";
-                            problemsHolder.registerProblem(psiElement, descriptionTemplate, new InstallLibraryFix(packageName));
+                            problemsHolder.registerProblem(packageExpression, descriptionTemplate, new InstallLibraryFix(packageName));
                         }
                     }
                 }

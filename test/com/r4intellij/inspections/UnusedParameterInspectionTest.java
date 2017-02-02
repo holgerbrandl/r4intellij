@@ -4,11 +4,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class UnusedParameterInspectionTest extends RInspectionTest {
 
-    @Override
-    protected String getTestDataPath() {
-        return super.getTestDataPath() + "/inspections/" + getTestName(true);
-    }
-
 
     public void testUnusedParameterInspection() {
         doTest(getTestName(true) + ".R");

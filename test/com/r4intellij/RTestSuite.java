@@ -15,12 +15,6 @@ import com.r4intellij.debugger.function.RBraceFunctionDebuggerTest;
 import com.r4intellij.debugger.function.RFunctionDebuggerFactoryImplTest;
 import com.r4intellij.debugger.function.RTraceAndDebugUtilsTest;
 import com.r4intellij.debugger.function.RUnbraceFunctionDebuggerTest;
-import com.r4intellij.inspections.RTypeCheckerInspectionTest;
-import com.r4intellij.inspections.UnresolvedReferenceInspectionTest;
-import com.r4intellij.inspections.UnusedParameterInspectionTest;
-import com.r4intellij.lexer.RHighlightingLexerTest;
-import com.r4intellij.parser.RParsingTest;
-import com.r4intellij.rename.RRenameTest;
 import com.r4intellij.run.RCommandLineCalculatorTest;
 import com.r4intellij.run.ROutputReceiverImplTest;
 import com.r4intellij.run.configuration.RRunConfigurationEditorTest;
@@ -40,26 +34,26 @@ import com.r4intellij.run.graphics.RGraphicsStateImplTest;
 import com.r4intellij.run.run.RRunExecutionResultCalculatorTest;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 //http://stackoverflow.com/questions/457276/junit4-test-suites
-public class RTestSuite extends TestCase {
+// suite just kept to allow for non-intellij programmatic testing
+@RunWith(Suite.class)
+public class RTestSuite {
 
-    @NotNull
     public static Test suite() {
-        final TestSuite suite = new TestSuite("AllTest");
+        TestSuite suite = new TestSuite("junit3-tests");
 
-        suite.addTestSuite(RTypeCheckerInspectionTest.class);
-        suite.addTestSuite(UnresolvedReferenceInspectionTest.class);
-        suite.addTestSuite(UnusedParameterInspectionTest.class);
-        suite.addTestSuite(RHighlightingLexerTest.class);
-        suite.addTestSuite(RParsingTest.class);
-        suite.addTestSuite(RRenameTest.class);
-
-        addDebuggerTests(suite);
-        addRunTests(suite);
+        // not needed by intellij to collect all the test
+//        suite.addTestSuite(TypeCheckerInspectionTest.class);
+//        suite.addTestSuite(UnresolvedReferenceInspectionTest.class);
+//        suite.addTestSuite(UnusedParameterInspectionTest.class);
+//        suite.addTestSuite(RHighlightingLexerTest.class);
+//        suite.addTestSuite(RParsingTest.class);
+//        suite.addTestSuite(RRenameTest.class);
 
         return suite;
     }
