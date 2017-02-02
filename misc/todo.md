@@ -1,5 +1,5 @@
 R4Intellij Development Notes
-----------------------------
+=============================
 
 ## 0-day bugs
 
@@ -56,15 +56,44 @@ intentions & inspections
 
 * check if urls and strings that are arguments of readr methods exist (allow to add working dir annotation to configure this locally)
     * http://stackoverflow.com/questions/18134718/java-quickest-way-to-check-if-url-exists
+```r
+# similar to type annotation
+# @type recursive : logical
+
+# Examples: 
+# @working-dir ../../
+# @working-dir ~/Users/
+# @working-dir ${FOO}/bar
+
+```
    
 * intention to replace tidyverse imports with library(tidyverse)
 * intention
 
+* warn if data-frame arguments are not declared in script (with comment annotation option to flag presence). Since this is not possible on a general we could/should provide it for certain APIs like tidyverse --> what about existing missinfref-inspection
+
 
 * highlight packages with naming conflicts (or indicate it visually in the IDE using virtual comment)
 
-    
-## Formatter
+* "add braces for if/else statement" intention
+* inspection in case of naming conflicts (same functions in imported packages) suggest to add prefix to method call (allow to override by annotation)
+* offer quickfix to surround if expression with curly brackets
+
+* Intention to add roxygen docu + code basic tag completion for roxygen comments
+* Intention to change function to S4 function
+
+Documentation provider
+----------------------
+
+* add title to package view like in RS:
+
+![](.todo_images/packages_rstudio.png)
+
+* also add links to package names to go to cran/bioconductor homepages
+* Show parameter info
+ 
+Formatter
+---------
 
 see `CodeStyleManager.adjustLineIndent()`
 
@@ -87,6 +116,7 @@ pdStories %>%
 
 ```
 
+* post fix template support https://www.jetbrains.com/help/idea/2016.3/using-postfix-templates.html
 
 Completion Provider
 -------------------
@@ -95,47 +125,26 @@ Completion Provider
 * method names after <package>:: 
 * after function name completion, cursor should end up between brackets
 
-
-Later features
-==============
-
-
-```r
-# similar to type annotation
-# @type recursive : logical
-
-# Examples: 
-# @working-dir ../../
-# @working-dir ~/Users/
-# @working-dir ${FOO}/bar
-
-```
 * show library import suggestions also for infix operators (like %<>% --> magrittr)
-* also support rstudio like sectioning 
 
-* make sure all rstudio refactorings work as well
 
-![](.todo_images/refactorings.png)
+* Make use of CompletionType enum to finetune/speed up auto-completion
 
----
-* add title to package view like in RS:
+* provide completion for named function parameters
+* help for function parameter should open function help
 
-![](.todo_images/packages_rstudio.png)
+* general method name completion with autoimpart
+```
+com<complete> # show all methods which start with com including their packacke prefix --> autoimport if not done is completion is accepted 
+```
+    * preference schemes for certain packages (dplyr, ggplot, etc)
+* better File path completion for nested directories
 
-* also add links to package names to go to cran/bioconductor homepages
 
----
-integrate with table editor in intellij
+Refactorings
+------------
 
-* https://www.jetbrains.com/help/idea/2016.3/working-with-the-table-editor.html
-* Allow to open table by clicking (R Console session required)
-
-* warn if data-frame arguments are not declared in script (with comment annotation option to flag presence). Since this is not possible on a general we could/should provide it for certain APIs like tidyverse
-
-* intention in case of naming conflicts (same functions in imported packages) suggest to add prefix to method call (allow to override by annotation)
-
-* bug: renaming for loop variables is broken
-
+* **FIXME**: renaming for loop variables is broken
 ```r
 for (name in packageNames) {
     if (paste(name, "r", sep=".") %in% list.files(path=args[1])) {
@@ -144,35 +153,25 @@ for (name in packageNames) {
 }
 ```
 
-* offer quickfix to surround if expression with curly brackets
+* make sure all rstudio refactorings work as well
 
+![](.todo_images/refactorings.png)
 
-* necessity of 
+* resolver should allow to avoid renaming of locally overloaded libray methods. So it should detect local function redefinitions
+```r
+require(dplyr)
+
+require = function(a) a+1
+
+require(dplyr) ## rename this to foo --> should not touch first import statment
 ```
-application.invokeLater(new Runnable() {
-    @Override
-    public void run() {
 
-        application.runWriteAction(new Runnable() {
-        ....
-```
-
-
-
-* knit button
-    * use `ExecutionManager.getInstance(project).startRunProfile();`
-    
-* post fix template support https://www.jetbrains.com/help/idea/2016.3/using-postfix-templates.html
 * change signature refac
 ```
     <extensionPoint name="refactoring.changeSignatureUsageProcessor"
                     interface="com.intellij.refactoring.changeSignature.ChangeSignatureUsageProcessor"/>
 ```
-
-
-Refactorings
-------------
-
+* along with signature changes: remove unused parameter from method signature
 
 
 Rnotebook support
@@ -207,65 +206,27 @@ https://slides.yihui.name/2017-rstudio-conf-rmarkdown-Yihui-Xie.html#1
 
 http://ijlyttle.github.io/bsplus/
 
-## Markdown impro wishlist
+## Environment view 
 
-* aligned cursor with preview
-* highlight search results in preview
-* search in preview
-* jump to code from preview
-* intention to unify header styles
+![](.todo_images/environment_view.png)
 
+* open table in idea support (differnt modes: internal, DT)
+* integrate with table editor in intellij
+* Allow to open table by clicking (R Console session required)
 
-
-## Enhanced code completion
-
-* Make use of CompletionType enum to finetune/speed up auto-completion
-
-* provide completion for named function parameters
-* help for function parameter should open function help
-
-* general method name completion with autoimpart
-```
-com<complete> # show all methods which start with com including their packacke prefix --> autoimport if not done is completion is accepted 
-```
-    * preference schemes for certain packages (dplyr, ggplot, etc)
-
-## Misc
-
-What about packrat? http://rstudio.github.io/packrat/walkthrough.html
-
-
-Also see [OpenApi notes](openapi_notes.md)
+See  https://www.jetbrains.com/help/idea/2016.3/working-with-the-table-editor.html
 
 
 
-Brainstorming  & Roadmap
-=======
+Brainstorming
+=============
 
-
-* better File path completion for nested directories
-* Better highlighting of syntax errors
-* Intention to add roxygen docu + code basic tag completion for roxygen comments
-* Intention to change function to S4 function
 * Connectors for xterm and Rgui on windows
-
-
-* More context-aware auto-completion for variables, functions and file paths
-* Push to R also for windows
-* Example? Arc:ReplToolWindow
 * ColorSettingsPage (see Bash implementation)
-* Show parameter info
-* BnfAnnotator: psi-aware highlightling of syntax elements
 
-* resolver should allow to avoid renaming of locally overloaded libray methods
-```r
-require(dplyr)
-
-require = function(a) a+1
-
-require(a) ## rename this to foo --> should not touch first import statment
-
-```
+* use gradle build similar to markdown plugin
+*  also support rstudio like sectioning 
+* What about packrat? http://rstudio.github.io/packrat/walkthrough.html
 
 
 Send To Console Improvements
@@ -292,38 +253,16 @@ Windows Support
 * Or most promising, we could try to use the windows API via VBScript or C#
 
 
+Markdown impro wishlist
+=======================
 
-Markdown plugin
-==============
-
-* Useful structure view
+* Useful structure view **[done]**
 * Click to to jump to code
 * synced scrolling
 
+* aligned cursor with preview
+* highlight search results in preview
+* search in preview
+* intention to unify header styles
 
-IDE Comparison
-=====
-
-See how it compares to
-https://rawgit.com/kevinushey/2017-rstudio-conf/master/slides.html
-
-https://www.rstudio.com/rviews/2017/01/27/january-17-tips-and-tricks/
-
-Pros
-* fast incremental updates (backed by exhaustive unit-test suites)
-* better scm (reformat, inlined change annotation)
-* more efficient parser & inspections (runs permanently)
-
-Cons
-* intial setup 
-* IDE complexity
-
-Still missing
-* radiant integration
-* jsonedit integration 
-* open table in idea support (differnt modes: internal, DT)
-
-
-environment view? 
-![](.todo_images/environment_view.png)
-
+Also see [OpenApi notes](openapi_notes.md)

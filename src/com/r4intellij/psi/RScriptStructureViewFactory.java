@@ -15,6 +15,7 @@ import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.PlatformIcons;
 import com.r4intellij.psi.api.RAssignmentStatement;
 import com.r4intellij.psi.api.RFile;
@@ -148,13 +149,13 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
         @NotNull
         public StructureViewTreeElement[] getChildren() {
 
-            final List<PsiElement> childrenElements = new ArrayList<PsiElement>();
+            final List<StructureViewTreeElement> childrenElements = new ArrayList<StructureViewTreeElement>();
 
             final PsiElementVisitor functionCollector = new PsiElementVisitor() {
                 public void visitElement(PsiElement element) {
 //                        if (element instanceof RSection || (getFunctionName(element) != null && getSection(element) == null)) {
                     if (element instanceof RFunctionExpression) {
-                        childrenElements.add(element);
+                        childrenElements.add(new RStructureViewElement(element));
                         return;
                     }
 
@@ -170,7 +171,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
                     @Override
                     public void visitComment(PsiComment comment) {
                         if (isSectionDivider(comment)) {
-                            childrenElements.add(comment);
+                            childrenElements.add(new RStructureViewElement(comment));
                         }
                     }
 
@@ -197,14 +198,7 @@ public class RScriptStructureViewFactory implements PsiStructureViewFactory {
                 }
             }
 
-
-            // reshape into array
-            StructureViewTreeElement[] children = new StructureViewTreeElement[childrenElements.size()];
-            for (int i = 0; i < children.length; i++) {
-                children[i] = new RStructureViewElement(childrenElements.get(i));
-            }
-
-            return children;
+            return ArrayUtil.toObjectArray(childrenElements, StructureViewTreeElement.class);
         }
 
 

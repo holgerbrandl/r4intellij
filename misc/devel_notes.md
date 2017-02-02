@@ -10,6 +10,17 @@ Release Action List
 API Doc Comments
 ================
 
+* necessity of 
+```
+application.invokeLater(new Runnable() {
+    @Override
+    public void run() {
+
+        application.runWriteAction(new Runnable() {
+        ....
+```
+
+
 ## custom language support
 
 ![](.openapi_notes_images/language_api.png)
