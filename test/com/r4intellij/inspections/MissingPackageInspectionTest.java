@@ -26,6 +26,16 @@ public class MissingPackageInspectionTest extends RInspectionTest {
     }
 
 
+    public void testQuotedPackageName() {
+        doTest(getTestName(true) + ".R");
+    }
+
+
+    public void testFunCallRequireArg() {
+        doExprTest("require(getPckgName('foo'))");
+    }
+
+
     @NotNull
     @Override
     Class<? extends RInspection> getInspection() {

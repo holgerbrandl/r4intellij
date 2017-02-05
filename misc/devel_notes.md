@@ -7,6 +7,8 @@ Release Action List
 4. Deploy jar and upload to plugin reposiotry
 
 
+
+
 API Doc Comments
 ================
 * visitor pattern pretty powerful allows for type specific visiting. see com.r4intellij.psi.api.RVisitor
@@ -81,12 +83,18 @@ To make sure that renaming does not apply to installed packages/library --> http
 
 Intentions vs. Inspections
 =========================
+
  
+good docs http://www.jetbrains.org/intellij/sdk/docs/tutorials/code_intentions.html
 
 * Inspections: Error warning + fix
     * Error/warning indicators in code and at the right side
 * Local refactorings (like expression conversion)
     * More hidden: just show up when using Alt-Enter
+
+
+many potentially useful base-classes
+`com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement`
 
 
 In openapi.jar there is a com.intellij.refactoring.util.RefactoringMessageDialog which seems to be extended only by com.intellij.refactoring.inline.InlineParameterDialog in idea.jar, so all the other refactorings are using a different base for their dialogs.

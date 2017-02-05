@@ -1,0 +1,5 @@
+foo = <spot>T</spot>
+
+if(require(dplyr) = <spot>F</spot>){
+# do something
+}

@@ -86,3 +86,21 @@ TODO
 Write unit tests for all this if possilbe :-)
 
 
+Misc
+====
+
+Clear config between runs 
+`rm -rf ~/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/config/`
+
+* hightlighting codes from com/intellij/openapi/options/colors/pages/GeneralColorsPage.java:60 
+```
+  "Code Inspections:\n" +
+    "  <error>Error</error>\n" +
+    "  <warning>Warning</warning>\n" +
+    "  <weak_warning>Weak warning</weak_warning>\n" +
+    "  <deprecated>Deprecated symbol</deprecated>\n" +
+    "  <unused>Unused symbol</unused>\n"+
+    "  <wrong_ref>Unknown symbol</wrong_ref>\n" +
+    "  <server_error>Problem from server</server_error>\n" +
+    "  <server_duplicate>Duplicate from server</server_duplicate>\n" +
+```

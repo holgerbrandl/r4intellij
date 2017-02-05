@@ -1,5 +1,6 @@
 package com.r4intellij.inspections;
 
+import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -13,10 +14,19 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 public class UnusedParameterInspection extends RInspection {
+
+
+    @Override
+    public boolean isEnabledByDefault() {
+        return true;
+    }
+
+
+
     @NotNull
     @Override
-    public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session) {
-        return new Visitor(holder);
+    public HighlightDisplayLevel getDefaultLevel() {
+        return HighlightDisplayLevel.WEAK_WARNING;
     }
 
 
@@ -26,6 +36,14 @@ public class UnusedParameterInspection extends RInspection {
     public String getDisplayName() {
         return "Unused Function Parameter";
     }
+
+
+    @NotNull
+    @Override
+    public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session) {
+        return new Visitor(holder);
+    }
+
 
 
     //TODO: check not only parameters
@@ -44,7 +62,7 @@ public class UnusedParameterInspection extends RInspection {
             Query<PsiReference> search = ReferencesSearch.search(o);
             PsiReference first = search.findFirst();
             if (first == null) {
-                myProblemHolder.registerProblem(o, "Unused parameter " + o.getText(), ProblemHighlightType.WEAK_WARNING);
+                myProblemHolder.registerProblem(o, "Unused parameter " + o.getText(), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
             }
         }
     }

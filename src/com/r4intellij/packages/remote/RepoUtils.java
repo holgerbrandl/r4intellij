@@ -236,7 +236,7 @@ public class RepoUtils {
     }
 
 
-    static void uninstallPackage(List<InstalledPackage> repoPackage) throws ExecutionException {
+    public static void uninstallPackage(List<InstalledPackage> repoPackage) throws ExecutionException {
         final String path = RInterpreterService.getInstance().getInterpreterPath();
         if (StringUtil.isEmptyOrSpaces(path)) {
             throw new ExecutionException("Please, specify path to the R executable.");

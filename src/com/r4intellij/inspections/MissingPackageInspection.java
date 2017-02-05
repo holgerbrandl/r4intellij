@@ -4,20 +4,14 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiRecursiveElementWalkingVisitor;
 import com.r4intellij.intentions.InstallLibraryFix;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
-import com.r4intellij.psi.api.RCallExpression;
-import com.r4intellij.psi.api.RExpression;
-import com.r4intellij.psi.api.RFile;
+import com.r4intellij.psi.RRecursiveElementVisitor;
+import com.r4intellij.psi.api.*;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 import static com.r4intellij.editor.RCompletionContributor.PACKAGE_IMPORT_METHODS;
 
@@ -27,20 +21,16 @@ import static com.r4intellij.editor.RCompletionContributor.PACKAGE_IMPORT_METHOD
  */
 public class MissingPackageInspection extends RInspection {
 
-    @Nullable
-    @Override
-    public JComponent createOptionsPanel() {
-        return super.createOptionsPanel();
-    }
-
 
     @Nls
     @NotNull
     @Override
     public String getGroupDisplayName() {
         return "R";
-
     }
+
+
+// FIXME   https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000074350-Why-are-default-xml-plugin-settings-preferred-over-code-based-component-configuration-
 
 
     @Nls
@@ -49,7 +39,6 @@ public class MissingPackageInspection extends RInspection {
     public String getDisplayName() {
         return "Missing package";
     }
-
 
 
     @NotNull
@@ -70,31 +59,43 @@ public class MissingPackageInspection extends RInspection {
     private static void checkFile(final PsiFile file, final ProblemsHolder problemsHolder) {
         if (!(file instanceof RFile)) return;
 
-        file.accept(new PsiRecursiveElementWalkingVisitor() {
+        file.accept(new RRecursiveElementVisitor() {
+
             @Override
-            public void visitElement(PsiElement psiElement) {
+            public void visitCallExpression(@NotNull RCallExpression psiElement) {
+                String methodName = psiElement.getExpression().getText();
 
-                if (psiElement instanceof RCallExpression) {
-                    String methodName = ((RCallExpression) psiElement).getExpression().getText();
+                if (PACKAGE_IMPORT_METHODS.contains(methodName) &&
+                        !psiElement.getArgumentList().getExpressionList().isEmpty()) {
 
-                    if (PACKAGE_IMPORT_METHODS.contains(methodName) &&
-                            !((RCallExpression) psiElement).getArgumentList().getExpressionList().isEmpty()) {
+                    RExpression packageExpression = psiElement.getArgumentList().getExpressionList().get(0);
 
-                        RExpression packageExpression = ((RCallExpression) psiElement).getArgumentList().getExpressionList().get(0);
 
-                        String packageName = packageExpression.getText();
-                        RPackage byName = RPackageService.getInstance().getByName(packageName);
+                    // support quoted and unquoted method names here
+                    String packageName;
+                    if (packageExpression instanceof RStringLiteralExpression) {
+                        packageName = unqote(packageExpression.getText());
+                    } else if (packageExpression instanceof RReferenceExpression) {
+                        packageName = packageExpression.getText();
+                    } else {
+                        // could be a function RCallExpression or something weired, so ignore it
+                        return;
+                    }
+                    RPackage byName = RPackageService.getInstance().getByName(packageName);
 
-                        if (byName == null) {
-                            String descriptionTemplate = "'" + packageName + "' is not yet installed";
-                            problemsHolder.registerProblem(packageExpression, descriptionTemplate, new InstallLibraryFix(packageName));
-                        }
+                    if (byName == null) {
+                        String descriptionTemplate = "'" + packageName + "' is not yet installed";
+                        problemsHolder.registerProblem(packageExpression, descriptionTemplate, new InstallLibraryFix(packageName));
                     }
                 }
-
-                super.visitElement(psiElement);
             }
 //
         });
+    }
+
+
+    // http://stackoverflow.com/questions/41298164/how-to-remove-single-and-double-quotes-at-both-ends-of-a-string
+    public static String unqote(String text) {
+        return text.replaceAll("^['\"]*", "").replaceAll("['\"]*$", "");
     }
 }

@@ -48,6 +48,10 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
+    public void testSelfAssignment() {
+        doExprTest("sdf = ls(<warning descr=\"Unresolved reference\">sdf</warning>)");
+    }
+
     @NotNull
     @Override
     Class<? extends RInspection> getInspection() {

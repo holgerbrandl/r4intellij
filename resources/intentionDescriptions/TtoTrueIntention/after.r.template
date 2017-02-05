@@ -1,0 +1,5 @@
+foo = <spot>TRUE</spot>
+
+if(require(dplyr) = <spot>FALSE</spot>){
+# do something
+}

@@ -5,6 +5,7 @@ R4Intellij Development Notes
 
 * library("randomForest") quickfix does not work
 * formula show up ans non-resolvable: `pw_present~.`
+* com.intellij.codeInspection.LocalQuickFixAsIntentionAdapter
 
 right-click on scratches
 ```
@@ -122,6 +123,18 @@ v1.0
 Intentions & inspections
 ------------------------
 
+* create missing function intention
+```r
+result = myfancyfun(sdf)  # should become
+
+myfancyfun = function(sdf){
+    .caret.
+}
+result = myfancyfun(sdf)  
+
+```
+![](.todo_images/create function intention.png)
+
 * missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
 
 * quick fix to simplify/ remove the dot in  `filtGraphData %>% graph.data.frame(., directed=TRUE)` if first arg
@@ -153,6 +166,15 @@ Intentions & inspections
 
 * Intention to add roxygen docu + code basic tag completion for roxygen comments
 * Intention to change function to S4 function
+
+* intention to add name to named argument `myfun(34)` ->  `myfun(num_reps = 34)`  
+
+* intention: warn about usage of T and F
+
+* consider to use `    <codeInsight.unresolvedReferenceQuickFixProvider
+                           implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"/>` for better API design
+                           
+* conider to use `com.intellij.codeInsight.intention.LowPriorityAction` 
 
 Documentation provider
 ----------------------
@@ -199,6 +221,8 @@ Completion Provider
 * after function name completion, cursor should end up between brackets
 
 * show library import suggestions also for infix operators (like %<>% --> magrittr)
+
+* intention to remove unused parameter from method signature
 
 
 * Make use of CompletionType enum to finetune/speed up auto-completion
@@ -247,11 +271,15 @@ require(dplyr) ## rename this to foo --> should not touch first import statment
     <extensionPoint name="refactoring.changeSignatureUsageProcessor"
                     interface="com.intellij.refactoring.changeSignature.ChangeSignatureUsageProcessor"/>
 ```
-* along with signature changes: remove unused parameter from method signature
+ 
 
+* refac to change signature
 
 Rnotebook support
 -----------------
+
+dynmaic toolbar buttons
+`https://intellij-support.jetbrains.com/hc/en-us/community/posts/206151289-How-to-add-icons-to-the-toolbar-`
 
 * implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
 
@@ -282,6 +310,10 @@ https://slides.yihui.name/2017-rstudio-conf-rmarkdown-Yihui-Xie.html#1
 
 http://ijlyttle.github.io/bsplus/
 
+* allow to open notebook in browser
+`    <selectInTarget implementation="com.intellij.ide.browsers.actions.SelectInDefaultBrowserTarget"/>
+`
+
 ## Environment view 
 
 ![](.todo_images/environment_view.png)
@@ -293,6 +325,11 @@ http://ijlyttle.github.io/bsplus/
 See  https://www.jetbrains.com/help/idea/2016.3/working-with-the-table-editor.html
 
 
+Package Manger
+==============
+
+* **fixme** package installation fails 
+
 
 Brainstorming
 =============
@@ -300,10 +337,11 @@ Brainstorming
 * Connectors for xterm and Rgui on windows
 * ColorSettingsPage (see Bash implementation)
 
-* use gradle build similar to markdown plugin
+* use gradle build similar to markdown plugin. see http://www.jetbrains.org/intellij/sdk/docs/tutorials/kotlin.html
+
 *  also support rstudio like sectioning 
 * What about packrat? http://rstudio.github.io/packrat/walkthrough.html
-
+* provide `com.intellij.codeInsight.daemon.impl.quickfix.FetchExtResourceAction.FetchExtResourceAction(boolean)` for `devtools::source_url)` statments 
 
 Send To Console Improvements
 ============================
