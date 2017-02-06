@@ -16,6 +16,8 @@ import com.intellij.psi.search.ProjectScopeImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RPsiUtils;
 import com.r4intellij.interpreter.RInterpreterConfigurable;
+import com.r4intellij.packages.RPackage;
+import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
 import com.r4intellij.typing.RTypeProvider;
@@ -25,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RResolver {
 
@@ -34,8 +37,45 @@ public class RResolver {
         for (String name : names) {
             addFromProject(name, element.getProject(), result);
             addFromLibrary(element, result, name, RInterpreterConfigurable.USER_SKELETONS);
-            addFromLibrary(element, result, name, RInterpreterConfigurable.R_SKELETONS);
             addFromLibrary(element, result, name, RInterpreterConfigurable.R_LIBRARY);
+
+            // too unspecific and does not reflect imports
+//            addFromLibrary(element, result, name, RInterpreterConfigurable.R_SKELETONS);
+
+            addFromImports(element, result, name, RInterpreterConfigurable.R_SKELETONS);
+
+        }
+    }
+
+
+    private static void addFromImports(@NotNull final PsiElement element,
+                                       @NotNull final List<ResolveResult> result,
+                                       @NotNull final String name,
+                                       @NotNull final String libraryName) {
+
+        // get all imports for the current File
+        List<String> imports = RPackageService.getInstance().resolveImports(element).stream().
+                map(RPackage::getName).collect(Collectors.toList());
+
+        Project project = element.getProject();
+        LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
+        final Library library = libraryTable.getLibraryByName(libraryName);
+        if (library == null) {
+            return;
+        }
+
+        final Collection<RAssignmentStatement> assignmentStatements =
+                RAssignmentNameIndex.find(name, project, new LibraryScope(project, library));
+
+        for (RAssignmentStatement statement : assignmentStatements) {
+            final PsiFile containingFile = statement.getContainingFile();
+
+            if (!imports.contains(containingFile.getName().replaceAll(".r$", ""))) continue;
+
+            final PsiElement assignee = statement.getAssignee();
+            if (assignee == null || containingFile.getName() == null) continue;
+
+            result.add(new PsiElementResolveResult(statement));
         }
     }
 
@@ -47,16 +87,19 @@ public class RResolver {
         Project project = element.getProject();
         LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
         final Library library = libraryTable.getLibraryByName(libraryName);
-        if (library != null) {
-            final Collection<RAssignmentStatement> assignmentStatements = RAssignmentNameIndex.find(name, project,
-                    new LibraryScope(
-                            project, library));
-            for (RAssignmentStatement statement : assignmentStatements) {
-                final PsiFile containingFile = statement.getContainingFile();
-                final PsiElement assignee = statement.getAssignee();
-                if (assignee == null || containingFile.getName() == null) continue;
-                result.add(new PsiElementResolveResult(statement));
-            }
+
+        if (library == null) {
+            return;
+        }
+
+        final Collection<RAssignmentStatement> assignmentStatements =
+                RAssignmentNameIndex.find(name, project, new LibraryScope(project, library));
+
+        for (RAssignmentStatement statement : assignmentStatements) {
+            final PsiFile containingFile = statement.getContainingFile();
+            final PsiElement assignee = statement.getAssignee();
+            if (assignee == null || containingFile.getName() == null) continue;
+            result.add(new PsiElementResolveResult(statement));
         }
     }
 

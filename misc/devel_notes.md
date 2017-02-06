@@ -62,8 +62,14 @@ https://intellij-support.jetbrains.com/hc/en-us/community/posts/207250965-PsiRef
 
 * **[todo]** redeclaration of function with same name (prefer local over global; same dir over other dir)
 
+### datasets
 
+added to sekelton; accessible via stub-index like functions
 
+stub index content
+```text
+StubIndex.getInstance().getAllKeys(KEY, project).stream().filter(p->p.trim().contains("nasa")).collect(Collectors.toList())
+```
 #### unresolved symbols when using uquoted method names
 
 Example

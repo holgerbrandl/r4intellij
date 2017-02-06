@@ -64,6 +64,7 @@ public class RPackage implements Serializable {
         return dataSets.stream().map(PckgDataSet::getName).collect(Collectors.toList());
     }
 
+
     public String getName() {
         return packageName;
     }
@@ -80,13 +81,13 @@ public class RPackage implements Serializable {
 
 
     public boolean hasFunction(String funName) {
-        for (PckgFunction function : functions) {
-            if (function.getName().equals(funName)) {
-                return true;
-            }
-        }
+        return functions.stream().anyMatch(ds -> ds.getName().equals(funName));
 
-        return false;
+    }
+
+
+    public boolean hasDataSet(String setName) {
+        return dataSets.stream().anyMatch(ds -> ds.getName().equals(setName));
     }
 
 

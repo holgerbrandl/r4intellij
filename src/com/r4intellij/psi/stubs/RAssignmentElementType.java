@@ -6,6 +6,7 @@ import com.intellij.psi.stubs.*;
 import com.intellij.util.io.StringRef;
 import com.r4intellij.psi.RAssignmentStatementImpl;
 import com.r4intellij.psi.api.RAssignmentStatement;
+import com.r4intellij.psi.api.RFile;
 import com.r4intellij.psi.api.RFunctionExpression;
 import com.r4intellij.psi.api.RPsiElement;
 import org.jetbrains.annotations.NotNull;
@@ -30,11 +31,14 @@ public class RAssignmentElementType extends RStubElementType<RAssignmentStub, RA
     }
 
 
+    @NotNull
     @Override
     public RAssignmentStub createStub(@NotNull RAssignmentStatement psi, StubElement parentStub) {
         final String name = psi.getName();
         final RPsiElement value = psi.getAssignedValue();
-        return new RAssignmentStubImpl(name, parentStub, this, value instanceof RFunctionExpression);
+        boolean isTopLevelAssign = value.getParent() != null && value.getParent().getParent() != null && value.getParent().getParent() instanceof RFile;
+
+        return new RAssignmentStubImpl(name, parentStub, this, value instanceof RFunctionExpression, isTopLevelAssign);
     }
 
 
@@ -43,6 +47,7 @@ public class RAssignmentElementType extends RStubElementType<RAssignmentStub, RA
             throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isFunctionDeclaration());
+        dataStream.writeBoolean(stub.isTopLevelAssignment());
     }
 
 
@@ -51,14 +56,15 @@ public class RAssignmentElementType extends RStubElementType<RAssignmentStub, RA
     public RAssignmentStub deserialize(@NotNull final StubInputStream dataStream, final StubElement parentStub) throws IOException {
         String name = StringRef.toString(dataStream.readName());
         final boolean isFunctionDefinition = dataStream.readBoolean();
-        return new RAssignmentStubImpl(name, parentStub, this, isFunctionDefinition);
+        final boolean isTopLevel = dataStream.readBoolean();
+        return new RAssignmentStubImpl(name, parentStub, this, isFunctionDefinition, isTopLevel);
     }
 
 
     @Override
     public void indexStub(@NotNull final RAssignmentStub stub, @NotNull final IndexSink sink) {
         final String name = stub.getName();
-        if (name != null && stub.getParentStub() instanceof PsiFileStub && stub.isFunctionDeclaration()) {
+        if (name != null && stub.getParentStub() instanceof PsiFileStub && stub.isTopLevelAssignment()) {
             sink.occurrence(RAssignmentNameIndex.KEY, name);
         }
     }

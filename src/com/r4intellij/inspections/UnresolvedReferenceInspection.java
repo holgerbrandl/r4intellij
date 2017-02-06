@@ -118,20 +118,19 @@ public class UnresolvedReferenceInspection extends RInspection {
             RExpression funExpr = psiElement.getExpression();
             String functionName = funExpr.getText();
 
-            List<RPackage> funPackage = packageService.getContainingPackages(functionName);
-            List<String> funPackageNames = Lists.newArrayList(Iterables.transform(funPackage, Functions.toStringFunction()));
+            List<RPackage> contPackages = packageService.getContainingPackages(functionName);
+            List<String> contPackageNames = Lists.newArrayList(Iterables.transform(contPackages, Functions.toStringFunction()));
 
-            if (funPackageNames.isEmpty())
+            if (contPackageNames.isEmpty())
                 return false;
 
             // check if there's an import statement for any of them
-            List<String> importedPackages = ((RFile) psiElement.getContainingFile()).getImportedPackages();
 
-            List<RPackage> resolvedImports = packageService.resolveDependencies(importedPackages);
-            importedPackages = Lists.newArrayList(Iterables.transform(resolvedImports, Functions.toStringFunction()));
+            List<RPackage> resolvedImports = packageService.resolveImports(psiElement);
+            List<String> importedPackages = Lists.newArrayList(Iterables.transform(resolvedImports, Functions.toStringFunction()));
 
             // check whether the import list contains any of the packages
-            if (!Sets.intersection(Sets.newHashSet(importedPackages), Sets.newHashSet(funPackageNames)).isEmpty()) {
+            if (!Sets.intersection(Sets.newHashSet(importedPackages), Sets.newHashSet(contPackageNames)).isEmpty()) {
                 return true;
             }
 
@@ -147,12 +146,12 @@ public class UnresolvedReferenceInspection extends RInspection {
 
 
             List<LocalQuickFix> fixes = new ArrayList<LocalQuickFix>();
-            for (String funPackageName : funPackageNames) {
+            for (String funPackageName : contPackageNames) {
                 fixes.add(new ImportLibraryFix(funPackageName));
             }
 
             String descriptionTemplate = "'" + functionName + "' has been detected in a package (" +
-                    Joiner.on(", ").join(funPackageNames) + ") which does not seem to be imported yet.";
+                    Joiner.on(", ").join(contPackageNames) + ") which does not seem to be imported yet.";
             problemsHolder.registerProblem(funExpr, descriptionTemplate, fixes.toArray(new LocalQuickFix[0]));
 
             return true;

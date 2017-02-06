@@ -45,8 +45,24 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
-    public void testPackageData() {
-        doTest();
+    // data-set resolve (which should come via stub index
+
+
+    /**
+     * since it is asscoiated with base the package should be resolvable
+     */
+    public void testIris() {
+        doExprTest("iris");
+    }
+
+
+    public void testNasaWithoutDplyr() {
+        doExprTest("<warning descr=\"Unresolved reference\">nasa</warning>");
+    }
+
+
+    public void testNasaWithDplyr() {
+        doExprTest("require(dplyr); nasa");
     }
 
 

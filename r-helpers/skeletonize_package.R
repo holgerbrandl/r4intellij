@@ -122,7 +122,10 @@ dsets <- as.data.frame(data(package = pName)$result)
 dsets  = subset(dsets, !(1:nrow(dsets) %in% grep("(", as.character(dsets$Item), fixed=TRUE)))
 
 sink(skeletonFile, append=T)
-cat(with(dsets, paste0(as.character(Item), " <- function() ", as.character(pName), "::", as.character(Item), "\t\t## ", as.character(Title))), sep="\n\n")
+
+cat("\n\n## Package Data\n\n")
+cat(with(dsets, paste0(as.character(Item), " <- ", as.character(pName), "::", as.character(Item), "\t\t## ", as.character(Title))), sep="\n\n")
+
 sink()
 }
 

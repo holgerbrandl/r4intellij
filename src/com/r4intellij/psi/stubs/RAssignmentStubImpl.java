@@ -10,15 +10,17 @@ import org.jetbrains.annotations.Nullable;
 public class RAssignmentStubImpl extends StubBase<RAssignmentStatement> implements RAssignmentStub {
     private final String myName;
     private final boolean isFunction;
+    private final boolean isTopLevel;
 
 
     public RAssignmentStubImpl(@Nullable final String name,
                                @NotNull final StubElement parent,
                                @NotNull IStubElementType stubElementType,
-                               boolean isFunctionDefinition) {
+                               boolean isFunctionDefinition, boolean isTopLevel) {
         super(parent, stubElementType);
-        myName = name;
-        isFunction = isFunctionDefinition;
+        this.myName = name;
+        this.isFunction = isFunctionDefinition;
+        this.isTopLevel = isTopLevel;
     }
 
 
@@ -37,5 +39,11 @@ public class RAssignmentStubImpl extends StubBase<RAssignmentStatement> implemen
     @Override
     public boolean isFunctionDeclaration() {
         return isFunction;
+    }
+
+
+    @Override
+    public boolean isTopLevelAssignment() {
+        return isTopLevel;
     }
 }

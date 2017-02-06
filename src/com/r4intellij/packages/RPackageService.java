@@ -11,10 +11,12 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.r4intellij.interpreter.RSkeletonGenerator;
+import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -276,16 +278,10 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
 
     @NotNull
-    public List<RPackage> getContainingPackages(String functionName) {
-        List<RPackage> funPackages = Lists.newArrayList();
-
-        for (RPackage rPackage : getPackages()) {
-            if (rPackage.hasFunction(functionName)) {
-                funPackages.add(rPackage);
-            }
-        }
-
-        return funPackages;
+    public List<RPackage> getContainingPackages(String symbol) {
+        return getPackages().stream().filter(pckg ->
+                pckg.hasFunction(symbol) || pckg.hasDataSet(symbol)
+        ).collect(Collectors.toList());
     }
 
 
@@ -386,5 +382,12 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
     public boolean isReady() {
         return !allPackages.isEmpty();
+    }
+
+
+    public List<RPackage> resolveImports(PsiElement psiElement) {
+        List<String> importedPackages = ((RFile) psiElement.getContainingFile()).getImportedPackages();
+
+        return resolveDependencies(importedPackages);
     }
 }
