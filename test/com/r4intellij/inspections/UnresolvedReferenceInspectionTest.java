@@ -67,6 +67,12 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testTransitiveDependencies() {
+        doExprTest("require(caret); ggplot(iris)");
+    }
+
+
+    // see https://github.com/tidyverse/tidyverse/issues/40
+    public void testTransitiveTidyverseDependencies() {
         doExprTest("require(tidyverse); count(iris, Species)");
     }
 

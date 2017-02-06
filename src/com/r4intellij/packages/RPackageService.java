@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author avesloguzova
@@ -367,6 +368,17 @@ public class RPackageService implements PersistentStateComponent<RPackageService
                     return resolvedImports.stream();
                 }).collect(Collectors.toList());
 
+        // workaround for https://github.com/tidyverse/tidyverse/issues/40
+
+
+        if (dependencies.stream().anyMatch(rpg -> rpg.getName().equals("tidyverse"))) {
+            List<RPackage> tidyverseAttachments = Stream.of("magrittr", "stringr", "dplyr", "purrr", "readr", "tidyr", "tibble", "ggplot2").
+                    map(p -> new RPackageService().getByName(p)).
+                    filter(Objects::nonNull).collect(Collectors.toList());
+
+            int tidyverse = dependencies.indexOf("tidyverse");
+            dependencies.addAll(tidyverse + 1, tidyverseAttachments);
+        }
 
         return dependencies;
     }
@@ -380,6 +392,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
+    @Deprecated
     public boolean isReady() {
         return !allPackages.isEmpty();
     }
