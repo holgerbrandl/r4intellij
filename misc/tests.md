@@ -25,7 +25,7 @@ There are several types of testing to be considered:
 Missing Unit Tests
 ------------------
 
-autocompletion unit-tests?
+autocompletion unit-tests? Just use CITF as usual with `com.intellij.testFramework.fixtures.CodeInsightTestFixture.testCompletion(java.lang.String, java.lang.String, java.lang.String...)` and friends
 
 Nice docs
 http://www.jetbrains.org/intellij/sdk/docs/basics/testing_plugins.html

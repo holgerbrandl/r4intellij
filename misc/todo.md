@@ -3,6 +3,10 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+
+why is it not applicable to all occurences
+![](.todo_images/totrue_all.png)
+
 * library("randomForest") quickfix does not work
 * formula show up ans non-resolvable: `pw_present~.`
 * com.intellij.codeInspection.LocalQuickFixAsIntentionAdapter
@@ -169,6 +173,7 @@ result = myfancyfun(sdf)
 
 * intention to add name to named argument `myfun(34)` ->  `myfun(num_reps = 34)`  
 
+* warn about assigmnet usage when boolean result is expected
 * intention: warn about usage of T and F
 
 * consider to use `    <codeInsight.unresolvedReferenceQuickFixProvider

@@ -33,7 +33,7 @@ Other improvements
 
 New Quickfixes (aka intention) and Inspections
 * install missing library intention
-
+* replace T/F with TRUE/FALSE
 
 Code Snippet Evaluation
 * refactored into separate [Send to Terminal](https://plugins.jetbrains.com/idea/plugin/9409-send-to-terminal) plugin. Code is available under https://github.com/holgerbrandl/send2terminal

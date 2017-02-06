@@ -1,14 +1,15 @@
 package com.r4intellij.intentions;
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+
 
 /**
  * @author Holger Brandl
  */
-public class TtoTrueIntentionTest extends CodeInsightFixtureTestCase {
+public class TtoTrueIntentionTest extends AbstractRIntentionTest {
+
+    // example /Users/brandl/projects/jb/intellij-community/java/java-tests/testData/codeInsight/addJavadoc/afterClass.java
+    // com/intellij/codeInsight/intention/AddJavadocIntentionTest.java
 
     @Override
     public void setUp() throws Exception {
@@ -20,23 +21,19 @@ public class TtoTrueIntentionTest extends CodeInsightFixtureTestCase {
     }
 
 
-    protected String getBasePath() {
-        return "/analysisServer/intentions";
+    public void testBooleanAssignment() throws Throwable {
+        doExprTest("foo = <caret>T", "foo = TRUE<caret>");
     }
 
 
-    private void doTest(@NotNull final String intentionName) {
-        myFixture.configureByFile(getTestName(false) + ".dart");
-        final IntentionAction intention = myFixture.findSingleIntention(intentionName);
-
-        ApplicationManager.getApplication().runWriteAction(() -> intention.invoke(getProject(), getEditor(), getFile()));
-
-        myFixture.checkResultByFile(getTestName(false) + ".after.dart");
+    public void testLoopCheck() throws Throwable {
+        doTest();
     }
 
 
-    public void testIntroduceVariableNoSelection() throws Throwable {
-        doTest("Assign value to new local variable");
+    @Override
+    @NotNull
+    protected String getIntentionName() {
+        return new TtoTrueIntention().getText();
     }
-
 }

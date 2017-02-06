@@ -15,6 +15,7 @@ import java.util.Objects;
 /**
  * @author Holger Brandl
  */
+// TODO since this is an accepted best-practice this should be accompanied with an inspection
 public class TtoTrueIntention extends AbstractRIntention {
 
     @Override
@@ -40,8 +41,16 @@ public class TtoTrueIntention extends AbstractRIntention {
 //                elseBranchContents.getText(), parentStatement);
 
         if (Objects.equals(element.getText(), "T")) {
-            element.replace(RElementFactory.createLeafFromText(element.getProject(), "TRUE"));
+            PsiElement replacement = element.replace(RElementFactory.createLeafFromText(element.getProject(), "TRUE"));
+            editor.getCaretModel().moveToOffset(replacement.getTextOffset() + 4);
         }
+
+        if (Objects.equals(element.getText(), "F")) {
+            PsiElement replacement = element.replace(RElementFactory.createLeafFromText(element.getProject(), "FALSE"));
+            editor.getCaretModel().moveToOffset(replacement.getTextOffset() + 5);
+        }
+
+//        PsiElement element = file.findElementAt(position);
     }
 
 
@@ -63,7 +72,8 @@ public class TtoTrueIntention extends AbstractRIntention {
 
         public boolean satisfiedBy(PsiElement element) {
             // todo what's the difference with RBooleanLiteralExpression??
-            return PsiTreeUtil.getParentOfType(element, RLogicalLiteralExpression.class) != null && Arrays.asList("T", "T").contains(element.getText());
+            return PsiTreeUtil.getParentOfType(element, RLogicalLiteralExpression.class) != null &&
+                    Arrays.asList("T", "F").contains(element.getText());
 
         }
     }

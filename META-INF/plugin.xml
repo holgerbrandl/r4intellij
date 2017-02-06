@@ -10,8 +10,9 @@
         <h3>R support for IntelliJ</h3>
 
         "R language Support" is an integration of R, which is a language for statistical computing and graphics, into
-        Intellij
-        IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever.
+        Intellij IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever.
+        <p/>
+        Read more about the features at <a href="http://holgerbrandl.github.io/r4intellij">project page</a>
         <p/>
         By implementing a fault-tolerant parser for R, the plugin allows for syntax highlighting, intelligent code
         folding and completion, refactorings, and more.
@@ -32,7 +33,6 @@
             <li> Some (simple) live templates</li>
         </ul>
         <p/>
-        Read more about the features at <a href="http://holgerbrandl.github.io/r4intellij">project page</a>
 
 
         The project was intially deveoped from scratch, but in 2017 we rebuilt it based on the more modern MIT-licensed
