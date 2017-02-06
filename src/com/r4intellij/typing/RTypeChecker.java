@@ -16,12 +16,19 @@ public class RTypeChecker {
     public static void checkTypes(List<RExpression> arguments, RFunctionExpression functionExpression) throws MatchingException {
         Map<RExpression, RParameter> matchedParams = new HashMap<RExpression, RParameter>();
         List<RExpression> matchedByTripleDot = new ArrayList<RExpression>();
-        RType type = RTypeProvider.getType(functionExpression);
-        if (!RFunctionType.class.isInstance(type)) {
-            return; // TODO: fix me properly
-        }
-        RFunctionType functionType = (RFunctionType) type;
+//        RType type = RTypeProvider.getType(functionExpression);
+//        if (!RFunctionType.class.isInstance(type)) {
+//            return; // TODO: fix me properly
+//        }
+//        RFunctionType functionType = (RFunctionType) type;
+        RFunctionType functionType = new RFunctionType(functionExpression);
+
         matchArgs(arguments, matchedParams, matchedByTripleDot, functionType);
+//        checkArgumentTypes(matchedParams, functionType);
+    }
+
+
+    private static void checkArgumentTypes(Map<RExpression, RParameter> matchedParams, RFunctionType functionType) throws MatchingException {
         for (Map.Entry<RExpression, RParameter> entry : matchedParams.entrySet()) {
             RParameter parameter = entry.getValue();
             RType paramType = RTypeProvider.getParamType(parameter, functionType);

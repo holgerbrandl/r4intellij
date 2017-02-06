@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -20,7 +21,7 @@ import java.util.*;
  */
 public class RPackage implements Serializable {
 
-    private static final long serialVersionUID = -6424246043802526705L;
+    private static final long serialVersionUID = -6424246043802526706L;
 
     private final String packageName;
     private final String title;
@@ -28,12 +29,14 @@ public class RPackage implements Serializable {
     private final Set<String> dependencies;
     private final Set<String> imports;
 
-    private Set<Function> functions;
+    private Set<PckgFunction> functions;
+    private Set<PckgDataSet> dataSets;
 
     private String repoUrl;
 
 
-    public RPackage(String packageName, String packageVersion, String title, Set<String> dependencies, Set<String> imports) {
+    public RPackage(String packageName, String packageVersion, String title,
+                    Set<String> dependencies, Set<String> imports) {
         this.packageName = packageName;
         this.packageVersion = packageVersion;
         this.title = title;
@@ -42,15 +45,24 @@ public class RPackage implements Serializable {
     }
 
 
-    public List<String> getFunctionNames() {
-        List<String> funNames = new ArrayList<String>();
-        for (Function function : getFunctions()) {
-            funNames.add(function.getFunName());
-        }
-
-        return funNames;
+    public void setFunctions(List<PckgFunction> functions) {
+        this.functions = Sets.newHashSet(functions);
     }
 
+
+    public void setDatSets(List<PckgDataSet> dataSets) {
+        this.dataSets = Sets.newHashSet(dataSets);
+    }
+
+
+    public List<String> getFunctionNames() {
+        return functions.stream().map(PckgFunction::getName).collect(Collectors.toList());
+    }
+
+
+    public List<String> getDataSetNames() {
+        return dataSets.stream().map(PckgDataSet::getName).collect(Collectors.toList());
+    }
 
     public String getName() {
         return packageName;
@@ -62,14 +74,14 @@ public class RPackage implements Serializable {
     }
 
 
-    public Collection<Function> getFunctions() {
+    public Collection<PckgFunction> getFunctions() {
         return Collections.unmodifiableCollection(functions);
     }
 
 
     public boolean hasFunction(String funName) {
-        for (Function function : functions) {
-            if (function.getFunName().equals(funName)) {
+        for (PckgFunction function : functions) {
+            if (function.getName().equals(funName)) {
                 return true;
             }
         }
@@ -78,9 +90,9 @@ public class RPackage implements Serializable {
     }
 
 
-    public Function getFunction(String funName) {
-        for (Function function : functions) {
-            if (function.getFunName().equals(funName)) {
+    public PckgFunction getFunction(String funName) {
+        for (PckgFunction function : functions) {
+            if (function.getName().equals(funName)) {
                 return function;
             }
         }
@@ -141,11 +153,6 @@ public class RPackage implements Serializable {
 
     public String getTitle() {
         return title;
-    }
-
-
-    public void setFunctions(List<Function> functions) {
-        this.functions = Sets.newHashSet(functions);
     }
 
 

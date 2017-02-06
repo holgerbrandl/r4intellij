@@ -213,6 +213,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
                         for (RPackage rPackage : RPackageService.getInstance().allPackages) {
                             dictionary.addToDictionary(rPackage.getName());
                             dictionary.addToDictionary(rPackage.getFunctionNames());
+                            dictionary.addToDictionary(rPackage.getDataSetNames());
                         }
 
                         DaemonCodeAnalyzer.getInstance(project).restart();
@@ -230,17 +231,36 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
         RHelperUtil.LOG.info("detecting methods in " + rPackage.getName());
 
+
+        // get all package functions
         String allFunsConcat = RHelperUtil.runCommand("cat(getNamespaceExports('" + rPackage.getName() + "'))").trim();
         List<String> allFuns = Splitter.on(" ").trimResults().splitToList(allFunsConcat);
 
-        List<Function> functions = Lists.transform(allFuns, new com.google.common.base.Function<String, Function>() {
+        List<PckgFunction> functions = Lists.transform(allFuns, new com.google.common.base.Function<String, PckgFunction>() {
             @Override
-            public Function apply(String funName) {
-                return new Function(funName);
+            public PckgFunction apply(String funName) {
+                return new PckgFunction(funName);
             }
         });
 
         rPackage.setFunctions(functions);
+
+        //get all package datasets
+        // pName="ggplot2"
+        // cat(with(as.data.frame(data(package = pName)$result), paste(Item, Title, sep="$$$")), sep="\n")
+
+        if (!Arrays.asList("base", "stats", "backports").contains(rPackage.getName())) {
+            String dsCmd = "cat(with(as.data.frame(data(package = '" + rPackage.getName() + "')$result), paste(Item, Title, sep='$$$')), sep='\\n')";
+            List<String> allDataConcat = Splitter.on("\n").trimResults().splitToList(RHelperUtil.runCommand(dsCmd));
+            List<PckgDataSet> dataSets = allDataConcat.stream().filter(f -> !f.trim().isEmpty()).
+                    map(line -> {
+                        List<String> splitLine = Splitter.on("$$$").trimResults().splitToList(line);
+                        return new PckgDataSet(splitLine.get(0), splitLine.get(1));
+                    }).
+                    collect(Collectors.toList());
+
+            rPackage.setDatSets(dataSets);
+        }
 
         if (indexPackage != null) {
             allPackages.remove(indexPackage);
@@ -297,11 +317,11 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    public List<Function> getFunctionByName(String funName) {
-        List<Function> funList = new ArrayList<Function>();
+    public List<PckgFunction> getFunctionByName(String funName) {
+        List<PckgFunction> funList = new ArrayList<PckgFunction>();
 
         for (RPackage aPackage : getInstance().getPackages()) {
-            Function function = aPackage.getFunction(funName);
+            PckgFunction function = aPackage.getFunction(funName);
 
             if (function != null) {
                 funList.add(function);

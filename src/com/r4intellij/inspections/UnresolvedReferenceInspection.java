@@ -63,7 +63,7 @@ public class UnresolvedReferenceInspection extends RInspection {
                 return;
             }
 
-            // for calls like myfun=function(a, ...) a; myfun(23, a=4) don't care about a **[todo]** unit-test?
+            // for calls like myfun=function(a, ...) a; myfun(23, b=4) don't care about b **[todo]** unit-test?
             RCallExpression callExpression = PsiTreeUtil.getParentOfType(element, RCallExpression.class);
             if (callExpression != null) {
                 RFunctionExpression function = RPsiUtils.getFunction(callExpression);
@@ -83,8 +83,9 @@ public class UnresolvedReferenceInspection extends RInspection {
                 }
             }
 
-            // prevent package names to show up as unresolved
 
+            // prevent package names to show up as unresolved
+            // todo should we resolve packages to skeletons
             if (callExpression != null && RCompletionContributor.PACKAGE_IMPORT_METHODS.contains(callExpression.getExpression().getName())) {
                 return;
             }
@@ -99,6 +100,8 @@ public class UnresolvedReferenceInspection extends RInspection {
         }
 
 
+        // todo do once all current unit-tests are fixed:
+        // todo thise should go into the RResolver and complement or replace com.r4intellij.psi.references.RResolver.resolveFunction*() !!
         private boolean resolveInPackages(RCallExpression psiElement, ProblemsHolder problemsHolder) {
             // is it a locally defined function?
             RFunctionExpression function = RPsiUtils.getFunction(psiElement);

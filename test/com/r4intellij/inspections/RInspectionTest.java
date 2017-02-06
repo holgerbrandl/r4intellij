@@ -12,6 +12,10 @@ public abstract class RInspectionTest extends RTestCase {
     }
 
 
+    protected CodeInsightTestFixture doTest() {
+        return doTest(getTestName(true) + ".R");
+    }
+
     protected CodeInsightTestFixture doTest(@NotNull String filename) {
         myFixture.configureByFile(filename);
         myFixture.enableInspections(getInspection());

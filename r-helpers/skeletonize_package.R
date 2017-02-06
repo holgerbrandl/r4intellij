@@ -12,6 +12,7 @@ pName = args[2]
 #pName = "clusterProfiler"
 #pName = "modeest"
 #pName = "config"
+#pName = "dplyr"
 
 searchPath <- search()
 
@@ -107,10 +108,28 @@ for (symbol in functions) {
 }
 
 
+##
+## Also export datasets from package into skelekto
+##
+
+# http://stackoverflow.com/questions/27709936/how-to-get-the-list-of-data-sets-in-a-particular-package
+# dsets <- as.data.frame(data(package = "ggplot2")$result)
+# dsets <- as.data.frame(data(package = "VennDiagram")$result)
+if(!(pName %in% c("base", "stats", "backports"))){
+dsets <- as.data.frame(data(package = pName)$result)
+
+# remove columns with round brackets
+dsets  = subset(dsets, !(1:nrow(dsets) %in% grep("(", as.character(dsets$Item), fixed=TRUE)))
+
+sink(skeletonFile, append=T)
+cat(with(dsets, paste0(as.character(Item), " <- function() ", as.character(pName), "::", as.character(Item), "\t\t## ", as.character(Title))), sep="\n\n")
+sink()
+}
+
 ## examples: /Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/1842261700/pryr.r:545
 ## /Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/1842261700/GSEABase.r:18
 
 ## write a completion tag into each file to also have a skeleton file for packages without symbols
 sink(skeletonFile, append=T)
-cat("## EOF")
+cat("\n## EOF")
 sink()

@@ -68,9 +68,10 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
     }
 
 
-    public void testDefaultValue() {
-        doTest("DefaultValue.R");
+    public void _testExpectedCharacterFoundNumeric() {
+        doTest();
     }
+
 
     @NotNull
     @Override

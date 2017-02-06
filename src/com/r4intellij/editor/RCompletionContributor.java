@@ -22,6 +22,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RCallExpression;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -48,7 +49,7 @@ public class RCompletionContributor extends CompletionContributor {
     //    public static final String test = new File("");
 
     @Override
-    public void fillCompletionVariants(final CompletionParameters parameters, final CompletionResultSet result) {
+    public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
 //        if (parameters.getCompletionType() == CompletionType.BASIC && shouldPerformWordCompletion(parameters)) {
         addWordCompletionVariants(result, parameters, Collections.<String>emptySet());
         PlatformPatterns.psiElement().inside(PsiJavaPatterns.literalExpression());
@@ -65,15 +66,14 @@ public class RCompletionContributor extends CompletionContributor {
         RCallExpression pp = PsiTreeUtil.getContextOfType(insertedElement, RCallExpression.class);
 
 
-        boolean isPackageContext = pp != null && PACKAGE_IMPORT_METHODS.
-                contains(pp.getExpression().getText());
+        boolean isPackageContext = pp != null && PACKAGE_IMPORT_METHODS.contains(pp.getExpression().getText());
 
         if (isPackageContext) {         // .. auto-completion for require and libary
 
 //            List<RepoPackage> allPackages = LocalRUtil.getPckgNameVersionMap();
             Set<RPackage> allPackages = RPackageService.getInstance().getPackages();
 
-            // todo add completion for not-yet-installed packages
+            // TODO add completion for not-yet-installed packages
 
             final CompletionResultSet plainResultSet = result.
                     withPrefixMatcher(CompletionUtil.findAlphanumericPrefix(parameters));
@@ -85,7 +85,7 @@ public class RCompletionContributor extends CompletionContributor {
         } else {
             addWordFromDocument(result, parameters, excludes);
 
-            // also add function names of loaded packages
+            // TODO also add function names of loaded packages
 //            if(parameters.isExtendedCompletion()){
 
 //            }

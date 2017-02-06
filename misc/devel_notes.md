@@ -64,6 +64,30 @@ https://intellij-support.jetbrains.com/hc/en-us/community/posts/207250965-PsiRef
 
 
 
+#### unresolved symbols when using uquoted method names
+
+Example
+```r
+require(tidyverse)
+
+count(iris, Species) ## species
+mutate(iris, Species) ## species
+```
+
+* also certain infix operators like `%$%` need to be whitelisted
+
+* special treatment for unquoted variable by whitelisting certain methods from strict symbol checking
+* [rsudio whitelisting model](https://github.com/rstudio/rstudio/blob/master/src/gwt/acesupport/acemode/r_code_model.js) (laste update 11/2016) 
+* **[todo]** allow to add user method to white-listing -> 
+    * quickfix1: "flag unquoted argument 'foo' as unquoted variable in R preferences"
+    * quickfix2: "flag unquoted argument 'foo' as resolved with annotation"
+
+
+Note: ignoring tripledot args in resolver is not general enough, see `dplyr::tally`
+
+
+
+
 Documentation Provider
 ======================
 
@@ -86,6 +110,8 @@ Intentions vs. Inspections
 
  
 good docs http://www.jetbrains.org/intellij/sdk/docs/tutorials/code_intentions.html
+
+interesting base class `com.intellij.codeInspection.LocalQuickFixAsIntentionAdapter`
 
 * Inspections: Error warning + fix
     * Error/warning indicators in code and at the right side

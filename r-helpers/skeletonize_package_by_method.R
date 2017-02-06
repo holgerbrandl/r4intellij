@@ -3,6 +3,7 @@ args <- commandArgs(TRUE)
 ## test invcation:
 # rm -rf  ~/Desktop/skeleton/clusterProfiler/;
 # R -f /Users/brandl/projects/rplugin/r4intellij_v2/r-helpers/skeletonize_package.R --args ~/Desktop/skeleton viridisLite
+# R -f /Users/brandl/projects/rplugin/r4intellij_v2/r-helpers/skeletonize_package.R --args ~/Desktop/skeleton ggplot
 
 # args <- c("~/Desktop/skeleton", "clusterProfiler"); dir.create(args)
 

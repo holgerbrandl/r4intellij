@@ -62,7 +62,7 @@ public final class LocalRUtil {
     }
 
 
-    public static List<Function> getFunctionByName(String funName, @Nullable Collection<RPackage> importedPackages) {
+    public static List<PckgFunction> getFunctionByName(String funName, @Nullable Collection<RPackage> importedPackages) {
 
         RPackageService packageService = RPackageService.getInstance();
 
@@ -76,7 +76,7 @@ public final class LocalRUtil {
             importedPackages = addImportDependencies(importedPackages);
         }
 
-        List<Function> funs = new ArrayList<Function>();
+        List<PckgFunction> funs = new ArrayList<PckgFunction>();
         for (RPackage importedPackage : importedPackages) {
             if (importedPackage.hasFunction(funName))
                 funs.add(importedPackage.getFunction(funName));

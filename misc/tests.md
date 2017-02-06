@@ -43,6 +43,7 @@ Inlining: See org.intellij.grammar.BnfInlineRuleTest
 
 * renaming of function parameter: is the renaming also applied at the callsite? Yes
 
+* User RResolver coverarge to define missing resolver tests
 
 End2End Tests
 -------------

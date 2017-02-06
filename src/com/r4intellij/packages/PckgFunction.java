@@ -17,7 +17,7 @@ import java.io.Serializable;
  *
  * @author Holger Brandl
  */
-public class Function implements Serializable {
+public class PckgFunction implements Serializable {
 
     private static final long serialVersionUID = -61945361973531069L;
 
@@ -28,24 +28,25 @@ public class Function implements Serializable {
     private String shortDesc;
 
 
-    public Function(@NotNull String funName) {
+    public PckgFunction(@NotNull String funName) {
         this.funName = funName;
     }
 
 
-    public Function(@NotNull String funName, @NotNull String funSignature) {
+    @Deprecated
+    public PckgFunction(@NotNull String funName, @NotNull String funSignature) {
         this.funName = funName;
         this.funSignature = funSignature;
     }
 
 
-    public String getFunName() {
+    public String getName() {
         return funName;
     }
 
 
     public String getFunSignature() {
-        return funSignature != null ? funSignature.replace("function", getFunName()) : "";
+        return funSignature != null ? funSignature.replace("function", getName()) : "";
     }
 
 
@@ -64,7 +65,7 @@ public class Function implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Function function = (Function) o;
+        PckgFunction function = (PckgFunction) o;
 
         return funName.equals(function.funName);
     }
@@ -83,7 +84,7 @@ public class Function implements Serializable {
 
 //    public String getBasicFunSignature() {
 //        if (getFunSignature().contains(") \n{"))
-//            return getFunSignature().split("\\) \n\\{")[0].replace("function", getFunName()) + ")";
+//            return getFunSignature().split("\\) \n\\{")[0].replace("function", getName()) + ")";
 //
 //        Matcher matcher = Pattern.compile("(.*)\\{", Pattern.DOTALL).matcher(getFunSignature());
 //        if (matcher.find())

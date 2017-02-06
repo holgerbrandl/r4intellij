@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.r4intellij.psi.references.RResolver.*;
+
 public class RReferenceImpl implements PsiPolyVariantReference {
     protected final RReferenceExpression myElement;
 
@@ -41,27 +43,28 @@ public class RReferenceImpl implements PsiPolyVariantReference {
         final List<ResolveResult> result = new ArrayList<ResolveResult>();
 
         if (RPsiUtils.isNamedArgument(myElement)) {
-            RResolver.resolveNameArgument(myElement, myElement.getName(), result);
+            resolveNameArgument(myElement, myElement.getName(), result);
             return result.toArray(new ResolveResult[result.size()]);
         }
+
+        final String elementName = myElement.getName();
+        if (elementName == null) return ResolveResult.EMPTY_ARRAY;
 
         final String namespace = myElement.getNamespace();
-        final String name = myElement.getName();
-        if (name == null) return ResolveResult.EMPTY_ARRAY;
         if (namespace != null) {
-            RResolver.resolveWithNamespace(myElement.getProject(), name, namespace, result);
+            resolveWithNamespace(myElement.getProject(), elementName, namespace, result);
         }
 
-        RResolver.resolveFunction(myElement, name, result);
+        resolveFunction(myElement, elementName, result);
         if (!result.isEmpty()) {
             return result.toArray(new ResolveResult[result.size()]);
         }
 
-        RResolver.resolveWithoutNamespaceInFile(myElement, name, result);
+        result.addAll(resolveWithoutNamespaceInFile(myElement, elementName));
         if (!result.isEmpty()) {
             return result.toArray(new ResolveResult[result.size()]);
         }
-        RResolver.addFromSkeletonsAndRLibrary(myElement, result, name);
+        addFromSkeletonsAndRLibrary(myElement, result, elementName);
         return result.toArray(new ResolveResult[result.size()]);
     }
 

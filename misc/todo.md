@@ -4,14 +4,39 @@ R4Intellij Development Notes
 ## 0-day bugs
 
 
-why is it not applicable to all occurences
-![](.todo_images/totrue_all.png)
+* don't allow for forward references
+```r
+require(igraph)
+orthoGroupsNoSmes = data_frame(contig=V(orthoGraphNoHsapMmus)$name) 
 
-* library("randomForest") quickfix does not work
+## forward reference
+orthoGraphNoHsapMmus = iris
+```
+
+* transitive import resolving does not work, and also base data is tagged as non-resolvable
+```r
+require(tidyverse)
+
+count(iris, Species)
+```
+
+* fix resolver for unquoted variable names see [here](../misc/devel_notes.md:67)
+
+* namespace method calls `devtools::source_url("https://raw.githubusercontent.com/holgerbrandl/datautils/v1.34/R/bio/bioinfo_commons.R")` are still detected as unresolved reference --> unit test + fix needed
+
 * formula show up ans non-resolvable: `pw_present~.`
-* com.intellij.codeInspection.LocalQuickFixAsIntentionAdapter
 
-right-click on scratches
+* resolved fails to resolve if assignment (what about for, while) ? write unit tests to prevent regressions!
+```r
+if(T){
+a = 3
+}
+a
+```
+
+* import resolveer: support annotation (until we have proper source_url support): ` # @r4i-imports: tidyverse, ggplot`
+
+* exception when right-click on scratches:
 ```
 update failed for AnAction with ID=ProjectViewPopupMenuRefactoringGroup
 java.lang.NullPointerException
@@ -110,6 +135,7 @@ Type Tests:
 
 * remove deprecated api usage
 
+* help look hardly ever works
 
 ## Next Steps
 
@@ -119,13 +145,20 @@ v1.0
 * backport colorscheme
 * bring back formatter
 * fix threading issues when doing indexing 
-* release
-
+* create unresolved function intention using `codeInsight.unresolvedReferenceQuickFixProvider implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"`
+ 
 
 
 
 Intentions & inspections
 ------------------------
+
+
+* warn about dataframe arguments in pipe
+```r
+iris %>% mutate %>% ggplot(iris, aes())
+iris %>% mutate %>% transmute(iris, avg_length=mean(Length))
+```
 
 * create missing function intention
 ```r
@@ -155,6 +188,8 @@ result = myfancyfun(sdf)
 # @working-dir ${FOO}/bar
 
 ```
+
+* inspection to replace `<-` with `=`
    
 * intention to replace tidyverse imports with library(tidyverse)
 * intention
@@ -181,6 +216,11 @@ result = myfancyfun(sdf)
                            
 * conider to use `com.intellij.codeInsight.intention.LowPriorityAction` 
 
+Parser
+------
+
+* valid `1  + + 1` code but `ggplot() + + ggtitle("foo")` isn't  
+
 Documentation provider
 ----------------------
 
@@ -195,6 +235,7 @@ Documentation provider
 Formatter
 ---------
 
+enter after pipe should inline caret according to current indentation level
 see `CodeStyleManager.adjustLineIndent()`
 
 * break lines and indent properly in long ggplot commands like
@@ -225,7 +266,11 @@ Completion Provider
 * method names after <package>:: 
 * after function name completion, cursor should end up between brackets
 
-* show library import suggestions also for infix operators (like %<>% --> magrittr)
+* show library import suggestions also for infix operators (like %<>% --> magrittr) 
+```r
+iris %$% Species ## so what?
+
+```
 
 * intention to remove unused parameter from method signature
 
@@ -348,6 +393,16 @@ Brainstorming
 * What about packrat? http://rstudio.github.io/packrat/walkthrough.html
 * provide `com.intellij.codeInsight.daemon.impl.quickfix.FetchExtResourceAction.FetchExtResourceAction(boolean)` for `devtools::source_url)` statments 
 
+
+* unit test integration for testhat package (see http://r-pkgs.had.co.nz/tests.html)
+    * run tests in directory
+    * rerun failed tests
+    * run tests in current console?
+    
+* package development support
+    * see http://r-pkgs.had.co.nz/tests.html
+    * new package template (or even own module? type) 
+    
 Send To Console Improvements
 ============================
 

@@ -1,5 +1,7 @@
 package com.r4intellij.psi.references;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
@@ -30,10 +32,10 @@ public class RResolver {
                                             @NotNull final List<ResolveResult> result,
                                             @NotNull final String... names) {
         for (String name : names) {
-            RResolver.addFromProject(name, element.getProject(), result);
-            RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.USER_SKELETONS);
-            RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.R_SKELETONS);
-            RResolver.addFromLibrary(element, result, name, RInterpreterConfigurable.R_LIBRARY);
+            addFromProject(name, element.getProject(), result);
+            addFromLibrary(element, result, name, RInterpreterConfigurable.USER_SKELETONS);
+            addFromLibrary(element, result, name, RInterpreterConfigurable.R_SKELETONS);
+            addFromLibrary(element, result, name, RInterpreterConfigurable.R_LIBRARY);
         }
     }
 
@@ -105,58 +107,80 @@ public class RResolver {
     }
 
 
+    // just used in ROperatorReference
     public static void resolveWithoutNamespaceInFile(@NotNull final PsiElement element,
                                                      @NotNull final List<ResolveResult> result,
                                                      String... names) {
         for (String name : names) {
-            resolveWithoutNamespaceInFile(element, name, result);
+            result.addAll(resolveWithoutNamespaceInFile(element, name));
         }
     }
 
 
-    public static void resolveWithoutNamespaceInFile(@NotNull final PsiElement element,
-                                                     String name,
-                                                     @NotNull final List<ResolveResult> result) {
+    public static List<ResolveResult> resolveWithoutNamespaceInFile(@NotNull final PsiElement element, String elementName) {
+        List<ResolveResult> result = new ArrayList<>();
+
+
+        // walk up local block hierarchy to resolve symboll in context TODO unit test missing?
         RBlockExpression rBlock = PsiTreeUtil.getParentOfType(element, RBlockExpression.class);
         while (rBlock != null) {
-            final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(rBlock, RAssignmentStatement.class);
-            if (statements != null) {
-                for (RAssignmentStatement statement : statements) {
-                    final PsiElement assignee = statement.getAssignee();
-                    if (assignee != null && assignee.getText().equals(name)) {
-                        result.add(new PsiElementResolveResult(statement));
-                    }
-                }
-            }
+            resolveFromAssignmentInContext(element, elementName, result, rBlock);
             rBlock = PsiTreeUtil.getParentOfType(rBlock, RBlockExpression.class);
         }
+
+        // are we resolving a loop variable?
+        // todo unit-test and fix local loops in blocks: { a = 12; for(a in 1:3) print(a); }
         RForStatement rLoop = PsiTreeUtil.getParentOfType(element, RForStatement.class);
         while (rLoop != null) {
             final RExpression target = rLoop.getTarget();
-            if (name.equals(target.getName())) {
+            if (elementName.equals(target.getName())) {
                 result.add(new PsiElementResolveResult(target));
             }
             rLoop = PsiTreeUtil.getParentOfType(rLoop, RForStatement.class);
         }
+
+        // are we resolving a symbol in a function expression?
         final RFunctionExpression rFunction = PsiTreeUtil.getParentOfType(element, RFunctionExpression.class);
         if (rFunction != null) {
             final RParameterList list = rFunction.getParameterList();
             for (RParameter parameter : list.getParameterList()) {
-                if (name.equals(parameter.getName())) {
+                if (elementName.equals(parameter.getName())) {
                     result.add(new PsiElementResolveResult(parameter));
                 }
             }
         }
+
+        // more specific lookup was not sucessful, so search complete file
         final PsiFile file = element.getContainingFile();
-        final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(file, RAssignmentStatement.class);
+        resolveFromAssignmentInContext(element, elementName, result, file);
+
+        // select the most local results (see UnresolvedReferenceInspectionTest.testRedefinedReferenceLookup())
+        if (!result.isEmpty()) result = Lists.newArrayList(Iterables.getLast(result));
+
+        return result;
+    }
+
+
+    private static void resolveFromAssignmentInContext(PsiElement element, String elementName, @NotNull List<ResolveResult> result, PsiElement context) {
+        final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(context, RAssignmentStatement.class);
+
         if (statements != null) {
             for (RAssignmentStatement statement : statements) {
                 final PsiElement assignee = statement.getAssignee();
-                if (assignee != null && assignee.getText().equals(name)) {
+                if (assignee != null &&
+                        assignee.getText().equals(elementName) &&
+                        (assignee.equals(element) || !PsiTreeUtil.isAncestor(statement, element, true))) {
                     result.add(new PsiElementResolveResult(statement));
                 }
             }
         }
+    }
+
+
+    // isAfterElementOrDifferentFile(element, statement)
+    private static boolean isAfterElementOrDifferentFile(PsiElement element, PsiElement resolveCandidate) {
+        return element.getContainingFile().equals(resolveCandidate.getContainingFile()) &&
+                element.getTextOffset() > resolveCandidate.getTextOffset();
     }
 
 
@@ -183,37 +207,44 @@ public class RResolver {
     // TODO: massive refactoring awaits!!!
     static void resolveFunction(PsiElement myElement, String name, List<ResolveResult> result) {
         PsiElement parent = myElement.getParent();
+
         if (parent != null && parent instanceof RCallExpression) {
             RCallExpression call = ((RCallExpression) parent);
             List<RExpression> arguments = call.getArgumentList().getExpressionList();
+
             if (call.getExpression().equals(myElement) && !arguments.isEmpty()) {
                 RExpression firstArgument = arguments.get(0);
                 List<ResolveResult> myResult = new ArrayList<ResolveResult>();
 
-                RResolver.resolveWithoutNamespaceInFile(myElement, name, myResult);
+                result.addAll(resolveWithoutNamespaceInFile(myElement, name));
                 if (myResult.isEmpty()) {
-                    RResolver.addFromSkeletonsAndRLibrary(myElement, myResult, name);
+                    addFromSkeletonsAndRLibrary(myElement, myResult, name);
                 }
 
                 for (ResolveResult resolveResult : myResult) {
                     PsiElement resolved = resolveResult.getElement();
+
                     if (resolved instanceof RAssignmentStatement) {
                         RPsiElement assignedValue = ((RAssignmentStatement) resolved).getAssignedValue();
+
                         if (assignedValue instanceof RFunctionExpression) {
                             RFunctionExpression function = ((RFunctionExpression) assignedValue);
                             List<RCallExpression> nestedCalls = PsiTreeUtil.getChildrenOfTypeAsList(function, RCallExpression.class);
+
                             for (RCallExpression nestedCall : nestedCalls) {
                                 if ("UseMethod".equals(nestedCall.getExpression().getText())) {
                                     RType firstType = RTypeProvider.getType(firstArgument);
                                     List<String> s3Classes = firstType.getS3Classes();
                                     s3Classes.add("default");
+
                                     for (String s3Class : s3Classes) {
                                         String genericName = name + "." + s3Class;
                                         List<ResolveResult> genericResult = new ArrayList<ResolveResult>();
 
-                                        RResolver.resolveWithoutNamespaceInFile(myElement, genericName, genericResult);
+                                        result.addAll(resolveWithoutNamespaceInFile(myElement, genericName));
+
                                         if (genericResult.isEmpty()) {
-                                            RResolver.addFromSkeletonsAndRLibrary(myElement, genericResult, genericName);
+                                            addFromSkeletonsAndRLibrary(myElement, genericResult, genericName);
                                         }
 
                                         if (!genericResult.isEmpty()) {

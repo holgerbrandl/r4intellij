@@ -34,7 +34,7 @@ public class UnusedParameterInspection extends RInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Unused Function Parameter";
+        return "Unused PckgFunction Parameter";
     }
 
 

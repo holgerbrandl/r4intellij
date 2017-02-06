@@ -1,9 +1,18 @@
 package com.r4intellij.inspections;
 
+import com.google.common.collect.Iterables;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.r4intellij.packages.RPackageService;
+import com.r4intellij.psi.api.RAssignmentStatement;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.Collection;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertThat;
 
 public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
@@ -18,12 +27,38 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
-    public void testTidyrImportMissing() {
-        doTest(getTestName(true) + ".R");
+    // positive tests: symbols that should be resolvable
+
+
+    public void testSimpleAssignment() {
+        doExprTest("foo = 23; 16 + foo");
+    }
+
+
+    public void testLocalFunctionCall() {
+        doExprTest("foo = function(x) x; foo(3)");
     }
 
 
     public void testNoWarningForOverriddenMethod() {
+        doTest(getTestName(true) + ".R");
+    }
+
+
+    public void testPackageData() {
+        doTest();
+    }
+
+
+    public void testTransitiveDependencies() {
+        doExprTest("require(tidyverse); count(iris, Species)");
+    }
+
+
+    // negative tests: symbols that should not be resolvable
+
+
+    public void testTidyrImportMissing() {
         doTest(getTestName(true) + ".R");
     }
 
@@ -43,14 +78,25 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
-    public void testPackageData() {
-        doTest(getTestName(true) + ".R");
-    }
-
-
     public void testSelfAssignment() {
         doExprTest("sdf = ls(<warning descr=\"Unresolved reference\">sdf</warning>)");
     }
+
+
+    public void testRedefinedReferenceLookup() {
+        // no warning is expected here but do we correctly reveal the second assignment as reference for a?
+        CodeInsightTestFixture fixture = doExprTest("a = 2; a = 3; b = a");
+
+        Collection<RAssignmentStatement> assignments = PsiTreeUtil.findChildrenOfType(fixture.getFile(), RAssignmentStatement.class);
+        assertSize(3, assignments);
+
+        PsiElement aResolved = Iterables.getLast(assignments).getAssignedValue().getReference().resolve();
+
+        assertNotNull(aResolved);
+        assertThat(aResolved, instanceOf(RAssignmentStatement.class));
+        assertEquals(((RAssignmentStatement) aResolved).getAssignedValue().getText(), "3");
+    }
+
 
     @NotNull
     @Override
