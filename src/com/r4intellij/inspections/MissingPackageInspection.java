@@ -1,6 +1,5 @@
 package com.r4intellij.inspections;
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -25,27 +24,10 @@ public class MissingPackageInspection extends RInspection {
     @Nls
     @NotNull
     @Override
-    public String getGroupDisplayName() {
-        return "R";
-    }
-
-
-// FIXME   https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000074350-Why-are-default-xml-plugin-settings-preferred-over-code-based-component-configuration-
-
-
-    @Nls
-    @NotNull
-    @Override
     public String getDisplayName() {
         return "Missing package";
     }
 
-
-    @NotNull
-    @Override
-    public HighlightDisplayLevel getDefaultLevel() {
-        return HighlightDisplayLevel.ERROR;
-    }
 
 
     @Override

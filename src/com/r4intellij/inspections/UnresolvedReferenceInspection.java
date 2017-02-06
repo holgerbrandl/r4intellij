@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UnresolvedReferenceInspection extends RInspection {
+
+
     @Nls
     @NotNull
     @Override

@@ -1,6 +1,5 @@
 package com.r4intellij.inspections;
 
-import com.intellij.codeHighlighting.HighlightDisplayLevel;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
@@ -16,25 +15,11 @@ import org.jetbrains.annotations.NotNull;
 public class UnusedParameterInspection extends RInspection {
 
 
-    @Override
-    public boolean isEnabledByDefault() {
-        return true;
-    }
-
-
-
-    @NotNull
-    @Override
-    public HighlightDisplayLevel getDefaultLevel() {
-        return HighlightDisplayLevel.WEAK_WARNING;
-    }
-
-
     @Nls
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Unused PckgFunction Parameter";
+        return "Unused Function Parameter";
     }
 
 

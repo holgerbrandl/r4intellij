@@ -29,12 +29,6 @@ public class TypeCheckerInspection extends RInspection {
     }
 
 
-    @Override
-    public boolean isEnabledByDefault() {
-        return false;
-    }
-
-
     @NotNull
     @Override
     public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session) {

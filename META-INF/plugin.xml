@@ -152,7 +152,7 @@
         <localInspection language="R" enabledByDefault="true" level="ERROR"
                          implementationClass="com.r4intellij.inspections.MissingPackageInspection"/>
 
-        <localInspection language="R" level="WARNING" enabledByDefault="true"
+        <localInspection language="R" enabledByDefault="true" level="WARNING"
                          implementationClass="com.r4intellij.inspections.UnresolvedReferenceInspection"/>
 
 
