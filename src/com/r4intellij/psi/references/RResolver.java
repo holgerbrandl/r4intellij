@@ -120,27 +120,31 @@ public class RResolver {
 
 
     //TODO: should we search in other libraries too?
+    //TODO: why don't we use the stub index here? should be faster and more elegant
     public static void resolveWithNamespace(@NotNull final Project project,
                                             String name,
                                             String namespace,
                                             @NotNull final List<ResolveResult> result) {
         final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
         final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
-        final Library library = model.getLibraryByName(RInterpreterConfigurable.R_LIBRARY);
+        final Library library = model.getLibraryByName(RInterpreterConfigurable.R_SKELETONS);
+
         if (library != null) {
             final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);
+
             for (VirtualFile child : files) {
-                if (namespace.equals(child.getParent().getName())) {
-                    final VirtualFile file = child.findChild(name + ".R");
-                    if (file != null) {
-                        final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                        final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(psiFile, RAssignmentStatement.class);
-                        if (statements != null) {
-                            for (RAssignmentStatement statement : statements) {
-                                final PsiElement assignee = statement.getAssignee();
-                                if (assignee != null && assignee.getText().equals(name)) {
-                                    result.add(new PsiElementResolveResult(assignee));
-                                }
+                final VirtualFile file = child.findFileByRelativePath("dplyr.R");
+
+                if (file != null) {
+                    final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                    final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(psiFile, RAssignmentStatement.class);
+
+                    if (statements != null) {
+                        for (RAssignmentStatement statement : statements) {
+                            final PsiElement assignee = statement.getAssignee();
+
+                            if (assignee != null && assignee.getText().equals(name)) {
+                                result.add(new PsiElementResolveResult(assignee));
                             }
                         }
                     }

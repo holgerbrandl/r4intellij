@@ -45,6 +45,11 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
+    public void testResolveNamespaceCall() {
+        doExprTest("foo = dplyr::count(iris, Species)");
+    }
+
+
     // data-set resolve (which should come via stub index
 
 

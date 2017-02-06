@@ -36,6 +36,8 @@ public class RInterpreterConfigurable implements SearchableConfigurable, Configu
     private final TextFieldWithBrowseButton myInterpreterField;
     private final TextFieldWithBrowseButton mySourcesField;
 
+
+    //todo why do we need R_LIBRARY?
     public static final String R_LIBRARY = "R Library";
     public static final String R_SKELETONS = "R Skeletons";
     public static final String USER_SKELETONS = "R User Skeletons";
