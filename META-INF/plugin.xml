@@ -18,9 +18,11 @@
         folding and completion, refactorings, and more.
         <p/>
 
+        <p>
         This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features or
         report bugs in our <a href="https://github.com/holgerbrandl/r4intellij/issues">issue tracker</a>.
-        <br>
+        <p/>
+
         <b>Features:</b><br>
         <ul>
             <li> Syntax highlighting</li>

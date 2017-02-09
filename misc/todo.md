@@ -12,9 +12,7 @@ modelData = complete(mice(modelData))
 modelData %<>% mutate()
 ```
 
-* allmost all landing page links are broken
-
-* function arugments should be reolved locally
+* function arguments should be resolved locally
 ```r
 mart <- biomaRt::useDataset("mmusculus_gene_ensembl", mart = biomaRt::useMart("ENSEMBL_MART_ENSEMBL", host="www.ensembl.org"))
 geneInfo <- biomaRt::getBM(attributes=c("ensembl_gene_id", "external_gene_name", "description", "gene_biotype"), mart=mart)
