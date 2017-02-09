@@ -1,7 +1,8 @@
 R Language support for Intellij IDEA
 =====
 
-This project provides an integration of R, which is a language for statistical computing and graphics, into Intellij&nbsp;IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever. 
+This project provides an integration of R, which is a language for statistical computing and graphics, into [Intellij IDEA](http://jetbrains.com). It aims to bring the best language for data mining and modeling in touch with the best IDE. 
+
 
 
 For project documentation see our **[project website](http://holgerbrandl.github.io/r4intellij)**
@@ -9,10 +10,9 @@ For project documentation see our **[project website](http://holgerbrandl.github
 
 ## Developer Info
 
-* [development notes](docs/devel_notes.md) 
-* [Pointer into Intellij OpenApi](docs/openapi_notes.md) 
 * [Release History](Changes.md) 
-* [FAQ](docs/pages/faq.md) 
+* [Roadmap](misc/todo.md) 
+* [Development notes](misc/devel_notes.md) 
 
 Acknoledgements
 ----
