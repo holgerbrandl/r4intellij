@@ -133,7 +133,7 @@ public class RResolver {
             final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);
 
             for (VirtualFile child : files) {
-                final VirtualFile file = child.findFileByRelativePath("dplyr.R");
+                final VirtualFile file = child.findFileByRelativePath(namespace + ".r");
 
                 if (file != null) {
                     final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);

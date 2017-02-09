@@ -29,7 +29,7 @@ IDENT_CONTINUE = {LETTER}|[0-9_"."]
 QUOTED_IDENTIFIER = "`" [^`]* "`"
 IDENTIFIER = {IDENT_START}{IDENT_CONTINUE}** | {QUOTED_IDENTIFIER} | "."
 
-LETTER_OR_OP = {LETTER} | "+"|"-"|"*"|"&"|"^"|"$"|"/"|"~"|">"|"<"|"="|"."|"|"
+LETTER_OR_OP = {LETTER} | "+"|"-"|"*"|"&"|"^"|"$"|"/"|"~"|">"|"<"|"="|"."|"|"|":"
 END_OF_LINE_COMMENT="#"[^\r\n]*
 
 
