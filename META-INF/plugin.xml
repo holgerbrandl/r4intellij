@@ -86,8 +86,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.r4intellij.RFileTypeFactory"/>
-        <lang.syntaxHighlighterFactory key="R"
-                                       implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
 
         <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>
         <lang.braceMatcher language="R" implementationClass="com.r4intellij.highlighting.RBraceMatcher"/>
@@ -150,6 +149,9 @@
 
         <localInspection language="R" enabledByDefault="true" groupName="R"
                          implementationClass="com.r4intellij.inspections.UnusedParameterInspection"/>
+
+        <localInspection language="R" enabledByDefault="true" groupName="R"
+                         implementationClass="com.r4intellij.inspections.UnusedVariableInspection"/>
 
         <localInspection language="R" enabledByDefault="true" groupName="R" level="ERROR"
                          implementationClass="com.r4intellij.inspections.MissingPackageInspection"/>

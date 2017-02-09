@@ -1,5 +1,7 @@
 package com.r4intellij.inspections;
 
+import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.openapi.editor.colors.CodeInsightColors;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.r4intellij.RTestCase;
 import org.intellij.lang.annotations.Language;
@@ -9,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public abstract class RInspectionTest extends RTestCase {
 
@@ -47,6 +50,26 @@ public abstract class RInspectionTest extends RTestCase {
         } catch (IOException e) {
             throw new IllegalArgumentException("could not read test resource file", e);
         }
+    }
+
+
+    protected void assertUnused(@Language("R") String expr) {
+        CodeInsightTestFixture fixture = doExprTest(expr);
+        List<HighlightInfo> highlightInfo = fixture.doHighlighting();
+
+        // make sure that they show up as unused
+        assertNotEmpty(highlightInfo);
+        assertEquals(highlightInfo.get(0).type.getAttributesKey(), CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES);
+    }
+
+
+    protected void assertAllUsed(@Language("R") String expr) {
+        // todo needed? doExpr will fail if there's a warning!!
+
+        CodeInsightTestFixture fixture = doExprTest(expr);
+        List<HighlightInfo> highlightInfo = fixture.doHighlighting();
+
+        assertEmpty(highlightInfo);
     }
 
 

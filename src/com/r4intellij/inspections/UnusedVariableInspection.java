@@ -12,7 +12,11 @@ import com.r4intellij.psi.api.RVisitor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-public class UnusedParameterInspection extends RInspection {
+/**
+ * Flag unused variables. We never flag functions calls (even when not being assigned) because
+ * of potential side effects.
+ */
+public class UnusedVariableInspection extends RInspection {
 
 
     @Nls
