@@ -62,7 +62,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
         // otherwise detect help via
         if (packageName == null && isLibraryElement(reference)) {
-            packageName = reference.getContainingFile().getVirtualFile().getName().replace(".r$", "");
+            packageName = reference.getContainingFile().getVirtualFile().getName().replaceAll(".r$", "");
         }
 
         // run help detection

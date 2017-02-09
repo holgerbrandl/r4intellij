@@ -59,7 +59,11 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    public static RPackageService getInstance() {
+    //todo synchronized is ugly here, but otherwise getInstance is not yet done when after its first invocation
+    // and retriggers an index refresh
+
+
+    public synchronized static RPackageService getInstance() {
         RPackageService service = ServiceManager.getService(RPackageService.class);
         service.loadPcgIndex();
         return service;
@@ -164,6 +168,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
             allPackages.removeAll(noLongerInstalled);
         }
 
+        // todo refersh most commons packages first for better ux
 
         // cut down packges to be refreshed to speed up calculations
 //        if(packageNames.length>0){
@@ -198,6 +203,8 @@ public class RPackageService implements PersistentStateComponent<RPackageService
         executorService.shutdown();
         try {
             executorService.awaitTermination(1, TimeUnit.DAYS);
+            RHelperUtil.LOG.info("finished package indexing ");
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -269,6 +276,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
             allPackages.remove(indexPackage);
         }
 
+//        System.err.println("finished indexing of "+ rPackage.getName());
         allPackages.add(rPackage);
     }
 
@@ -376,7 +384,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
                     map(p -> new RPackageService().getByName(p)).
                     filter(Objects::nonNull).collect(Collectors.toList());
 
-            int tidyverse = dependencies.indexOf("tidyverse");
+            int tidyverse = dependencies.stream().map(RPackage::getName).collect(Collectors.toList()).indexOf("tidyverse");
             dependencies.addAll(tidyverse + 1, tidyverseAttachments);
         }
 

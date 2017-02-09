@@ -17,7 +17,7 @@ import java.io.Serializable;
  */
 public class PckgDataSet implements Serializable {
 
-    private static final long serialVersionUID = -61945361973531069L;
+    private static final long serialVersionUID = -6432397228209255322L;
 
     private final String name;
 

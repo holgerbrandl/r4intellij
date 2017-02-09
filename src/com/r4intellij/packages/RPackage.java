@@ -7,8 +7,6 @@
 
 package com.r4intellij.packages;
 
-import com.google.common.collect.Sets;
-
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,8 +27,8 @@ public class RPackage implements Serializable {
     private final Set<String> dependencies;
     private final Set<String> imports;
 
-    private Set<PckgFunction> functions;
-    private Set<PckgDataSet> dataSets;
+    private List<PckgFunction> functions = Collections.emptyList();
+    private List<PckgDataSet> dataSets = Collections.emptyList();
 
     private String repoUrl;
 
@@ -46,21 +44,23 @@ public class RPackage implements Serializable {
 
 
     public void setFunctions(List<PckgFunction> functions) {
-        this.functions = Sets.newHashSet(functions);
+        this.functions = new ArrayList<>(functions); // rewrap because provided list may not be serializable
     }
 
 
     public void setDatSets(List<PckgDataSet> dataSets) {
-        this.dataSets = Sets.newHashSet(dataSets);
+        this.dataSets = new ArrayList<>(dataSets); // rewrap because provided list may not be serializable
     }
 
 
     public List<String> getFunctionNames() {
+        if (functions == null) return Collections.emptyList();
         return functions.stream().map(PckgFunction::getName).collect(Collectors.toList());
     }
 
 
     public List<String> getDataSetNames() {
+        if (dataSets == null) return Collections.emptyList();
         return dataSets.stream().map(PckgDataSet::getName).collect(Collectors.toList());
     }
 
@@ -102,6 +102,7 @@ public class RPackage implements Serializable {
     }
 
 
+    @Deprecated
     public boolean isDummy() {
         return functions.isEmpty();
     }
@@ -120,9 +121,7 @@ public class RPackage implements Serializable {
 
         RPackage rPackage = (RPackage) o;
 
-        if (!Objects.equals(packageName, rPackage.packageName)) return false;
-
-        return true;
+        return Objects.equals(packageName, rPackage.packageName);
     }
 
 
