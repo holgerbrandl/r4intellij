@@ -3,6 +3,38 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+* incorrect resolver result for function argument
+![](.todo_images/funarg.png)
+
+* initial variable declaration should not resolve downwards:
+```r
+modelData = complete(mice(modelData))
+modelData %<>% mutate()
+```
+
+* allmost all landing page links are broken
+
+* function arugments should be reolved locally
+```r
+mart <- biomaRt::useDataset("mmusculus_gene_ensembl", mart = biomaRt::useMart("ENSEMBL_MART_ENSEMBL", host="www.ensembl.org"))
+geneInfo <- biomaRt::getBM(attributes=c("ensembl_gene_id", "external_gene_name", "description", "gene_biotype"), mart=mart)
+```
+
+* dot in pipes should resolve correctly
+```r
+"foo" %>% paste0(".", ., ".RData")
+```
+
+* NA package data in skeleton
+
+```r
+NA <- Rsamtools::NA		## NA
+```
+
+
+* argument n is misisn with not default in piped expression
+`"foo.bar" %>% str_split_fixed("[.]")`
+
 
 * don't allow for forward references
 ```r
@@ -13,16 +45,7 @@ orthoGroupsNoSmes = data_frame(contig=V(orthoGraphNoHsapMmus)$name)
 orthoGraphNoHsapMmus = iris
 ```
 
-* transitive import resolving does not work, and also base data is tagged as non-resolvable
-```r
-require(tidyverse)
-
-count(iris, Species)
-```
-
 * fix resolver for unquoted variable names see [here](../misc/devel_notes.md:67)
-
-* namespace method calls `devtools::source_url("https://raw.githubusercontent.com/holgerbrandl/datautils/v1.34/R/bio/bioinfo_commons.R")` are still detected as unresolved reference --> unit test + fix needed
 
 * formula show up ans non-resolvable: `pw_present~.`
 
@@ -34,7 +57,11 @@ a = 3
 a
 ```
 
-* import resolveer: support annotation (until we have proper source_url support): ` # @r4i-imports: tidyverse, ggplot`
+* import resolveer: support annotation (until we have proper source_url support): 
+```r
+# @r4i-imports: tidyverse, ggplot
+devtools::source_url("...") # @r4i-imports: tidyverse, ggplot
+```
 
 * exception when right-click on scratches:
 ```
@@ -135,7 +162,9 @@ Type Tests:
 
 * remove deprecated api usage
 
-* help look hardly ever works
+* help: header and packag eis missing in popup (seems to be minor bug in `com.r4intellij.documentation.RDocumentationUtils.getFormattedString(com.r4intellij.RHelp)`)
+
+* help: "fetching " forever for invalid symbols (like `Species`)
 
 ## Next Steps
 
@@ -153,6 +182,7 @@ v1.0
 Intentions & inspections
 ------------------------
 
+* add intention to name function argument (just current or all in funciton call)
 
 * warn about dataframe arguments in pipe
 ```r
@@ -189,6 +219,14 @@ result = myfancyfun(sdf)
 
 ```
 
+
+* find better name for "R Type Checker"
+ 
+* show correct warning if too many args are provided 
+```r
+log(1,2,3,4)
+```
+
 * inspection to replace `<-` with `=`
    
 * intention to replace tidyverse imports with library(tidyverse)
@@ -201,6 +239,8 @@ result = myfancyfun(sdf)
 
 * "add braces for if/else statement" intention
 * inspection in case of naming conflicts (same functions in imported packages) suggest to add prefix to method call (allow to override by annotation)
+    * show warning just for overridden symbols
+
 * offer quickfix to surround if expression with curly brackets
 
 * Intention to add roxygen docu + code basic tag completion for roxygen comments
@@ -209,18 +249,38 @@ result = myfancyfun(sdf)
 * intention to add name to named argument `myfun(34)` ->  `myfun(num_reps = 34)`  
 
 * warn about assigmnet usage when boolean result is expected
-* intention: warn about usage of T and F
+* inspection: warn about usage of T and F
 
 * consider to use `    <codeInsight.unresolvedReferenceQuickFixProvider
                            implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"/>` for better API design
                            
 * conider to use `com.intellij.codeInsight.intention.LowPriorityAction` 
 
+* inpsection for highly cascaded function calls --> pipe them
+    * apply post-fix reformatting of affected code-chunk
+    * intention to also pipe simple function arguments (test inital but also non-inital positions)
+    * Example: atribute may want to go out
+```r 
+    geneInfo <- biomaRt::getBM(attributes=c("ensembl_gene_id", "external_gene_name", "description", "gene_biotype"), mart=mart) %>% cache_it()
+```
+
+ * also allow to reverse pipes with intention (like non-sense 2 element pipes)
+ ```r
+distinct(x) %>% nrow
+# should become
+nrow(distinct(x))
+```
+
+baser to tidyverse intentions
+* `read.delim("algn_counts.txt", header=F)` to read_tsv
+
 Parser
 ------
 
 * valid `1  + + 1` code but `ggplot() + + ggtitle("foo")` isn't  
 
+* `%<>%` should be treated as some kind of assignment operator 
+ 
 Documentation provider
 ----------------------
 
@@ -245,7 +305,6 @@ see `CodeStyleManager.adjustLineIndent()`
 
 * ensure proper check indentation when using as pipe sink
 ```r
-
 pdStories %>%
     filter(!is.na(pub_time_category)) %>%
     group_by(labtype, pub_time_category) %>% summarize(
@@ -262,6 +321,16 @@ pdStories %>%
 Completion Provider
 -------------------
 
+
+* dollar completion for environment variables
+```
+# dynamic via object introspection
+iris$Sep<caret>
+
+## static comes via regular word completion
+iris$foo = 34
+iris$f<caret>
+```
 
 * method names after <package>:: 
 * after function name completion, cursor should end up between brackets
@@ -302,6 +371,9 @@ for (name in packageNames) {
     }
 }
 ```
+
+* introduce variable for selection: infer name from pipe sink if it's a named argument
+![](.todo_images/8a347216.png)
 
 * make sure all rstudio refactorings work as well
 
@@ -433,10 +505,20 @@ Markdown impro wishlist
 * Useful structure view **[done]**
 * Click to to jump to code
 * synced scrolling
+* synced caret http://codepen.io/ArtemGordinsky/pen/GnLBq
 
 * aligned cursor with preview
 * highlight search results in preview
 * search in preview
 * intention to unify header styles
+
+* line comment/uncomment see http://stackoverflow.com/questions/4823468/comments-in-markdown. Examples:
+<!---
+unfortunately doesn't work in GitHub Markdown
+-->
+[//]: <> (seems more generic) 
+[//]: <> (seems more generic) 
+
+
 
 Also see [OpenApi notes](openapi_notes.md)

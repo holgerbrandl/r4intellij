@@ -35,6 +35,12 @@ resolveDependencies
 * namespace preferences
 * duplication
 
+## help provider
+
+* ns-prefix calls:
+```r
+dplyr::count(iris, Species)
+```
 
 ### Refactorings
 
