@@ -145,16 +145,16 @@
 
         <!-- note: display names not needed if defined in impl-->
         <!--https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000074350-Why-are-default-xml-plugin-settings-preferred-over-code-based-component-configuration- -->
-        <localInspection language="R" enabledByDefault="true"
+        <localInspection language="R" enabledByDefault="true" groupName="R"
                          implementationClass="com.r4intellij.inspections.TypeCheckerInspection"/>
 
-        <localInspection language="R" enabledByDefault="true"
+        <localInspection language="R" enabledByDefault="true" groupName="R"
                          implementationClass="com.r4intellij.inspections.UnusedParameterInspection"/>
 
-        <localInspection language="R" enabledByDefault="true" level="ERROR"
+        <localInspection language="R" enabledByDefault="true" groupName="R" level="ERROR"
                          implementationClass="com.r4intellij.inspections.MissingPackageInspection"/>
 
-        <localInspection language="R" enabledByDefault="true" level="WARNING"
+        <localInspection language="R" enabledByDefault="true" groupName="R" level="WARNING"
                          implementationClass="com.r4intellij.inspections.UnresolvedReferenceInspection"/>
 
 
