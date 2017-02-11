@@ -119,7 +119,26 @@ public class RReferenceImpl implements PsiPolyVariantReference {
 
     @Override
     public boolean isReferenceTo(PsiElement element) {
-        //TODO: check some conditions
+        // method is called e.g. by ReferencesSearch.search(com.intellij.psi.PsiElement)
+        // when searching for unused parameters and variables like in
+        // this is typically invoked on all references with the same name
+
+        //TODO: check some conditions to speed up search (ie avoid resolving)
+//        if(element instanceof RParameter){
+//            // same file at least
+//            PsiTreeUtil.
+//
+//            // better: test for same function expression
+//
+//        }
+
+        // most other impl do something like
+//        final PsiManager manager = getManager();
+//        for (final ResolveResult result : multiResolve(false)) {
+//            if (manager.areElementsEquivalent(result.getElement(), element)) return true;
+//        }
+
+        // this seems enough here
         return resolve() == element;
     }
 

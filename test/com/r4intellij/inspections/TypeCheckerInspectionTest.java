@@ -2,11 +2,46 @@ package com.r4intellij.inspections;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+
 public class TypeCheckerInspectionTest extends RInspectionTest {
 
 
     public void testNoWarnings() {
+
         doTest("NoWarnings.R");
+    }
+
+
+    public void testResolveSignatureFromLibraryMethod() {
+        // add library to fixture
+
+        // this is working for groovy
+//        void testQualifiedRefToInnerClass() {
+//            myFixture.addFileToProject('A.groovy', 'class A {class Bb {}}')
+//            final PsiReference ref = configureByText('b.groovy', 'A.B<ref>b b = new A.Bb()')
+//            assertNotNull(ref.resolve())
+//        }
+
+        myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
+
+//        Module myModule = myFixture.getModule();
+//        PsiTestUtil.addLibrary(myModule, 'lib', tempDir.getFile('').path, [] as String[], [''] as String[])
+
+//         myFixture.addFileToProject("Foo.groovy", """\
+//        int a = 42
+//        int b = 3 //1
+//        """)
+
+
+        doExprTest("<warning descr=\"argument 'x' is missing, with no default\">head()</warning>");
+    }
+
+
+    @NotNull
+    // todo make generic
+    public static File getSkeletonPath(final String pckgName) {
+        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/r_skeletons/1842261700/" + pckgName + ".r");
     }
 
 
@@ -18,6 +53,12 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
     public void testUnusedTripleDotArgument() {
         doTest("UnusedTripleDotArgument.R");
     }
+
+
+    public void testIgnoreNamedTripleDotArgs() {
+        doExprTest("myfun=function(a, ...) a; myfun(23, b=4)"); // b should not be tagged
+    }
+
 
 
     public void testOptional() {

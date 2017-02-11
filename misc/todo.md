@@ -272,6 +272,9 @@ nrow(distinct(x))
 baser to tidyverse intentions
 * `read.delim("algn_counts.txt", header=F)` to read_tsv
 
+* intention to add unresolved arg in function expression as named parameter
+![](.todo_images/unres_to_named_paramameter_intention.png)
+
 Parser
 ------
 
@@ -433,6 +436,10 @@ http://ijlyttle.github.io/bsplus/
 * allow to open notebook in browser
 `    <selectInTarget implementation="com.intellij.ide.browsers.actions.SelectInDefaultBrowserTarget"/>
 `
+
+* what is the meaning of "run all cells"?
+![](.todo_images/run_all_chunks.png)
+
 
 ## Environment view 
 

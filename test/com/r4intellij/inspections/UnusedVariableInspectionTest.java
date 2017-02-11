@@ -52,6 +52,20 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
     }
 
 
+    public void testDontFlagFunctionArgUsedAsUnnamedArg() {
+        assertAllUsed("function(usedArg) head(usedArg)");
+    }
+
+
+    public void testDontFlagFunctionArgUsedAsNamedArg() {
+        // todo this will fail because it's the last statment in the file --> Disable for some unit-tests
+        assertAllUsed("function(usedArg) head(x=usedArg)");
+    }
+
+
+
+
+
     // this should if all be optional
 //    public void dontFlagLastExprInFile () {
 //        doExprTest("a = 3");

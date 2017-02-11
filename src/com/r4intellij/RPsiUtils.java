@@ -11,6 +11,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Predicate;
+import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
 import com.r4intellij.typing.MatchingException;
@@ -213,5 +214,14 @@ public class RPsiUtils {
             }
         }
         return result;
+    }
+
+
+    public static boolean isNamespacePrefix(@NotNull RReferenceExpression element) {
+        PsiElement sibling = element.getNextSibling();
+        return sibling != null && (
+                sibling.getNode().getElementType() == RElementTypes.R_DOUBLECOLON ||
+                        sibling.getNode().getElementType() == RElementTypes.R_TRIPLECOLON
+        );
     }
 }

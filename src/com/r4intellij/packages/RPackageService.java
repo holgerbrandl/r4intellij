@@ -70,8 +70,10 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    public static RPackageService getTestInstance(File indexFile) {
+    public static RPackageService getTestInstance() {
         RPackageService service = ServiceManager.getService(RPackageService.class);
+        File indexFile = service.getLibIndexFile();
+
         if (indexFile.exists()) {
             service.allPackages = (Set<RPackage>) loadObject(indexFile);
         }
@@ -105,7 +107,6 @@ public class RPackageService implements PersistentStateComponent<RPackageService
             boolean hasChanged = refreshIndex();
 
             if (hasChanged) {
-                saveObject(allPackages, getLibIndexFile());
             }
         });
     }
@@ -213,6 +214,8 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
 
         if (hasChanged[0]) {
+            saveObject(allPackages, getLibIndexFile());
+
             if (ApplicationManager.getApplication() != null) {
                 Project[] projects = ProjectManager.getInstance().getOpenProjects();
                 for (Project project : projects) {
@@ -410,5 +413,16 @@ public class RPackageService implements PersistentStateComponent<RPackageService
         List<String> importedPackages = ((RFile) psiElement.getContainingFile()).getImportedPackages();
 
         return resolveDependencies(importedPackages);
+    }
+
+
+    public void refreshIndexInThread() {
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                refreshIndex();
+            }
+        });
     }
 }

@@ -25,6 +25,7 @@ public abstract class RInspectionTest extends RTestCase {
         return doTest(getTestName(true) + ".R");
     }
 
+
     protected CodeInsightTestFixture doTest(@NotNull String filename) {
         myFixture.configureByFile(filename);
         myFixture.enableInspections(getInspection());
@@ -34,7 +35,7 @@ public abstract class RInspectionTest extends RTestCase {
     }
 
 
-    protected CodeInsightTestFixture doExprTest(@NotNull @Language("R") String expressionList) {
+    protected CodeInsightTestFixture doExprTest(@NotNull String expressionList) {
         myFixture.configureByText("a.R", expressionList);
         myFixture.enableInspections(getInspection());
         myFixture.testHighlighting(true, false, false);
@@ -45,6 +46,13 @@ public abstract class RInspectionTest extends RTestCase {
 
     protected String readTestDataFile() {
         Path testDataPath = Paths.get(getTestDataPath(), getTestName(true) + ".R");
+        return readFileAsString(testDataPath);
+
+    }
+
+
+    @NotNull
+    protected String readFileAsString(Path testDataPath) {
         try {
             return new String(Files.readAllBytes(testDataPath));
         } catch (IOException e) {

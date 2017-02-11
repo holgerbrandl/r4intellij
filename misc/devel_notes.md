@@ -177,6 +177,11 @@ see com.r4intellij.RPsiUtils.findCall
 
 In RS users can jump to library functions but can't go any further (like digging through the R API)
 
+---
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206765345-How-to-trigger-GeneralHighlightingPass-operations-after-file-based-indexing-process-
+
+File based indexes should always be up to date. If your annotating code accesses the index IntelliJ will detect that the index is out of date and re-index the file. 
+
 Misc
 =====
 

@@ -5,12 +5,12 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.webcore.packaging.InstalledPackage;
+import com.r4intellij.inspections.MissingPackageInspection;
 import com.r4intellij.packages.RHelperUtil;
+import com.r4intellij.packages.RPackageService;
 import com.r4intellij.packages.remote.RepoUtils;
 
 import java.util.List;
-
-import static java.util.Collections.singletonList;
 
 /**
  * @author Holger Brandl
@@ -25,15 +25,24 @@ public class InstallLibraryFixTest extends LightPlatformCodeInsightFixtureTestCa
         final String TEST_PACKAGE = "pals";
 
         try {
-            RepoUtils.uninstallPackage(singletonList(new InstalledPackage(TEST_PACKAGE, null)));
+            RepoUtils.uninstallPackage(new InstalledPackage(TEST_PACKAGE, null));
         } catch (ExecutionException e) {
+            e.printStackTrace();
+            fail("could not uninstall package");
         }
 
 
+        RPackageService.getInstance().refreshIndex("pals");
 //        PsiFile psiFile = myFixture.configureByFile("...");
+
+        myFixture.enableInspections(MissingPackageInspection.class);
         PsiFile psiFile = myFixture.configureByText("a.R", "require(pals)");
+//        ensureIndexesUpToDate(myFixture.getProject());
+//        myFixture.testHighlighting(false, false, false);
         List<IntentionAction> quickFixes = myFixture.getAllQuickFixes();
+
         myFixture.launchAction(assertOneElement(quickFixes));
+        Thread.sleep(30000); // what a mess!!
 //        assertSameLines(expected, psiFile.getText());
 
 
@@ -58,13 +67,13 @@ public class InstallLibraryFixTest extends LightPlatformCodeInsightFixtureTestCa
 //    }
 
 
-    @SuppressWarnings("unchecked")
-    public void testBla() throws Exception {
-        myFixture.configureByFile("...");
-
-        List<IntentionAction> quickFixes = myFixture.getAllQuickFixes();
-        for (IntentionAction intention : quickFixes) {
-            myFixture.launchAction(intention);
-        }
-    }
+//    @SuppressWarnings("unchecked")
+//    public void testBla() throws Exception {
+//        myFixture.configureByFile("...");
+//
+//        List<IntentionAction> quickFixes = myFixture.getAllQuickFixes();
+//        for (IntentionAction intention : quickFixes) {
+//            myFixture.launchAction(intention);
+//        }
+//    }
 }

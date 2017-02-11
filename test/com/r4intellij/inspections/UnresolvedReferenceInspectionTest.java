@@ -1,16 +1,21 @@
 package com.r4intellij.inspections;
 
 import com.google.common.collect.Iterables;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.vfs.LocalFileSystem;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.r4intellij.interpreter.RInterpreterConfigurable;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RAssignmentStatement;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.Collection;
 
+import static com.r4intellij.inspections.TypeCheckerInspectionTest.getSkeletonPath;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -22,12 +27,13 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
         super.setUp();
 
         // inject stub index here for more reproducible testing
-        RPackageService.getTestInstance(new File(TEST_DATA_PATH, "libindex.dat"));
+        RPackageService.getTestInstance();
 //        RPackageService.getInstance().refreshIndex();
     }
 
 
-    // positive tests: symbols that should be resolvable
+    // positive tests: symbols that should be resolvable. These test actually test the resolver itself and not so
+    // much the inspection code
 
 
     public void testSimpleAssignment() {
@@ -46,17 +52,24 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testResolveNamespaceCall() {
+
         doExprTest("foo = dplyr::count(iris, Species)");
     }
 
 
-    // data-set resolve (which should come via stub index
-
-
     /**
-     * since it is asscoiated with base the package should be resolvable
+     * since it is associated with base the package should be resolvable. This should come from  stub-index
      */
     public void testIris() {
+        myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
+
+        // todo rather use actual library here to see if stub-index is working correctly
+        Module myModule = myFixture.getModule();
+
+        VirtualFile pckgSkeletonFile = LocalFileSystem.getInstance().findFileByPath(getSkeletonPath("utils").toPath().toAbsolutePath().toString());
+
+
+        PsiTestUtil.addProjectLibrary(myModule, RInterpreterConfigurable.R_SKELETONS, pckgSkeletonFile);
         doExprTest("iris");
     }
 
@@ -122,6 +135,16 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
         assertNotNull(aResolved);
         assertThat(aResolved, instanceOf(RAssignmentStatement.class));
         assertEquals(((RAssignmentStatement) aResolved).getAssignedValue().getText(), "3");
+    }
+
+
+    public void testUnamedCallArgumentInFunctionBody() {
+        doExprTest("function() head(<warning descr=\"Unresolved reference\">sdf</warning>)");
+    }
+
+
+    public void testNamedCallArgumentInFunctionBody() {
+        doExprTest("function() head(x=<warning descr=\"Unresolved reference\">sdf</warning>)");
     }
 
 

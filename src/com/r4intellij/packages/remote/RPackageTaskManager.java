@@ -259,7 +259,7 @@ public class RPackageTaskManager {
         protected List<ExecutionException> runTask(@NotNull ProgressIndicator indicator) {
             final List<ExecutionException> exceptions = new ArrayList<ExecutionException>();
             try {
-                RepoUtils.uninstallPackage(myPackages);
+                for (InstalledPackage pckg : myPackages) RepoUtils.uninstallPackage(pckg);
             } catch (ExecutionException e) {
                 exceptions.add(e);
             }

@@ -3,8 +3,6 @@ package com.r4intellij.inspections;
 import com.r4intellij.packages.RPackageService;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-
 /**
  * @author Holger Brandl
  */
@@ -16,7 +14,7 @@ public class MissingPackageInspectionTest extends RInspectionTest {
         super.setUp();
 
         // inject stub index here for more reproducible testing
-        RPackageService.getTestInstance(new File(TEST_DATA_PATH, "libindex.dat"));
+        RPackageService.getTestInstance();
 //        RPackageService.getInstance().refreshIndex();
     }
 
@@ -33,6 +31,16 @@ public class MissingPackageInspectionTest extends RInspectionTest {
 
     public void testFunCallRequireArg() {
         doExprTest("require(getPckgName('foo'))");
+    }
+
+
+    public void testMissingPckgInNamespaceCall() {
+        doExprTest("<error descr=\"'foobar' is not yet installed\">foobar</error>::myFun()");
+    }
+
+
+    public void testMissingPckgInNonExportedNamespaceCall() {
+        doExprTest("<error descr=\"'foobar' is not yet installed\">foobar</error>:::myFun()");
     }
 
 

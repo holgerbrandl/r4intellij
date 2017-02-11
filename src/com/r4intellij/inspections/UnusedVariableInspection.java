@@ -23,7 +23,7 @@ public class UnusedVariableInspection extends RInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "Unused Function Parameter";
+        return "Unused Variable or Function";
     }
 
 

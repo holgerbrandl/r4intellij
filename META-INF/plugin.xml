@@ -86,7 +86,8 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.r4intellij.RFileTypeFactory"/>
-        <lang.syntaxHighlighterFactory implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory language="R"
+                                       implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
 
         <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>
         <lang.braceMatcher language="R" implementationClass="com.r4intellij.highlighting.RBraceMatcher"/>

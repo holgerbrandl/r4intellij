@@ -236,16 +236,22 @@ public class RepoUtils {
     }
 
 
-    public static void uninstallPackage(List<InstalledPackage> repoPackage) throws ExecutionException {
+    public static void uninstallPackage(InstalledPackage repoPackage) throws ExecutionException {
         final String path = RInterpreterService.getInstance().getInterpreterPath();
         if (StringUtil.isEmptyOrSpaces(path)) {
             throw new ExecutionException("Please, specify path to the R executable.");
         }
-        final ArrayList<String> arguments = Lists.newArrayList(path, "CMD", "REMOVE");
-        for (InstalledPackage aRepoPackage : repoPackage) {
-            arguments.add(aRepoPackage.getName());
+
+        // test if the package is actually installed
+        boolean isInstalled = RHelperUtil.runCommand(
+                "cat('" + repoPackage.getName() + "' %in% rownames(installed.packages()))").equals("TRUE");
+
+        if (!isInstalled) {
+            return;
         }
-//        final Process process = new GeneralCommandLine(arguments).createProcess();
+
+        final ArrayList<String> arguments = Lists.newArrayList(path, "CMD", "REMOVE");
+        arguments.add(repoPackage.getName());
 
         final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(arguments));
         final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);

@@ -17,7 +17,6 @@ import com.r4intellij.editor.RCompletionContributor;
 import com.r4intellij.intentions.ImportLibraryFix;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
-import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.RReferenceImpl;
 import org.jetbrains.annotations.Nls;
@@ -56,26 +55,15 @@ public class UnresolvedReferenceInspection extends RInspection {
 
         @Override
         public void visitReferenceExpression(@NotNull RReferenceExpression element) {
-            PsiElement sibling = element.getNextSibling();
-            if (sibling != null && sibling.getNode().getElementType() == RElementTypes.R_DOUBLECOLON) {
-                return;
-            }
+            // how does/should it work:
+            // exclude (ie. white-list) certain situations to show up as unresolved, but generally use
+            // Ref.resolve() to check for resolvability
+
 
             if (RPsiUtils.isNamedArgument(element)) {
                 return;
             }
 
-            // for calls like myfun=function(a, ...) a; myfun(23, b=4) don't care about b **[todo]** unit-test?
-            RCallExpression callExpression = PsiTreeUtil.getParentOfType(element, RCallExpression.class);
-            if (callExpression != null) {
-                RFunctionExpression function = RPsiUtils.getFunction(callExpression);
-                if (function != null) {
-                    List<RParameter> list = function.getParameterList().getParameterList();
-                    if (RPsiUtils.containsTripleDot(list)) {
-                        return;
-                    }
-                }
-            }
 
             // ignore function calls here because they are handled by the missing import inspection
             if (element.getParent() instanceof RCallExpression) {
@@ -86,15 +74,38 @@ public class UnresolvedReferenceInspection extends RInspection {
             }
 
 
-            // prevent package names to show up as unresolved
-            // todo should we resolve packages to skeletons
-            if (callExpression != null && RCompletionContributor.PACKAGE_IMPORT_METHODS.contains(callExpression.getExpression().getName())) {
+            RCallExpression callExpression = PsiTreeUtil.getParentOfType(element, RCallExpression.class);
+
+//            // this is type-checker stuff and should be handled there ## todo remove code bits once test are running
+//            // ignore named arguments in tripledot calls. e.g. myfun=function(a, ...) a; myfun(23, b=4)
+//            if (callExpression != null) {
+//                RFunctionExpression function = RPsiUtils.getFunction(callExpression);
+//                if (function != null) {
+//                    List<RParameter> list = function.getParameterList().getParameterList();
+//                    if (RPsiUtils.containsTripleDot(list)) {
+//                        return;
+//                    }
+//                }
+//            }
+
+
+            // prevent package names to show up as unresolved, because they are handled separately by
+            // the missing package inspection
+            if (callExpression != null &&
+                    RCompletionContributor.PACKAGE_IMPORT_METHODS.contains(callExpression.getExpression().getName())) {
                 return;
             }
 
+            // prevent package names to show up as unresolved in namespace-calls, because they are handled separately by
+            // the missing package inspection
+            if (RPsiUtils.isNamespacePrefix(element)) return;
+
+
+            // resolve normally
             RReferenceImpl reference = element.getReference();
             if (reference != null) {
                 PsiElement resolve = reference.resolve();
+
                 if (resolve == null) {
                     myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
