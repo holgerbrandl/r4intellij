@@ -17,11 +17,13 @@ import java.util.List;
  */
 public class InstallLibraryFixTest extends LightPlatformCodeInsightFixtureTestCase {
 
-    // see     // from https://intellij-support.jetbrains.com/hc/en-us/community/posts/203365330-SetupJDKFix-fails-in-LightCodeInsightFixtureTestCase
+    // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/203365330-SetupJDKFix-fails-in-LightCodeInsightFixtureTestCase
+    // alsp see org.jetbrains.plugins.groovy.intentions.GroovyConvertJUnitIntentionTest
+
 
 
     public void testPackageInstallationAction() throws Exception {
-        // kill a package
+        // remove the package so that we can detect it as missing
         final String TEST_PACKAGE = "pals";
 
         try {
@@ -37,43 +39,15 @@ public class InstallLibraryFixTest extends LightPlatformCodeInsightFixtureTestCa
 
         myFixture.enableInspections(MissingPackageInspection.class);
         PsiFile psiFile = myFixture.configureByText("a.R", "require(pals)");
-//        ensureIndexesUpToDate(myFixture.getProject());
-//        myFixture.testHighlighting(false, false, false);
+
+        // not needed here
+        // myFixture.testHighlighting(false, false, false);
+
         List<IntentionAction> quickFixes = myFixture.getAllQuickFixes();
 
         myFixture.launchAction(assertOneElement(quickFixes));
         Thread.sleep(30000); // what a mess!!
-//        assertSameLines(expected, psiFile.getText());
-
-
-        // see org.jetbrains.plugins.groovy.intentions.GroovyConvertJUnitIntentionTest
 
         assertTrue(RHelperUtil.runCommand("require(pals) ==TRUE").contains("TRUE"));
     }
-
-
-//    public void testTokenSimple2() throws Exception {
-//        doTest("inline = 8\ninline + inline", "8 + 8");
-//    }
-//
-//    private void doTest(/*@Language("R")*/ String text, /*@Language("R")*/ String expected) {
-//        PsiFile file = myFixture.configureByText("a.r", text);
-//
-//        RAssignmentStatement rule = PsiTreeUtil.getChildOfType(file, RAssignmentStatement.class);
-//        assertNotNull(rule);
-//
-//        new InlineAssignmentProcessor(rule, getProject(), null, false).run();
-//        assertSameLines(expected, file.getText());
-//    }
-
-
-//    @SuppressWarnings("unchecked")
-//    public void testBla() throws Exception {
-//        myFixture.configureByFile("...");
-//
-//        List<IntentionAction> quickFixes = myFixture.getAllQuickFixes();
-//        for (IntentionAction intention : quickFixes) {
-//            myFixture.launchAction(intention);
-//        }
-//    }
 }
