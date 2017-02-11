@@ -76,11 +76,11 @@ public class InstallLibraryFix implements LocalQuickFix {
                     String expected = packageName + " installed: TRUE";
 
                     if (event.getText().trim().equals(expected)) {
-                        // update package index
-                        RPackageService.getInstance().refreshIndex();
-
                         // installation looks good, so lets close the window
                         runner.getConsoleExecuteActionHandler().processLine("quit(\"no\")");
+
+                        // update package index
+                        RPackageService.getInstance().refreshIndexInThread();
                     }
                 }
 
