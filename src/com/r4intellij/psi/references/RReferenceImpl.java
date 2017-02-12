@@ -43,7 +43,7 @@ public class RReferenceImpl implements PsiPolyVariantReference {
         final List<ResolveResult> result = new ArrayList<ResolveResult>();
 
         if (RPsiUtils.isNamedArgument(myElement)) {
-            resolveNameArgument(myElement, myElement.getName(), result);
+            resolveNameArgument(myElement, myElement.getName(), result); // onlyusage
             return result.toArray(new ResolveResult[result.size()]);
         }
 

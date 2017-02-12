@@ -6,10 +6,7 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.util.Query;
-import com.r4intellij.psi.api.RArgumentList;
-import com.r4intellij.psi.api.RCallExpression;
-import com.r4intellij.psi.api.RExpression;
-import com.r4intellij.psi.api.RReferenceExpression;
+import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.RReferenceImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,17 +17,16 @@ public class PlaygroundTest extends RInspectionTest {
 
 
     public void testPlayground() {
-        CodeInsightTestFixture fixture = doExprTest("function() head(sdf)");
+        CodeInsightTestFixture fixture = doExprTest("function(usedArg) head(x=usedArg)");
 
         RCallExpression childOfType = PsiTreeUtil.findChildOfType(fixture.getFile(), RCallExpression.class);
         RExpression argExpr = childOfType.getArgumentList().getExpressionList().get(0);
 
         //        RReferenceExpression argExpr = (RReferenceExpression) ((RAssignmentStatement) rExpression).getAssignedValue();
 
-        RReferenceImpl reference = ((RReferenceExpression) argExpr).getReference();
-        PsiElement resolvedRef = reference.resolve();
-        assertNull(resolvedRef);
-//        assertNotNull(resolvedRef);
+//        RReferenceExpression reference = (RReferenceExpression)((RAssignmentStatement) argExpr).getAssignedValue();
+        RReferenceExpression reference = (RReferenceExpression) ((RAssignmentStatement) argExpr).getAssignee();
+        PsiElement resolvedRef = reference.getReference().resolve();
 
         System.out.println(resolvedRef);
     }

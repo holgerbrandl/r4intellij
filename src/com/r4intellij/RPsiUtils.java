@@ -61,13 +61,18 @@ public class RPsiUtils {
     }
 
 
+    /**
+     * Returns true if <code>element</code> is the LHS of named argument in a function call.
+     */
     public static boolean isNamedArgument(RReferenceExpression element) {
         PsiElement parent = element.getParent();
         if (parent == null || !(parent instanceof RAssignmentStatement)) {
             return false;
         }
         PsiElement argumentList = parent.getParent();
-        return argumentList != null && argumentList instanceof RArgumentList;
+        return argumentList != null &&
+                argumentList instanceof RArgumentList &&
+                ((RAssignmentStatement) parent).getAssignee()==element;
     }
 
 

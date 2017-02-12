@@ -1,5 +1,5 @@
 function(){
-    <warning descr="Variable 'ab' is never used">ab<warning> = 1
+    <warning descr="Variable 'ab' is never used">ab</warning> = 1
     return(1)
 }
 

@@ -275,6 +275,13 @@ baser to tidyverse intentions
 * intention to add unresolved arg in function expression as named parameter
 ![](.todo_images/unres_to_named_paramameter_intention.png)
 
+* highlight use of `return` in assignment as error:
+```r
+function(){
+  asdf = return(1)
+}
+
+```
 Parser
 ------
 

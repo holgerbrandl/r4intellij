@@ -10,7 +10,7 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
 
 
     public void testUnusedVariable() {
-        doExprTest("a = 3");
+        doExprTest("<warning descr=\"Variable 'a' is never used\">a</warning> = 3");
     }
 
 
@@ -25,7 +25,7 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
 
 
     public void testUnusedFunction() {
-        doExprTest("myfun = function(x)x");
+        doExprTest("<warning descr=\"Variable 'myfun' is never used\">myfun</warning> = function(x)x");
     }
 
 
@@ -38,7 +38,7 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
     }
 
 
-    public void testUsageOutsideIfEls() {
+    public void testUsageOutsideIfElse() {
         // since (in contrary to java) is legal in R; scoping works different somehow
         doExprTest("{ a = 3; }; a");
     }

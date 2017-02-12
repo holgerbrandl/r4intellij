@@ -8,12 +8,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
+import com.intellij.util.ArrayUtil;
 import com.r4intellij.interpreter.RInterpreterConfigurable;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RAssignmentStatement;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.r4intellij.inspections.TypeCheckerInspectionTest.getSkeletonPath;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -61,16 +66,28 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
      * since it is associated with base the package should be resolvable. This should come from  stub-index
      */
     public void testIris() {
-        myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
+        // myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
 
-        // todo rather use actual library here to see if stub-index is working correctly
+        // rather use actual library here to see if stub-index is working correctly
+        createLibraryFromPckgNames("datasets");
+        doExprTest("iris");
+    }
+
+
+    private void createLibraryFromPckgNames(String... packageNames) {
         Module myModule = myFixture.getModule();
 
-        VirtualFile pckgSkeletonFile = LocalFileSystem.getInstance().findFileByPath(getSkeletonPath("utils").toPath().toAbsolutePath().toString());
+        LocalFileSystem fileSystem = LocalFileSystem.getInstance();
+
+        List<VirtualFile> skeletons = Arrays.stream(packageNames).map(pckgName -> {
+            Path skeletonPath = getSkeletonPath(pckgName).toPath();
+            return fileSystem.findFileByPath(skeletonPath.toAbsolutePath().toString());
+        }).collect(Collectors.toList());
 
 
-        PsiTestUtil.addProjectLibrary(myModule, RInterpreterConfigurable.R_SKELETONS, pckgSkeletonFile);
-        doExprTest("iris");
+        PsiTestUtil.addProjectLibrary(myModule,
+                RInterpreterConfigurable.R_SKELETONS,
+                ArrayUtil.toObjectArray(skeletons, VirtualFile.class));
     }
 
 

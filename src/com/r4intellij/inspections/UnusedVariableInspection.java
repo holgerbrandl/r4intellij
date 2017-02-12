@@ -3,11 +3,14 @@ package com.r4intellij.inspections;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Query;
-import com.r4intellij.psi.api.RParameter;
+import com.r4intellij.RPsiUtils;
+import com.r4intellij.psi.api.RAssignmentStatement;
+import com.r4intellij.psi.api.RReferenceExpression;
 import com.r4intellij.psi.api.RVisitor;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -45,12 +48,26 @@ public class UnusedVariableInspection extends RInspection {
 
 
         @Override
-        public void visitParameter(@NotNull RParameter o) {
-            Query<PsiReference> search = ReferencesSearch.search(o);
+        public void visitAssignmentStatement(@NotNull RAssignmentStatement o) {
+
+
+            PsiElement assignee = o.getAssignee();
+
+            if (RPsiUtils.isNamedArgument((RReferenceExpression) assignee)) {
+                return;
+            }
+
+
+            Query<PsiReference> search = ReferencesSearch.search(assignee);
             PsiReference first = search.findFirst();
+
             if (first == null) {
-                myProblemHolder.registerProblem(o, "Unused parameter " + o.getText(), ProblemHighlightType.LIKE_UNUSED_SYMBOL);
+                myProblemHolder.registerProblem(assignee,
+                        "Variable '" + assignee.getText() + "' is never used",
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL);
             }
         }
+
+
     }
 }
