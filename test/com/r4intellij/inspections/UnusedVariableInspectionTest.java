@@ -58,6 +58,22 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
     }
 
 
+    /**
+     * The last statement of a block is its return value in R.
+     */
+    public void testDontFlagLastBlockExprStatement() {
+        assertAllUsed("{ foo= 3; foo }");
+    }
+
+    // todo finish this --> NoSideEffectsInspection
+//    public void testFlagNoSideEffectExprInFunction(){
+//        assertAllUsed("myFun = function(){ <warning descr=\"Expression '1+1' has no side effects\">1+1<\warning>; 3 }; myFun()");
+//    }
+//
+//    public void testFlagNoSideEffectExprInBlock(){
+//        assertAllUsed("{ <warning descr=\"Expression '1+1' has no side effects\">1+1<\warning>; 3 }");
+//    }
+
     public void testDontFlagLastFunBlockExpr() {
         assertAllUsed("function(){ head(iris); { a = 3} }()");
     }

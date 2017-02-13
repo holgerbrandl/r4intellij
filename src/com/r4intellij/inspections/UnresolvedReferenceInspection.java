@@ -19,6 +19,7 @@ import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.RReferenceImpl;
+import com.r4intellij.psi.references.RResolver;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -103,11 +104,15 @@ public class UnresolvedReferenceInspection extends RInspection {
 
             // resolve normally
             RReferenceImpl reference = element.getReference();
+
             if (reference != null) {
                 PsiElement resolve = reference.resolve();
 
                 if (resolve == null) {
+
                     myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                } else if (RResolver.isForwardReference(resolve, element)) {
+                    myProblemHolder.registerProblem(element, "Forward reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 }
             }
         }

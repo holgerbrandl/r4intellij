@@ -283,6 +283,10 @@ function(){
 }
 
 ```
+
+* implement NoSideEffectsInspection (see already created unit-test)
+    * also make sure to flag plotting in loops etc.
+    
 Parser
 ------
 

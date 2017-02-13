@@ -1,7 +1,6 @@
 package com.r4intellij.psi.references;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
@@ -26,6 +25,7 @@ import com.r4intellij.typing.types.RType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class RResolver {
@@ -209,14 +209,30 @@ public class RResolver {
             }
         }
 
-        // more specific lookup was not sucessful, so search complete file
+        // more specific lookup was not successful, so search complete file
         final PsiFile file = element.getContainingFile();
         resolveFromAssignmentInContext(element, elementName, result, file);
 
         // select the most local results (see UnresolvedReferenceInspectionTest.testRedefinedReferenceLookup())
-        if (!result.isEmpty()) result = Lists.newArrayList(Iterables.getLast(result));
+
+
+//        if (!result.isEmpty()) result = Lists.newArrayList(Iterables.getLast(result));
+        if (!result.isEmpty()) {
+            Predicate<ResolveResult> isFwdRef = resolveResult -> isForwardReference(resolveResult.getElement(), element);
+            ResolveResult bestRef = result.stream().filter(not(isFwdRef)).
+                    // get most local backward reference
+                            reduce((first, second) -> second).
+                    // or first forward reference
+                            orElse(Iterables.getFirst(result, null));
+            result = Collections.singletonList(bestRef);
+        }
 
         return result;
+    }
+
+
+    public static <T> Predicate<T> not(Predicate<T> t) {
+        return t.negate();
     }
 
 
@@ -227,12 +243,31 @@ public class RResolver {
             for (RAssignmentStatement statement : statements) {
                 final PsiElement assignee = statement.getAssignee();
                 if (assignee != null &&
-                        assignee.getText().equals(elementName) &&
-                        (assignee.equals(element) || !PsiTreeUtil.isAncestor(statement, element, true))) {
-                    result.add(new PsiElementResolveResult(statement));
+                        assignee.getText().equals(elementName) //&&
+//                        (assignee.equals(element) )
+//                        (assignee.equals(element) || !PsiTreeUtil.isAncestor(statement, element, true))
+                        ) {
+                    PsiElementResolveResult resolveResult = new PsiElementResolveResult(statement);
+                    result.add(resolveResult);
                 }
             }
         }
+    }
+
+
+    // should go into RPsiUtil
+    public static boolean isForwardReference(PsiElement resolvant, PsiElement element) {
+        if (!resolvant.getContainingFile().equals(element.getContainingFile())) {
+            return false;
+        }
+
+
+        boolean isSelfReference = (resolvant instanceof RAssignmentStatement) &&
+                ((RAssignmentStatement) resolvant).getAssignee().equals(element);
+
+        return !isSelfReference && (PsiTreeUtil.isAncestor(resolvant, element, true) ||
+                resolvant.getTextOffset() > element.getTextOffset());
+//        return  resolvant.getTextOffset() +1 < element.getTextOffset() ;
     }
 
 
