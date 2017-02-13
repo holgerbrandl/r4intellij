@@ -24,6 +24,7 @@ public class RSettingsConfigurable implements SearchableConfigurable, Configurab
     private JPanel settingsPanel;
 
     private TextFieldWithBrowseButton interpreterPathField;
+    private JCheckBox resolveVariablesInModuleCheckBox;
 
 
     RSettingsConfigurable(Project project) {
@@ -62,26 +63,25 @@ public class RSettingsConfigurable implements SearchableConfigurable, Configurab
     @Nullable
     @Override
     public JComponent createComponent() {
-//        interpreterPathField.setText(get);
         return settingsPanel;
     }
 
 
     @Override
     public boolean isModified() {
-        final RSettings interpreterService = RSettings.getInstance();
-        return !interpreterService.getInterpreterPath().equals(interpreterPathField.getText());// ||
-//                !interpreterService.getSourcesPath().equals(mySourcesField.getText());
+        final RSettings rSettings = RSettings.getInstance();
+        return !rSettings.getInterpreterPath().equals(interpreterPathField.getText()) ||
+                rSettings.isResolveInModule() != (resolveVariablesInModuleCheckBox.isSelected());
     }
 
 
     @Override
     public void apply() throws ConfigurationException {
-        final RSettings interpreterService = RSettings.getInstance();
+        final RSettings rSettings = RSettings.getInstance();
         final String interpreterPath = interpreterPathField.getText();
 
 
-//        final String oldSourcesPath = interpreterService.getSourcesPath();
+//        final String oldSourcesPath = rSettings.getSourcesPath();
 //
 //            if (!StringUtil.isEmptyOrSpaces(oldSourcesPath)) {
 //                detachLibrary(myProject, R_LIBRARY);
@@ -99,8 +99,10 @@ public class RSettingsConfigurable implements SearchableConfigurable, Configurab
 
 
         RSkeletonGenerator.generateSkeletons(myProject);
-//        interpreterService.setSourcesPath(sourcesPath);
-        interpreterService.setInterpreterPath(interpreterPath);
+//        rSettings.setSourcesPath(sourcesPath);
+        rSettings.setInterpreterPath(interpreterPath);
+
+        rSettings.setResolveInModule(resolveVariablesInModuleCheckBox.isSelected());
     }
 
 
@@ -125,10 +127,12 @@ public class RSettingsConfigurable implements SearchableConfigurable, Configurab
 
     @Override
     public void reset() {
-        final RSettings interpreterService = RSettings.getInstance();
+        final RSettings rSettings = RSettings.getInstance();
 
-        final String interpreterPath = interpreterService.getInterpreterPath();
+        final String interpreterPath = rSettings.getInterpreterPath();
         interpreterPathField.setText(interpreterPath != null ? interpreterPath : "");
+
+        resolveVariablesInModuleCheckBox.setSelected(rSettings.isResolveInModule());
     }
 
 
@@ -141,6 +145,6 @@ public class RSettingsConfigurable implements SearchableConfigurable, Configurab
         interpreterPathField = new TextFieldWithBrowseButton();
 
         final FileChooserDescriptor interpreterDescriptor = FileChooserDescriptorFactory.createSingleLocalFileDescriptor();
-        interpreterPathField.addBrowseFolderListener("Choose interpreter path", "Choose interpreter path", myProject, interpreterDescriptor);
+        interpreterPathField.addBrowseFolderListener("Choose Interpreter Path", "Choose interpreter path", myProject, interpreterDescriptor);
     }
 }

@@ -20,6 +20,7 @@ import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
 import com.r4intellij.settings.LibraryUtil;
+import com.r4intellij.settings.RSettings;
 import com.r4intellij.typing.RTypeProvider;
 import com.r4intellij.typing.types.RType;
 import org.jetbrains.annotations.NotNull;
@@ -35,9 +36,13 @@ public class RResolver {
                                             @NotNull final List<ResolveResult> result,
                                             @NotNull final String... names) {
         for (String name : names) {
-            // todo this should be an option ( but is is in gernal too relaxed to be useful
-            addFromProject(name, element.getProject(), result);
-            addFromLibrary(element, result, name, LibraryUtil.USER_SKELETONS);
+            if (RSettings.getInstance().isResolveInModule()) {
+                addFromProject(name, element.getProject(), result);
+            }
+
+//            addFromLibrary(element, result, name, LibraryUtil.USER_SKELETONS);
+
+            // by design always resolve from user libary
             addFromLibrary(element, result, name, LibraryUtil.R_LIBRARY);
 
             // too unspecific and does not reflect imports
@@ -108,6 +113,8 @@ public class RResolver {
     private static void addFromProject(String name,
                                        @NotNull final Project project,
                                        @NotNull final List<ResolveResult> results) {
+
+        //todo actually we should just resolve in module here and not in project
         Collection<RAssignmentStatement> statements =
                 RAssignmentNameIndex.find(name, project,
                         new ProjectScopeImpl(project, FileIndexFacade

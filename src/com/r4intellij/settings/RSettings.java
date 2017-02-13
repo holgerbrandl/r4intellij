@@ -8,17 +8,13 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.r4intellij.interpreter.RInterpreterUtil;
 import org.jetbrains.annotations.NotNull;
 
-// todo name of component looks wrong
-@State(
-        name = "RSettings",
-        storages = {@Storage(file = "rSettings.xml")}
-)
+@State(name = "RSettings", storages = {@Storage(file = "rSettings.xml")})
 public class RSettings implements PersistentStateComponent<RSettings> {
 
     public String interpreterPath = RInterpreterUtil.suggestHomePath();
     public String INTERPRETER_SOURCES_PATH = "";
 
-    public boolean resolveWithinModule = false;
+    public boolean resolveInModule = false;
 
 
     public static RSettings getInstance() {
@@ -48,13 +44,13 @@ public class RSettings implements PersistentStateComponent<RSettings> {
     }
 
 
-    public boolean isResolveWithinModule() {
-        return resolveWithinModule;
+    public boolean isResolveInModule() {
+        return resolveInModule;
     }
 
 
-    public void setResolveWithinModule(boolean resolveWithinModule) {
-        this.resolveWithinModule = resolveWithinModule;
+    public void setResolveInModule(boolean resolveInModule) {
+        this.resolveInModule = resolveInModule;
     }
 
 
