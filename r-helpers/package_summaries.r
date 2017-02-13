@@ -44,7 +44,7 @@ pckgList %<>% rowwise() %>% mutate(title=get_title(Package))
 # }
 
 ## dump in a format suitable for parsing
-with(pckgList, paste(Package, Version, title, depends, imports, "\n", sep="\t")) %>% cat
+with(pckgList, paste(Package, Version, title, depends, imports, sep="\t")) %>% cat(sep="\n")
 
 ## todo also add doc-string here
 # pckgDocu <-library(help = "dplyr"); pckgDocu$info[[2]]

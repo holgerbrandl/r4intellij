@@ -107,19 +107,28 @@ public final class LocalRUtil {
 
         @Override
         public RPackage apply(String s) {
-            String[] splitLine = s.split("\t");
+            // http://stackoverflow.com/questions/14602062/java-string-split-removed-empty-values
+            String[] splitLine = s.split("\t", -1);
 
-            Set<String> dependencies = Sets.<String>newHashSet((splitLine.length == 4 ? splitLine[3] : "").split(",")).
+            if (splitLine.length != 5) {
+                throw new RuntimeException("incorrect summary format in: " + s);
+            }
+
+            Set<String> dependencies = Sets.<String>newHashSet(splitLine[3].split(",")).
                     stream().filter(f -> !f.isEmpty()).
                     filter(f -> !Objects.equals(f, "NA")).
                     collect(Collectors.toSet());
 
-            Set<String> imports = Sets.<String>newHashSet((splitLine.length == 5 ? splitLine[4] : "").split(",")).
+            Set<String> imports = Sets.<String>newHashSet(splitLine[4].split(",")).
                     stream().filter(f -> !f.isEmpty()).
                     filter(f -> !Objects.equals(f, "NA")).
                     collect(Collectors.toSet());
 
-            return new RPackage(splitLine[0].trim(), splitLine[1].trim(), splitLine[2], dependencies, imports);
+            String packageName = splitLine[0].trim();
+            String version = splitLine[1].trim();
+            String title = splitLine[2];
+
+            return new RPackage(packageName, version, title, dependencies, imports);
         }
     }
 }

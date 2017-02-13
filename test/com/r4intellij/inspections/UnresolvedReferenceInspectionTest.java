@@ -69,12 +69,12 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
         // myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
 
         // rather use actual library here to see if stub-index is working correctly
-        createLibraryFromPckgNames("datasets");
+        addPckgsToSkeletonLibrary("datasets");
         doExprTest("iris");
     }
 
 
-    private void createLibraryFromPckgNames(String... packageNames) {
+    private void addPckgsToSkeletonLibrary(String... packageNames) {
         Module myModule = myFixture.getModule();
 
         LocalFileSystem fileSystem = LocalFileSystem.getInstance();
@@ -102,6 +102,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testTransitiveDependencies() {
+//        addPckgsToSkeletonLibrary("datasets");
         doExprTest("require(caret); ggplot(iris)");
     }
 

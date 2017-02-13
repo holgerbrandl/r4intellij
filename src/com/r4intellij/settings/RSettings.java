@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 public class RSettings implements PersistentStateComponent<RSettings> {
 
     public String interpreterPath = RInterpreterUtil.suggestHomePath();
-    public String INTERPRETER_SOURCES_PATH = "";
 
     public boolean resolveInModule = false;
 
@@ -24,6 +23,7 @@ public class RSettings implements PersistentStateComponent<RSettings> {
 
     @Override
     public RSettings getState() {
+        //noinspection ReturnOfThis
         return this;
     }
 
@@ -51,15 +51,5 @@ public class RSettings implements PersistentStateComponent<RSettings> {
 
     public void setResolveInModule(boolean resolveInModule) {
         this.resolveInModule = resolveInModule;
-    }
-
-
-    public String getSourcesPath() {
-        return INTERPRETER_SOURCES_PATH;
-    }
-
-
-    public void setSourcesPath(@NotNull final String interpreterSourcesPath) {
-        INTERPRETER_SOURCES_PATH = interpreterSourcesPath;
     }
 }
