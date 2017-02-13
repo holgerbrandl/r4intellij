@@ -14,9 +14,9 @@ For project documentation see our **[project website](http://holgerbrandl.github
 * [Roadmap](misc/todo.md) 
 * [Development notes](misc/devel_notes.md) 
 
-Acknoledgements
+Acknowledgements
 ----
 
-This project was rebuilt by merging it's codebase with a fork of [The R plugin](https://github.com/ktisha/TheRPlugin). So most credits go to go [ktisha](https://github.com/ktisha).
+This project was rebuilt by merging its codebase with a fork of [The R plugin](https://github.com/ktisha/TheRPlugin). So most credits go to go [ktisha](https://github.com/ktisha).
   
 This project would not have been possible without great [bash plugin](https://plugins.jetbrains.com/plugin/4230?pr=phpStorm) which inspired us a lot when getting started with r4intllij, and from which we borrowed also some code.
