@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-import static com.r4intellij.inspections.UnresolvedReferenceInspectionTest.addPckgsToSkeletonLibrary;
+import static com.r4intellij.inspections.UnresolvedReferenceInspectionTest.createLibraryFromPckgNames;
 
 public class TypeCheckerInspectionTest extends RInspectionTest {
 
@@ -26,7 +26,7 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
 //        }
 
 //        myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
-        addPckgsToSkeletonLibrary(myFixture, "utils");
+        createLibraryFromPckgNames(myFixture, "utils");
 
 //        Module myModule = myFixture.getModule();
 //        PsiTestUtil.addLibrary(myModule, 'lib', tempDir.getFile('').path, [] as String[], [''] as String[])

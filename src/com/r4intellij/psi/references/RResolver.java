@@ -25,9 +25,7 @@ import com.r4intellij.typing.RTypeProvider;
 import com.r4intellij.typing.types.RType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RResolver {
@@ -139,25 +137,31 @@ public class RResolver {
 
         if (library != null) {
             final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);
+            Optional<VirtualFile> first = Arrays.stream(files).filter(f -> f.getName().equals(namespace + ".r")).findFirst();
 
-            for (VirtualFile child : files) {
-                final VirtualFile file = child.findFileByRelativePath(namespace + ".r");
+            if (!first.isPresent())
+                return;
 
-                if (file != null) {
-                    final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                    final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(psiFile, RAssignmentStatement.class);
 
-                    if (statements != null) {
-                        for (RAssignmentStatement statement : statements) {
-                            final PsiElement assignee = statement.getAssignee();
+//            for (VirtualFile child : files) {
+            final VirtualFile file = first.get();
+//                final VirtualFile file = child.findChild(namespace + ".r");
 
-                            if (assignee != null && assignee.getText().equals(name)) {
-                                result.add(new PsiElementResolveResult(assignee));
-                            }
-                        }
+//            if (file != null) {
+            final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+            final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(psiFile, RAssignmentStatement.class);
+
+            if (statements != null) {
+                for (RAssignmentStatement statement : statements) {
+                    final PsiElement assignee = statement.getAssignee();
+
+                    if (assignee != null && assignee.getText().equals(name)) {
+                        result.add(new PsiElementResolveResult(assignee));
                     }
+//                    }
                 }
             }
+//            }
         }
     }
 

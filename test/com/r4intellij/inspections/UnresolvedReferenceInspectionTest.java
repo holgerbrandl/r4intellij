@@ -2,6 +2,10 @@ package com.r4intellij.inspections;
 
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
+import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
@@ -19,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.r4intellij.inspections.TypeCheckerInspectionTest.getSkeletonPath;
 import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
@@ -37,7 +42,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 //        RPackageService.getInstance().refreshIndex();
 
         // add base packages for testing
-        addPckgsToSkeletonLibrary(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));
+        createLibraryFromPckgNames(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));
     }
 
 
@@ -61,8 +66,11 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testResolveNamespaceCall() {
-
-        doExprTest("foo = dplyr::count(iris, Species)");
+//        addPckgsToSkeletonLibrary(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));
+//        createLibraryFromPckgNames(myFixture, "dplyr", "datasets");
+        addPckgsToSkeletonLibrary(myFixture, "dplyr");
+//        doExprTest("foo = dplyr::group_by(iris)");
+        doExprTest("dplyr::group_by(iris)");
     }
 
 
@@ -73,12 +81,29 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
         // myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
 
         // rather use actual library here to see if stub-index is working correctly
-        addPckgsToSkeletonLibrary(myFixture, "datasets");
+        createLibraryFromPckgNames(myFixture, "datasets");
         doExprTest("iris");
     }
 
 
     public static void addPckgsToSkeletonLibrary(CodeInsightTestFixture myFixture, String... packageNames) {
+//        fail("not yet ready because we can not fetch the existing library");
+
+        LibraryTable libraryTable = ProjectLibraryTable.getInstance(myFixture.getModule().getProject());
+        Library libraryByName = libraryTable.getLibraryByName(LibraryUtil.R_SKELETONS);
+
+        if (libraryByName != null) {
+            Stream<String> existingLibFiles = Arrays.stream(libraryByName.getFiles(OrderRootType.CLASSES)).
+                    map(f -> f.getName().replaceFirst("[.]r", ""));
+            packageNames = Stream.concat(existingLibFiles, Arrays.stream(packageNames)).toArray(String[]::new);
+
+        }
+
+        createLibraryFromPckgNames(myFixture, packageNames);
+    }
+
+
+    public static void createLibraryFromPckgNames(CodeInsightTestFixture myFixture, String... packageNames) {
         Module myModule = myFixture.getModule();
 
         LocalFileSystem fileSystem = LocalFileSystem.getInstance();
@@ -101,6 +126,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testNasaWithDplyr() {
+        createLibraryFromPckgNames(myFixture, "dplyr");
         doExprTest("require(dplyr); nasa");
     }
 

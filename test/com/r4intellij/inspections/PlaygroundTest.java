@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 public class PlaygroundTest extends RInspectionTest {
 
 
-    public void testPlayground() {
+    public void _testPlayground() {
         CodeInsightTestFixture fixture = doExprTest("function(usedArg) head(x=usedArg)");
 
         RCallExpression childOfType = PsiTreeUtil.findChildOfType(fixture.getFile(), RCallExpression.class);
@@ -32,7 +32,7 @@ public class PlaygroundTest extends RInspectionTest {
     }
 
 
-    public void testPlayground2() {
+    public void _testPlayground2() {
         CodeInsightTestFixture fixture = doExprTest("function(sdf) head(x=sdf)");
 
         RArgumentList childOfType = PsiTreeUtil.findChildOfType(fixture.getFile(), RArgumentList.class);
