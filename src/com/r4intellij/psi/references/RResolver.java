@@ -15,11 +15,11 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScopeImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RPsiUtils;
-import com.r4intellij.interpreter.RInterpreterConfigurable;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
+import com.r4intellij.settings.LibraryUtil;
 import com.r4intellij.typing.RTypeProvider;
 import com.r4intellij.typing.types.RType;
 import org.jetbrains.annotations.NotNull;
@@ -35,14 +35,15 @@ public class RResolver {
                                             @NotNull final List<ResolveResult> result,
                                             @NotNull final String... names) {
         for (String name : names) {
+            // todo this should be an option ( but is is in gernal too relaxed to be useful
             addFromProject(name, element.getProject(), result);
-            addFromLibrary(element, result, name, RInterpreterConfigurable.USER_SKELETONS);
-            addFromLibrary(element, result, name, RInterpreterConfigurable.R_LIBRARY);
+            addFromLibrary(element, result, name, LibraryUtil.USER_SKELETONS);
+            addFromLibrary(element, result, name, LibraryUtil.R_LIBRARY);
 
             // too unspecific and does not reflect imports
-//            addFromLibrary(element, result, name, RInterpreterConfigurable.R_SKELETONS);
+//            addFromLibrary(element, result, name, RSettingsConfigurable.R_SKELETONS);
 
-            addFromImports(element, result, name, RInterpreterConfigurable.R_SKELETONS);
+            addFromImports(element, result, name, LibraryUtil.R_SKELETONS);
 
         }
     }
@@ -127,7 +128,7 @@ public class RResolver {
                                             @NotNull final List<ResolveResult> result) {
         final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
         final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
-        final Library library = model.getLibraryByName(RInterpreterConfigurable.R_SKELETONS);
+        final Library library = model.getLibraryByName(LibraryUtil.R_SKELETONS);
 
         if (library != null) {
             final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);

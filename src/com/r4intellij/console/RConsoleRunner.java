@@ -13,7 +13,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.r4intellij.RLanguage;
 import com.r4intellij.debugger.data.RInterpreterConstants;
-import com.r4intellij.interpreter.RInterpreterService;
+import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +43,7 @@ public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageCon
     @NotNull
     @Override
     protected OSProcessHandler createProcessHandler(@NotNull final Process process) {
-        final String commandLine = getCommandLine(RInterpreterService.getInstance().getInterpreterPath()).getCommandLineString();
+        final String commandLine = getCommandLine(RSettings.getInstance().getInterpreterPath()).getCommandLineString();
         return new ColoredProcessHandler(process, commandLine);
     }
 
@@ -69,7 +69,7 @@ public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageCon
 
     @NotNull
     private String getInterpreterPath() throws ExecutionException {
-        final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
+        final String interpreterPath = RSettings.getInstance().getInterpreterPath();
 
         if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
             throw new ExecutionException("R interpreter is not specified");

@@ -9,7 +9,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
 import com.r4intellij.RPsiUtils;
-import com.r4intellij.interpreter.RInterpreterService;
+import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +27,7 @@ public class RHelperUtil {
 
     @Nullable
     public static ProcessOutput getProcessOutput(@NotNull final String scriptText) {
-        String interpreter = RInterpreterService.getInstance().getInterpreterPath();
+        String interpreter = RSettings.getInstance().getInterpreterPath();
 
         final String path = interpreter;
         if (path == null) {
@@ -74,7 +74,7 @@ public class RHelperUtil {
 
     @Nullable
     public static RRunResult runHelperWithArgs(@NotNull final PluginResourceFile helper, @NotNull final String... args) {
-        final String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
+        final String interpreterPath = RSettings.getInstance().getInterpreterPath();
 
         if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
             LOG.info("Path to interpreter didn't set");

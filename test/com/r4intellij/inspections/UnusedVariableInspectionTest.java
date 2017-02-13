@@ -44,11 +44,27 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
     }
 
 
+    public void testDonFlagReturn() {
+        assertAllUsed("function(){ if(T){ head(iris); return(1) };  return(2); { return(3) }; return(4) }()");
+    }
+
+
+
     /**
      * Last expression of function expression should be flagged because its return value as side effect
      */
     public void testDontFlagLastFunExprStatement() {
         assertAllUsed("function(){ a = 3 }()");
+    }
+
+
+    public void testDontFlagLastFunBlockExpr() {
+        assertAllUsed("function(){ head(iris); { a = 3} }()");
+    }
+
+
+    public void testDontFlagExprInTerminalIfElse() { // this already not really realistic, but for sake of completeness
+        assertAllUsed("function(){ head(iris); if(T){ a = 3} }()");
     }
 
 

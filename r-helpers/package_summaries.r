@@ -17,6 +17,7 @@ get_title = function(myPackage){
 
 pckgList = installed.packages()[,c("Package", "Version", "LibPath")] %>% as.data.frame
 
+# todo fixme this requires network access which should be avoided
 pckgDepends = package_dependencies(pckgList$Package, which="Depends") %>%
     lapply(function(x)paste(x, collapse=",")) %$%
     data_frame(Package=names(.), depends=unlist(.))
@@ -36,6 +37,7 @@ pckgList %<>% rowwise() %>% mutate(title=get_title(Package))
 # if(F){
 # options(width=200)
 # filter(pckgList, Package=="tidyr")
+# filter(pckgList, Package=="caret") %>% str
 # filter(pckgList, Package=="ggplot2") %>% knitr::kable()
 # filter(pckgDepends, Package=="ggplot2") %>% knitr::kable()
 # filter(pckgImports, Package=="ggplot2") %>% knitr::kable()

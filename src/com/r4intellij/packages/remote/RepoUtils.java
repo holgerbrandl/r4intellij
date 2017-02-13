@@ -12,11 +12,11 @@ import com.intellij.util.CatchingConsumer;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.RepoPackage;
 import com.r4intellij.RPsiUtils;
-import com.r4intellij.interpreter.RInterpreterService;
 import com.r4intellij.packages.LocalRUtil;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RHelperUtil.PluginResourceFile;
 import com.r4intellij.packages.RPackageService;
+import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -237,7 +237,7 @@ public class RepoUtils {
 
 
     public static void uninstallPackage(InstalledPackage repoPackage) throws ExecutionException {
-        final String path = RInterpreterService.getInstance().getInterpreterPath();
+        final String path = RSettings.getInstance().getInterpreterPath();
         if (StringUtil.isEmptyOrSpaces(path)) {
             throw new ExecutionException("Please, specify path to the R executable.");
         }

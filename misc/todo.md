@@ -30,6 +30,7 @@ NA <- Rsamtools::NA		## NA
 ```
 
 
+
 * argument n is misisn with not default in piped expression
 `"foo.bar" %>% str_split_fixed("[.]")`
 
@@ -467,6 +468,8 @@ Package Manger
 
 Brainstorming
 =============
+
+* pacakge_summaries.R require network access (via tools::package_dependencies) 
 
 * Connectors for xterm and Rgui on windows
 * ColorSettingsPage (see Bash implementation)

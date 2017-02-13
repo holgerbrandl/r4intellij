@@ -229,4 +229,16 @@ public class RPsiUtils {
                         sibling.getNode().getElementType() == RElementTypes.R_TRIPLECOLON
         );
     }
+
+
+    public static boolean isReturnValue(RAssignmentStatement o) {
+        RFunctionExpression funExpr = PsiTreeUtil.getParentOfType(o, RFunctionExpression.class);
+        if (funExpr == null)
+            return false;
+
+        if (funExpr.getExpression() == o) return true;
+
+
+        return false;
+    }
 }

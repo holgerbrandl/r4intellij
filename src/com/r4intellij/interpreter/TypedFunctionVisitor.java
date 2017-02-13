@@ -16,6 +16,7 @@ import com.r4intellij.documentation.RDocumentationProvider;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.psi.RRecursiveElementVisitor;
 import com.r4intellij.psi.api.*;
+import com.r4intellij.settings.RSettings;
 import com.r4intellij.typing.*;
 import com.r4intellij.typing.types.RType;
 import com.r4intellij.typing.types.RUnknownType;
@@ -214,7 +215,7 @@ class TypedFunctionVisitor extends RVisitor {
                     + "print(myValueType)";
 
             String stdout = RHelperUtil.runCommand(programString);
-            String rPath = RInterpreterService.getInstance().getInterpreterPath();
+            String rPath = RSettings.getInstance().getInterpreterPath();
 
             RType evaluatedType = RSkeletonGeneratorHelper.findType(stdout);
             myOk = RTypeChecker.matchTypes(myCandidate, evaluatedType);

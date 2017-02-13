@@ -9,9 +9,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.PsiTestUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.util.ArrayUtil;
-import com.r4intellij.interpreter.RInterpreterConfigurable;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RAssignmentStatement;
+import com.r4intellij.settings.LibraryUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
@@ -86,7 +86,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
         PsiTestUtil.addProjectLibrary(myModule,
-                RInterpreterConfigurable.R_SKELETONS,
+                LibraryUtil.R_SKELETONS,
                 ArrayUtil.toObjectArray(skeletons, VirtualFile.class));
     }
 
@@ -136,7 +136,14 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testSelfAssignment() {
-        doExprTest("sdf = ls(<warning descr=\"Unresolved reference\">sdf</warning>)");
+//        doExprTest("sdf = ls(<warning descr=\"Unresolved reference\">sdf</warning>)");
+        doExprTest("sdf = { <warning descr=\"Unresolved reference\">sdf</warning> }");
+//        doExprTest("sdf = <warning descr=\"Unresolved reference\">foo</warning>");
+    }
+
+
+    public void testForwardReference() {
+        doExprTest("foo = <warning descr=\"Unresolved reference\">bar</warning>; bar = 1");
     }
 
 

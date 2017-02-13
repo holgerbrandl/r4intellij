@@ -14,11 +14,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.r4intellij.RElementGenerator;
 import com.r4intellij.RPsiUtils;
-import com.r4intellij.interpreter.RInterpreterConfigurable;
 import com.r4intellij.interpreter.RSkeletonGenerator;
 import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
+import com.r4intellij.settings.LibraryUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -191,7 +191,7 @@ public class RReferenceImpl implements PsiPolyVariantReference {
         final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(myElement.getProject());
 
         if (model != null) {
-            final Library library = model.getLibraryByName(RInterpreterConfigurable.R_SKELETONS);
+            final Library library = model.getLibraryByName(LibraryUtil.R_SKELETONS);
 
             final String skeletonsDir = RSkeletonGenerator.getSkeletonsPath();
             if (library != null) {

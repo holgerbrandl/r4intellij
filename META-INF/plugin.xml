@@ -92,10 +92,12 @@
         <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>
         <lang.braceMatcher language="R" implementationClass="com.r4intellij.highlighting.RBraceMatcher"/>
 
-        <projectConfigurable instance="com.r4intellij.interpreter.RInterpreterConfigurable"/>
+        <projectConfigurable groupId="language" instance="com.r4intellij.settings.RSettingsConfigurable"
+                             id="com.r4intellij.settings.RSettingsConfigurable" displayName="R Language"/>
 
-        <applicationService serviceInterface="com.r4intellij.interpreter.RInterpreterService"
-                            serviceImplementation="com.r4intellij.interpreter.RInterpreterService"/>
+
+        <applicationService serviceInterface="com.r4intellij.settings.RSettings"
+                            serviceImplementation="com.r4intellij.settings.RSettings"/>
         <applicationService serviceInterface="com.r4intellij.packages.RPackageService"
                             serviceImplementation="com.r4intellij.packages.RPackageService"/>
 

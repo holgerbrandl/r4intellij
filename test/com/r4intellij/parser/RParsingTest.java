@@ -46,6 +46,13 @@ public class RParsingTest extends ParsingTestCase {
 
 
     public void testFunctionDefinition() {
+
+        doTest();
+    }
+
+
+    // known to be broken because of parser inability to do call-block before
+    public void testInPlaceFunctionDefCall() {
         doTest();
     }
 

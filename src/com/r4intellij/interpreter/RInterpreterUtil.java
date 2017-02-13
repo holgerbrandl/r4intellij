@@ -29,7 +29,7 @@ public class RInterpreterUtil {
     private static String[] MAC_PATHS = {"/Library/Frameworks/R.framework/Resources", "/System/Library/Frameworks/R.framework/Resources"};
 
 
-    static String suggestHomePath() {
+    public static String suggestHomePath() {
         return Iterables.getFirst(suggestHomePaths(), "");
     }
 

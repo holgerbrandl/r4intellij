@@ -74,6 +74,7 @@ public class RFileImpl extends PsiFileBase implements RFile {
 
     @Override
     public List<String> getImportedPackages() {
+        // use cache to get list of imported package names
         List<String> imports = getPckgImportExpressions().stream().map(rCall -> {
             List<RExpression> args = rCall.getArgumentList().getExpressionList();
 

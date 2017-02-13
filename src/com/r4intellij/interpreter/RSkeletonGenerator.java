@@ -20,6 +20,7 @@ import com.intellij.util.DocumentUtil;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
+import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,10 +29,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
-import static com.r4intellij.interpreter.RInterpreterConfigurable.R_SKELETONS;
-import static com.r4intellij.interpreter.RInterpreterConfigurable.createLibrary;
 import static com.r4intellij.packages.RHelperUtil.PluginResourceFile;
 import static com.r4intellij.packages.RHelperUtil.RRunResult;
+import static com.r4intellij.settings.LibraryUtil.R_SKELETONS;
+import static com.r4intellij.settings.LibraryUtil.createLibrary;
 
 
 public class RSkeletonGenerator {
@@ -75,7 +76,7 @@ public class RSkeletonGenerator {
 
                 //TODO still needed?
 //                        final String userSkeletonsPath = RHelpersLocator.getHelperPath("r-user-skeletons");
-//                        createLibrary(RInterpreterConfigurable.USER_SKELETONS, userSkeletonsPath, project);
+//                        createLibrary(RSettingsConfigurable.USER_SKELETONS, userSkeletonsPath, project);
             }
         });
 
@@ -184,7 +185,7 @@ public class RSkeletonGenerator {
         final String basePath = PathManager.getSystemPath();
 
         // todo this should include the interpreter version as well
-        String interpreterPath = RInterpreterService.getInstance().getInterpreterPath();
+        String interpreterPath = RSettings.getInstance().getInterpreterPath();
         int interpreterHash = FileUtil.toSystemIndependentName(interpreterPath).hashCode();
 
         return (basePath + File.separator + SKELETON_DIR_NAME) + File.separator + Math.abs(interpreterHash) + File.separator;
@@ -192,7 +193,7 @@ public class RSkeletonGenerator {
 
 
     private static void runSkeletonGeneration(@Nullable ProgressIndicator indicator) {
-        final String interpreter = RInterpreterService.getInstance().getInterpreterPath();
+        final String interpreter = RSettings.getInstance().getInterpreterPath();
 
         if (StringUtil.isEmptyOrSpaces(interpreter)) return;
 

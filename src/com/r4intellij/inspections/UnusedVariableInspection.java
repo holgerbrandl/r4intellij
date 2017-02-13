@@ -57,6 +57,9 @@ public class UnusedVariableInspection extends RInspection {
                 return;
             }
 
+            //is last statement in function expression (which are) return values in R
+            if (RPsiUtils.isReturnValue(o)) return;
+
 
             Query<PsiReference> search = ReferencesSearch.search(assignee);
             PsiReference first = search.findFirst();

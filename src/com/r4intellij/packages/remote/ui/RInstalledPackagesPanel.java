@@ -3,8 +3,8 @@ package com.r4intellij.packages.remote.ui;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.webcore.packaging.*;
-import com.r4intellij.interpreter.RInterpreterService;
 import com.r4intellij.packages.LocalRUtil;
+import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,7 +18,7 @@ public class RInstalledPackagesPanel extends InstalledPackagesPanel {
 
 
     public static boolean hasInterpreterPath() {
-        return StringUtil.isNotEmpty(RInterpreterService.getInstance().getInterpreterPath());
+        return StringUtil.isNotEmpty(RSettings.getInstance().getInterpreterPath());
     }
 
 
