@@ -24,7 +24,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.r4intellij.editor.RCompletionContributor.PACKAGE_IMPORT_METHODS;
-import static com.r4intellij.packages.LocalRUtil.basePackages;
+import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
 
 public class RFileImpl extends PsiFileBase implements RFile {
 
@@ -86,7 +86,7 @@ public class RFileImpl extends PsiFileBase implements RFile {
         }).filter(Objects::nonNull).collect(Collectors.toList());
 
         // prefix with default libraries
-        return Lists.newArrayList(Iterables.concat(basePackages, imports));
+        return Lists.newArrayList(Iterables.concat(DEFAULT_PACKAGES, imports));
     }
 
 

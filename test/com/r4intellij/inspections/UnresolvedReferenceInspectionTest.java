@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.r4intellij.inspections.TypeCheckerInspectionTest.getSkeletonPath;
+import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -34,6 +35,9 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
         // inject stub index here for more reproducible testing
         RPackageService.getTestInstance();
 //        RPackageService.getInstance().refreshIndex();
+
+        // add base packages for testing
+        addPckgsToSkeletonLibrary(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));
     }
 
 
@@ -69,12 +73,12 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
         // myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
 
         // rather use actual library here to see if stub-index is working correctly
-        addPckgsToSkeletonLibrary("datasets");
+        addPckgsToSkeletonLibrary(myFixture, "datasets");
         doExprTest("iris");
     }
 
 
-    private void addPckgsToSkeletonLibrary(String... packageNames) {
+    public static void addPckgsToSkeletonLibrary(CodeInsightTestFixture myFixture, String... packageNames) {
         Module myModule = myFixture.getModule();
 
         LocalFileSystem fileSystem = LocalFileSystem.getInstance();

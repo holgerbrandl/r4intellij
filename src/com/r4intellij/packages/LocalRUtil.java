@@ -24,14 +24,14 @@ public final class LocalRUtil {
 
     private static final PluginResourceFile RHELPER_PACKAGE_SUMMARIES = new PluginResourceFile("package_summaries.r");
 
-    public static final Set<String> basePackages = Sets.newHashSet("stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base");
+    public static final Set<String> DEFAULT_PACKAGES = Sets.newHashSet("stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base");
 
-    //    public static final Set<String> basePackages = Sets.newHashSet("base", "utils", "stats", "datasets", "graphics",
+    //    public static final Set<String> DEFAULT_PACKAGES = Sets.newHashSet("base", "utils", "stats", "datasets", "graphics",
 //            "grDevices", "grid", "methods", "tools", "parallel", "compiler", "splines", "tcltk", "stats4");
 
 
     public static boolean isPackageBase(@NotNull final InstalledPackage pkg) {
-        return basePackages.contains(pkg.getName());
+        return DEFAULT_PACKAGES.contains(pkg.getName());
     }
 
 

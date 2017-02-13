@@ -79,10 +79,11 @@ public class RPackageService implements PersistentStateComponent<RPackageService
         }
 
         if (service.allPackages == null) {
-            System.err.println("building package index for testing ");
+            System.err.print("building package index for testing... ");
             service.allPackages = Sets.newConcurrentHashSet();
             service.refreshIndex();
             saveObject(service.allPackages, indexFile);
+            System.err.println("Done");
         }
 
         return service;
