@@ -476,6 +476,8 @@ Package Manger
 Brainstorming
 =============
 
+* resolve project sources to source_statemtns OR assume project sources to be always present in project files
+
 * pacakge_summaries.R require network access (via tools::package_dependencies) 
 
 * Connectors for xterm and Rgui on windows

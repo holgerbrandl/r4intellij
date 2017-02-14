@@ -249,15 +249,17 @@ public class RPsiUtils {
     public static boolean isReturnValue(PsiElement o) {
         RFunctionExpression funExpr = PsiTreeUtil.getParentOfType(o, RFunctionExpression.class);
 
-        if (funExpr == null) return false;
+        if (funExpr == null) return false; // not part of a function def
 
 
         if (o instanceof RCallExpression) {
-            ((RCallExpression) o).getName().equals("return");
+            Objects.equals(((RCallExpression) o).getName(), "return");
         }
 
         // the recursion is needed to resolve final blocks
-        return PsiTreeUtil.nextVisibleLeaf(o) == null && isReturnValue(o.getParent());
+//        return PsiTreeUtil.nextVisibleLeaf(o) == null && isReturnValue(o.getParent());
+        return PsiTreeUtil.getNextSiblingOfType(o, RExpression.class) == null &&
+                (o.getParent() instanceof RFunctionExpression || isReturnValue(o.getParent()));
     }
 
 

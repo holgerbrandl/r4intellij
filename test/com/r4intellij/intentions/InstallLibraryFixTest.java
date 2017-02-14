@@ -21,6 +21,9 @@ public class InstallLibraryFixTest extends LightPlatformCodeInsightFixtureTestCa
     // alsp see org.jetbrains.plugins.groovy.intentions.GroovyConvertJUnitIntentionTest
 
 
+    public void testDummy() {
+    }
+
     // TODO enable once UI disposal issue has been resolved
     public void _testPackageInstallationAction() throws Exception {
         // remove the package so that we can detect it as missing

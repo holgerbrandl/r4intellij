@@ -61,6 +61,8 @@ The debug environment unpacks the jar while the deployed environment does not. S
 Reference Provider
 ----------
 
+
+
 https://confluence.jetbrains.com/display/IDEADEV/Developing+Custom+Language+Plugins+for+IntelliJ+IDEA
 
 
@@ -68,6 +70,12 @@ http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/ref
 
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/207250965-PsiReferenceContributor-Find-Usages-and-Go-to-Declaration
 
+search scope
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/206793585-Help-with-different-behavior-between-writable-and-readonly-files
+
+my question: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000093684-Reference-search-scope-different-between-project-files-and-scratches-
+
+![](.devel_notes_images/search_scopes.png)
 
 * seems to work within a within project context even across files. 
 

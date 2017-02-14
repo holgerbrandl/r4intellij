@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Query;
 import com.r4intellij.RPsiUtils;
@@ -69,7 +70,9 @@ public class UnusedVariableInspection extends RInspection {
 
 
             // because the reference refers to the assignment and not just the assignee, we search for assignment refs here
-            Query<PsiReference> search = ReferencesSearch.search(element);
+
+            // use function or loop bariier here
+            Query<PsiReference> search = ReferencesSearch.search(element, new LocalSearchScope(element.getContainingFile()));
             PsiReference first = search.findFirst();
 
 
