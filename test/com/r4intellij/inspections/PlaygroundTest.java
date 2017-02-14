@@ -16,6 +16,9 @@ import org.jetbrains.annotations.NotNull;
 public class PlaygroundTest extends RInspectionTest {
 
 
+    public void testDummy() {
+    }
+
     public void _testPlayground() {
         CodeInsightTestFixture fixture = doExprTest("function(usedArg) head(x=usedArg)");
 

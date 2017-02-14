@@ -177,10 +177,10 @@ public class RResolver {
 
 
     public static List<ResolveResult> resolveWithoutNamespaceInFile(@NotNull final PsiElement element, String elementName) {
-        List<ResolveResult> result = new ArrayList<>();
+        final List<ResolveResult> result = new ArrayList<>();
 
 
-        // walk up local block hierarchy to resolve symboll in context TODO unit test missing?
+        // walk up local block hierarchy to resolve symbol in context
         RBlockExpression rBlock = PsiTreeUtil.getParentOfType(element, RBlockExpression.class);
         while (rBlock != null) {
             resolveFromAssignmentInContext(element, elementName, result, rBlock);
@@ -211,23 +211,61 @@ public class RResolver {
 
         // more specific lookup was not successful, so search complete file
         final PsiFile file = element.getContainingFile();
-        resolveFromAssignmentInContext(element, elementName, result, file);
+        resolveInContextByBlockRecursion(file, element, elementName, result);
+
+//        PsiTreeUtil.getContextOfType(element, RBlockExpression.class, RIfStatement.class, RFile.class)
+        //
+        PsiElement resolveBarrier = PsiTreeUtil.getContextOfType(element, RFunctionExpression.class);
+        if (resolveBarrier != null) {
+            resolveInContextByBlockRecursion(resolveBarrier, element, elementName, result);
+        }
 
         // select the most local results (see UnresolvedReferenceInspectionTest.testRedefinedReferenceLookup())
-
-
 //        if (!result.isEmpty()) result = Lists.newArrayList(Iterables.getLast(result));
+        // todo this reduction step should happen later, so that we could access the full set if needed
         if (!result.isEmpty()) {
-            Predicate<ResolveResult> isFwdRef = resolveResult -> isForwardReference(resolveResult.getElement(), element);
-            ResolveResult bestRef = result.stream().filter(not(isFwdRef)).
+            Predicate<ResolveResult> fwdRefPredicate = RPsiUtils.createForwardRefPredicate(element);
+
+            ResolveResult bestRef = result.stream().filter(not(fwdRefPredicate)).
                     // get most local backward reference
                             reduce((first, second) -> second).
                     // or first forward reference
                             orElse(Iterables.getFirst(result, null));
-            result = Collections.singletonList(bestRef);
+
+            // replace result (since it's final we have to mess around a bit)
+//            result = Collections.singletonList(bestRef);
+            result.clear();
+            result.add(bestRef);
         }
 
         return result;
+    }
+
+
+    private static void resolveInContextByBlockRecursion(PsiElement context, @NotNull final PsiElement element, final String elementName, final List<ResolveResult> result) {
+        resolveFromAssignmentInContext(element, elementName, result, context);
+
+        // also recurse into blocks, if and elses of current context
+        context.acceptChildren(new RVisitor() {
+            @Override
+            public void visitBlockExpression(@NotNull RBlockExpression o) {
+                resolveFromAssignmentInContext(element, elementName, result, o);
+                o.acceptChildren(this);
+            }
+
+
+            @Override
+            public void visitIfStatement(@NotNull RIfStatement o) {
+                super.visitIfStatement(o);
+//                resolveFromAssignmentInContext(element, elementName, result, o);
+
+//                PsiTreeUtil.getNextSiblingOfType()
+//                PsiTreeUtil.nextVisibleLeaf(element)
+//                PsiElement nextSibling = PsiTreeUtil.skipSiblingsBackward(o.getElse(), LeafPsiElement.class);
+//                if(nextSibling!=null)
+                o.acceptChildren(this);
+            }
+        });
     }
 
 
@@ -243,7 +281,8 @@ public class RResolver {
             for (RAssignmentStatement statement : statements) {
                 final PsiElement assignee = statement.getAssignee();
                 if (assignee != null &&
-                        assignee.getText().equals(elementName) //&&
+                        assignee.getText().equals(elementName) &&
+                        assignee != element // disallow self-references --> disabled to allow for correct usage search --> see design considerations in devel_notes.md
 //                        (assignee.equals(element) )
 //                        (assignee.equals(element) || !PsiTreeUtil.isAncestor(statement, element, true))
                         ) {
@@ -254,28 +293,6 @@ public class RResolver {
         }
     }
 
-
-    // should go into RPsiUtil
-    public static boolean isForwardReference(PsiElement resolvant, PsiElement element) {
-        if (!resolvant.getContainingFile().equals(element.getContainingFile())) {
-            return false;
-        }
-
-
-        boolean isSelfReference = (resolvant instanceof RAssignmentStatement) &&
-                ((RAssignmentStatement) resolvant).getAssignee().equals(element);
-
-        return !isSelfReference && (PsiTreeUtil.isAncestor(resolvant, element, true) ||
-                resolvant.getTextOffset() > element.getTextOffset());
-//        return  resolvant.getTextOffset() +1 < element.getTextOffset() ;
-    }
-
-
-    // isAfterElementOrDifferentFile(element, statement)
-    private static boolean isAfterElementOrDifferentFile(PsiElement element, PsiElement resolveCandidate) {
-        return element.getContainingFile().equals(resolveCandidate.getContainingFile()) &&
-                element.getTextOffset() > resolveCandidate.getTextOffset();
-    }
 
 
     static void resolveNameArgument(@NotNull final PsiElement element,

@@ -1,0 +1,17 @@
+RFile:InPlaceFunctionDefCall.r
+R_CALL_EXPRESSION
+  R_FUNCTION_EXPRESSION
+    PsiElement(function)('function')
+    R_PARAMETER_LIST
+      PsiElement(()('(')
+      PsiElement())(')')
+      R_BLOCK_EXPRESSION
+        PsiElement({)('{')
+        PsiWhiteSpace(' ')
+        R_NUMERIC_LITERAL_EXPRESSION
+          PsiElement(numeric)('1')
+        PsiWhiteSpace(' ')
+        PsiElement(})('}')
+  R_ARGUMENT_LIST
+    PsiElement(()('(')
+    PsiElement())(')')

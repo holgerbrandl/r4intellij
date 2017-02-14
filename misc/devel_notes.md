@@ -7,6 +7,17 @@ Release Action List
 4. Deploy jar and upload to plugin reposiotry
 
 
+Design Consideration
+====================
+
+What defines variable usage in R?
+```r
+iris  = mutate(iris)
+```
+This redefines `iris` so when checking for usage second iris is technically not the same.
+
+What does the user expect when search for usage? 
+Should the plugin provide _strict_ or _fuzzy_ usage search? This could be done by providing different modes in `com.r4intellij.psi.references.RFindUsagesProvider` 
 
 
 API Doc Comments

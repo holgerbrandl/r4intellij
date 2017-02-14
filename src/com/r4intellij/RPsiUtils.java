@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import com.intellij.psi.search.ProjectAndLibrariesScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -73,6 +74,20 @@ public class RPsiUtils {
         return argumentList != null &&
                 argumentList instanceof RArgumentList &&
                 ((RAssignmentStatement) parent).getAssignee()==element;
+    }
+
+
+    /**
+     * Returns true if <code>element</code> is the LHS of named argument in a function call.
+     */
+    public static boolean isVarDeclaration(RReferenceExpression element) {
+        PsiElement parent = element.getParent();
+
+        if (parent == null || !(parent instanceof RAssignmentStatement)) {
+            return false;
+        }
+
+        return ((RAssignmentStatement) parent).getAssignee().equals(element);
     }
 
 
@@ -240,5 +255,26 @@ public class RPsiUtils {
 
 
         return false;
+    }
+
+
+    public static java.util.function.Predicate<ResolveResult> createForwardRefPredicate(PsiElement element) {
+        return resolveResult -> isForwardReference(resolveResult.getElement(), element);
+    }
+
+
+    // should go into RPsiUtil
+    public static boolean isForwardReference(PsiElement resolvant, PsiElement element) {
+        if (!resolvant.getContainingFile().equals(element.getContainingFile())) {
+            return false;
+        }
+
+
+        boolean isSelfReference = (resolvant instanceof RAssignmentStatement) &&
+                ((RAssignmentStatement) resolvant).getAssignee().equals(element);
+
+        return !isSelfReference && (PsiTreeUtil.isAncestor(resolvant, element, true) ||
+                resolvant.getTextOffset() > element.getTextOffset());
+//        return  resolvant.getTextOffset() +1 < element.getTextOffset() ;
     }
 }

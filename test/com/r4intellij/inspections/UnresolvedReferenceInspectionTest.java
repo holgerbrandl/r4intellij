@@ -145,6 +145,18 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
+    public void testOutsideBlockUsage() {
+        // outside a should be resolvable
+        doExprTest("{ a = 3; }; a");
+    }
+
+
+    public void testUsageOutsideIfElse() {
+        // outside a and b should be resolvable because of r scoping rules
+        doExprTest("if(T)\n{ a = 3; }else{\n b = 2; }; a ; b");
+    }
+
+
     public void testUnquotedVarUsageInTidyverse() {
         doExprTest("require(tidyverse); count(iris, Species)");
     }

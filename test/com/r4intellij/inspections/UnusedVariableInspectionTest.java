@@ -1,6 +1,9 @@
 package com.r4intellij.inspections;
 
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import org.jetbrains.annotations.NotNull;
+
+import static com.r4intellij.inspections.UnresolvedReferenceInspectionTest.createLibraryFromPckgNames;
 
 public class UnusedVariableInspectionTest extends RInspectionTest {
 
@@ -29,6 +32,21 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
     }
 
 
+    /**
+     * Make sure to not mistake overriden functions symbols.
+     */
+    public void testOverrideFunWithSymbol() {
+        // c should b be tagged as unused
+        // c() should not resolve to c but to base::c
+        CodeInsightTestFixture fixture = doExprTest("<warning =\"Variable 'c' is never used\">c</warning> = 1; c('foo', 'bar')");
+
+        //todo
+//        cAssign = fixture.getFile().
+//        funCall = ...
+//        funcCall.resolve() != cAssign
+    }
+
+
     // False positive tests: Unused annotation might be present (or was by regression) but should not
 
 
@@ -38,16 +56,41 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
     }
 
 
+    /**
+     * array modifications are regular usage, so a should be flagged as used; 1+a has printing as side effect.
+     */
+    public void testArrayModification() {
+        doExprTest("a = 1:5; a[4] = 3; 1 + a");
+    }
+
+
+    /**
+     * This is weired r magic. Make sure that don't tag <code>a</code>  nor <code>rownames(a)</code> as unused.
+     * See https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Attributes
+     * <p>
+     * TODO also ensure that rownames resolves to the correct <code>`rownames<-`</code>. TBD: Where would it matter?
+     */
+    public void testDedicatedAccessorFunction() {
+        createLibraryFromPckgNames(myFixture, "base");
+
+        doExprTest("a = data.frame(col1=1:3, col2=NA); rownames(a) = c('foo', 'bar');  a");
+
+        // todo maybe we could/should ensure that foo is tagged as unused in
+        // foo = iris; names(foo) <- 1:3
+    }
+
+
+
+
     public void testUsageOutsideIfElse() {
         // since (in contrary to java) is legal in R; scoping works different somehow
-        doExprTest("{ a = 3; }; a");
+        doExprTest("if(T){ a = 3; }else{ b = 2; }; a ; b");
     }
 
 
     public void testDonFlagReturn() {
         assertAllUsed("function(){ if(T){ head(iris); return(1) };  return(2); { return(3) }; return(4) }()");
     }
-
 
 
     /**
@@ -74,8 +117,16 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
 //        assertAllUsed("{ <warning descr=\"Expression '1+1' has no side effects\">1+1<\warning>; 3 }");
 //    }
 
-    public void testDontFlagLastFunBlockExpr() {
-        assertAllUsed("function(){ head(iris); { a = 3} }()");
+
+    public void testFlagLastBlockIfNotAssignedOrReturn() {
+        // a bit more artificial but still valid
+        assertAllUsed("myfun = function(){ head(iris); { a = 3} }; myfun()");
+
+        // bar printing is usage side-effect -> all used
+        assertAllUsed("bar = { foo = 3}; bar");
+
+        // no assignment no side-effect --> flag unused
+        doExprTest("{ <warning descr=\"Variable 'foo' is never used\">foo</warning> = 3}");
     }
 
 
@@ -93,9 +144,6 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
         // todo this will fail because it's the last statment in the file --> Disable for some unit-tests
         assertAllUsed("function(usedArg) head(x=usedArg)");
     }
-
-
-
 
 
     // this should if all be optional

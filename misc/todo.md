@@ -181,6 +181,8 @@ v1.0
 Intentions & inspections
 ------------------------
 
+* unresolved package methods should show as error (as do non-imported java methods/classes)
+
 * add intention to name function argument (just current or all in funciton call)
 
 * warn about dataframe arguments in pipe
@@ -281,8 +283,9 @@ baser to tidyverse intentions
 function(){
   asdf = return(1)
 }
-
 ```
+* unit test & inspection to prevent that return is used outside of function_expression
+
 
 * implement NoSideEffectsInspection (see already created unit-test)
     * also make sure to flag plotting in loops etc.

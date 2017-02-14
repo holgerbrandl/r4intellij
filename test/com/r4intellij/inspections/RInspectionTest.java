@@ -71,7 +71,7 @@ public abstract class RInspectionTest extends RTestCase {
     }
 
 
-    protected void assertAllUsed(@Language("R") String expr) {
+    protected void assertAllUsed(String expr) {
         // todo needed? doExpr will fail if there's a warning!!
 
         CodeInsightTestFixture fixture = doExprTest(expr);

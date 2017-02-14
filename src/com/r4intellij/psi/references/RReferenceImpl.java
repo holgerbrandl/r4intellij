@@ -23,8 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static com.r4intellij.psi.references.RResolver.*;
 
@@ -85,7 +87,19 @@ public class RReferenceImpl implements PsiPolyVariantReference {
     @Nullable
     @Override
     public PsiElement resolve() {
+        return resolve(false);
+    }
+
+
+    @Nullable
+    public PsiElement resolve(boolean includeForwardRefs) {
         final ResolveResult[] results = multiResolve(false);
+
+        if (!includeForwardRefs) {
+            Predicate<ResolveResult> fwdRefPredicate = RPsiUtils.createForwardRefPredicate(this.getElement());
+            Arrays.stream(results).filter(fwdRefPredicate).toArray(ResolveResult[]::new);
+        }
+
         return results.length >= 1 ? results[0].getElement() : null;
     }
 
