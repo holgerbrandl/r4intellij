@@ -73,7 +73,7 @@ public class RPsiUtils {
         PsiElement argumentList = parent.getParent();
         return argumentList != null &&
                 argumentList instanceof RArgumentList &&
-                ((RAssignmentStatement) parent).getAssignee()==element;
+                ((RAssignmentStatement) parent).getAssignee() == element;
     }
 
 
@@ -246,15 +246,18 @@ public class RPsiUtils {
     }
 
 
-    public static boolean isReturnValue(RAssignmentStatement o) {
+    public static boolean isReturnValue(PsiElement o) {
         RFunctionExpression funExpr = PsiTreeUtil.getParentOfType(o, RFunctionExpression.class);
-        if (funExpr == null)
-            return false;
 
-        if (funExpr.getExpression() == o) return true;
+        if (funExpr == null) return false;
 
 
-        return false;
+        if (o instanceof RCallExpression) {
+            ((RCallExpression) o).getName().equals("return");
+        }
+
+        // the recursion is needed to resolve final blocks
+        return PsiTreeUtil.nextVisibleLeaf(o) == null && isReturnValue(o.getParent());
     }
 
 
