@@ -97,7 +97,7 @@ public class RReferenceImpl implements PsiPolyVariantReference {
 
         if (!includeForwardRefs) {
             Predicate<ResolveResult> fwdRefPredicate = RPsiUtils.createForwardRefPredicate(this.getElement());
-            Arrays.stream(results).filter(fwdRefPredicate).toArray(ResolveResult[]::new);
+            Arrays.stream(results).filter(not(fwdRefPredicate)).toArray(ResolveResult[]::new);
         }
 
         return results.length >= 1 ? results[0].getElement() : null;

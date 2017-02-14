@@ -177,7 +177,7 @@ public class RResolver {
 
 
     public static List<ResolveResult> resolveWithoutNamespaceInFile(@NotNull final PsiElement element, String elementName) {
-        final List<ResolveResult> result = new ArrayList<>();
+        List<ResolveResult> result = new ArrayList<>();
 
 
         // walk up local block hierarchy to resolve symbol in context
@@ -233,9 +233,9 @@ public class RResolver {
                             orElse(Iterables.getFirst(result, null));
 
             // replace result (since it's final we have to mess around a bit)
-//            result = Collections.singletonList(bestRef);
-            result.clear();
-            result.add(bestRef);
+            result = Collections.singletonList(bestRef);
+//            result.clear();
+//            result.add(bestRef);
         }
 
         return result;

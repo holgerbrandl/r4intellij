@@ -10,10 +10,7 @@ import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.Query;
 import com.r4intellij.RPsiUtils;
 import com.r4intellij.psi.RElementFactory;
-import com.r4intellij.psi.api.RAssignmentStatement;
-import com.r4intellij.psi.api.RCallExpression;
-import com.r4intellij.psi.api.RReferenceExpression;
-import com.r4intellij.psi.api.RVisitor;
+import com.r4intellij.psi.api.*;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,29 +61,17 @@ public class UnusedVariableInspection extends RInspection {
 //                return;
 //            }
 
-            //is last statement in function expression (which are) return values in R
+            //is last statement in function expression (which are) return values in R (see unit-tests)
             if (RPsiUtils.isReturnValue(element)) return;
 
-            if (isAccessorSetterCall(assignee)) return;
+            // handle special attribute setters and inplace array-place modifications (see unit-tests)
+            if (isInplaceAssignment(assignee)) return;
 
 
             // because the reference refers to the assignment and not just the assignee, we search for assignment refs here
             Query<PsiReference> search = ReferencesSearch.search(element);
             PsiReference first = search.findFirst();
-//            search.findAll()
 
-//            PsiReference first;
-//            Iterator<PsiReference> searchIt = search.iterator();
-//
-//            while (searchIt.hasNext()) {
-//                PsiElement resolvant = searchIt.next().getElement();
-//
-//                boolean isSelfRef = (resolvant instanceof RAssignmentStatement) &&
-//                        ((RAssignmentStatement) resolvant).getAssignee().equals(element);
-//
-//                if()
-//                first = search.findFirst();
-//            }
 
             if (first == null) {
                 myProblemHolder.registerProblem(assignee,
@@ -96,7 +81,9 @@ public class UnusedVariableInspection extends RInspection {
         }
 
 
-        private boolean isAccessorSetterCall(PsiElement assignee) {
+        private boolean isInplaceAssignment(PsiElement assignee) {
+            if (assignee instanceof RSubscriptionExpression) return true;
+
             if (!(assignee instanceof RCallExpression)) return false;
 
             RCallExpression callExpression = (RCallExpression) assignee;
