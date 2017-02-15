@@ -27,11 +27,6 @@ import static com.r4intellij.packages.RHelperUtil.runHelperWithArgs;
  * For library functions use R help.
  */
 public class RDocumentationProvider extends AbstractDocumentationProvider {
-    @Nullable
-    @Override
-    public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
-        return super.getQuickNavigateInfo(element, originalElement);
-    }
 
 
     @Nullable
