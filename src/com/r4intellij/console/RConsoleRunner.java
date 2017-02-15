@@ -11,16 +11,26 @@ import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
+import com.r4intellij.RFileType;
 import com.r4intellij.RLanguage;
 import com.r4intellij.debugger.data.RInterpreterConstants;
 import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+
 public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageConsoleView> {
 
     public RConsoleRunner(@NotNull final Project project, @Nullable final String workingDir) {
         super(project, "R Console", workingDir);
+    }
+
+
+    @Nullable
+    @Override
+    protected Icon getConsoleIcon() {
+        return RFileType.INSTANCE.getIcon();
     }
 
 
