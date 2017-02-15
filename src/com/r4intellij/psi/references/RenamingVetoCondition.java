@@ -2,6 +2,7 @@ package com.r4intellij.psi.references;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.r4intellij.psi.api.RPsiElement;
 
 import static com.r4intellij.documentation.RDocumentationProvider.isLibraryElement;
 
@@ -16,6 +17,6 @@ public class RenamingVetoCondition implements Condition<PsiElement> {
 
     @Override
     public boolean value(PsiElement psiElement) {
-        return isLibraryElement(psiElement);
+        return psiElement instanceof RPsiElement && isLibraryElement(psiElement);
     }
 }

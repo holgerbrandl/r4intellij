@@ -6,18 +6,6 @@ R4Intellij Development Notes
 * incorrect resolver result for function argument
 ![](.todo_images/funarg.png)
 
-* initial variable declaration should not resolve downwards:
-```r
-modelData = complete(mice(modelData))
-modelData %<>% mutate()
-```
-
-* function arguments should be resolved locally
-```r
-mart <- biomaRt::useDataset("mmusculus_gene_ensembl", mart = biomaRt::useMart("ENSEMBL_MART_ENSEMBL", host="www.ensembl.org"))
-geneInfo <- biomaRt::getBM(attributes=c("ensembl_gene_id", "external_gene_name", "description", "gene_biotype"), mart=mart)
-```
-
 * dot in pipes should resolve correctly
 ```r
 "foo" %>% paste0(".", ., ".RData")
@@ -29,9 +17,7 @@ geneInfo <- biomaRt::getBM(attributes=c("ensembl_gene_id", "external_gene_name",
 NA <- Rsamtools::NA		## NA
 ```
 
-
-
-* argument n is misisn with not default in piped expression
+* argument n is missing with no default in piped expression
 `"foo.bar" %>% str_split_fixed("[.]")`
 
 
@@ -56,108 +42,11 @@ a = 3
 a
 ```
 
-* import resolveer: support annotation (until we have proper source_url support): 
+* import resolver: support annotation (until we have proper source_url support): 
 ```r
 # @r4i-imports: tidyverse, ggplot
 devtools::source_url("...") # @r4i-imports: tidyverse, ggplot
 ```
-
-* exception when right-click on scratches:
-```
-update failed for AnAction with ID=ProjectViewPopupMenuRefactoringGroup
-java.lang.NullPointerException
-	at com.r4intellij.documentation.RDocumentationProvider.isLibraryElement(RDocumentationProvider.java:89)
-	at com.r4intellij.psi.references.RenamingVetoCondition.value(RenamingVetoCondition.java:19)
-	at com.r4intellij.psi.references.RenamingVetoCondition.value(RenamingVetoCondition.java:15)
-	at com.intellij.refactoring.rename.PsiElementRenameHandler.isVetoed(PsiElementRenameHandler.java:210)
-	at com.intellij.refactoring.rename.PsiElementRenameHandler.isAvailableOnDataContext(PsiElementRenameHandler.java:204)
-	at com.intellij.refactoring.rename.RenameHandlerRegistry.hasAvailableHandler(RenameHandlerRegistry.java:69)
-	at com.intellij.refactoring.actions.RenameElementAction.isEnabledOnDataContext(RenameElementAction.java:64)
-	at com.intellij.refactoring.actions.BaseRefactoringAction.update(BaseRefactoringAction.java:166)
-	at com.intellij.openapi.actionSystem.ex.ActionUtil.performDumbAwareUpdate(ActionUtil.java:122)
-	at com.intellij.openapi.actionSystem.ActionGroupUtil.isActionEnabledAndVisible(ActionGroupUtil.java:98)
-	at com.intellij.openapi.actionSystem.ActionGroupUtil.isGroupEmpty(ActionGroupUtil.java:43)
-	at com.intellij.openapi.actionSystem.ActionGroupUtil.isGroupEmpty(ActionGroupUtil.java:45)
-	at com.intellij.openapi.actionSystem.ActionGroupUtil.isGroupEmpty(ActionGroupUtil.java:34)
-	at com.intellij.ide.actions.NonTrivialActionGroup.update(NonTrivialActionGroup.java:37)
-	at com.intellij.openapi.actionSystem.ex.ActionUtil.performDumbAwareUpdate(ActionUtil.java:122)
-	at com.intellij.openapi.actionSystem.impl.Utils.a(Utils.java:188)
-	at com.intellij.openapi.actionSystem.impl.Utils.expandActionGroup(Utils.java:139)
-	at com.intellij.openapi.actionSystem.impl.Utils.expandActionGroup(Utils.java:86)
-	at com.intellij.openapi.actionSystem.impl.Utils.fillMenu(Utils.java:280)
-	at com.intellij.openapi.actionSystem.impl.ActionPopupMenuImpl$MyMenu.show(ActionPopupMenuImpl.java:95)
-	at com.intellij.ide.ui.customization.CustomizationUtil$2.invokePopup(CustomizationUtil.java:290)
-	at com.intellij.ui.PopupHandler.mousePressed(PopupHandler.java:48)
-	at java.awt.AWTEventMulticaster.mousePressed(AWTEventMulticaster.java:280)
-	at java.awt.AWTEventMulticaster.mousePressed(AWTEventMulticaster.java:279)
-	at java.awt.Component.processMouseEvent(Component.java:6532)
-	at javax.swing.JComponent.processMouseEvent(JComponent.java:3324)
-	at com.intellij.ui.treeStructure.Tree.processMouseEvent(Tree.java:410)
-	at com.intellij.ide.dnd.aware.DnDAwareTree.processMouseEvent(DnDAwareTree.java:59)
-	at java.awt.Component.processEvent(Component.java:6300)
-	at java.awt.Container.processEvent(Container.java:2236)
-	at java.awt.Component.dispatchEventImpl(Component.java:4891)
-	at java.awt.Container.dispatchEventImpl(Container.java:2294)
-	at java.awt.Component.dispatchEvent(Component.java:4713)
-	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4888)
-	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4522)
-	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4466)
-	at java.awt.Container.dispatchEventImpl(Container.java:2280)
-	at java.awt.Window.dispatchEventImpl(Window.java:2750)
-	at java.awt.Component.dispatchEvent(Component.java:4713)
-	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:758)
-	at java.awt.EventQueue.access$500(EventQueue.java:97)
-	at java.awt.EventQueue$3.run(EventQueue.java:709)
-	at java.awt.EventQueue$3.run(EventQueue.java:703)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:76)
-	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
-	at java.awt.EventQueue$4.run(EventQueue.java:731)
-	at java.awt.EventQueue$4.run(EventQueue.java:729)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:76)
-	at java.awt.EventQueue.dispatchEvent(EventQueue.java:728)
-	at com.intellij.ide.IdeEventQueue.b(IdeEventQueue.java:843)
-	at com.intellij.ide.IdeEventQueue._dispatchEvent(IdeEventQueue.java:675)
-	at com.intellij.ide.IdeEventQueue.dispatchEvent(IdeEventQueue.java:391)
-	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:201)
-	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:116)
-	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:105)
-	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
-	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:93)
-	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
-```
-
-usually after startup
-```
-method not implemented
-java.lang.Throwable
-	at com.intellij.openapi.diagnostic.Logger.error(Logger.java:132)
-	at com.intellij.psi.impl.file.PsiPackageBase.getChildren(PsiPackageBase.java:157)
-	at com.r4intellij.documentation.RDocumentationProvider.generateDoc(Unknown Source)
-	at com.intellij.lang.documentation.CompositeDocumentationProvider.generateDoc(CompositeDocumentationProvider.java:144)
-	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:661)
-	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:884)
-	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:658)
-	at com.intellij.util.concurrency.QueueProcessor.runSafely(QueueProcessor.java:223)
-	at com.intellij.util.Alarm$Request$1.run(Alarm.java:387)
-	at com.intellij.util.Alarm$Request.run(Alarm.java:398)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at com.intellij.util.concurrency.SchedulingWrapper$MyScheduledFutureTask.run(SchedulingWrapper.java:237)
-	at com.intellij.util.concurrency.BoundedTaskExecutor$2.run(BoundedTaskExecutor.java:210)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-```
-
-* fix all unit tests
-    * UnusedParameterInspectionTest
-    * UnresolvedReferenceInspectionTest
-    
-Type Tests:
-    * ArgumentsMatching
-    * TripleDot
 
 * remove deprecated api usage
 
@@ -171,9 +60,9 @@ v1.0
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
     * templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
 * backport colorscheme
-* bring back formatter
+* bring back basic formatter
 * fix threading issues when doing indexing 
-* create unresolved function intention using `codeInsight.unresolvedReferenceQuickFixProvider implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"`
+* create unresolved function quickfix using `codeInsight.unresolvedReferenceQuickFixProvider implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"`
  
 
 
@@ -290,12 +179,17 @@ function(){
 * implement NoSideEffectsInspection (see already created unit-test)
     * also make sure to flag plotting in loops etc.
     
+* inspection category for best practices. see https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/ 
+    
 Parser
 ------
 
 * valid `1  + + 1` code but `ggplot() + + ggtitle("foo")` isn't  
 
 * `%<>%` should be treated as some kind of assignment operator 
+
+allow to embed urls. See xml-plugin
+![](.todo_images/dec7861c.png)
  
 Documentation provider
 ----------------------
