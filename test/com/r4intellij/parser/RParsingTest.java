@@ -51,7 +51,13 @@ public class RParsingTest extends ParsingTestCase {
     }
 
 
-    // known to be broken because of parser inability to do call-block before
+    /**
+     * note: it may look wrong to parse the tailing () into a call on the block, but R does so as well.
+     * Actually even if this defines syntactically correct R code, R can not evaluate it, and errors with an
+     * <code>Error in foo() : attempt to apply non-function</code>
+     * To call an anonymously defined function in place additional brackets are requires:
+     * <code>(function(){1})()</code>
+     */
     public void testInPlaceFunctionDefCall() {
         doTest();
     }

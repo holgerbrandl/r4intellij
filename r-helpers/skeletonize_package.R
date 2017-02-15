@@ -9,7 +9,7 @@ args <- commandArgs(TRUE)
 
 skelBaseDirectory = args[1]
 pName = args[2]
-#pName = "clusterProfiler"
+#pName = "Rsamtools"
 #pName = "modeest"
 #pName = "config"
 #pName = "dplyr"
@@ -49,7 +49,7 @@ dir.create(skelBaseDirectory)
 skeletonFile = file.path(skelBaseDirectory, paste0(pName, ".r"))
 print(paste("writing skeleton of ",pName, "into", skeletonFile))
 
-
+#' some symbols are defined as functions in base.R but our parser does not like it.
 ignoreList = c("for", "function", "if", "repeat", "while")
 
 for (symbol in functions) {
@@ -119,7 +119,10 @@ if(!(pName %in% c("base", "stats", "backports"))){
 dsets <- as.data.frame(data(package = pName)$result)
 
 # remove columns with round brackets
-dsets  = subset(dsets, !(1:nrow(dsets) %in% grep("(", as.character(dsets$Item), fixed=TRUE)))
+if(nrow(dsets)>0){
+    dsets  = subset(dsets, !(1:nrow(dsets) %in% grep("(", as.character(dsets$Item), fixed=TRUE)))
+}
+
 
 sink(skeletonFile, append=T)
 
@@ -134,5 +137,18 @@ sink()
 
 ## write a completion tag into each file to also have a skeleton file for packages without symbols
 sink(skeletonFile, append=T)
+
+# report package info (to finally replace RPackageService)
+cat("\n## Package Info\n\n")
+
+
+
+
+
+# report version here to allow for reskeletonization of outdated skeletons in a future version of r4intellij
+cat("\n.skeleton_version=1")
+
+## indicate the end of the skeleton with an EOF flag so that we can check if skeletons were created correctly
 cat("\n## EOF")
+
 sink()
