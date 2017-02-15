@@ -8,7 +8,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RElementGenerator;
-import com.r4intellij.documentation.RDocumentationUtils;
 import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.ROperatorReference;
@@ -19,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Alefas
@@ -220,7 +220,12 @@ public class RPsiImplUtil {
         }
 
         if (!comments.isEmpty()) {
-            return RDocumentationUtils.getFormattedString(getCommentText(comments));
+            List<String> stringifiedComments = comments.stream().
+                    map(c -> trimCommentPrefix(c.getText())).
+                    collect(Collectors.toList());
+
+            // todo why not using dummy RHelp here?
+            return Joiner.on("\n").join(stringifiedComments);
         } else {
             return null;
         }
@@ -253,16 +258,6 @@ public class RPsiImplUtil {
     }
 
 
-    @NotNull
-    private static String getCommentText(@NotNull final List<PsiComment> comments) {
-        final StringBuilder stringBuilder = new StringBuilder();
-        for (PsiComment comment : comments) {
-            String string = trimCommentPrefix(comment.getText());
-
-            stringBuilder.append(string).append("\n");
-        }
-        return stringBuilder.toString().trim();
-    }
 
 
     @NotNull

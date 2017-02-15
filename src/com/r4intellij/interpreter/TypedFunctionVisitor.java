@@ -10,9 +10,9 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.util.DocumentUtil;
 import com.intellij.util.FileContentUtil;
-import com.r4intellij.RHelp;
 import com.r4intellij.RStaticAnalyzerHelper;
 import com.r4intellij.documentation.RDocumentationProvider;
+import com.r4intellij.documentation.RHelp;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.psi.RRecursiveElementVisitor;
 import com.r4intellij.psi.api.*;
@@ -83,14 +83,13 @@ class TypedFunctionVisitor extends RVisitor {
             }
             assignee = children[0];
         }
-        //TODO: check if we have user skeleton for this function
+
         if (assignedValue instanceof RFunctionExpression) {
             if (assignee.getText().equals("all")) {
                 System.out.println();
             }
 
             String helpText = RDocumentationProvider.getHelpForFunction(assignee.getText(), myPackageName);
-            // todo uncomment once skeletoniziation is more stable and speedy
             if (helpText != null) {
                 RHelp help = new RHelp(helpText);
 

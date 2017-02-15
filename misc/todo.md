@@ -4,33 +4,19 @@ R4Intellij Development Notes
 ## 0-day bugs
 
 
-* dot in pipes should resolve correctly
-```r
-"foo" %>% paste0(".", ., ".RData")
-```
-
-* argument n is missing with no default in piped expression
-`"foo.bar" %>% str_split_fixed("[.]")`
-
-* argument n is missing with no default in piped expression with dot
-`"foo.bar" %>% gsub("foo", "is.cool", .)`
-
-* missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
-
-
 * fix resolver for unquoted variable names see [here](../misc/devel_notes.md)
 
 * formula show up ans non-resolvable: `pw_present~.`
 
 
-* remove deprecated api usage
+* help: header and package eis missing in popup (seems to be minor bug in `com.r4intellij.documentation.RDocumentationUtils.getFormattedString(com.r4intellij.documentation.RHelp)`)
 
-* help: header and package eis missing in popup (seems to be minor bug in `com.r4intellij.documentation.RDocumentationUtils.getFormattedString(com.r4intellij.RHelp)`)
-
-* help: "fetching " forever for invalid symbols (like `Species`)
 
 
 ## Next Steps
+
+* remove deprecated api usage
+
 
 v1.0
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)

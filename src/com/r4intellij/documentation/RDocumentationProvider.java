@@ -4,9 +4,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.r4intellij.RHelp;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
@@ -26,6 +26,11 @@ import static com.r4intellij.packages.RHelperUtil.runHelperWithArgs;
  * For library functions use R help.
  */
 public class RDocumentationProvider extends AbstractDocumentationProvider {
+    @Nullable
+    @Override
+    public String getQuickNavigateInfo(PsiElement element, PsiElement originalElement) {
+        return super.getQuickNavigateInfo(element, originalElement);
+    }
 
 
     @Nullable
@@ -63,14 +68,8 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
             packageName = reference.getContainingFile().getVirtualFile().getName().replaceAll(".r$", "");
         }
 
-        // run help detection
-        String helpText = getHelpForFunction(elementText, packageName);
-
-        if (helpText != null) {
-            return RDocumentationUtils.getFormattedString(new RHelp(helpText));
-        }
-
-        return null;
+        // run generic R help on symbol
+        return getHelpForFunction(elementText, packageName);
     }
 
 
@@ -112,7 +111,12 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
             return null;
         }
 
-        return stdout;
+
+        if (StringUtil.isNotEmpty(stdout)) {
+            return RHelp.getFormattedString(new RHelp(stdout));
+        }
+
+        return null;
     }
 
 

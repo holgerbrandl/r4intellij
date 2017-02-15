@@ -1,6 +1,6 @@
 package com.r4intellij.typing;
 
-import com.r4intellij.RHelp;
+import com.r4intellij.documentation.RHelp;
 import com.r4intellij.psi.api.RFunctionExpression;
 import com.r4intellij.psi.api.RParameter;
 import com.r4intellij.typing.types.*;

@@ -115,7 +115,30 @@ Note: ignoring tripledot args in resolver is not general enough, see `dplyr::tal
 
 ## Pipe `%>%` support
 
-Affects mainly type-checking, but also resolved (see unquoted variable names)
+affects multiple sub-systems
+- type-checking, because 1st arg may be missing (or not if dot is used)
+- resolver (dot should be resolve to LHS arg in pipe)
+- make sure pipe affects usage of variables. Example in `iris %>% mutate()` iris is used, even if the usage is not part of the psi
+
+
+Misc
+- there might be different pipe-operators and not just `%>%`
+- what about the popular `%<>%`?
+
+Usecases
+
+* dot in pipes should resolve correctly
+```r
+"foo" %>% paste0(".", ., ".RData")
+```
+
+* argument n is missing with no default in piped expression
+`"foo.bar" %>% str_split_fixed("[.]")`
+
+* argument n is missing with no default in piped expression with dot
+`"foo.bar" %>% gsub("foo", "is.cool", .)`
+
+* missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
 
 
 Documentation Provider
