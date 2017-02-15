@@ -25,7 +25,7 @@ public class TypeCheckerInspection extends RInspection {
     @NotNull
     @Override
     public String getDisplayName() {
-        return "R Type Checker";
+        return "Validate Call Arguments";
     }
 
 
