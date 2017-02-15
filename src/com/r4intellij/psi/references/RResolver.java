@@ -153,6 +153,13 @@ public class RResolver {
                 map(d -> d.findFileByRelativePath(namespace + ".r")).
                 filter(Objects::nonNull).findFirst().orElse(null);
 
+        // support unit-test library layout out here (bad design!)
+        if (file == null) {
+            Arrays.stream(library.getFiles(OrderRootType.CLASSES))
+                    .filter(f -> f.getName().equals(namespace + ".r"))
+                    .findFirst().orElse(null);
+        }
+
         if (file == null) {
             return;
         }
