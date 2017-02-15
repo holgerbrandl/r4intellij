@@ -231,16 +231,15 @@ public class RPsiImplUtil {
     public static String getRoxygenComment(RFunctionExpression functionExpression) {
         List<String> detectObjectDocs = Lists.newArrayList();
 
+
+        // traverse back before the function def and collect roxygen comment lines
         int newLineCounter = 0;
         for (PsiElement sibling = functionExpression.getParent().getPrevSibling(); sibling != null && (sibling instanceof PsiComment || sibling.getText().equals("\n")); ) {
 
             if (sibling instanceof PsiComment && sibling.getText().startsWith("#'")) {
-                detectObjectDocs.add(trimCommentPrefix(sibling.getText()));
+                detectObjectDocs.add(trimCommentPrefix(sibling.getText()).trim());
                 newLineCounter = 0;
             } else {
-                // preserve single linebreaks
-                if (newLineCounter < 2) detectObjectDocs.add("");
-
                 newLineCounter++;
 
                 if (newLineCounter > 2) {
@@ -250,10 +249,7 @@ public class RPsiImplUtil {
             sibling = sibling.getPrevSibling();
         }
 
-
-        boolean hasAnyContent = detectObjectDocs.stream().anyMatch(f -> !f.isEmpty());
-        return hasAnyContent ? Joiner.on("").join(Lists.reverse(detectObjectDocs)).trim().replace("\n", "<br>") : "";
-
+        return Joiner.on("<br>").join(Lists.reverse(detectObjectDocs));
     }
 
 

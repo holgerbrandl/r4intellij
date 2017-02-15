@@ -10,9 +10,7 @@ import com.r4intellij.RHelp;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
-import com.r4intellij.psi.api.RCallExpression;
-import com.r4intellij.psi.api.RFile;
-import com.r4intellij.psi.api.RFunctionExpression;
+import com.r4intellij.psi.api.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,16 +38,16 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
         String elementText = identifier.getText();
 
         // first guess : process locally defined function definitions
-        for (PsiElement el : reference.getChildren()) {
-            if (el instanceof RFunctionExpression) {
-                String docString = ((RFunctionExpression) el).getDocStringValue();
-                return docString != null ? docString : "No doc-string found for locally defined function.";
-//                if(docString != null) {
-//                    return docString;
-//                }
+        if (!isLibraryElement(reference)) {
+            if (reference instanceof RAssignmentStatement) {
+                RPsiElement assignedValue = ((RAssignmentStatement) reference).getAssignedValue();
+
+                if (assignedValue instanceof RFunctionExpression) {
+                    String docString = ((RFunctionExpression) assignedValue).getDocStringValue();
+                    return docString != null ? docString : "No doc-string found for locally defined function.";
+                }
             }
         }
-
 
         // try R help by detecting package if possible
         String packageName = null;
