@@ -12,7 +12,7 @@ import com.intellij.util.DocumentUtil;
 import com.intellij.util.FileContentUtil;
 import com.r4intellij.RStaticAnalyzerHelper;
 import com.r4intellij.documentation.RDocumentationProvider;
-import com.r4intellij.documentation.RHelp;
+import com.r4intellij.documentation.RHelpParser;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.psi.RRecursiveElementVisitor;
 import com.r4intellij.psi.api.*;
@@ -91,7 +91,7 @@ class TypedFunctionVisitor extends RVisitor {
 
             String helpText = RDocumentationProvider.getHelpForFunction(assignee.getText(), myPackageName);
             if (helpText != null) {
-                RHelp help = new RHelp(helpText);
+                RHelpParser help = new RHelpParser(helpText);
 
                 final Map<RParameter, RType> parsedTypes = RSkeletonGeneratorHelper.guessArgsTypeFromHelp(help,
                         (RFunctionExpression) assignedValue);
@@ -110,12 +110,12 @@ class TypedFunctionVisitor extends RVisitor {
                             }
                             appendToDocument(tempDocument, o.getText() + "\n");
 
-                            if (help.myExamples != null && !help.myExamples.isEmpty()) {
-                                appendToDocument(tempDocument, "\n" + help.myExamples + "\n");
+                            if (help.getDocExamples() != null && !help.getDocExamples().isEmpty()) {
+                                appendToDocument(tempDocument, "\n" + help.getDocExamples() + "\n");
                             }
 
-                            if (help.myUsage != null && !help.myUsage.isEmpty()) {
-                                appendToDocument(tempDocument, "\n" + help.myUsage + "\n");
+                            if (help.getDocUsage() != null && !help.getDocUsage().isEmpty()) {
+                                appendToDocument(tempDocument, "\n" + help.getDocUsage() + "\n");
                             }
                             saveDocument(tempDocument);
                             PsiDocumentManager.getInstance(myProject).commitDocument(tempDocument);
@@ -160,14 +160,14 @@ class TypedFunctionVisitor extends RVisitor {
     }
 
 
-    private void insertTypeFromHelp(PsiElement assignee, final RHelp help) throws IOException {
+    private void insertTypeFromHelp(PsiElement assignee, final RHelpParser help) throws IOException {
         RType valueType = RSkeletonGeneratorHelper.guessReturnValueTypeFromHelp(help);
         if (!RUnknownType.class.isInstance(valueType)) {
             String valueTempFileName = myFile.getNameWithoutExtension() + "-value-temp.r";
             VirtualFile valueTempFile = myFile.getParent().findOrCreateChildData(this, valueTempFileName);
             final Document valueTempDocument = FileDocumentManager.getInstance().getDocument(valueTempFile);
-            if (valueTempDocument != null && help.myExamples != null) {
-                appendToDocument(valueTempDocument, help.myExamples);
+            if (valueTempDocument != null && help.getDocExamples() != null) {
+                appendToDocument(valueTempDocument, help.getDocExamples());
                 saveDocument(valueTempDocument);
                 PsiDocumentManager.getInstance(myProject).commitDocument(valueTempDocument);
                 ValueVisitor valueVisitor = new ValueVisitor(valueType, valueTempFile, assignee.getText());

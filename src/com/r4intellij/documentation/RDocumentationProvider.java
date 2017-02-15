@@ -10,6 +10,7 @@ import com.intellij.psi.PsiFile;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
+import com.r4intellij.psi.RReferenceExpressionImpl;
 import com.r4intellij.psi.api.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,16 +55,25 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
             }
         }
 
-        // try R help by detecting package if possible
+        // ease R documentation lookup by detecting package if possible
         String packageName = null;
 
-        // first be as local as possible taking imported packages into account
-        List<RPackage> origins = resolvePckgFromContext(elementText, identifier.getContainingFile());
-        if (!origins.isEmpty()) {
-            packageName = Iterables.getLast(origins).getName();
+        // if possible resolve package from namespace prefix
+        if (reference instanceof RReferenceExpressionImpl &&
+                ((RReferenceExpressionImpl) reference).getNamespace() != null) {
+            packageName = ((RReferenceExpressionImpl) reference).getNamespace();
+
         }
 
-        // otherwise detect help via
+        // resolve method package from script dependencies
+        if (packageName == null) {
+            List<RPackage> origins = resolvePckgFromContext(elementText, identifier.getContainingFile());
+            if (!origins.isEmpty()) {
+                packageName = Iterables.getLast(origins).getName();
+            }
+        }
+
+        // also make sure that we can provide help in skeleton files
         if (packageName == null && isLibraryElement(reference)) {
             packageName = reference.getContainingFile().getVirtualFile().getName().replaceAll(".r$", "");
         }
@@ -113,7 +123,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
 
         if (StringUtil.isNotEmpty(stdout)) {
-            return RHelp.getFormattedString(new RHelp(stdout));
+            return new RHelpParser(stdout).getFormattedString();
         }
 
         return null;

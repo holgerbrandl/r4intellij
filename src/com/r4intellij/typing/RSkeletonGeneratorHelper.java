@@ -1,6 +1,6 @@
 package com.r4intellij.typing;
 
-import com.r4intellij.documentation.RHelp;
+import com.r4intellij.documentation.RHelpParser;
 import com.r4intellij.psi.api.RFunctionExpression;
 import com.r4intellij.psi.api.RParameter;
 import com.r4intellij.typing.types.*;
@@ -67,10 +67,10 @@ public class RSkeletonGeneratorHelper {
     }
 
 
-    public static Map<RParameter, RType> guessArgsTypeFromHelp(RHelp help, RFunctionExpression function) {
+    public static Map<RParameter, RType> guessArgsTypeFromHelp(RHelpParser help, RFunctionExpression function) {
         List<RParameter> parameters = function.getParameterList().getParameterList();
         Map<RParameter, RType> parsedTypes = new HashMap<RParameter, RType>();
-        String argumentsDescription = help.myArguments;
+        String argumentsDescription = help.getDocArguments();
         if (argumentsDescription != null && !parameters.isEmpty()) {
             RSkeletonGeneratorHelper.parseArgumentsDescription(argumentsDescription, parameters, parsedTypes);
         }
@@ -88,10 +88,10 @@ public class RSkeletonGeneratorHelper {
     }
 
 
-    public static RType guessReturnValueTypeFromHelp(RHelp help) {
-        if (help.myValue == null) {
+    public static RType guessReturnValueTypeFromHelp(RHelpParser help) {
+        if (help.getDocValue() == null) {
             return RUnknownType.INSTANCE;
         }
-        return findType(help.myValue);
+        return findType(help.getDocValue());
     }
 }

@@ -9,7 +9,7 @@ R4Intellij Development Notes
 * formula show up ans non-resolvable: `pw_present~.`
 
 
-* help: header and package eis missing in popup (seems to be minor bug in `com.r4intellij.documentation.RDocumentationUtils.getFormattedString(com.r4intellij.documentation.RHelp)`)
+* help: header and package eis missing in popup (seems to be minor bug in `com.r4intellij.documentation.RDocumentationUtils.getFormattedString(com.r4intellij.documentation.RHelpParser)`)
 
 
 
@@ -383,6 +383,10 @@ Brainstorming
   devtools::source_url("...") # @r4i-imports: tidyverse, ggplot
   ```
 
+* documentation provider improvements 
+    * button to open examples in scratch-file
+    * use syntax coloring in examples and usage
+    
     
 Send To Console Improvements
 ============================

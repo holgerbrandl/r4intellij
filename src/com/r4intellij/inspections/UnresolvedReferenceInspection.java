@@ -101,7 +101,7 @@ public class UnresolvedReferenceInspection extends RInspection {
                 return;
             }
 
-            // prevent package names to show up as unresolved in namespace-calls, because they are handled separately by
+            // prevent package names to show up as unresolved in packageName-calls, because they are handled separately by
             // the missing package inspection
             if (RPsiUtils.isNamespacePrefix(element)) return;
 

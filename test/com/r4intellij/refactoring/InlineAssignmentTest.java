@@ -1,10 +1,9 @@
-package com.r4intellij;
+package com.r4intellij.refactoring;
 
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.r4intellij.psi.api.RAssignmentStatement;
-import com.r4intellij.refactoring.InlineAssignmentProcessor;
 
 /**
  * @author Holger Brandl

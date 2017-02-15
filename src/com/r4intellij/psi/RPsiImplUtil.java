@@ -224,7 +224,7 @@ public class RPsiImplUtil {
                     map(c -> trimCommentPrefix(c.getText())).
                     collect(Collectors.toList());
 
-            // todo why not using dummy RHelp here?
+            // todo why not using dummy RHelpParser here?
             return Joiner.on("\n").join(stringifiedComments);
         } else {
             return null;
