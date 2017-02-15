@@ -172,6 +172,8 @@
             <className>com.r4intellij.intentions.TtoTrueIntention</className>
         </intentionAction>
 
+        <lang.formatter language="R" implementationClass="com.r4intellij.editor.formatting.RFormattingModelBuilder"/>
+
 
         <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
 

@@ -7,9 +7,6 @@ R4Intellij Development Notes
 
 ## Next Steps
 
-http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/additional_minor_features.html
-
-* port reformatter 
 
 * port coding style
 
@@ -21,12 +18,17 @@ http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_suppo
 
 * remove deprecated api usage
 
+
 ### v1.0
 
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
     * templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
 * replace RPackage service with on-the-fly model using stub-index (is possible because they still miss function titles)
   
+### v1.1
+
+http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/additional_minor_features.html
+
 
 
 
