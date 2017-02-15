@@ -3,29 +3,30 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+* threading issues when doing skeletonization
+
+## Next Steps
+
+http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/additional_minor_features.html
+
+* port reformatter 
+
+* port coding style
 
 * fix resolver for unquoted variable names see [here](../misc/devel_notes.md)
 
 * formula show up ans non-resolvable: `pw_present~.`
 
-
-* help: header and package eis missing in popup (seems to be minor bug in `com.r4intellij.documentation.RDocumentationUtils.getFormattedString(com.r4intellij.documentation.RHelpParser)`)
-
-
-
-## Next Steps
+* implement pipe support
 
 * remove deprecated api usage
 
+### v1.0
 
-v1.0
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
     * templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
-* backport colorscheme
-* bring back basic formatter
-* fix threading issues when doing indexing 
-* create unresolved function quickfix using `codeInsight.unresolvedReferenceQuickFixProvider implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"`
- 
+* replace RPackage service with on-the-fly model using stub-index (is possible because they still miss function titles)
+  
 
 
 
@@ -72,7 +73,10 @@ if(a=(function(){T})()){ print("foo")}
 ### dependency management
 
 
-* create missing function intention
+
+* create unresolved function quickfix 
+
+* create missing function intention (by considering   `codeInsight.unresolvedReferenceQuickFixProvider implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"`)
 ```r
 result = myfancyfun(sdf)  ### show myfancyfun in RED
 
@@ -84,8 +88,6 @@ result = myfancyfun(sdf)
 
 ```
 ![](.todo_images/create function intention.png)
-
-
 
 * highlight packages with naming conflicts (or indicate it visually in the IDE using virtual comment)
 
