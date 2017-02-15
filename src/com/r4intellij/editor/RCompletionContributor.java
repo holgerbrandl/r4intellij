@@ -35,8 +35,6 @@ public class RCompletionContributor extends CompletionContributor {
 
     public static ArrayList<String> PACKAGE_IMPORT_METHODS = Lists.newArrayList("require", "library", "load_pack");
 
-    public static final String ss = "huhu.txt";
-
 
     public RCompletionContributor() {
         // also allow for within string completion

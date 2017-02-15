@@ -40,7 +40,7 @@ public class RResolver {
 
 //            addFromLibrary(element, result, name, LibraryUtil.USER_SKELETONS);
 
-            // by design always resolve from user libary
+            // by design always resolve from user library
             addFromLibrary(element, result, name, LibraryUtil.R_LIBRARY);
 
             // too unspecific and does not reflect imports
@@ -135,33 +135,41 @@ public class RResolver {
         final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
         final Library library = model.getLibraryByName(LibraryUtil.R_SKELETONS);
 
-        if (library != null) {
-            final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);
-            Optional<VirtualFile> first = Arrays.stream(files).filter(f -> f.getName().equals(namespace + ".r")).findFirst();
+        if (library == null) {
+            return;
+        }
+//            final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);
+        // works for unit-tests but library layout is not the same as if IJ is running
+//            Optional<VirtualFile> first = Arrays.stream(files).filter(f -> f.getName().equals(namespace + ".r")).findFirst();
 
-            if (!first.isPresent())
-                return;
-
+//            if (!first.isPresent())
+//                return;
 
 //            for (VirtualFile child : files) {
-            final VirtualFile file = first.get();
+//            final VirtualFile file = first.get();
 //                final VirtualFile file = child.findChild(namespace + ".r");
 
-//            if (file != null) {
-            final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-            final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(psiFile, RAssignmentStatement.class);
+        VirtualFile file = Arrays.stream(library.getFiles(OrderRootType.CLASSES)).
+                map(d -> d.findFileByRelativePath(namespace + ".r")).
+                filter(Objects::nonNull).findFirst().orElse(null);
 
-            if (statements != null) {
-                for (RAssignmentStatement statement : statements) {
-                    final PsiElement assignee = statement.getAssignee();
+        if (file == null) {
+            return;
+        }
 
-                    if (assignee != null && assignee.getText().equals(name)) {
-                        result.add(new PsiElementResolveResult(assignee));
-                    }
-//                    }
+        final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+
+        final RAssignmentStatement[] statements =
+                PsiTreeUtil.getChildrenOfType(psiFile, RAssignmentStatement.class);
+
+        if (statements != null) {
+            for (RAssignmentStatement statement : statements) {
+                final PsiElement assignee = statement.getAssignee();
+
+                if (assignee != null && assignee.getText().equals(name)) {
+                    result.add(new PsiElementResolveResult(assignee));
                 }
             }
-//            }
         }
     }
 
@@ -292,7 +300,6 @@ public class RResolver {
             }
         }
     }
-
 
 
     static void resolveNameArgument(@NotNull final PsiElement element,
