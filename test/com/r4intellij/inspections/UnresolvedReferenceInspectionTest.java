@@ -187,14 +187,14 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
     public void testSelfAssignment() {
 //        doExprTest("sdf = ls(<warning descr=\"Unresolved reference\">sdf</warning>)");
-        doExprTest("sdf = { <warning descr=\"Forward reference\">sdf</warning> }");
+        doExprTest("sdf = { <error descr=\"Forward reference\">sdf</error> }");
 //        doExprTest("sdf = <warning descr=\"Unresolved reference\">foo</warning>");
     }
 
 
     public void testForwardReference() {
 //        doExprTest("foo = <warning descr=\"Unresolved reference\">bar</warning>; bar = 1");
-        doExprTest("foo = { <warning descr=\"Forward reference\">bar</warning> } ; bar = 1");
+        doExprTest("foo = { <error descr=\"Forward reference\">bar</error> } ; bar = 1");
     }
 
 

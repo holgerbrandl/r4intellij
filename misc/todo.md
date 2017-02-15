@@ -3,9 +3,6 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
-* incorrect resolver result for function argument
-![](.todo_images/funarg.png)
-
 * dot in pipes should resolve correctly
 ```r
 "foo" %>% paste0(".", ., ".RData")

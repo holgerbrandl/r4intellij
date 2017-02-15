@@ -116,7 +116,7 @@ public class UnresolvedReferenceInspection extends RInspection {
 
                     myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 } else if (RPsiUtils.isForwardReference(resolve, element)) {
-                    myProblemHolder.registerProblem(element, "Forward reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    myProblemHolder.registerProblem(element, "Forward reference", ProblemHighlightType.GENERIC_ERROR);
                 }
             }
         }
