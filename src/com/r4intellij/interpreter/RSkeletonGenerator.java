@@ -25,8 +25,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Scanner;
 import java.util.Set;
 
 import static com.r4intellij.packages.RHelperUtil.PluginResourceFile;
@@ -95,7 +97,7 @@ public class RSkeletonGenerator {
                 ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
                     @Override
                     public void run() {
-                        RSkeletonGenerator.runSkeletonGeneration(indicator);
+                        RSkeletonGenerator.updateSkeletons(indicator);
 
                         // TBD seems to cause thread exeception. Needed?
 //                        PsiDocumentManager.getInstance(project).commitAllDocuments();
@@ -192,7 +194,7 @@ public class RSkeletonGenerator {
     }
 
 
-    private static void runSkeletonGeneration(@Nullable ProgressIndicator indicator) {
+    private static void updateSkeletons(@Nullable ProgressIndicator indicator) {
         final String interpreter = RSettings.getInstance().getInterpreterPath();
 
         if (StringUtil.isEmptyOrSpaces(interpreter)) return;
@@ -216,10 +218,12 @@ public class RSkeletonGenerator {
                 LOG.error("Can't create skeleton dir " + String.valueOf(skeletonsPath));
             }
 
-            // skip if smart skeleton existis already
-            if (new File(skeletonsDir, rPackage.getName() + ".r").exists()) {
+            // skip if skeleton exists already and it is not outdated
+            File skeletonFile = new File(skeletonsDir, rPackage.getName() + ".r");
+            if (skeletonFile.exists() && isCurrentVersion(skeletonFile)) {
                 continue;
             }
+
 
 //            // skip existing skeleton dir exists already
 //            File packageSkelDir = new File(skeletonsDir, rPackage.getName());
@@ -232,13 +236,48 @@ public class RSkeletonGenerator {
                 @Override
                 public void run() {
                     RRunResult output = RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, skeletonsPath, rPackage.getName());
-                    if (output.getExitCode() != 0) {
+                    if (output != null && output.getExitCode() != 0) {
                         LOG.error("Failed to generate skeleton for '" + rPackage.getName() + "'. Exit code: " + output.getExitCode());
                         LOG.error(output.getStdErr());
                     }
                 }
             });
         }
+    }
+
+
+    // note: just change in sync with ./r-helpers/skeletonize_package.R
+    public static final int SKELETONIZE_VERSION = 1;
+
+
+    //todo refac to use to-be-impl Rpackage API here
+    private static boolean isCurrentVersion(File skeletonFile) {
+
+        // todo tbd why don't we use the stub here (should be faster)
+//        VirtualFile virtualFile = VfsTestUtil.findFileByCaseSensitivePath(skeletonFile.getAbsolutePath());
+//        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+//
+//        Integer fileVersion = PsiTreeUtil.findChildrenOfType(psiFile, RAssignmentStatement.class).stream()
+//                .filter(rassign -> Objects.equals(rassign.getName(), ".skeleton_version"))
+//                .map(rassign -> Integer.valueOf(rassign.getAssignedValue().getText()))
+//                .findFirst().orElse(-1);
+
+
+        // use basic file search because psi-read access is not allowed from here (and it's also faster)
+        Integer fileVersion = -1;
+        try {
+            Scanner scanner = new Scanner(skeletonFile);
+            while (scanner.hasNextLine()) {
+                String curLine = scanner.nextLine();
+                if (curLine.startsWith(".skeleton_version")) {
+                    fileVersion = Integer.valueOf(curLine.split(" = ")[1]);
+                    break;
+                }
+            }
+        } catch (FileNotFoundException | ArrayIndexOutOfBoundsException ignored) {
+        }
+
+        return SKELETONIZE_VERSION == fileVersion;
     }
 
 }
