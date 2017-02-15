@@ -3,53 +3,32 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+
 * dot in pipes should resolve correctly
 ```r
 "foo" %>% paste0(".", ., ".RData")
 ```
 
-* NA package data in skeleton
-
-```r
-NA <- Rsamtools::NA		## NA
-```
-
 * argument n is missing with no default in piped expression
 `"foo.bar" %>% str_split_fixed("[.]")`
 
+* argument n is missing with no default in piped expression with dot
+`"foo.bar" %>% gsub("foo", "is.cool", .)`
 
-* don't allow for forward references
-```r
-require(igraph)
-orthoGroupsNoSmes = data_frame(contig=V(orthoGraphNoHsapMmus)$name) 
+* missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
 
-## forward reference
-orthoGraphNoHsapMmus = iris
-```
 
-* fix resolver for unquoted variable names see [here](../misc/devel_notes.md:67)
+* fix resolver for unquoted variable names see [here](../misc/devel_notes.md)
 
 * formula show up ans non-resolvable: `pw_present~.`
 
-* resolved fails to resolve if assignment (what about for, while) ? write unit tests to prevent regressions!
-```r
-if(T){
-a = 3
-}
-a
-```
-
-* import resolver: support annotation (until we have proper source_url support): 
-```r
-# @r4i-imports: tidyverse, ggplot
-devtools::source_url("...") # @r4i-imports: tidyverse, ggplot
-```
 
 * remove deprecated api usage
 
-* help: header and packag eis missing in popup (seems to be minor bug in `com.r4intellij.documentation.RDocumentationUtils.getFormattedString(com.r4intellij.RHelp)`)
+* help: header and package eis missing in popup (seems to be minor bug in `com.r4intellij.documentation.RDocumentationUtils.getFormattedString(com.r4intellij.RHelp)`)
 
 * help: "fetching " forever for invalid symbols (like `Species`)
+
 
 ## Next Steps
 
@@ -67,20 +46,51 @@ v1.0
 Intentions & inspections
 ------------------------
 
-* unresolved package methods should show as error (as do non-imported java methods/classes)
 
-* add intention to name function argument (just current or all in funciton call)
+### call arguments 
+ 
+* add intention to name function argument (just current or all in function call)
 
-* warn about dataframe arguments in pipe
+* intention to add unresolved arg in function expression as named parameter
+ ![](.todo_images/unres_to_named_paramameter_intention.png)
+
+* show correct warning if too many args are provided 
 ```r
-iris %>% mutate %>% ggplot(iris, aes())
-iris %>% mutate %>% transmute(iris, avg_length=mean(Length))
+log(1,2,3,4)
 ```
+
+* intention to add name to named argument `myfun(34)` ->  `myfun(num_reps = 34)`  
+
+### best practices & coding style
+
+* inspection to replace `<-` with `=`
+   
+* intention to replace tidyverse imports with library(tidyverse)
+
+* Intention to surround if expression list selection with curly brackets
+    * "add braces for if/else statement" intention
+
+* inspection: warn about usage of T and F
+
+* warn about assignment usage when boolean result is expected:
+```r
+if(a=3){}
+filter(iris, Species="setosa")
+subset(iris, Species="setosa")
+
+## Note: technially certain assignment can evaluate to boolean
+if(a=(function(){T})()){ print("foo")}
+## but this seems very bad practice and should be flagged as well
+```
+
+### dependency management
+
 
 * create missing function intention
 ```r
-result = myfancyfun(sdf)  # should become
+result = myfancyfun(sdf)  ### show myfancyfun in RED
 
+## intention should change it into
 myfancyfun = function(sdf){
     .caret.
 }
@@ -89,64 +99,31 @@ result = myfancyfun(sdf)
 ```
 ![](.todo_images/create function intention.png)
 
-* missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
-
-* quick fix to simplify/ remove the dot in  `filtGraphData %>% graph.data.frame(., directed=TRUE)` if first arg
-
-* check if urls and strings that are arguments of readr methods exist (allow to add working dir annotation to configure this locally)
-    * http://stackoverflow.com/questions/18134718/java-quickest-way-to-check-if-url-exists
-```r
-# similar to type annotation
-# @type recursive : logical
-
-# Examples: 
-# @working-dir ../../
-# @working-dir ~/Users/
-# @working-dir ${FOO}/bar
-
-```
-
-
-* find better name for "R Type Checker"
- 
-* show correct warning if too many args are provided 
-```r
-log(1,2,3,4)
-```
-
-* inspection to replace `<-` with `=`
-   
-* intention to replace tidyverse imports with library(tidyverse)
-* intention
-
-* warn if data-frame arguments are not declared in script (with comment annotation option to flag presence). Since this is not possible on a general we could/should provide it for certain APIs like tidyverse --> what about existing missinfref-inspection
 
 
 * highlight packages with naming conflicts (or indicate it visually in the IDE using virtual comment)
 
-* "add braces for if/else statement" intention
+
+* unresolved package methods should show as error (as do non-imported java methods/classes)
+
 * inspection in case of naming conflicts (same functions in imported packages) suggest to add prefix to method call (allow to override by annotation)
     * show warning just for overridden symbols
 
-* offer quickfix to surround if expression with curly brackets
 
-* Intention to add roxygen docu + code basic tag completion for roxygen comments
-* Intention to change function to S4 function
+### piping support
 
-* intention to add name to named argument `myfun(34)` ->  `myfun(num_reps = 34)`  
+* warn about dataframe arguments in pipe
+```r
+iris %>% mutate %>% ggplot(iris, aes())
+iris %>% mutate %>% transmute(iris, avg_length=mean(Length))
+```
 
-* warn about assigmnet usage when boolean result is expected
-* inspection: warn about usage of T and F
+* quick fix to simplify/ remove the dot in  `filtGraphData %>% graph.data.frame(., directed=TRUE)` if first arg
 
-* consider to use `    <codeInsight.unresolvedReferenceQuickFixProvider
-                           implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"/>` for better API design
-                           
-* conider to use `com.intellij.codeInsight.intention.LowPriorityAction` 
-
-* inpsection for highly cascaded function calls --> pipe them
+* inspection for highly cascaded function calls --> pipe them
     * apply post-fix reformatting of affected code-chunk
-    * intention to also pipe simple function arguments (test inital but also non-inital positions)
-    * Example: atribute may want to go out
+    * intention to also pipe simple function arguments (test initial but also non-initial positions)
+    * Example: attribute may want to go out
 ```r 
     geneInfo <- biomaRt::getBM(attributes=c("ensembl_gene_id", "external_gene_name", "description", "gene_biotype"), mart=mart) %>% cache_it()
 ```
@@ -158,11 +135,11 @@ distinct(x) %>% nrow
 nrow(distinct(x))
 ```
 
+### Misc
+
 baser to tidyverse intentions
 * `read.delim("algn_counts.txt", header=F)` to read_tsv
 
-* intention to add unresolved arg in function expression as named parameter
-![](.todo_images/unres_to_named_paramameter_intention.png)
 
 * highlight use of `return` in assignment as error:
 ```r
@@ -172,12 +149,36 @@ function(){
 ```
 * unit test & inspection to prevent that return is used outside of function_expression
 
+* refac: Introduce parameter to method
 
 * implement NoSideEffectsInspection (see already created unit-test)
     * also make sure to flag plotting in loops etc.
     
 * inspection category for best practices. see https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/ 
+
+* warn/error if using attribute-setter invokation style on non-attribute-setter method:
+```r
+nrow(iris) = 0
+```
+
+* check if urls and strings that are arguments of readr methods exist (allow to add working dir annotation to configure this locally)
+    * http://stackoverflow.com/questions/18134718/java-quickest-way-to-check-if-url-exists
+```r
+# similar to type annotation
+# @type recursive : logical
+
+# Examples: 
+# @working-dir ../../
+# @working-dir ~/Users/
+# @working-dir ${FOO}/bar
+```
     
+
+* Intention to add roxygen docu + code basic tag completion for roxygen comments
+* Intention to change function to S4 function
+
+
+
 Parser
 ------
 
@@ -389,6 +390,13 @@ Brainstorming
 * package development support
     * see http://r-pkgs.had.co.nz/tests.html
     * new package template (or even own module? type) 
+    
+* `#@r4i-imports` annotation (until we have proper source_url support): 
+  ```r
+  # @r4i-imports: tidyverse, ggplot
+  devtools::source_url("...") # @r4i-imports: tidyverse, ggplot
+  ```
+
     
 Send To Console Improvements
 ============================

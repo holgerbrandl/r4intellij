@@ -89,7 +89,9 @@ stub index content
 ```text
 StubIndex.getInstance().getAllKeys(KEY, project).stream().filter(p->p.trim().contains("nasa")).collect(Collectors.toList())
 ```
-#### unresolved symbols when using uquoted method names
+
+
+## Unquoted method names
 
 Example
 ```r
@@ -111,6 +113,9 @@ mutate(iris, Species) ## species
 Note: ignoring tripledot args in resolver is not general enough, see `dplyr::tally`
 
 
+## Pipe `%>%` support
+
+Affects mainly type-checking, but also resolved (see unquoted variable names)
 
 
 Documentation Provider
@@ -132,6 +137,16 @@ To make sure that renaming does not apply to installed packages/library --> http
 
 Intentions vs. Inspections
 =========================
+
+
+
+* consider to use `    <codeInsight.unresolvedReferenceQuickFixProvider
+                           implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"/>` for better API design
+                           
+* conider to use `com.intellij.codeInsight.intention.LowPriorityAction` 
+
+
+
 
  
 good docs http://www.jetbrains.org/intellij/sdk/docs/tutorials/code_intentions.html
@@ -186,7 +201,7 @@ com.r4intellij.inspections.typing.RTypeChecker.getNamedArguments
 
 Seems built by manual invocation in
 `com.r4intellij.actions.RSkeletonsGeneratorAction.generateSkeletonsForPackage` which itself calls
-`com.r4intellij.interpreter.RSkeletonGenerator.runSkeletonGeneration`
+`updateSkeletons`
 
 tricky packages for skeletonizer
 * config
