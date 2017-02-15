@@ -5,7 +5,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 
-package com.r4intellij.editor.codestyle;
+package com.r4intellij.highlighting;
 
 import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
@@ -45,13 +45,13 @@ public class RColorSettingsPage implements ColorSettingsPage {
      * The sample .R document shown in the colors settings dialog
      */
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
-            new AttributesDescriptor("Comment", RHighlighterColors.COMMENT_ATTR_KEY),
-            new AttributesDescriptor("Keyword", RHighlighterColors.KEYWORD_ATTR_KEY),
-            new AttributesDescriptor("Parenthesis", RHighlighterColors.PAREN_ATTR_KEY),
-            new AttributesDescriptor("Braces", RHighlighterColors.BRACES_ATTR_KEY),
-            new AttributesDescriptor("Brackets", RHighlighterColors.BRACKETS_ATTR_KEY),
-            new AttributesDescriptor("Number", RHighlighterColors.NUMBER_ATTR_KEY),
-            new AttributesDescriptor("String ...", RHighlighterColors.STRING_ATTR_KEY)
+            new AttributesDescriptor("Comment", RSyntaxHighlighterColors.LINE_COMMENT),
+            new AttributesDescriptor("Keyword", RSyntaxHighlighterColors.KEYWORD),
+            new AttributesDescriptor("Parenthesis", RSyntaxHighlighterColors.PARENTHS),
+            new AttributesDescriptor("Braces", RSyntaxHighlighterColors.BRACES),
+            new AttributesDescriptor("Brackets", RSyntaxHighlighterColors.BRACKETS),
+            new AttributesDescriptor("Number", RSyntaxHighlighterColors.NUMBER),
+            new AttributesDescriptor("String ...", RSyntaxHighlighterColors.STRING)
 //            new AttributesDescriptor("Function Call", RHighlighterColors.),
     };
 

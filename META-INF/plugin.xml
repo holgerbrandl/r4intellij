@@ -90,7 +90,7 @@
                                        implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
 
         <colorSettingsPage
-                implementation="com.r4intellij.editor.codestyle.RColorSettingsPage"/>
+                implementation="com.r4intellij.highlighting.RColorSettingsPage"/>
 
 
         <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>

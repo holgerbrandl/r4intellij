@@ -5,7 +5,7 @@
  * http://www.opensource.org/licenses/bsd-license.php
  */
 
-package com.r4intellij.editor.codestyle;
+package com.r4intellij.highlighting;
 
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors;
@@ -50,7 +50,7 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
 
     private static final Map<IElementType, TextAttributesKey> attributes;
 
-    static TokenSet keywords = TokenSet.create(R_ELSE, R_FOR, R_FUNCTION, R_IF, R_WHILE);
+    static final TokenSet keywords = TokenSet.create(R_ELSE, R_FOR, R_FUNCTION, R_IF, R_WHILE);
 
     static {
         //setup default attribute formatting
@@ -58,13 +58,13 @@ public class RSyntaxHighlighter extends SyntaxHighlighterBase {
 
         attributes = new HashMap<IElementType, TextAttributesKey>();
 
-        fillMap(attributes, lineCommentSet, RHighlighterColors.COMMENT_ATTR_KEY);
-        fillMap(attributes, keywords, RHighlighterColors.KEYWORD_ATTR_KEY);
-        fillMap(attributes, parenthesisSet, RHighlighterColors.PAREN_ATTR_KEY);
-        fillMap(attributes, curlySet, RHighlighterColors.BRACES_ATTR_KEY);
-        fillMap(attributes, bracketSet, RHighlighterColors.BRACKETS_ATTR_KEY);
-        fillMap(attributes, string2Set, RHighlighterColors.STRING_ATTR_KEY);
-        fillMap(attributes, numberSet, RHighlighterColors.NUMBER_ATTR_KEY);
+        fillMap(attributes, lineCommentSet, RSyntaxHighlighterColors.COMMA);
+        fillMap(attributes, keywords, RSyntaxHighlighterColors.KEYWORD);
+        fillMap(attributes, parenthesisSet, RSyntaxHighlighterColors.PARENTHS);
+        fillMap(attributes, curlySet, RSyntaxHighlighterColors.BRACES);
+        fillMap(attributes, bracketSet, RSyntaxHighlighterColors.BRACKETS);
+        fillMap(attributes, string2Set, RSyntaxHighlighterColors.STRING);
+        fillMap(attributes, numberSet, RSyntaxHighlighterColors.NUMBER);
     }
 
 
