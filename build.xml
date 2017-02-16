@@ -50,6 +50,10 @@
     <!--tasks-->
     <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="dep.javac2.classpath"/>
 
+    <!-- kotlin support see https://kotlinlang.org/docs/reference/using-ant.html-->
+    <typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
+
+
     <!--targets-->
     <target name="clean">
         <delete dir="${out.dir}"/>
@@ -68,7 +72,9 @@
                 source="1.8"
                 target="1.8"
                 includeantruntime="false"
-        />
+        >
+            <withKotlin/>
+        </javac2>
     </target>
 
     <target name="plugin.zip" depends="clean, compile"
