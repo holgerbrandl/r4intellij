@@ -66,11 +66,21 @@
 
 
     <actions>
-        <action id="com.r4intellij.console.RConsoleAction" class="com.r4intellij.console.RConsoleAction"
+        <action id="com.r4intellij.console.RConsoleAction"
+                class="com.r4intellij.console.RConsoleAction"
                 text="Run R Console..." description="Starts R interactive console">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
 
+        <action id="com.r4intellij.actions.EvalSelectionOrExprAction"
+                class="com.r4intellij.actions.EvalSelectionOrExprAction"
+                text="Evaluate in R Console"
+                description="Evaluate current selection or expression under caret in R Console">
+            <add-to-group group-id="RunMenu" anchor="last"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="meta alt ENTER"/>
+        </action>
+
+        <!--todo disable for release?-->
         <action id="RGenerateTypingReport" class="com.r4intellij.actions.RGenerateTypingReport"
                 text="Generate Typing Report">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
