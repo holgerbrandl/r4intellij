@@ -26,9 +26,9 @@ import java.util.List;
 /**
  * Block implementation for the R formatter.
  * <p/>
- * This class is based on the block code for the Groovy formatter.
+ * This class is based on the block code for the Groovy and Json formatter.
  *
- * @author ilyas, jansorg
+ * @author ilyas, jansorg, holgerbrandl
  */
 public class RFormatterBlock implements Block {
 

@@ -21,9 +21,9 @@ import java.util.List;
 /**
  * Utility class to generate myBlock hierarchy
  * <p/>
- * This code was taken from the Groovy plugin.
+ * This class is based on the Groovy and Json formatter implementation.
  *
- * @author ilyas, jansorg
+ * @author ilyas, jansorg, holgerbrandl
  */
 public class RBlockGenerator implements RElementTypes {
 

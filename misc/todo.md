@@ -32,7 +32,7 @@ R4Intellij Development Notes
 http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/additional_minor_features.html
 
 
-
+* fix gradle build to include resource files in zip (see https://github.com/JetBrains/gradle-intellij-plugin/issues/180#issuecomment-280377767) 
 
 Intentions & inspections
 ------------------------
@@ -367,8 +367,6 @@ Brainstorming
 * Connectors for xterm and Rgui on windows
 * ColorSettingsPage (see Bash implementation)
 
-* use gradle build similar to markdown plugin. see http://www.jetbrains.org/intellij/sdk/docs/tutorials/kotlin.html
-
 *  also support rstudio like sectioning 
 * What about packrat? http://rstudio.github.io/packrat/walkthrough.html
 * provide `com.intellij.codeInsight.daemon.impl.quickfix.FetchExtResourceAction.FetchExtResourceAction(boolean)` for `devtools::source_url)` statments 
@@ -392,6 +390,10 @@ Brainstorming
 * documentation provider improvements 
     * button to open examples in scratch-file
     * use syntax coloring in examples and usage
+    
+* should we add `    <enterHandlerDelegate implementation="com.intellij.json.formatter.JsonEnterBetweenBracesHandler"/>`
+
+* learn from `/Users/brandl/projects/jb/intellij-community/platform/platform-resources/src/META-INF/JsonPlugin.xml`
     
     
 Send To Console Improvements

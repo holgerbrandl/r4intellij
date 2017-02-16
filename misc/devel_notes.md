@@ -7,6 +7,14 @@ Release Action List
 4. Deploy jar and upload to plugin reposiotry
 
 
+Setup and Build
+===============
+
+### Gradle
+
+
+To get started see http://www.jetbrains.org/intellij/sdk/docs/tutorials/kotlin.html
+
 Design Consideration
 ====================
 
@@ -247,6 +255,8 @@ http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_suppo
 
 formatter modifies only the characters between blocks, and the tree of blocks must be built in such a way that the bottom-level blocks cover all non-whitespace characters in the file
 
+Nice example for code-style settings
+/Users/brandl/projects/jb/intellij-community/json/src/com/intellij/json/formatter/JsonCodeStyleSettings.java
 
 Misc
 =====
