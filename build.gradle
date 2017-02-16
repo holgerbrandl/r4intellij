@@ -45,10 +45,11 @@ sourceSets {
 
     test {
         java {
-            srcDirs 'test/src'
+            srcDirs 'test'
         }
         resources {
             srcDirs 'testData'
+            srcDirs 'r-helpers'
         }
     }
 }
@@ -101,15 +102,17 @@ idea {
 // from https://github.com/Camelcade/Perl5-IDEA/blob/master/build.gradle
 task lexerTask(type: JavaExec) {
     classpath = files('misc/JFlex.jar')
-    main = 'jflex.Main'
+    main = 'JFlex.Main'
 
-    def src = "$project.projectDir/src/com/r4intellij/lexer/R.flex"
-    def dst = "$project.projectDir/src/com/r4intellij/lexer/"
+    def lexerDir = "$project.projectDir/src/com/r4intellij/lexer/"
+    def skel = "$lexerDir/idea-flex.skeleton"
+    def src = "$lexerDir/R.flex"
 
-    args = ['--charat', '--skel', 'src/com/r4intellij/lexer/R.flex', '-d', dst, src]
+
+    args = ['--charat', '--skel', skel, '-d', lexerDir, src]
 
     inputs.file file(src)
-    outputs.dir file("$dst/_RLexer.java")
+    outputs.dir file("$lexerDir/_RLexer.java")
 }
 
 
