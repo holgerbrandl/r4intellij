@@ -1,0 +1,137 @@
+buildscript {
+    ext.kotlin_version = '1.0.6'
+
+    repositories {
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.0-SNAPSHOT"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+    }
+}
+
+repositories {
+    mavenCentral()
+//    maven { url 'http://dl.bintray.com/jetbrains/markdown' }
+//    flatDir { dirs 'lib' }
+}
+
+apply plugin: 'org.jetbrains.intellij'
+apply plugin: 'java'
+apply plugin: "kotlin"
+
+//sourceCompatibility = javaVersion
+
+
+dependencies {
+    compileOnly "com.google.guava:guava:19.0"
+    testCompile "org.mockito:mockito-all:1.10.19"
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+            srcDirs 'gen'
+        }
+        resources {
+            srcDirs 'resources'
+        }
+    }
+
+    test {
+        java {
+            srcDirs 'test/src'
+        }
+        resources {
+            srcDirs 'testData'
+        }
+    }
+}
+
+//task archiveZip(type: Zip, dependsOn: 'jar') {
+//    baseName = 'project'
+//
+//    from fileTree('resources') // do not specify directory
+//
+//    // if you would like to put file into some directory, specify it.
+//    from (tasks.jar.archivePath) {
+//        into 'lib'
+//    }
+//}
+
+// https://github.com/JetBrains/gradle-intellij-plugin/blob/master/README.md#configuration
+
+intellij {
+//    version 'IC-LATEST-TRUNK-SNAPSHOT'
+//    version 'IC-2016.3'
+    version 'IU-163.12024.16'
+    pluginName 'R4Intellij'
+    downloadSources false
+    updateSinceUntilBuild false
+    plugins = ['IntelliLang']
+
+//    sandboxDirectory = project.rootDir.canonicalPath + "/.sandbox"
+//
+//    publish {
+//        username "$JETBRAINS_USERNAME"
+//        password "$JETBRAINS_PASSWORD"
+//    }
+}
+
+
+
+apply plugin: 'idea'
+idea {
+    project {
+        jdkName = javaVersion
+        languageLevel = javaVersion
+        vcs = 'Git'
+    }
+    module {
+        generatedSourceDirs += file('gen')
+    }
+}
+
+
+// from https://github.com/Camelcade/Perl5-IDEA/blob/master/build.gradle
+task lexerTask(type: JavaExec) {
+    classpath = files('misc/JFlex.jar')
+    main = 'jflex.Main'
+
+    def src = "$project.projectDir/src/com/r4intellij/lexer/R.flex"
+    def dst = "$project.projectDir/src/com/r4intellij/lexer/"
+
+    args = ['--charat', '--skel', 'src/com/r4intellij/lexer/R.flex', '-d', dst, src]
+
+    inputs.file file(src)
+    outputs.dir file("$dst/_RLexer.java")
+}
+
+
+// from https://github.com/GoogleCloudPlatform/google-cloud-intellij/blob/master/build.gradle
+//release {
+//    buildTasks = ['doRelease']
+//    // Do not change the tagTemplate value to double quotes or the version will be evaluated before
+//    // the SNAPSHOT version is updated to the release version.
+//    tagTemplate = 'v$version'
+//    git {
+//        requireBranch = /^release_v\d+.*$/
+//    }
+//}
+//
+//// We aren't building or doing anything interesting for release.
+//// We just update the version and generate the tag as CI will handle deployment.
+//task doRelease {
+//    doLast {
+//        println '===============================!!PLEASE READ!!=================================\n\n' +
+//                'IMPORTANT:  The release command will trigger the creation of a new release ' +
+//                'in Github, the uploading of binaries to github, and the publishing of our plugin' +
+//                'to the IntelliJ plugin repository.\n' +
+//                'Hit CTRL+C to cancel.\n'
+//    }
+//}
