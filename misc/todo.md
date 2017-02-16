@@ -7,8 +7,9 @@ R4Intellij Development Notes
 
 ## Next Steps
 
+* process forum replies
 
-* port coding style
+* fix basic formatting
 
 * fix resolver for unquoted variable names see [here](../misc/devel_notes.md)
 
@@ -22,6 +23,7 @@ R4Intellij Development Notes
 ### v1.0
 
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
+    * also see org.jetbrains.plugins.groovy.actions.NewScriptAction
     * templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
 * replace RPackage service with on-the-fly model using stub-index (is possible because they still miss function titles)
   

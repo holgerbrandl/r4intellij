@@ -2,7 +2,7 @@ args <- commandArgs(TRUE)
 
 ## test invcation:
 # rm -rf  ~/Desktop/skeleton/clusterProfiler/ ~/Desktop/skeleton/clusterProfiler.r;
-# R -f /Users/brandl/projects/rplugin/r4intellij_v2/r-helpers/skeletonize_package.R --args ~/Desktop/skeleton clusterProfiler
+# R -f /Users/brandl/projects/rplugin/r4intellij/r-helpers/skeletonize_package.R --args ~/Desktop/skeleton clusterProfiler
 
 # args <- c("~/Desktop/skeleton", "base"); dir.create(args[1])
 

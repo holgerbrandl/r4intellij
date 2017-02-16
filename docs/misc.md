@@ -117,7 +117,7 @@ See https://support.rstudio.com/hc/en-us/articles/200710523-Navigating-Code
 Use https://github.com/thlorenz/doctoc
 
 ```bash
-cd /Users/brandl/projects/rplugin/r4intellij_v2/docs
+cd /Users/brandl/projects/rplugin/r4intellij/docs
 doctoc .
 doctoc --title "**Content**" README.md
 

@@ -239,12 +239,33 @@ https://intellij-support.jetbrains.com/hc/en-us/community/posts/206765345-How-to
 
 File based indexes should always be up to date. If your annotating code accesses the index IntelliJ will detect that the index is out of date and re-index the file. 
 
+
+Formatter
+---------
+
+http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/code_formatting.html
+
+formatter modifies only the characters between blocks, and the tree of blocks must be built in such a way that the bottom-level blocks cover all non-whitespace characters in the file
+
+
 Misc
 =====
 
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/207567045-How-to-get-the-parent-psi-element-outside-of-a-language-injection
 
 Invoking psi.getContext in a loop (orPsiTreeUtil.getContextOfType) will eventually switch from injected to host PSI.
+
+### Action System
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/207173935-How-do-I-invoke-an-action-from-another-
+
+
+---
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/207379815-AnActionEvent-cannot-share-data-context-between-Swing-events-
+
+DataContext is an abstraction of current focus position. You can't use DataContext if focus has changed (say a popup was shown, editor is closed or not focused anymore, etc). We guarantee that focus and components hierarchy won't be changed in actionPerfomed() method until you explicitly request it (by showing modal dialogs, or passing data context into another thread, or passing it into invokeLater(), and so on). 
+
+General approach here is to collect necessary data before you trigger any UI activity.
 
 ### Language injection
 

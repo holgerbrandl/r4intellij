@@ -30,6 +30,9 @@ The following features were merged in from previous version of r4intellij
 Other improvements
 * more robust skeletonization
 * various parser enhancements
+* unused variable highlighting
+* improve reference resolver
+* 
 
 New Quickfixes (aka intention) and Inspections
 * install missing library intention
