@@ -45,7 +45,7 @@ public class RFormattingModelBuilder implements FormattingModelBuilder {
         // see com.intellij.formatting.FormattingModel
         // Typically, a plugin does not need to provide a complete FormattingModel implementation
         return FormattingModelProvider.createFormattingModelForPsiFile(containingFile,
-                new RBlock(astNode, null, Indent.getAbsoluteNoneIndent(), null, settings), settings);
+                new RFormatterBlock(astNode, null, Indent.getAbsoluteNoneIndent(), null, settings), settings);
     }
 
 

@@ -30,7 +30,7 @@ import java.util.List;
  *
  * @author ilyas, jansorg
  */
-public class RBlock implements Block {
+public class RFormatterBlock implements Block {
 
     final protected ASTNode myNode;
     final protected Alignment myAlignment;
@@ -41,7 +41,7 @@ public class RBlock implements Block {
     protected List<Block> mySubBlocks = null;
 
 
-    public RBlock(@NotNull final ASTNode node, @Nullable final Alignment alignment, @NotNull final Indent indent, @Nullable final Wrap wrap, final CodeStyleSettings settings) {
+    public RFormatterBlock(@NotNull final ASTNode node, @Nullable final Alignment alignment, @NotNull final Indent indent, @Nullable final Wrap wrap, final CodeStyleSettings settings) {
         myNode = node;
         myAlignment = alignment;
         myIndent = indent;
@@ -104,10 +104,10 @@ public class RBlock implements Block {
      */
     @Nullable
     public Spacing getSpacing(Block child1, Block child2) {
-        if ((child1 instanceof RBlock) && (child2 instanceof RBlock)) {
+        if ((child1 instanceof RFormatterBlock) && (child2 instanceof RFormatterBlock)) {
             // todo reenable
-//            Spacing spacing = RSpacingProcessor.getSpacing(((RBlock) child1), ((RBlock) child2), mySettings);
-//            return spacing != null ? spacing : RSpacingProcessorBasic.getSpacing(((RBlock) child1), ((RBlock) child2), mySettings);
+//            Spacing spacing = RSpacingProcessor.getSpacing(((RFormatterBlock) child1), ((RFormatterBlock) child2), mySettings);
+//            return spacing != null ? spacing : RSpacingProcessorBasic.getSpacing(((RFormatterBlock) child1), ((RFormatterBlock) child2), mySettings);
         }
         return null;
     }

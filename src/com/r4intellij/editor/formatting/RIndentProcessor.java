@@ -41,7 +41,7 @@ public abstract class RIndentProcessor implements RElementTypes {
      * @return indent
      */
     @NotNull
-    public static Indent getChildIndent(@NotNull RBlock parent, @Nullable final ASTNode prevChildNode, @NotNull final ASTNode child) {
+    public static Indent getChildIndent(@NotNull RFormatterBlock parent, @Nullable final ASTNode prevChildNode, @NotNull final ASTNode child) {
         ASTNode astParent = parent.getNode();
         final PsiElement psiParent = astParent.getPsi();
 
