@@ -40,6 +40,7 @@ sourceSets {
         }
         resources {
             srcDirs 'resources'
+            srcDirs 'r-helpers'
         }
     }
 
@@ -49,7 +50,6 @@ sourceSets {
         }
         resources {
             srcDirs 'testData'
-            srcDirs 'r-helpers'
         }
     }
 }
