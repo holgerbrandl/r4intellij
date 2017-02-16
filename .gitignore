@@ -5,6 +5,7 @@
 .idea/scopes/scope_settings.xml
 .idea/uiDesigner.xml
 /out
+/build
 
 **/_site
 **/.sass-cache
