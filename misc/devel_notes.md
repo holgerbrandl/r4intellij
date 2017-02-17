@@ -69,12 +69,36 @@ The debug environment unpacks the jar while the deployed environment does not. S
 Reference Provider & Resolver
 ============================
 
+to enhance reference search consider
+
+http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/reference_contributor.html
+
+Example `com.intellij.xml.util.XmlReferenceContributor`
+
+contributor -> provider pattern
+```
+
+ResourceScriptReferenceContributor
+
+public class DocStringReferenceContributor extends PsiReferenceContributor {
+  @Override
+  public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
+    registrar.registerReferenceProvider(DocStringTagCompletionContributor.DOCSTRING_PATTERN,
+                                        new DocStringReferenceProvider());
+  }
+}
+
+// define where it applies 
+  public static final PsiElementPattern.Capture<PyStringLiteralExpression> DOCSTRING_PATTERN = psiElement(PyStringLiteralExpression.class)
+    .withParent(psiElement(PyExpressionStatement.class).inside(PyDocStringOwner.class));
+
+
+
+```
 
 
 https://confluence.jetbrains.com/display/IDEADEV/Developing+Custom+Language+Plugins+for+IntelliJ+IDEA
 
-
-http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/reference_contributor.html
 
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/207250965-PsiReferenceContributor-Find-Usages-and-Go-to-Declaration
 
@@ -158,6 +182,13 @@ https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000086390-How
 UX
 * intention to refresh cached resource (also check for diffs with remote automatically after a certain while via low-priority quickfix)
 
+Use com.intellij.psi.impl.source.resolve.reference.impl.providers.URLReferenceQuickFixProvider (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000086390-How-to-embed-external-resource-file-into-PsiElement-tree-?page=1#community_comment_115000115584)
+
+See com.intellij.psi.impl.source.resolve.reference.impl.providers.URLReference 
+```java
+PsiFile document = ExternalResourceManager.getInstance().getResourceLocation(canonicalText, containingFile, tag.getAttributeValue("version"));
+
+```
 
 Documentation Provider
 ======================

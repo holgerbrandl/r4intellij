@@ -19,8 +19,9 @@
         <p/>
 
         <p>
-        This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features or
-        report bugs in our <a href="https://github.com/holgerbrandl/r4intellij/issues">issue tracker</a>.
+            This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features
+            or
+            report bugs in our <a href="https://github.com/holgerbrandl/r4intellij/issues">issue tracker</a>.
         <p/>
 
         <b>Features:</b><br>
@@ -95,6 +96,7 @@
 
 
     <extensions defaultExtensionNs="com.intellij">
+
         <fileTypeFactory implementation="com.r4intellij.RFileTypeFactory"/>
         <lang.syntaxHighlighterFactory language="R"
                                        implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>
@@ -109,10 +111,29 @@
         <quoteHandler className="com.r4intellij.completion.RQuoteHandler" fileType="R"/>
 
 
+        <!-- Codeinsight -->
+        <psi.referenceContributor
+                implementation="com.r4intellij.psi.references.externalres.ResourceScriptReferenceContributor"/>
+
         <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>
 
+        <stubIndex implementation="com.r4intellij.psi.stubs.RAssignmentNameIndex"/>
+        <stubElementTypeHolder class="com.r4intellij.parsing.RElementTypes"/>
+
+        <lang.commenter language="R" implementationClass="com.r4intellij.RCommenter"/>
+        <psi.referenceContributor implementation="com.r4intellij.editor.ResourceFileReferenceProvider"/>
+
+        <lang.elementManipulator forClass="com.r4intellij.psi.api.RStringLiteralExpression"
+                                 implementationClass="com.r4intellij.psi.RStringManipulator"/>
+        <lang.findUsagesProvider implementationClass="com.r4intellij.psi.references.RFindUsagesProvider" language="R"/>
+
+        <completion.contributor language="R" implementationClass="com.r4intellij.editor.RCompletionContributor"/>
+
+
+        <!-- Settings -->
         <projectConfigurable groupId="language" instance="com.r4intellij.settings.RSettingsConfigurable"
                              id="com.r4intellij.settings.RSettingsConfigurable" displayName="R Language"/>
+        <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
 
 
         <applicationService serviceInterface="com.r4intellij.settings.RSettings"
@@ -120,30 +141,11 @@
         <applicationService serviceInterface="com.r4intellij.packages.RPackageService"
                             serviceImplementation="com.r4intellij.packages.RPackageService"/>
 
+
+        <!-- runconfig-->
         <directoryProjectConfigurator implementation="com.r4intellij.interpreter.RInterpreterConfigurator"
                                       id="interpreter"
                                       order="after PlatformProjectConfigurator"/>
-
-        <stubIndex implementation="com.r4intellij.psi.stubs.RAssignmentNameIndex"/>
-        <stubElementTypeHolder class="com.r4intellij.parsing.RElementTypes"/>
-
-        <lang.commenter language="R" implementationClass="com.r4intellij.RCommenter"/>
-
-        <treeStructureProvider implementation="com.r4intellij.projectView.RTreeStructureProvider"/>
-
-        <lang.psiStructureViewFactory language="R"
-                                      implementationClass="com.r4intellij.psi.RScriptStructureViewFactory"/>
-
-
-
-        <!--<fileIconProvider implementation="com.r4intellij.RFileIconProvider"/>-->
-
-        <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
-
-        <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
-
-        <completion.contributor language="R" implementationClass="com.r4intellij.editor.RCompletionContributor"/>
-        <psi.referenceContributor implementation="com.r4intellij.editor.ResourceFileReferenceProvider"/>
 
 
         <configurationType implementation="com.r4intellij.run.configuration.RRunConfigurationType"/>
@@ -153,15 +155,30 @@
         <programRunner implementation="com.r4intellij.run.debug.RDebugRunner"/>
         <xdebugger.breakpointType implementation="com.r4intellij.run.debug.RLineBreakpointType"/>
 
+
+        <!-- tool windows-->
+        <treeStructureProvider implementation="com.r4intellij.projectView.RTreeStructureProvider"/>
+
+        <lang.psiStructureViewFactory language="R"
+                                      implementationClass="com.r4intellij.psi.RScriptStructureViewFactory"/>
+
+        <toolWindow id="R Packages" anchor="right"
+                    factoryClass="com.r4intellij.packages.remote.ui.RPackagesToolWindowFactory"/>
+
         <toolWindow id="R Graphics" anchor="right"
                     factoryClass="com.r4intellij.run.graphics.RGraphicsToolWindowFactory"/>
 
-        <vetoRenameCondition implementation="com.r4intellij.psi.references.RenamingVetoCondition"/>
+        <!-- refactorings -->
 
         <!--see /Users/brandl/projects/jb/intellij-community/plugins/groovy/src/META-INF/plugin.xml:448-->
+        <vetoRenameCondition implementation="com.r4intellij.psi.references.RenamingVetoCondition"/>
         <refactoring.inlineHandler language="R" implementationClass="com.r4intellij.refactoring.RInlineHandler"/>
-
         <inlineActionHandler implementation="com.r4intellij.refactoring.RInlineActionHandler"/>
+
+
+        <!-- coding assistance-->
+        <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
+        <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
 
 
         <!-- Inspections -->
@@ -190,16 +207,9 @@
         </intentionAction>
 
 
+        <!-- playground -->
+        <!--<documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>-->
+        <!--<fileIconProvider implementation="com.r4intellij.RFileIconProvider"/>-->
 
-        <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
-
-        <lang.elementManipulator forClass="com.r4intellij.psi.api.RStringLiteralExpression"
-                                 implementationClass="com.r4intellij.psi.RStringManipulator"/>
-
-        <lang.findUsagesProvider implementationClass="com.r4intellij.psi.references.RFindUsagesProvider" language="R"/>
-
-        <toolWindow id="R Packages" anchor="right"
-                    factoryClass="com.r4intellij.packages.remote.ui.RPackagesToolWindowFactory"/>
-        <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
     </extensions>
 </idea-plugin>

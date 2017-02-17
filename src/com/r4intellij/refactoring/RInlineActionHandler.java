@@ -23,6 +23,7 @@ import java.util.Collection;
  * @author Holger Brandl
  */
 public class RInlineActionHandler extends InlineActionHandler {
+
     @Override
     public boolean isEnabledForLanguage(Language language) {
         return language.equals(RLanguage.getInstance());

@@ -22,6 +22,8 @@ import com.intellij.util.IncorrectOperationException;
 
 
 /**
+ * Allow for language injection into string literals
+ *
  * @author gregsh
  * @author brandl http://devnet.jetbrains.net/message/5448773#5448773
  */

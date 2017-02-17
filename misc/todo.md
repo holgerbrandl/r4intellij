@@ -121,6 +121,7 @@ iris %>% mutate %>% transmute(iris, avg_length=mean(Length))
 ```
 
  * also allow to reverse pipes with intention (like non-sense 2 element pipes)
+    * `see com.siyeh.ipp.concatenation.MakeCallChainIntoCallSequenceIntention`
  ```r
 distinct(x) %>% nrow
 # should become
@@ -191,6 +192,7 @@ Documentation provider
 * also add links to package names to go to cran/bioconductor homepages
 * Show parameter info
 * function help should be context aware
+* provide reference profder for roxygen doc `com.jetbrains.python.documentation.docstrings.DocStringReferenceProvider`
 
 Formatter
 ---------

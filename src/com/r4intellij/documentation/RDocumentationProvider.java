@@ -32,6 +32,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     @Nullable
     @Override
     public String generateDoc(PsiElement reference, @Nullable PsiElement identifier) {
+        if (reference instanceof RStringLiteralExpression) return null;
         // check if it's a library function and return help if it is
 
         if (identifier == null) return null;
