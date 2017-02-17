@@ -15,7 +15,9 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.ILazyParseableElementType;
+import com.r4intellij.RLanguage;
 import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.NotNull;
@@ -38,15 +40,20 @@ public class RFormatterBlock implements Block {
     final protected Wrap myWrap;
     final protected CodeStyleSettings mySettings;
 
+    final SpacingBuilder mySpacingBuilder;
+
+
     protected List<Block> mySubBlocks = null;
 
 
-    public RFormatterBlock(@NotNull final ASTNode node, @Nullable final Alignment alignment, @NotNull final Indent indent, @Nullable final Wrap wrap, final CodeStyleSettings settings) {
+    public RFormatterBlock(@NotNull final ASTNode node, @Nullable final Alignment alignment, @NotNull final Indent indent, @Nullable final Wrap wrap, final CodeStyleSettings settings, SpacingBuilder spacingBuilder) {
         myNode = node;
         myAlignment = alignment;
         myIndent = indent;
         myWrap = wrap;
         mySettings = settings;
+
+        mySpacingBuilder = spacingBuilder;
     }
 
 
@@ -96,7 +103,7 @@ public class RFormatterBlock implements Block {
 
 
     /**
-     * Returns spacing between neighrbour elements
+     * Returns spacing between neighbour elements
      *
      * @param child1 left element
      * @param child2 right element
@@ -109,7 +116,7 @@ public class RFormatterBlock implements Block {
 //            Spacing spacing = RSpacingProcessor.getSpacing(((RFormatterBlock) child1), ((RFormatterBlock) child2), mySettings);
 //            return spacing != null ? spacing : RSpacingProcessorBasic.getSpacing(((RFormatterBlock) child1), ((RFormatterBlock) child2), mySettings);
         }
-        return null;
+        return mySpacingBuilder.getSpacing(this, child1, child2);
     }
 
 
@@ -160,4 +167,15 @@ public class RFormatterBlock implements Block {
     public boolean isLeaf() {
         return myNode.getFirstChildNode() == null;
     }
+
+
+    private RCodeStyleSettings getCustomSettings() {
+        return mySettings.getCustomSettings(RCodeStyleSettings.class);
+    }
+
+
+    private CommonCodeStyleSettings getCommonSettings() {
+        return mySettings.getCommonSettings(RLanguage.getInstance());
+    }
+
 }

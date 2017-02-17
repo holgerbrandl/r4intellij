@@ -44,7 +44,7 @@ public class RBlockGenerator implements RElementTypes {
         for (ASTNode childNode : children) {
             if (canBeCorrectBlock(childNode)) {
                 Indent indent = RIndentProcessor.getChildIndent(block, prevChildNode, childNode);
-                subBlocks.add(new RFormatterBlock(childNode, _myAlignment, indent, _myWrap, _mySettings));
+                subBlocks.add(new RFormatterBlock(childNode, _myAlignment, indent, _myWrap, _mySettings, block.mySpacingBuilder));
 
                 prevChildNode = childNode;
             }
