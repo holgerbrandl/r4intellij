@@ -1,4 +1,4 @@
-package com.r4intellij.projectView;
+package com.r4intellij.documentation;
 
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.TreeStructureProvider;

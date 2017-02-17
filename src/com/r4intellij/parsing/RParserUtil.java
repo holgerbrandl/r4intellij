@@ -4,8 +4,7 @@ import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.parser.GeneratedParserUtilBase;
 
 /**
- * @author Alefas
- * @since 23/12/14.
+ * @author holgerbrandl
  */
 public class RParserUtil extends GeneratedParserUtilBase {
     public static boolean parseEmptyExpression(PsiBuilder builder, int level) {

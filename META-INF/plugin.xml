@@ -158,7 +158,7 @@
 
 
         <!-- tool windows-->
-        <treeStructureProvider implementation="com.r4intellij.projectView.RTreeStructureProvider"/>
+        <treeStructureProvider implementation="com.r4intellij.documentation.RTreeStructureProvider"/>
 
         <lang.psiStructureViewFactory language="R"
                                       implementationClass="com.r4intellij.psi.RScriptStructureViewFactory"/>
