@@ -66,8 +66,8 @@ https://intellij-support.jetbrains.com/hc/en-us/community/posts/206104839-Access
 The debug environment unpacks the jar while the deployed environment does not. So the resources are not available in deployed version same as in debug. I would prefer that the debug version mimicked the deployed one, otherwise it makes it harder to debug.  --> copy stream to file
 
 
-Reference Provider
-----------
+Reference Provider & Resolver
+============================
 
 
 
@@ -149,6 +149,16 @@ Usecases
 * missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
 
 
+### source_url and source support
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000086390-How-to-embed-external-resource-file-into-PsiElement-tree-
+
+> Your resolver can do whatever it needs with the text and PSI. It can take the URL, find the corresponding project library, take the needed files from it, and use them for resolve. It's not a parser-postprocessor, but it's a more flexible approach. It's for you to decide on the details, you have total freedom. Your users might benefit from having a reference on that URL text that points to the downloaded file (and you could reuse this inside other resolvers), but that's just one of the possible ideas.
+
+UX
+* intention to refresh cached resource (also check for diffs with remote automatically after a certain while via low-priority quickfix)
+
+
 Documentation Provider
 ======================
 
@@ -174,7 +184,7 @@ Intentions vs. Inspections
 * consider to use `    <codeInsight.unresolvedReferenceQuickFixProvider
                            implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"/>` for better API design
                            
-* conider to use `com.intellij.codeInsight.intention.LowPriorityAction` 
+* consider to use `com.intellij.codeInsight.intention.LowPriorityAction` 
 
 
 
@@ -195,6 +205,30 @@ many potentially useful base-classes
 
 
 In openapi.jar there is a com.intellij.refactoring.util.RefactoringMessageDialog which seems to be extended only by com.intellij.refactoring.inline.InlineParameterDialog in idea.jar, so all the other refactorings are using a different base for their dialogs.
+
+
+---
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000083124-Intention-fails-to-change-code-in-injected-language-snippets?page=1#community_comment_115000115064
+
+> I found that you can mix both text and Psi based replacements as long as you commit changes between the two types of changes. If you don't you will get exceptions with helpful messages to guide you to the right API usage. :D
+
+Good example in com.intellij.xml.util.CollapseTagIntention
+```
+final int offset = child.getTextRange().getStartOffset();
+    VirtualFile file = tag.getContainingFile().getVirtualFile();
+    final Document document = FileDocumentManager.getInstance().getDocument(file);
+
+    new WriteCommandAction(project) {
+      @Override
+      protected void run(@NotNull final Result result) throws Throwable {
+        assert document != null;
+        document.replaceString(offset, tag.getTextRange().getEndOffset(), "/>");
+        PsiDocumentManager.getInstance(project).commitDocument(document);
+        CodeStyleManager.getInstance(project).reformat(tag);
+      }
+    }.execute();
+
+```
 
 
 Completion Provider
@@ -257,6 +291,10 @@ formatter modifies only the characters between blocks, and the tree of blocks mu
 
 Nice example for code-style settings
 /Users/brandl/projects/jb/intellij-community/json/src/com/intellij/json/formatter/JsonCodeStyleSettings.java
+
+Nice SpacingBuilder examples
+* `com.jetbrains.python.formatter.PythonFormattingModelBuilder#createSpacingBuilder`
+* `com.intellij.json.formatter.JsonFormattingBuilderModel.createSpacingBuilder`
 
 Misc
 =====

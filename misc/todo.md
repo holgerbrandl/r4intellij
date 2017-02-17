@@ -428,8 +428,11 @@ Markdown impro wishlist
 * synced scrolling
 * synced caret http://codepen.io/ArtemGordinsky/pen/GnLBq
 
+* make sure that https://youtrack.jetbrains.com/issue/RUBY-19204 is being fixed or fix it
+
 * aligned cursor with preview
 * highlight search results in preview
+    * http://stackoverflow.com/questions/19418626/javafx-search-and-highlight-text-add-search-bar-for-loaded-web-page
 * search in preview
 * intention to unify header styles
 

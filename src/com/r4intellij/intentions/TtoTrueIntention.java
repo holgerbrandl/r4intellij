@@ -50,6 +50,9 @@ public class TtoTrueIntention extends AbstractRIntention {
             editor.getCaretModel().moveToOffset(replacement.getTextOffset() + 5);
         }
 
+        // not needed here but seems good idea for more complex replacements
+//        CodeStyleManager.getInstance(project).reformat(tag);
+
 //        PsiElement element = file.findElementAt(position);
     }
 
