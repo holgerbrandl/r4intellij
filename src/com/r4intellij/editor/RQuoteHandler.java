@@ -1,4 +1,4 @@
-package com.r4intellij.completion;
+package com.r4intellij.editor;
 
 import com.intellij.codeInsight.editorActions.SimpleTokenSetQuoteHandler;
 import com.intellij.openapi.editor.Document;

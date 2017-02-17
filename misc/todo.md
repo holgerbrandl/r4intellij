@@ -33,6 +33,10 @@ http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_suppo
 
 
 * fix gradle build to include resource files in zip (see https://github.com/JetBrains/gradle-intellij-plugin/issues/180#issuecomment-280377767) 
+* improve test coverage, see http://www.jetbrains.org/intellij/sdk/docs/tutorials/writing_tests_for_plugins/reference_test.html
+* [parameter info](https://intellij-support.jetbrains.com/hc/en-us/community/posts/206791995-Parameter-Info)
+
+
 
 Intentions & inspections
 ------------------------
@@ -80,7 +84,9 @@ if(a=(function(){T})()){ print("foo")}
 
 * create unresolved function quickfix 
 
-* create missing function intention (by considering   `codeInsight.unresolvedReferenceQuickFixProvider implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"`)
+* create missing function intention (by considering   
+    * see `codeInsight.unresolvedReferenceQuickFixProvider implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"`)
+    * use: `QuickFixFactory.getInstance().createAddMethodFix() ` (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/206142769-Triggering-Create-Method-intention )
 ```r
 result = myfancyfun(sdf)  ### show myfancyfun in RED
 
@@ -235,6 +241,8 @@ iris$f<caret>
 ```
 
 * method names after <package>:: 
+    * use dot-autocompletion https://intellij-support.jetbrains.com/hc/en-us/community/posts/206139359-Autopopup-code-completion-in-custom-language
+    
 * after function name completion, cursor should end up between brackets
 
 * show library import suggestions also for infix operators (like %<>% --> magrittr) 

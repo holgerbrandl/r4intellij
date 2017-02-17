@@ -28,6 +28,13 @@ What does the user expect when search for usage?
 Should the plugin provide _strict_ or _fuzzy_ usage search? This could be done by providing different modes in `com.r4intellij.psi.references.RFindUsagesProvider` 
 
 
+UI
+==
+
+Consider kotlin DSL for ui aspects, see
+* https://github.com/JetBrains/intellij-community/blob/master/platform/platform-impl/src/com/intellij/ui/layout/readme.md
+* http://www.jetbrains.org/intellij/sdk/docs/tutorials/kotlin.html
+
 API Doc Comments
 ================
 * visitor pattern pretty powerful allows for type specific visiting. see com.r4intellij.psi.api.RVisitor
@@ -218,7 +225,7 @@ Intentions vs. Inspections
 * consider to use `com.intellij.codeInsight.intention.LowPriorityAction` 
 
 
-
+write-context: best overview: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000083124-Intention-fails-to-change-code-in-injected-language-snippets?page=1
 
  
 good docs http://www.jetbrains.org/intellij/sdk/docs/tutorials/code_intentions.html

@@ -108,7 +108,7 @@
         <colorSettingsPage implementation="com.r4intellij.highlighting.RColorSettingsPage"/>
         <lang.formatter language="R" implementationClass="com.r4intellij.editor.formatting.RFormattingModelBuilder"/>
         <lang.braceMatcher language="R" implementationClass="com.r4intellij.highlighting.RBraceMatcher"/>
-        <quoteHandler className="com.r4intellij.completion.RQuoteHandler" fileType="R"/>
+        <quoteHandler className="com.r4intellij.editor.RQuoteHandler" fileType="R"/>
 
 
         <!-- Codeinsight -->
