@@ -16,12 +16,10 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.r4intellij.RLanguage;
-import com.r4intellij.parsing.RElementTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.json.JsonElementTypes.*;
-import static com.r4intellij.lexer.RTokenTypes.OPERATORS;
+import static com.r4intellij.parsing.RElementTypes.*;
 
 /**
  * This code is based on code taken from the bash plugin which took it from the Groovy plugin. :-)
@@ -49,12 +47,15 @@ public class RFormattingModelBuilder implements FormattingModelBuilder {
         // see com.intellij.formatting.FormattingModel
         // Typically, a plugin does not need to provide a complete FormattingModel implementation
 //        Indent indent = Indent.getAbsoluteNoneIndent();
+//        Indent indent = Indent.getNoneIndent();
         Indent indent = Indent.getNoneIndent();
-        Wrap wrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, false);
+//        Wrap wrap = Wrap.createWrap(WrapType.CHOP_DOWN_IF_LONG, false);
+        Wrap wrap = null;
 //        Alignment alignment = Alignment.createAlignment();
         Alignment alignment = null;
 
         SpacingBuilder spacingBuilder = createSpacingBuilder(settings);
+
         return FormattingModelProvider.createFormattingModelForPsiFile(containingFile,
                 new RFormatterBlock(astNode, alignment, indent, wrap, settings, spacingBuilder), settings);
     }
@@ -69,27 +70,34 @@ public class RFormattingModelBuilder implements FormattingModelBuilder {
         final int spacesAfterColon = rStyleSettings.SPACE_AFTER_COLON ? 1 : 0;
 
         return new SpacingBuilder(settings, RLanguage.getInstance())
-                .between(RElementTypes.R_FUNCTION_EXPRESSION, RElementTypes.R_FUNCTION_EXPRESSION).blankLines(commonSettings.BLANK_LINES_AROUND_METHOD)
-                .between(RElementTypes.R_FUNCTION_EXPRESSION, RElementTypes.R_FUNCTION_EXPRESSION).blankLines(commonSettings.BLANK_LINES_AROUND_METHOD)
+//                .between(R_FUNCTION_EXPRESSION, R_FUNCTION_EXPRESSION).
+//                        blankLines(commonSettings.BLANK_LINES_AROUND_METHOD)
+
 //                .after(FUNCTION_DECLARATION).blankLines(commonSettings.BLANK_LINES_AROUND_METHOD)
-                .after(RElementTypes.R_FUNCTION_EXPRESSION).blankLines(commonSettings.BLANK_LINES_AROUND_METHOD)
+//                .after(R_FUNCTION_EXPRESSION).blankLines(commonSettings.BLANK_LINES_AROUND_METHOD)
 
 //                .between(RElementTypes.R_OPERATOR, RElementTypes.R_EXPRESSION).spaces(1)
-                .between(RElementTypes.R_OPERATOR_EXPRESSION, RElementTypes.R_OPERATOR).spaces(1)
-                .between(RElementTypes.R_OPERATOR_EXPRESSION, RElementTypes.R_OPERATOR).spaces(1)
-                .between(RElementTypes.R_EXPRESSION, RElementTypes.R_EXPRESSION).spaces(1)
-                .between(RElementTypes.R_EXPRESSION, RElementTypes.R_OPERATOR).spaces(1)
-                .between(RElementTypes.R_NUMERIC_LITERAL_EXPRESSION, RElementTypes.R_OPERATOR).spaces(2)
+//                .between(R_EXPRESSION, ASSIGNMENTS).spaces(1)
+//                .between(ASSIGNMENTS, R_EXPRESSION).spaces(1)
+//                .between(R_OPERATOR_EXPRESSION, R_OPERATOR).spaces(1)
+//                .between(R_OPERATOR_EXPRESSION, R_OPERATOR).spaces(1)
+//                .between(R_EXPRESSION, R_EXPRESSION).spaces(1)
+//                .between(R_EXPRESSION, R_OPERATOR).spaces(1)
+//                .between(R_NUMERIC_LITERAL_EXPRESSION, R_OPERATOR).spaces()
 //                .around(ASSIGNMENTS)
-                .around(OPERATORS).spaces(1)
+//                .around(ASSIGNMENTS).spaces(1)
+                .around(R_OPERATOR).spaces(1)
+//                .around(OPERATORS).spaces(10)
 
-
-//                .before(COLON).spacing(spacesBeforeColon, spacesBeforeColon, 0, false, 0)
-//                .after(COLON).spacing(spacesAfterColon, spacesAfterColon, 0, false, 0)
-                .withinPair(L_BRACKET, R_BRACKET).spaceIf(commonSettings.SPACE_WITHIN_BRACKETS, true)
-                .withinPair(L_CURLY, R_CURLY).spaceIf(commonSettings.SPACE_WITHIN_BRACES, true)
-                .before(COMMA).spacing(spacesBeforeComma, spacesBeforeComma, 0, false, 0)
-                .after(COMMA).spaceIf(commonSettings.SPACE_AFTER_COMMA);
+                .before(R_LBRACE).spaces(1)
+//                .around(TokenSet.create(R_LBRACE, R_RBRACE, R_LPAR, R_RPAR, R_LBRACKET, R_RBRACKET)).spaces(0)
+//                .around(R_LPAR).spaces(0)
+////                .after(COLON).spacing(spacesAfterColon, spacesAfterColon, 0, false, 0)
+//                .withinPair(R_LBRACE, R_RBRACE).spaceIf(commonSettings.SPACE_WITHIN_BRACKETS, true)
+//                .withinPair(L_CURLY, R_CURLY).spaceIf(commonSettings.SPACE_WITHIN_BRACES, true)
+//                .before(COMMA).spacing(spacesBeforeComma, spacesBeforeComma, 0, false, 0)
+                .after(R_COMMA).spaceIf(commonSettings.SPACE_AFTER_COMMA)
+                ;
     }
 
 

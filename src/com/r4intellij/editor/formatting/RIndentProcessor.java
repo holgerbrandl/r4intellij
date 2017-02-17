@@ -37,14 +37,14 @@ public abstract class RIndentProcessor implements RElementTypes {
      *
      * @param parent        parent block
      * @param child         child node
-     * @param prevChildNode previous child node
      * @return indent
      */
     @NotNull
-    public static Indent getChildIndent(@NotNull RFormatterBlock parent, @Nullable final ASTNode prevChildNode, @NotNull final ASTNode child) {
+    public static Indent getChildIndent(@NotNull RFormatterBlock parent, @NotNull final ASTNode child) {
         ASTNode astParent = parent.getNode();
         final PsiElement psiParent = astParent.getPsi();
 
+        ASTNode prevChildNode = child.getTreePrev();
         // For R file
         if (psiParent instanceof RPsiElement || psiParent instanceof RFile) {
             return Indent.getNoneIndent();

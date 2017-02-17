@@ -108,7 +108,7 @@ public class RLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetting
     public CommonCodeStyleSettings getDefaultCommonSettings() {
         CommonCodeStyleSettings commonSettings = new CommonCodeStyleSettings(RLanguage.getInstance());
         CommonCodeStyleSettings.IndentOptions indentOptions = commonSettings.initIndentOptions();
-        indentOptions.INDENT_SIZE = 2;
+//        indentOptions.INDENT_SIZE = 2;
         // strip all blank lines by default
         commonSettings.KEEP_BLANK_LINES_IN_CODE = 0;
         return commonSettings;

@@ -17,6 +17,8 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.ILazyParseableElementType;
+import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.containers.ContainerUtil;
 import com.r4intellij.RLanguage;
 import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.RFile;
@@ -25,6 +27,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.intellij.json.psi.JsonPsiUtil.hasElementType;
+import static com.intellij.psi.formatter.FormatterUtil.isWhitespaceOrEmpty;
+import static com.r4intellij.parsing.RElementTypes.R_LBRACE;
+import static com.r4intellij.parsing.RElementTypes.R_RBRACE;
+
 /**
  * Block implementation for the R formatter.
  * <p/>
@@ -32,7 +39,7 @@ import java.util.List;
  *
  * @author ilyas, jansorg, holgerbrandl
  */
-public class RFormatterBlock implements Block {
+public class RFormatterBlock implements ASTBlock {
 
     final protected ASTNode myNode;
     final protected Alignment myAlignment;
@@ -53,34 +60,53 @@ public class RFormatterBlock implements Block {
         myWrap = wrap;
         mySettings = settings;
 
+        // TODO fine tune rules depending on psi elements
+        // alternatively this could be done in com.r4intellij.editor.formatting.RBlockGenerator.generateSubBlocks(); see for example com.intellij.json.formatter.JsonBlock#makeSubBlock
+
+//        myPsiElement = node.getPsi();
+//
+//        if (myPsiElement instanceof JsonObject) {
+//            myChildWrap = Wrap.createWrap(getCustomSettings().OBJECT_WRAPPING, true);
+//        }
+
         mySpacingBuilder = spacingBuilder;
-    }
-
-
-    @NotNull
-    public ASTNode getNode() {
-        return myNode;
-    }
-
-
-    @NotNull
-    public CodeStyleSettings getSettings() {
-        return mySettings;
-    }
-
-
-    @NotNull
-    public TextRange getTextRange() {
-        return myNode.getTextRange();
     }
 
 
     @NotNull
     public List<Block> getSubBlocks() {
         if (mySubBlocks == null) {
-            mySubBlocks = RBlockGenerator.generateSubBlocks(myNode, myAlignment, myWrap, mySettings, this);
+            mySubBlocks = ContainerUtil.mapNotNull(myNode.getChildren(null), node -> {
+                if (isWhitespaceOrEmpty(node)) {
+                    return null;
+                }
+                return makeSubBlock(node);
+            });
         }
         return mySubBlocks;
+    }
+
+
+    @NotNull
+    public RFormatterBlock makeSubBlock(ASTNode childNode) {
+        Indent indent = Indent.getNoneIndent();
+        Alignment alignment = null;
+        Wrap wrap = null;
+
+
+        if (!hasElementType(childNode, TokenSet.create(R_LBRACE, R_RBRACE))) {
+            wrap = myWrap;
+//            indent = Indent.getNormalIndent(true);
+            indent = Indent.getNormalIndent();
+        }
+//        if (hasElementType(childNode, TokenSet.create(R_ASSIGNMENT_STATEMENT, R_CALL_EXPRESSION))) {
+//            wrap = myWrap;
+////            indent = Indent.getNormalIndent(true);
+//            indent = Indent.getAbsoluteLabelIndent();
+//        }
+//        Indent indent = RIndentProcessor.getChildIndent(this, childNode);
+
+        return new RFormatterBlock(childNode, alignment, indent, wrap, mySettings, mySpacingBuilder);
     }
 
 
@@ -102,31 +128,21 @@ public class RFormatterBlock implements Block {
     }
 
 
-    /**
-     * Returns spacing between neighbour elements
-     *
-     * @param child1 left element
-     * @param child2 right element
-     * @return
-     */
     @Nullable
-    public Spacing getSpacing(Block child1, Block child2) {
-        if ((child1 instanceof RFormatterBlock) && (child2 instanceof RFormatterBlock)) {
-            // todo reenable
+    public Spacing getSpacing(Block child1, @NotNull Block child2) {
+//        if ((child1 instanceof RFormatterBlock) && (child2 instanceof RFormatterBlock)) {
+        // todo reenable
 //            Spacing spacing = RSpacingProcessor.getSpacing(((RFormatterBlock) child1), ((RFormatterBlock) child2), mySettings);
 //            return spacing != null ? spacing : RSpacingProcessorBasic.getSpacing(((RFormatterBlock) child1), ((RFormatterBlock) child2), mySettings);
-        }
+//        }
         return mySpacingBuilder.getSpacing(this, child1, child2);
+//        return new SpacingBuilder(mySettings, RLanguage.getInstance()).around(OPERATORS).spaces(1, false).getSpacing(this, child1, child2);
     }
 
 
+    // see http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/code_formatting.html
     @NotNull
     public ChildAttributes getChildAttributes(final int newChildIndex) {
-        return getAttributesByParent();
-    }
-
-
-    private ChildAttributes getAttributesByParent() {
         ASTNode astNode = myNode;
         final PsiElement psiParent = astNode.getPsi();
         if (psiParent instanceof RFile) {
@@ -134,10 +150,10 @@ public class RFormatterBlock implements Block {
         }
 
         if (RElementTypes.R_EXPRESSION == astNode.getElementType()) {
-            return new ChildAttributes(Indent.getNormalIndent(), null);
+            return new ChildAttributes(Indent.getContinuationIndent(), null);
         }
 
-        return new ChildAttributes(Indent.getNoneIndent(), null);
+        return new ChildAttributes(Indent.getContinuationIndent(), null);
     }
 
 
@@ -169,11 +185,31 @@ public class RFormatterBlock implements Block {
     }
 
 
+    @NotNull
+    public ASTNode getNode() {
+        return myNode;
+    }
+
+
+    @NotNull
+    public TextRange getTextRange() {
+        return myNode.getTextRange();
+    }
+
+
+    @NotNull
+    public CodeStyleSettings getSettings() {
+        return mySettings;
+    }
+
+
+    @NotNull
     private RCodeStyleSettings getCustomSettings() {
         return mySettings.getCustomSettings(RCodeStyleSettings.class);
     }
 
 
+    @NotNull
     private CommonCodeStyleSettings getCommonSettings() {
         return mySettings.getCommonSettings(RLanguage.getInstance());
     }
