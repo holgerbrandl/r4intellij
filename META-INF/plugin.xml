@@ -112,6 +112,7 @@
 
 
         <!-- Codeinsight -->
+        <!--todo finalize impl for release of disable -->
         <psi.referenceContributor
                 implementation="com.r4intellij.psi.references.externalres.ResourceScriptReferenceContributor"/>
 
