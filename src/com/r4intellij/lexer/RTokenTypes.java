@@ -8,6 +8,7 @@ import com.r4intellij.psi.RElementType;
 
 //deprecated
 // DO NOT USE
+@Deprecated
 public class RTokenTypes {
   /*
    * There are five types of constants: integer, logical, numeric, complex and string.

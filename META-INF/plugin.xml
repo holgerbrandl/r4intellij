@@ -115,6 +115,7 @@
         <!--todo finalize impl for release of disable -->
         <psi.referenceContributor
                 implementation="com.r4intellij.psi.references.externalres.ResourceScriptReferenceContributor"/>
+        <!--<psi.referenceContributor implementation="com.r4intellij.psi.references.externalres.ResourceFileReferenceProvider"/>-->
 
         <lang.parserDefinition language="R" implementationClass="com.r4intellij.parsing.RParserDefinition"/>
 
@@ -122,7 +123,6 @@
         <stubElementTypeHolder class="com.r4intellij.parsing.RElementTypes"/>
 
         <lang.commenter language="R" implementationClass="com.r4intellij.RCommenter"/>
-        <psi.referenceContributor implementation="com.r4intellij.editor.ResourceFileReferenceProvider"/>
 
         <lang.elementManipulator forClass="com.r4intellij.psi.api.RStringLiteralExpression"
                                  implementationClass="com.r4intellij.psi.RStringManipulator"/>

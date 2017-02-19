@@ -334,6 +334,8 @@ Nice SpacingBuilder examples
 * `com.jetbrains.python.formatter.PythonFormattingModelBuilder#createSpacingBuilder`
 * `com.intellij.json.formatter.JsonFormattingBuilderModel.createSpacingBuilder`
 
+JB formatter impl often have very psi-aware spacing and indent processors. See `org.jetbrains.plugins.groovy.formatter.processors.GroovySpacingProcessor`. conclusion: There's no easy solution to formatting
+
 Misc
 =====
 

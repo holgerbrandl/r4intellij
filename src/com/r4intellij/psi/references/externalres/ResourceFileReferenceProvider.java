@@ -1,4 +1,4 @@
-package com.r4intellij.editor;
+package com.r4intellij.psi.references.externalres;
 
 import com.intellij.openapi.paths.PathReferenceManager;
 import com.intellij.psi.*;
@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.patterns.PlatformPatterns.psiFile;
 
+@Deprecated // replaced with ResourceScriptReferenceContributor
 public class ResourceFileReferenceProvider extends PsiReferenceContributor {
     @Override
     public void registerReferenceProviders(@NotNull PsiReferenceRegistrar registrar) {
