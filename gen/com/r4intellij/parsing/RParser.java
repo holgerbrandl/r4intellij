@@ -63,8 +63,8 @@ public class RParser implements PsiParser, LightPsiParser {
       R_FUNCTION_EXPRESSION, R_HELP_EXPRESSION, R_IF_STATEMENT, R_LOGICAL_LITERAL_EXPRESSION,
       R_MEMBER_EXPRESSION, R_NA_LITERAL_EXPRESSION, R_NEXT_STATEMENT, R_NULL_LITERAL_EXPRESSION,
       R_NUMERIC_LITERAL_EXPRESSION, R_OPERATOR_EXPRESSION, R_PARENTHESIZED_EXPRESSION, R_REFERENCE_EXPRESSION,
-      R_REPEAT_STATEMENT, R_SLICE_EXPRESSION, R_STRING_LITERAL_EXPRESSION, R_SUBSCRIPTION_EXPRESSION,
-      R_TILDE_EXPRESSION, R_UNARY_TILDE_EXPRESSION, R_WHILE_STATEMENT),
+      R_REPEAT_STATEMENT, R_STRING_LITERAL_EXPRESSION, R_SUBSCRIPTION_EXPRESSION, R_TILDE_EXPRESSION,
+      R_UNARY_TILDE_EXPRESSION, R_WHILE_STATEMENT),
   };
 
   /* ********************************************************** */
@@ -293,6 +293,18 @@ public class RParser implements PsiParser, LightPsiParser {
       c = current_position_(b);
     }
     return true;
+  }
+
+  /* ********************************************************** */
+  // ':'
+  public static boolean colon_operator(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "colon_operator")) return false;
+    if (!nextTokenIs(b, R_COLON)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, R_COLON);
+    exit_section_(b, m, R_OPERATOR, r);
+    return r;
   }
 
   /* ********************************************************** */
@@ -712,18 +724,6 @@ public class RParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ':'
-  public static boolean slice_operator(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "slice_operator")) return false;
-    if (!nextTokenIs(b, R_COLON)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, R_COLON);
-    exit_section_(b, m, R_OPERATOR, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // INF | NAN
   static boolean special_constant(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "special_constant")) return false;
@@ -858,8 +858,8 @@ public class RParser implements PsiParser, LightPsiParser {
   // 17: BINARY(compare_expression)
   // 18: BINARY(plusminus_expression)
   // 19: BINARY(muldiv_expression)
-  // 20: BINARY(user_defined_expression)
-  // 21: BINARY(slice_expression)
+  // 20: BINARY(infix_expression)
+  // 21: BINARY(colon_expression)
   // 22: PREFIX(unary_plusminus_expression)
   // 23: BINARY(exp_expression)
   // 24: POSTFIX(subscription_expression)
@@ -940,13 +940,13 @@ public class RParser implements PsiParser, LightPsiParser {
         r = expression(b, l, 19);
         exit_section_(b, l, m, R_OPERATOR_EXPRESSION, r, true, null);
       }
-      else if (g < 20 && user_defined_expression_0(b, l + 1)) {
+      else if (g < 20 && infix_expression_0(b, l + 1)) {
         r = expression(b, l, 20);
         exit_section_(b, l, m, R_OPERATOR_EXPRESSION, r, true, null);
       }
-      else if (g < 21 && slice_expression_0(b, l + 1)) {
+      else if (g < 21 && colon_expression_0(b, l + 1)) {
         r = expression(b, l, 21);
-        exit_section_(b, l, m, R_SLICE_EXPRESSION, r, true, null);
+        exit_section_(b, l, m, R_OPERATOR_EXPRESSION, r, true, null);
       }
       else if (g < 23 && exp_expression_0(b, l + 1)) {
         r = expression(b, l, 23);
@@ -1825,46 +1825,46 @@ public class RParser implements PsiParser, LightPsiParser {
   }
 
   // infix_operator nl*
-  private static boolean user_defined_expression_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "user_defined_expression_0")) return false;
+  private static boolean infix_expression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "infix_expression_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
     r = infix_operator(b, l + 1);
-    r = r && user_defined_expression_0_1(b, l + 1);
+    r = r && infix_expression_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // nl*
-  private static boolean user_defined_expression_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "user_defined_expression_0_1")) return false;
+  private static boolean infix_expression_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "infix_expression_0_1")) return false;
     int c = current_position_(b);
     while (true) {
       if (!consumeTokenSmart(b, R_NL)) break;
-      if (!empty_element_parsed_guard_(b, "user_defined_expression_0_1", c)) break;
+      if (!empty_element_parsed_guard_(b, "infix_expression_0_1", c)) break;
       c = current_position_(b);
     }
     return true;
   }
 
-  // slice_operator nl*
-  private static boolean slice_expression_0(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "slice_expression_0")) return false;
+  // colon_operator nl*
+  private static boolean colon_expression_0(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "colon_expression_0")) return false;
     boolean r;
     Marker m = enter_section_(b);
-    r = slice_operator(b, l + 1);
-    r = r && slice_expression_0_1(b, l + 1);
+    r = colon_operator(b, l + 1);
+    r = r && colon_expression_0_1(b, l + 1);
     exit_section_(b, m, null, r);
     return r;
   }
 
   // nl*
-  private static boolean slice_expression_0_1(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "slice_expression_0_1")) return false;
+  private static boolean colon_expression_0_1(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "colon_expression_0_1")) return false;
     int c = current_position_(b);
     while (true) {
       if (!consumeTokenSmart(b, R_NL)) break;
-      if (!empty_element_parsed_guard_(b, "slice_expression_0_1", c)) break;
+      if (!empty_element_parsed_guard_(b, "colon_expression_0_1", c)) break;
       c = current_position_(b);
     }
     return true;

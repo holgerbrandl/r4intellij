@@ -87,7 +87,7 @@ expression ::=
   block_expression | help_expression | parenthesized_expression |
   function_expression | left_assign_expression | eq_assign_expression | right_assign_expression |
   tilde_group | or_expression | and_expression | unary_not_expression | compare_expression | plusminus_expression |
-  muldiv_expression | user_defined_expression | slice_expression | unary_plusminus_expression | exp_expression | subscription_expression |
+  muldiv_expression | infix_expression | colon_expression | unary_plusminus_expression | exp_expression | subscription_expression |
   call_expression | member_expression | at_expression | namespace_access_expression | primitive_expression
 
 //operators
@@ -100,6 +100,7 @@ assignment_statement ::= {
 operator ::= {
   methods=[getName getReference]
 }
+
 left_assign_operator ::= '<-' | '<<-'  { elementType=operator }
 right_assign_operator ::= '->' | '->>' { elementType=operator }
 eq_assign_operator ::= '=' { elementType=operator }
@@ -109,34 +110,45 @@ and_operator ::= '&' | '&&' { elementType=operator }
 compare_operator ::= '>' | '>=' | '<' | '<=' | '==' | '!=' { elementType=operator }
 plusminus_operator ::= '+' | '-' { elementType=operator }
 muldiv_operator ::= '*' | '/' { elementType=operator }
-slice_operator ::= ':' { elementType=operator }
+colon_operator ::= ':' { elementType=operator } // used for sequences and interactions
 exp_operator ::= '^' { elementType=operator }
 infix_operator ::= INFIX_OP { elementType=operator }
 not_operator ::= '!' { elementType=operator }
 
-operator_expression ::= expression
+
+// assignment expressions
 left_assign_expression ::= expression left_assign_operator nl* expression { rightAssociative=true; elementType=assignment_statement }
 eq_assign_expression ::= expression eq_assign_operator nl* (expression | external_empty_expression) { rightAssociative=true; elementType=assignment_statement }
 right_assign_expression ::= expression right_assign_operator nl* expression { elementType=assignment_statement }
-private tilde_group ::= unary_tilde_expression | tilde_expression
+
+private tilde_group ::= unary_tilde_expression | tilde_expression // todo why do we this group?
 unary_tilde_expression ::= tilde_operator nl* expression
 tilde_expression ::= expression tilde_operator nl* expression
+
+
+operator_expression ::= expression { methods=[ getOperator isBinary getLeftExpr getRightExpr] }
+
+// binary operator expressions
 or_expression ::= expression nl* or_operator nl* expression { elementType=operator_expression }
 and_expression ::= expression nl* and_operator nl* expression { elementType=operator_expression }
-unary_not_expression ::= not_operator nl* expression  { elementType=operator_expression }
 compare_expression ::= expression compare_operator nl* expression { elementType=operator_expression }
 plusminus_expression ::= expression plusminus_operator nl* expression { elementType=operator_expression }
 muldiv_expression ::= expression muldiv_operator nl* expression { elementType=operator_expression }
-user_defined_expression ::= expression infix_operator nl* expression { elementType=operator_expression }
-slice_expression ::= expression slice_operator nl* expression
-unary_plusminus_expression ::= plusminus_operator nl* expression { elementType=operator_expression }
 exp_expression ::= expression exp_operator nl* expression { elementType=operator_expression }
+colon_expression ::= expression colon_operator nl* expression { elementType=operator_expression }
+infix_expression ::= expression infix_operator nl* expression { elementType=operator_expression }
+
+// unary operator expressions
+unary_not_expression ::= not_operator nl* expression  { elementType=operator_expression }
+unary_plusminus_expression ::= plusminus_operator nl* expression { elementType=operator_expression }
+
 
 private member_tag ::= identifier | string | '...'
 member_expression ::= expression '$' nl* member_tag {  methods = [ getTag ]
 }
 
 at_expression ::= expression '@' nl* member_tag {
+
   methods = [ getTag ]
 }
 

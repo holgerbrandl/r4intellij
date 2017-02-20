@@ -27,8 +27,10 @@ import java.util.stream.Collectors;
 public class RPsiImplUtil {
     public static final TokenSet LEFT_ASSIGNMENTS = TokenSet.create(
             RElementTypes.R_LEFT_ASSIGN, RElementTypes.R_LEFT_COMPLEX_ASSIGN);
+
     public static final TokenSet RIGHT_ASSIGNMENTS = TokenSet.create(
             RElementTypes.R_RIGHT_ASSIGN, RElementTypes.R_RIGHT_COMPLEX_ASSIGN);
+
     public static final TokenSet RESERVED_WORDS = TokenSet.create(
             RElementTypes.R_IF, RElementTypes.R_ELSE, RElementTypes.R_REPEAT,
             RElementTypes.R_WHILE, RElementTypes.R_FUNCTION, RElementTypes.R_FOR,
@@ -258,8 +260,6 @@ public class RPsiImplUtil {
     }
 
 
-
-
     @NotNull
     public static String trimCommentPrefix(String text) {
         String string = text;
@@ -288,6 +288,40 @@ public class RPsiImplUtil {
             return text.substring(namespaceIndex + 2);
         }
         return text;
+    }
+
+
+    // operator expressions
+
+
+    public static boolean isBinary(ROperatorExpression expr) {
+        return expr.getChildren().length == 3;
+    }
+
+
+    public static ROperator getOperator(ROperatorExpression expr) {
+        return (ROperator) expr.getChildren()[1];
+    }
+
+
+    public static RExpression getLeftExpr(ROperatorExpression expr) {
+        // not correct because of whitespace psi elements
+
+//        if (expr.getChildren().length == 2) {
+//            throw new AssertionError("unary operator expression has no left side argument");
+//        }
+        //redo with
+//        Collection<RPsiElement> psiChildren = PsiTreeUtil.findChildrenOfAnyType(expr, RExpression.class, ROperator.class);
+
+        return (RExpression) expr.getChildren()[0];
+    }
+
+
+    public static RExpression getRightExpr(ROperatorExpression expr) {
+//        Collection<RPsiElement> psiChildren = PsiTreeUtil.findChildrenOfAnyType(expr, RExpression.class, ROperator.class);
+
+        PsiElement[] children = expr.getChildren();
+        return (RExpression) children[children.length - 1];
     }
 
 

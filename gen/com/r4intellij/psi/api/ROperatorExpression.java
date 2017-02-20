@@ -7,4 +7,12 @@ import com.intellij.psi.PsiElement;
 
 public interface ROperatorExpression extends RExpression {
 
+  ROperator getOperator();
+
+  boolean isBinary();
+
+  RExpression getLeftExpr();
+
+  RExpression getRightExpr();
+
 }

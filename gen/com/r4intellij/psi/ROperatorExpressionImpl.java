@@ -25,4 +25,20 @@ public class ROperatorExpressionImpl extends RExpressionImpl implements ROperato
     else super.accept(visitor);
   }
 
+  public ROperator getOperator() {
+    return RPsiImplUtil.getOperator(this);
+  }
+
+  public boolean isBinary() {
+    return RPsiImplUtil.isBinary(this);
+  }
+
+  public RExpression getLeftExpr() {
+    return RPsiImplUtil.getLeftExpr(this);
+  }
+
+  public RExpression getRightExpr() {
+    return RPsiImplUtil.getRightExpr(this);
+  }
+
 }

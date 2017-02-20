@@ -106,10 +106,6 @@ public class RVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
-  public void visitSliceExpression(@NotNull RSliceExpression o) {
-    visitExpression(o);
-  }
-
   public void visitStringLiteralExpression(@NotNull RStringLiteralExpression o) {
     visitExpression(o);
   }

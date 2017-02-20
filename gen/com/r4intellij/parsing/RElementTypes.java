@@ -35,7 +35,6 @@ public interface RElementTypes {
   IElementType R_PARENTHESIZED_EXPRESSION = new RElementType("R_PARENTHESIZED_EXPRESSION");
   IElementType R_REFERENCE_EXPRESSION = new RElementType("R_REFERENCE_EXPRESSION");
   IElementType R_REPEAT_STATEMENT = new RElementType("R_REPEAT_STATEMENT");
-  IElementType R_SLICE_EXPRESSION = new RElementType("R_SLICE_EXPRESSION");
   IElementType R_STRING_LITERAL_EXPRESSION = new RElementType("R_STRING_LITERAL_EXPRESSION");
   IElementType R_SUBSCRIPTION_EXPRESSION = new RElementType("R_SUBSCRIPTION_EXPRESSION");
   IElementType R_TILDE_EXPRESSION = new RElementType("R_TILDE_EXPRESSION");
@@ -184,9 +183,6 @@ public interface RElementTypes {
       }
       else if (type == R_REPEAT_STATEMENT) {
         return new RRepeatStatementImpl(node);
-      }
-      else if (type == R_SLICE_EXPRESSION) {
-        return new RSliceExpressionImpl(node);
       }
       else if (type == R_STRING_LITERAL_EXPRESSION) {
         return new RStringLiteralExpressionImpl(node);
