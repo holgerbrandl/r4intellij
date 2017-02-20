@@ -19,7 +19,7 @@ if (TRUE) print(1)
     fun testLongPipeWrap() {
         checkFormatting("""
 foo = bar %>% mutate() %>% group_by() %>% filter() %>% head
-""", """"
+""", """
 foo = bar %>%
     mutate() %>%
     group_by() %>%
@@ -39,10 +39,10 @@ ggplot(iris) + geom_point() +ggtitle("iris plot")+ facet_grid(~Species) + scale_
 require(ggplot2)
 
 iris %>% ggplot() +
-            geom_point() +
-            ggtitle("iris plot") +
-            facet_grid(~ Species) +
-            scale_x_log10()
+    geom_point() +
+    ggtitle("iris plot") +
+    facet_grid(~ Species) +
+    scale_x_log10()
 """)
 
     }

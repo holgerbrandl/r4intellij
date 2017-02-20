@@ -33,6 +33,7 @@ abstract class RFormatterTestCase : LightCodeInsightFixtureTestCase() {
         commomSettings.CLASS_BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE
         commomSettings.METHOD_BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE
         commomSettings.BRACE_STYLE = CommonCodeStyleSettings.END_OF_LINE
+        commomSettings.initIndentOptions().INDENT_SIZE = 4
     }
 
     @Throws(Exception::class)
@@ -76,8 +77,8 @@ abstract class RFormatterTestCase : LightCodeInsightFixtureTestCase() {
     }
 
     protected fun checkFormatting(@Language("R") @NotNull fileText: String, @Language("R") @NotNull expected: String) {
-        myFixture.configureByText(RFileType.INSTANCE, fileText)
-        checkFormatting(expected)
+        myFixture.configureByText(RFileType.INSTANCE, fileText.trim())
+        checkFormatting(expected.trim())
     }
 
     //    fun doTest() {

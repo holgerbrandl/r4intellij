@@ -10,6 +10,8 @@ package com.r4intellij.editor.formatting;
 import com.intellij.formatting.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.patterns.PatternCondition;
+import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
@@ -18,19 +20,23 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.tree.ILazyParseableElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.r4intellij.RLanguage;
 import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.RFile;
+import com.r4intellij.psi.api.ROperator;
+import com.r4intellij.psi.api.ROperatorExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static com.intellij.json.JsonElementTypes.COMMA;
 import static com.intellij.json.psi.JsonPsiUtil.hasElementType;
+import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.intellij.psi.formatter.FormatterUtil.isWhitespaceOrEmpty;
-import static com.r4intellij.parsing.RElementTypes.R_LBRACE;
-import static com.r4intellij.parsing.RElementTypes.R_RBRACE;
+import static com.r4intellij.parsing.RElementTypes.*;
 
 /**
  * Block implementation for the R formatter.
@@ -59,16 +65,6 @@ public class RFormatterBlock implements ASTBlock {
         myIndent = indent;
         myWrap = wrap;
         mySettings = settings;
-
-        // TODO fine tune rules depending on psi elements
-        // alternatively this could be done in com.r4intellij.editor.formatting.RBlockGenerator.generateSubBlocks(); see for example com.intellij.json.formatter.JsonBlock#makeSubBlock
-
-//        myPsiElement = node.getPsi();
-//
-//        if (myPsiElement instanceof JsonObject) {
-//            myChildWrap = Wrap.createWrap(getCustomSettings().OBJECT_WRAPPING, true);
-//        }
-
         mySpacingBuilder = spacingBuilder;
     }
 
@@ -77,7 +73,7 @@ public class RFormatterBlock implements ASTBlock {
     public List<Block> getSubBlocks() {
         if (mySubBlocks == null) {
             mySubBlocks = ContainerUtil.mapNotNull(myNode.getChildren(null), node -> {
-                if (isWhitespaceOrEmpty(node)) {
+                if (isWhitespaceOrEmpty(node) || hasElementType(node, R_NL)) {
                     return null;
                 }
                 return makeSubBlock(node);
@@ -93,12 +89,22 @@ public class RFormatterBlock implements ASTBlock {
         Alignment alignment = null;
         Wrap wrap = null;
 
-
-        if (!hasElementType(childNode, TokenSet.create(R_LBRACE, R_RBRACE))) {
-            wrap = myWrap;
-//            indent = Indent.getNormalIndent(true);
-            indent = Indent.getNormalIndent();
+        if (hasElementType(childNode, COMMA)) {
+            wrap = Wrap.createWrap(WrapType.NONE, true);
         }
+
+        if (hasElementType(myNode, TokenSet.create(R_BLOCK_EXPRESSION)) &&
+                !hasElementType(childNode, TokenSet.create(R_LBRACE, R_RBRACE))) {
+
+            indent = Indent.getNormalIndent();
+
+        }
+//        else if (!hasElementType(childNode, TokenSet.create(R_BLOCK_EXPRESSION))) {
+//            wrap = myWrap;
+////            indent = Indent.getNormalIndent(true);
+////            indent = Indent.getNormalIndent();
+//            indent = Indent.getNoneIndent();
+//        }
 //        if (hasElementType(childNode, TokenSet.create(R_ASSIGNMENT_STATEMENT, R_CALL_EXPRESSION))) {
 //            wrap = myWrap;
 ////            indent = Indent.getNormalIndent(true);
@@ -106,7 +112,99 @@ public class RFormatterBlock implements ASTBlock {
 //        }
 //        Indent indent = RIndentProcessor.getChildIndent(this, childNode);
 
+        // note The indent specifies how the block is indented relative to its parent block.
+
+        // wrapping and indentation of pipes
+        PsiElement childPsi = childNode.getPsi();
+        if (isRightExprInOpChain(childPsi)) {
+            wrap = Wrap.createWrap(WrapType.ALWAYS, true);
+//                Wrap.createWrap(mySettings.METHOD_CALL_CHAIN_WRAP, false) :
+
+            // is first than indent(ROperatorExpression)childNode.getPsi())
+            ROperatorExpression parentOpExpr = (ROperatorExpression) childPsi.getParent();
+
+            PsiElementPattern.Capture<ROperatorExpression> chainOpCapture =
+                    buildOpExpCapture(parentOpExpr.getOperator());
+
+
+//            if (getSameOpChainRoot((ROperatorExpression) childPsi.getParent()) == childPsi.getParent()) {
+            // is last opexpr in chain with same operator
+//            if (chainOpCapture.accepts(parentOpExpr) && !psiElement().withChild(chainOpCapture).accepts(parentOpExpr)) {
+//            if (parentOpExpr.getOperator().getText().equals()) {
+            indent = Indent.getNormalIndent();
+//            }else{
+//                indent = Indent.getNormalIndent();
+//            }
+        } else {
+            wrap = Wrap.createWrap(WrapType.NONE, false);
+
+        }
+
         return new RFormatterBlock(childNode, alignment, indent, wrap, mySettings, mySpacingBuilder);
+    }
+
+
+    private final static PatternCondition<ROperatorExpression> IS_BINARY_OP = new PatternCondition<ROperatorExpression>("isBinary") {
+        @Override
+        public boolean accepts(@NotNull ROperatorExpression operatorExpression, ProcessingContext processingContext) {
+            return operatorExpression.isBinary();
+        }
+    };
+
+//    private final static PsiElementPattern.Capture<ROperatorExpression> BINOP_CAPTURE = psiElement(ROperatorExpression.class).with(IS_BINARY_OP);
+
+
+    public static PsiElementPattern.Capture<ROperatorExpression> buildOpExpCapture(ROperator rOperator) {
+        return psiElement(ROperatorExpression.class).
+                withChild(psiElement(ROperator.class).withText(rOperator.getText()));
+//                with(IS_BINARY_OP).
+    }
+
+
+    private static boolean isRightExprInOpChain(PsiElement blockPsi) {
+        if (blockPsi.getParent() == null || !(blockPsi.getParent() instanceof ROperatorExpression)) return false;
+
+        ROperatorExpression opExpr = (ROperatorExpression) blockPsi.getParent();
+
+        // is right expr
+        if (!opExpr.isBinary() || opExpr.getRightExpr() != blockPsi) return false;
+
+
+        ROperatorExpression chainRootExpr = getSameOpChainRoot(opExpr);
+
+
+        // is actual chain to avoid wrapping of simlple binary operator expressions
+        PsiElementPattern.Capture<ROperatorExpression> opCapture = buildOpExpCapture(chainRootExpr.getOperator());
+        // at least chain of 3
+        if (!opCapture.withChild(opCapture).accepts(chainRootExpr)) return false;
+
+        // is long enough to justify wrapping
+        if (chainRootExpr.getText().length() < 50) return false;
+
+
+        // later: ensure that current chaoinRoot is not RHS in named argument list  (like in mutate(foo, foo = str_detect(Species) %>% get_col %>% trim)
+
+        return true;
+    }
+
+
+    @NotNull
+    private static ROperatorExpression getSameOpChainRoot(@NotNull ROperatorExpression opExpr) {
+        while (true) {
+            PsiElement opParent = opExpr.getParent();
+
+            if (opParent == null || !(opParent instanceof ROperatorExpression)) return opExpr;
+
+            ROperatorExpression opExprParent = (ROperatorExpression) opParent;
+
+
+            if (opExprParent.getOperator().getText().equals(opExpr.getOperator().getText())) {
+                opExpr = opExprParent;
+                continue;
+            }
+
+            return opExpr;
+        }
     }
 
 
@@ -153,7 +251,7 @@ public class RFormatterBlock implements ASTBlock {
             return new ChildAttributes(Indent.getContinuationIndent(), null);
         }
 
-        return new ChildAttributes(Indent.getContinuationIndent(), null);
+        return new ChildAttributes(Indent.getNormalIndent(), null);
     }
 
 

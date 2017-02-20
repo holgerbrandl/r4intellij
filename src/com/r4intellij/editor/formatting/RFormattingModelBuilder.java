@@ -15,6 +15,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.psi.tree.TokenSet;
 import com.r4intellij.RLanguage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,11 +87,12 @@ public class RFormattingModelBuilder implements FormattingModelBuilder {
 //                .between(R_NUMERIC_LITERAL_EXPRESSION, R_OPERATOR).spaces()
 //                .around(ASSIGNMENTS)
 //                .around(ASSIGNMENTS).spaces(1)
+                .before(R_LBRACE).spaces(1) // if (%){
                 .around(R_OPERATOR).spaces(1)
 //                .around(OPERATORS).spaces(10)
 
-                .before(R_LBRACE).spaces(1)
-//                .around(TokenSet.create(R_LBRACE, R_RBRACE, R_LPAR, R_RPAR, R_LBRACKET, R_RBRACKET)).spaces(0)
+                .around(TokenSet.create(R_RBRACE, R_LPAR, R_RPAR, R_LBRACKET, R_RBRACKET)).spaces(0)
+
 //                .around(R_LPAR).spaces(0)
 ////                .after(COLON).spacing(spacesAfterColon, spacesAfterColon, 0, false, 0)
 //                .withinPair(R_LBRACE, R_RBRACE).spaceIf(commonSettings.SPACE_WITHIN_BRACKETS, true)

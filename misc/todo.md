@@ -4,12 +4,27 @@ R4Intellij Development Notes
 ## 0-day bugs
 
 * threading issues when doing skeletonization
+* code eval action does no work in injected language snippets
+* null assignments remove columns and should not be flagged as unused if the df is still used
+```r
+plasmidInfoValid = iris
+plasmidInfoValid$isDNA <- NULL
+write_delim(plasmidInfoValid)
+```
+
+* negative array access shows false-positive warning
+```r
+splitIndex = 1
+trainSplit <- iris[splitIndex,]
+testSplit <- iris[-splitIndex,]
+```
+
 
 ## Next Steps
 
 * process forum replies
 
-* fix basic formatting
+* **fix basic formatting**
 
 * fix resolver for unquoted variable names see [here](../misc/devel_notes.md)
 
@@ -18,6 +33,8 @@ R4Intellij Development Notes
 * implement pipe support
 
 * remove deprecated api usage
+
+* resolve all infix op and tag as unresolved
 
 
 ### v1.0
@@ -36,8 +53,8 @@ http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_suppo
 * improve test coverage, see http://www.jetbrains.org/intellij/sdk/docs/tutorials/writing_tests_for_plugins/reference_test.html
 * [parameter info](https://intellij-support.jetbrains.com/hc/en-us/community/posts/206791995-Parameter-Info)
 
-
-
+* better error recovery in parser (see https://github.com/JetBrains/Grammar-Kit#attributes-for-error-recovery-and-reporting)
+* more rigorous unit test for [operator presedence](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html)
 Intentions & inspections
 ------------------------
 
@@ -81,6 +98,9 @@ if(a=(function(){T})()){ print("foo")}
 ### dependency management
 
 
+* in addition to import also offer "use namespace call"
+
+![](.todo_images/d7165438.png)
 
 * create unresolved function quickfix 
 
@@ -133,6 +153,13 @@ distinct(x) %>% nrow
 # should become
 nrow(distinct(x))
 ```
+
+* warn by non function call use of `%>%`
+```
+1 %>% 1
+Error in function_list[[k]](value) : attempt to apply non-function
+```
+
 
 ### Misc
 
