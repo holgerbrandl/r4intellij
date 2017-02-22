@@ -33,6 +33,26 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
     }
 
 
+    public void testColumnDeleteByNullAssign() {
+        // this affects both resolvability of foo and the inspection\
+        // to detect that `foo` is of interest and not `foo$bar`
+        doExprTest("foo = data.frame() ; foo$bar <- NULL; head(foo)");
+    }
+
+
+    public void testFlagUnusedMemberAccess() {
+        // this affects both resolvability of foo and the inspection\
+        // to detect that `foo` is of interest and not `foo$bar`
+        doExprTest("foo = data.frame() ; " + warnUnused("foo$bar") + " <- 3");
+    }
+
+
+    @NotNull
+    private static String warnUnused(@NotNull String varName) {
+        return "<warning descr=\"Variable '" + varName + "' is never used\">" + varName + "</warning>";
+    }
+
+
     /**
      * Make sure to not mistake overridden functions symbols.
      */
@@ -80,8 +100,6 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
         // todo maybe we could/should ensure that foo is tagged as unused in
         // foo = iris; names(foo) <- 1:3
     }
-
-
 
 
     public void testUsageOutsideIfElse() {

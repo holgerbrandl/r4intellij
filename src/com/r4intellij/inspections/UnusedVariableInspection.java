@@ -66,12 +66,11 @@ public class UnusedVariableInspection extends RInspection {
             if (RPsiUtils.isReturnValue(element)) return;
 
             // handle special attribute setters and inplace array-place modifications (see unit-tests)
+            // todo use similar approach as for member expression to tag argument as unused if needed
             if (isInplaceAssignment(assignee)) return;
 
 
-            // because the reference refers to the assignment and not just the assignee, we search for assignment refs here
-
-            // use function or loop bariier here
+            // todo use function or loop barrier here
             Query<PsiReference> search = ReferencesSearch.search(element, new LocalSearchScope(element.getContainingFile()));
             PsiReference first = search.findFirst();
 
@@ -108,4 +107,6 @@ public class UnusedVariableInspection extends RInspection {
 
 
     }
+
+
 }

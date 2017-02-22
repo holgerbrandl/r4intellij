@@ -1,6 +1,5 @@
 package com.r4intellij.psi.references;
 
-import com.google.common.collect.Iterables;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
@@ -228,29 +227,9 @@ public class RResolver {
         final PsiFile file = element.getContainingFile();
         resolveInContextByBlockRecursion(file, element, elementName, result);
 
-//        PsiTreeUtil.getContextOfType(element, RBlockExpression.class, RIfStatement.class, RFile.class)
-        //
         PsiElement resolveBarrier = PsiTreeUtil.getContextOfType(element, RFunctionExpression.class);
         if (resolveBarrier != null) {
             resolveInContextByBlockRecursion(resolveBarrier, element, elementName, result);
-        }
-
-        // select the most local results (see UnresolvedReferenceInspectionTest.testRedefinedReferenceLookup())
-//        if (!result.isEmpty()) result = Lists.newArrayList(Iterables.getLast(result));
-        // todo this reduction step should happen later, so that we could access the full set if needed
-        if (!result.isEmpty()) {
-            Predicate<ResolveResult> fwdRefPredicate = RPsiUtils.createForwardRefPredicate(element);
-
-            ResolveResult bestRef = result.stream().filter(not(fwdRefPredicate)).
-                    // get most local backward reference
-                            reduce((first, second) -> second).
-                    // or first forward reference
-                            orElse(Iterables.getFirst(result, null));
-
-            // replace result (since it's final we have to mess around a bit)
-            result = Collections.singletonList(bestRef);
-//            result.clear();
-//            result.add(bestRef);
         }
 
         return result;
@@ -303,6 +282,14 @@ public class RResolver {
                         ) {
                     PsiElementResolveResult resolveResult = new PsiElementResolveResult(statement);
                     result.add(resolveResult);
+                }
+
+                // also resolve member expressions
+                if (assignee instanceof RMemberExpression) {
+                    RExpression expr = ((RMemberExpression) assignee).getExpression();
+                    if (expr.getText().equals(elementName) && expr != element) { // disallow self-references
+                        result.add(new PsiElementResolveResult(statement));
+                    }
                 }
             }
         }

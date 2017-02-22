@@ -55,6 +55,11 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
+    public void testIrisReassignment() {
+        doExprTest("iris = iris");
+    }
+
+
     public void testLocalFunctionCall() {
         doExprTest("foo = function(x) x; foo(3)");
     }

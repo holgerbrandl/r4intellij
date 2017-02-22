@@ -133,6 +133,12 @@ public class RPsiImplUtil {
 
     public static String getName(RAssignmentStatement assignment) {
         final ASTNode node = assignment.getNameNode();
+
+        // for member assignments return the expression reference, e.g foo$bar = 1 # return foo
+        if (assignment.getAssignee() instanceof RMemberExpression) {
+            return ((RMemberExpression) assignment.getAssignee()).getExpression().getText();
+        }
+
         return node != null ? node.getText() : null;
     }
 

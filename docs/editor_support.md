@@ -1,6 +1,10 @@
 Editor support
 ===============
 
+General IDE usage
+-----------------
+
+* [How to use the navigation bar?](https://blog.jetbrains.com/pycharm/2017/01/life-without-the-project-explorer/)
 
 Refactoring
 ------------

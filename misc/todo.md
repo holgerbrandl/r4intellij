@@ -4,12 +4,12 @@ R4Intellij Development Notes
 ## 0-day bugs
 
 * threading issues when doing skeletonization
-* code eval action does no work in injected language snippets
 * null assignments remove columns and should not be flagged as unused if the df is still used
 ```r
-plasmidInfoValid = iris
-plasmidInfoValid$isDNA <- NULL
-write_delim(plasmidInfoValid)
+require(datasets)
+foo = data.frame() 
+foo$bar <- NULL
+head(foo)
 ```
 
 * negative array access shows false-positive warning
@@ -17,8 +17,20 @@ write_delim(plasmidInfoValid)
 splitIndex = 1
 trainSplit <- iris[splitIndex,]
 testSplit <- iris[-splitIndex,]
+
+## problem is more generic
+foo = -splitIndex
+
 ```
 
+* function inlineing is broken
+```r
+train_glm = function(trainData){   train(is_group_leader ~ ., data = trainData, trControl = trainCtrl, method = "glm")}
+
+list(
+pdModel = model_glmnet
+)
+```
 
 ## Next Steps
 
@@ -55,6 +67,9 @@ http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_suppo
 
 * better error recovery in parser (see https://github.com/JetBrains/Grammar-Kit#attributes-for-error-recovery-and-reporting)
 * more rigorous unit test for [operator presedence](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html)
+
+
+
 Intentions & inspections
 ------------------------
 
@@ -230,7 +245,17 @@ Documentation provider
 Formatter
 ---------
 
-enter after pipe should inline caret according to current indentation level
+* also indent comments in wrapped pipes
+```r
+varImpsPooled %>%
+    filter(! str_detect(feature, "PC")) %>%
+    ggplot(aes(feature, Overall)) +
+# geom_boxplot() + ## todo this should be inlined
+    geom_violin() +
+    geom_point(alpha = 0.3) +
+    coord_flip()
+```
+* enter after pipe should inline caret according to current indentation level
 see `CodeStyleManager.adjustLineIndent()`
 
 * break lines and indent properly in long ggplot commands like
@@ -333,6 +358,9 @@ require(dplyr) ## rename this to foo --> should not touch first import statment
  
 
 * refac to change signature
+
+* surround with try catch block
+
 
 Rnotebook support
 -----------------

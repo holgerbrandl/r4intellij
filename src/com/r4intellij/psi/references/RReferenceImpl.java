@@ -1,5 +1,6 @@
 package com.r4intellij.psi.references;
 
+import com.google.common.collect.Iterables;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.ASTNode;
@@ -22,10 +23,7 @@ import com.r4intellij.settings.LibraryUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.r4intellij.psi.references.RResolver.*;
@@ -62,10 +60,12 @@ public class RReferenceImpl implements PsiPolyVariantReference {
             return result.toArray(new ResolveResult[result.size()]);
         }
 
+        //
+        // resolve locally in file (incl forward refs)
         result.addAll(resolveWithoutNamespaceInFile(myElement, elementName));
-        if (!result.isEmpty()) {
-            return result.toArray(new ResolveResult[result.size()]);
-        }
+//        if (!result.isEmpty()) {
+//            return result.toArray(new ResolveResult[result.size()]);
+//        }
         addFromSkeletonsAndRLibrary(myElement, result, elementName);
         return result.toArray(new ResolveResult[result.size()]);
     }
@@ -93,14 +93,27 @@ public class RReferenceImpl implements PsiPolyVariantReference {
 
     @Nullable
     public PsiElement resolve(boolean includeForwardRefs) {
-        final ResolveResult[] results = multiResolve(false);
+        List<ResolveResult> results = Arrays.asList(multiResolve(false));
 
-        if (!includeForwardRefs) {
-            Predicate<ResolveResult> fwdRefPredicate = RPsiUtils.createForwardRefPredicate(this.getElement());
-            Arrays.stream(results).filter(not(fwdRefPredicate)).toArray(ResolveResult[]::new);
+        Predicate<ResolveResult> fwdRefPredicate = RPsiUtils.createForwardRefPredicate(this.getElement());
+
+        // get most local backward reference
+        Optional<ResolveResult> mostLocalRef = results.stream()
+                .filter(not(fwdRefPredicate))
+                .reduce((first, second) -> second);
+
+        ResolveResult bestRef;
+
+        if (includeForwardRefs) {
+            // or first forward reference
+            bestRef = mostLocalRef.orElse(Iterables.getFirst(results, null));
+
+            results = Collections.singletonList(bestRef);
+        } else {
+            bestRef = mostLocalRef.orElse(null);
         }
 
-        return results.length >= 1 ? results[0].getElement() : null;
+        return bestRef != null ? bestRef.getElement() : null;
     }
 
 
