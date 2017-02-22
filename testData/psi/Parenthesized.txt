@@ -10,7 +10,7 @@ RFile:Parenthesized.r
       PsiElement(numeric)('2')
   PsiElement(nl)('\n')
   R_OPERATOR_EXPRESSION
-    R_SLICE_EXPRESSION
+    R_OPERATOR_EXPRESSION
       R_NUMERIC_LITERAL_EXPRESSION
         PsiElement(numeric)('1')
       R_OPERATOR
@@ -27,7 +27,7 @@ RFile:Parenthesized.r
   PsiComment(END_OF_LINE_COMMENT)('#[1] 0 1')
   PsiElement(nl)('\n')
   PsiElement(nl)('\n')
-  R_SLICE_EXPRESSION
+  R_OPERATOR_EXPRESSION
     R_NUMERIC_LITERAL_EXPRESSION
       PsiElement(numeric)('1')
     R_OPERATOR

@@ -3,8 +3,8 @@ RFile:Subscription.r
     R_REFERENCE_EXPRESSION
       PsiElement(identifier)('mtcars')
     PsiElement([)('[')
-    R_SLICE_EXPRESSION
-      R_SLICE_EXPRESSION
+    R_OPERATOR_EXPRESSION
+      R_OPERATOR_EXPRESSION
         R_NUMERIC_LITERAL_EXPRESSION
           PsiElement(numeric)('2')
         R_OPERATOR

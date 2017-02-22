@@ -1,6 +1,6 @@
 RFile:BinarySlice.r
   R_OPERATOR_EXPRESSION
-    R_SLICE_EXPRESSION
+    R_OPERATOR_EXPRESSION
       R_NUMERIC_LITERAL_EXPRESSION
         PsiElement(numeric)('1')
       R_OPERATOR

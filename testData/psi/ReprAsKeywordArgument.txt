@@ -31,7 +31,7 @@ RFile:ReprAsKeywordArgument.r
             PsiElement(identifier)('`x 1`')
           R_OPERATOR
             PsiElement(=)('=')
-          R_SLICE_EXPRESSION
+          R_OPERATOR_EXPRESSION
             R_OPERATOR_EXPRESSION
               R_OPERATOR
                 PsiElement(-)('-')

@@ -19,7 +19,7 @@ RFile:EmptyExpressionInSubscription.r
           R_REFERENCE_EXPRESSION
             PsiElement(identifier)('DF')
           PsiElement([)('[')
-          R_SLICE_EXPRESSION
+          R_OPERATOR_EXPRESSION
             R_NUMERIC_LITERAL_EXPRESSION
               PsiElement(numeric)('7')
             R_OPERATOR

@@ -15,7 +15,7 @@ RFile:ExpressionAsBinaryExpressionPart.r
       PsiWhiteSpace(' ')
       PsiElement(in)('in')
       PsiWhiteSpace(' ')
-      R_SLICE_EXPRESSION
+      R_OPERATOR_EXPRESSION
         R_NUMERIC_LITERAL_EXPRESSION
           PsiElement(numeric)('1')
         R_OPERATOR
