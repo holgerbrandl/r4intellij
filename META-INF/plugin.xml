@@ -208,8 +208,10 @@
         </intentionAction>
 
 
+        <documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>
+
+
         <!-- playground -->
-        <!--<documentationProvider implementation="com.r4intellij.documentation.RDocumentationProvider"/>-->
         <!--<fileIconProvider implementation="com.r4intellij.RFileIconProvider"/>-->
 
     </extensions>
