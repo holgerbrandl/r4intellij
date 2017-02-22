@@ -6,6 +6,7 @@ fName = args[1]
 # fName = "library"
 
 # hResults = help(fName)
+options(help_type = "text")
 hResults = help(fName,  try.all.packages=T)
 # str(hResults)
 # hResults[1]
