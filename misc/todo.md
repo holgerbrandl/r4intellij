@@ -3,6 +3,45 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+* regression: unused even if used:
+```r
+train_glm = function(trainData){   train(is_group_leader ~ ., data = trainData, trControl = trainCtrl, method = "glm")}
+
+trainFunctions = list(
+    glm = train_glm,
+    glmnet = train_glmnet,
+    logit = train_logit,
+    rf = train_rf,
+    rf_pca = train_rf_pca,
+    rf_pp = train_rf_pp,
+    C5Tree = train_C5Tree
+)
+
+trainFunctions
+
+```
+
+* exception when opening project
+```
+jaacva.lang.ArrayIndexOutOfBoundsException: 1
+	at com.r4intellij.documentation.RHelpParser.<init>(Unknown Source)
+	at com.r4intellij.documentation.RDocumentationProvider.getHelpForFunction(Unknown Source)
+	at com.r4intellij.documentation.RDocumentationProvider.generateDoc(Unknown Source)
+	at com.intellij.lang.documentation.CompositeDocumentationProvider.generateDoc(CompositeDocumentationProvider.java:144)
+	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:661)
+	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:884)
+	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:658)
+	at com.intellij.util.concurrency.QueueProcessor.runSafely(QueueProcessor.java:223)
+	at com.intellij.util.Alarm$Request$1.run(Alarm.java:387)
+	at com.intellij.util.Alarm$Request.run(Alarm.java:398)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at com.intellij.util.concurrency.SchedulingWrapper$MyScheduledFutureTask.run(SchedulingWrapper.java:237)
+	at com.intellij.util.concurrency.BoundedTaskExecutor$2.run(BoundedTaskExecutor.java:210)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+```
 * threading issues when doing skeletonization
 * null assignments remove columns and should not be flagged as unused if the df is still used
 ```r
@@ -113,6 +152,10 @@ if(a=(function(){T})()){ print("foo")}
 ### dependency management
 
 
+* somehow offer detach as option to resolve namespace conflicts
+```r
+detach("package:tibble", unload=TRUE)
+```
 * in addition to import also offer "use namespace call"
 
 ![](.todo_images/d7165438.png)

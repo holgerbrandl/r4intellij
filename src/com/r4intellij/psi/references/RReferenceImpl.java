@@ -108,7 +108,6 @@ public class RReferenceImpl implements PsiPolyVariantReference {
             // or first forward reference
             bestRef = mostLocalRef.orElse(Iterables.getFirst(results, null));
 
-            results = Collections.singletonList(bestRef);
         } else {
             bestRef = mostLocalRef.orElse(null);
         }

@@ -180,16 +180,6 @@ public class RResolver {
     }
 
 
-    // just used in ROperatorReference
-    public static void resolveWithoutNamespaceInFile(@NotNull final PsiElement element,
-                                                     @NotNull final List<ResolveResult> result,
-                                                     String... names) {
-        for (String name : names) {
-            result.addAll(resolveWithoutNamespaceInFile(element, name));
-        }
-    }
-
-
     public static List<ResolveResult> resolveWithoutNamespaceInFile(@NotNull final PsiElement element, String elementName) {
         List<ResolveResult> result = new ArrayList<>();
 

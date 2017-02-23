@@ -24,6 +24,11 @@ public class UnusedParameterInspectionTest extends RInspectionTest {
     }
 
 
+    public void testDontFlagExternallyDefinedArgs() {
+        // this test is especially important since the resolver order and the detection of locality matter here
+        assertAllUsed("trainData <- iris; function(trainData){   trainData }");
+    }
+
     @NotNull
     @Override
     Class<? extends RInspection> getInspection() {
