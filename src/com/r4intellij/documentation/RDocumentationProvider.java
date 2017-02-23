@@ -3,6 +3,9 @@ package com.r4intellij.documentation;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.process.CapturingProcessHandler;
+import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -12,10 +15,15 @@ import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.RReferenceExpressionImpl;
 import com.r4intellij.psi.api.*;
+import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.URL;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 import static com.r4intellij.interpreter.RSkeletonGenerator.SKELETON_DIR_NAME;
@@ -75,15 +83,85 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
         }
 
         // run generic R help on symbol
-        return getHelpForFunction(elementText, packageName);
+        if (HELP_SERVER_PORT == null) try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+//        return getHelpForFunction(elementText, packageName);
+        String htmlTrimmed = getHelpFromLocalHelpServer(elementText, packageName);
+        if (htmlTrimmed != null) return htmlTrimmed;
+
+        return null;
+        //
+//        return getHelpForFunction(elementText, packageName);
     }
 
 
-    private boolean isFunctionName(@Nullable PsiElement element1) {
-        return element1 != null &&
-                element1.getParent() != null &&
-                element1.getParent().getParent() instanceof RCallExpression;
+    static Integer HELP_SERVER_PORT = startHelpServer();
+
+
+    @Nullable
+    private String getHelpFromLocalHelpServer(String elementText, String packageName) {
+        try {
+            // check if help server is alive and restart it if necessary
+            try {
+                new Scanner(new URL("http://127.0.0.1:" + HELP_SERVER_PORT)
+                        .openStream(), "UTF-8").useDelimiter("\\A").next();
+            } catch (ConnectException e) {
+                e.printStackTrace();
+                HELP_SERVER_PORT = startHelpServer();
+            }
+
+            URL localHelpURL;
+
+            if (packageName != null) {
+                localHelpURL = new URL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + packageName + "/help/" + elementText);
+            } else {
+                localHelpURL = new URL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/NULL/help/" + elementText);
+            }
+
+            String htmlRaw = new Scanner(localHelpURL.openStream(), "UTF-8").useDelimiter("\\A").next();
+            htmlRaw.indexOf("</head><body>");
+
+            String htmlTrimmed = htmlRaw.substring(htmlRaw.indexOf("</head><body>") + 13, htmlRaw.length()).trim();
+
+            // fix URLs
+            htmlTrimmed = htmlTrimmed.replace("href=\"../../", "href=\"http://127.0.0.1:" + HELP_SERVER_PORT + "/library/");
+            htmlTrimmed = htmlTrimmed.replace("00Index.html", "http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + packageName + "/html/00Index.html");
+
+
+            return htmlTrimmed;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
+
+
+    @Nullable
+    public static Integer startHelpServer() {
+        String interpreter = RSettings.getInstance().getInterpreterPath();
+
+        if (interpreter == null) {
+            return null;
+        }
+
+        String scriptText = "cat( tools::startDynamicHelp(start = TRUE)); Sys.sleep(3600)";
+
+        String[] getPckgsCmd = new String[]{interpreter, "--vanilla", "--quiet", "--slave", "-e", scriptText};
+
+        try {
+            final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(getPckgsCmd));
+            ProcessOutput processOutput = processHandler.runProcess(1000, false);
+            return Integer.parseInt(processOutput.getStdout());
+        } catch (Throwable e) {
+            LOG.info("Failed to run start help-server");
+        }
+        return null;
+    }
+
 
 
     public static boolean isLibraryElement(PsiElement element) {
@@ -98,6 +176,8 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
      * If packageName parameter equals null we do not load package
      */
     @Nullable
+    @Deprecated
+    // use embedded server to fetch help
     public static String getHelpForFunction(@NotNull final String assignee, @Nullable final String packageName) {
         if (assignee.isEmpty()) {
             return null;

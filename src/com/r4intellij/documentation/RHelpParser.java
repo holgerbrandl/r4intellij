@@ -30,7 +30,8 @@ public class RHelpParser {
         List<List<String>> sectionsRaw = splitIntoSections(Arrays.asList(lines), isSectionHeader);
 
 
-        String[] splitDocHeader = sectionsRaw.remove(0).get(1).split("[ ]+");
+        List<String> headerSection = sectionsRaw.remove(0);
+        String[] splitDocHeader = headerSection.get(1).split("[ ]+");
         docHeader = splitDocHeader[1].replace("package:", "") + "::" + splitDocHeader[0];
 
         title = sectionsRaw.remove(0).get(0).replaceAll("_\b", "").replaceAll(":$", "");

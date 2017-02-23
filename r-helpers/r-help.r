@@ -1,4 +1,5 @@
 args <- commandArgs(TRUE)
+# args = c("dplyr", "glimpse")
 packageName <- args[1]
 
 library(package=packageName, character.only=TRUE)
