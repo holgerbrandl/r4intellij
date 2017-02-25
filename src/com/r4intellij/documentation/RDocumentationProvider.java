@@ -37,6 +37,13 @@ import static com.r4intellij.packages.RHelperUtil.runHelperWithArgs;
 public class RDocumentationProvider extends AbstractDocumentationProvider {
 
 
+    static {
+        startHelpServer(null);
+    }
+
+    private static Integer HELP_SERVER_PORT;
+
+
     @Nullable
     @Override
     public String generateDoc(PsiElement reference, @Nullable PsiElement identifier) {
@@ -98,10 +105,6 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 //        return getHelpForFunction(elementText, packageName);
     }
 
-
-    static Integer HELP_SERVER_PORT = startHelpServer();
-
-
     @Nullable
     private String getHelpFromLocalHelpServer(String elementText, String packageName) {
         try {
@@ -111,7 +114,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
                         .openStream(), "UTF-8").useDelimiter("\\A").next();
             } catch (ConnectException e) {
                 e.printStackTrace();
-                HELP_SERVER_PORT = startHelpServer();
+                startHelpServer(null);
             }
 
             URL localHelpURL;
@@ -140,28 +143,37 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     }
 
 
-    @Nullable
-    public static Integer startHelpServer() {
+    public static void startHelpServer(@Nullable Integer userDefinedPort) {
         String interpreter = RSettings.getInstance().getInterpreterPath();
 
         if (interpreter == null) {
-            return null;
+            return;
         }
 
         String scriptText = "cat( tools::startDynamicHelp(start = TRUE)); Sys.sleep(3600)";
+
+        if (userDefinedPort != null) {
+            String custPortOption = "options(help.ports = " + userDefinedPort + ")";
+
+            scriptText = custPortOption + "; " + scriptText;
+        }
+
 
         String[] getPckgsCmd = new String[]{interpreter, "--vanilla", "--quiet", "--slave", "-e", scriptText};
 
         try {
             final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(getPckgsCmd));
             ProcessOutput processOutput = processHandler.runProcess(1000, false);
-            return Integer.parseInt(processOutput.getStdout());
+
+            if (userDefinedPort == null) {
+                HELP_SERVER_PORT = Integer.parseInt(processOutput.getStdout());
+            } else {
+                HELP_SERVER_PORT = userDefinedPort;
+            }
         } catch (Throwable e) {
             LOG.info("Failed to run start help-server");
         }
-        return null;
     }
-
 
 
     public static boolean isLibraryElement(PsiElement element) {

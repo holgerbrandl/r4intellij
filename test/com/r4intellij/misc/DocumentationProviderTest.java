@@ -20,6 +20,14 @@ import java.util.Objects;
 public class DocumentationProviderTest extends RTestCase {
 
     @Override
+    public void setUp() throws Exception {
+        super.setUp();
+
+        RDocumentationProvider.startHelpServer(5678);
+    }
+
+
+    @Override
     protected String getTestDataPath() {
         return super.getTestDataPath() + "/misc/" + getClass().getSimpleName().replace("Test", "");
     }

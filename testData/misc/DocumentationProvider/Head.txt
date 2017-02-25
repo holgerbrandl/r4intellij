@@ -1,81 +1,124 @@
-utils::head<br>
-<h2>Return the First or Last Part of an Object</h2><br>
-<b><u>Usage:</u></b><br>
-<code><br>
-     head(x, ...)<br>
-     ## Default S3 method:<br>
-     head(x, n = 6L, ...)<br>
-     ## S3 method for class 'data.frame'<br>
-     head(x, n = 6L, ...)<br>
-     ## S3 method for class 'matrix'<br>
-     head(x, n = 6L, ...)<br>
-     ## S3 method for class 'ftable'<br>
-     head(x, n = 6L, ...)<br>
-     ## S3 method for class 'table'<br>
-     head(x, n = 6L, ...)<br>
-     ## S3 method for class 'function'<br>
-     head(x, n = 6L, ...)<br>
-     <br>
-     tail(x, ...)<br>
-     ## Default S3 method:<br>
-     tail(x, n = 6L, ...)<br>
-     ## S3 method for class 'data.frame'<br>
-     tail(x, n = 6L, ...)<br>
-     ## S3 method for class 'matrix'<br>
-     tail(x, n = 6L, addrownums = TRUE, ...)<br>
-     ## S3 method for class 'ftable'<br>
-     tail(x, n = 6L, addrownums = FALSE, ...)<br>
-     ## S3 method for class 'table'<br>
-     tail(x, n = 6L, addrownums = TRUE, ...)<br>
-     ## S3 method for class 'function'<br>
-     tail(x, n = 6L, ...)<br>
-     </code><br>
-<b><u>Description:</u></b><br>
-<br>
-     Returns the first or last parts of a vector, matrix, table, data<br>
-     frame or function.  Since ‘head()’ and ‘tail()’ are generic<br>
-     functions, they may also have been extended to other classes.<br>
-<br>
-<b><u>Details:</u></b><br>
-<br>
-     For matrices, 2-dim tables and data frames, ‘head()’ (‘tail()’)<br>
-     returns the first (last) ‘n’ rows when ‘n > 0’ or all but the last<br>
-     (first) ‘n’ rows when ‘n < 0’.  ‘head.matrix()’ and<br>
-     ‘tail.matrix()’ are exported.  For functions, the lines of the<br>
-     deparsed function are returned as character strings.<br>
-<br>
-     If a matrix has no row names, then ‘tail()’ will add row names of<br>
-     the form ‘"[n,]"’ to the result, so that it looks similar to the<br>
-     last lines of ‘x’ when printed.  Setting ‘addrownums = FALSE’<br>
-     suppresses this behaviour.<br>
-<br>
-<b><u>Author(s):</u></b><br>
-<br>
-     Patrick Burns, improved and corrected by R-Core. Negative argument<br>
-     added by Vincent Goulet.<br>
-<br>
-<b><u>Arguments:</u></b><br>
-<br/> <br/><b>       x:</b> an object <br/> <br/><b>       n: a single integer. If positive, size for the resulting object:</b> <br/>          number of elements for a vector (including lists), rows for a <br/>          matrix or data frame or lines for a function. If negative, <br/>          all but the ‘n’ last/first number of elements of ‘x’. <br/> <br/><b>addrownums:</b> if there are no row names, create them from the row <br/>          numbers. <br/> <br/><b>     ...:</b> arguments to be passed to or from other methods. <br/> <br>
-<b><u>Value:</u></b><br>
-<br>
-     An object (usually) like ‘x’ but generally smaller.  For ‘ftable’<br>
-     objects ‘x’, a transformed ‘format(x)’.<br>
-<br>
-<b><u>Examples:</u></b><br>
-<code><br>
-     head(letters)<br>
-     head(letters, n = -6L)<br>
-     <br>
-     head(freeny.x, n = 10L)<br>
-     head(freeny.y)<br>
-     <br>
-     tail(letters)<br>
-     tail(letters, n = -6L)<br>
-     <br>
-     tail(freeny.x)<br>
-     tail(freeny.y)<br>
-     <br>
-     tail(library)<br>
-     <br>
-     head(stats::ftable(Titanic))<br>
-     </code>
+<table width="100%" summary="page for head {utils}"><tr><td>head {utils}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Return the First or Last Part of an Object
+</h2>
+
+<h3>Description</h3>
+
+<p>Returns the first or last parts of a vector, matrix, table, data frame
+or function.  Since <code>head()</code> and <code>tail()</code> are generic
+functions, they may also have been extended to other classes.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+head(x, ...)
+## Default S3 method:
+head(x, n = 6L, ...)
+## S3 method for class 'data.frame'
+head(x, n = 6L, ...)
+## S3 method for class 'matrix'
+head(x, n = 6L, ...)
+## S3 method for class 'ftable'
+head(x, n = 6L, ...)
+## S3 method for class 'table'
+head(x, n = 6L, ...)
+## S3 method for class 'function'
+head(x, n = 6L, ...)
+
+tail(x, ...)
+## Default S3 method:
+tail(x, n = 6L, ...)
+## S3 method for class 'data.frame'
+tail(x, n = 6L, ...)
+## S3 method for class 'matrix'
+tail(x, n = 6L, addrownums = TRUE, ...)
+## S3 method for class 'ftable'
+tail(x, n = 6L, addrownums = FALSE, ...)
+## S3 method for class 'table'
+tail(x, n = 6L, addrownums = TRUE, ...)
+## S3 method for class 'function'
+tail(x, n = 6L, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>an object</p>
+</td></tr>
+<tr valign="top"><td><code>n</code></td>
+<td>
+<p>a single integer. If positive, size for the resulting
+object: number of elements for a vector (including lists), rows for
+a matrix or data frame or lines for a function. If negative, all but
+the <code>n</code> last/first number of elements of <code>x</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>addrownums</code></td>
+<td>
+<p>if there are no row names, create them from the row
+numbers.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>arguments to be passed to or from other methods.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>For matrices, 2-dim tables and data frames, <code>head()</code> (<code>tail()</code>) returns
+the first (last) <code>n</code> rows when <code>n &gt; 0</code> or all but the
+last (first) <code>n</code> rows when <code>n &lt; 0</code>.  <code>head.matrix()</code> and
+<code>tail.matrix()</code> are exported.  For functions, the
+lines of the deparsed function are returned as character strings.
+</p>
+<p>If a matrix has no row names, then <code>tail()</code> will add row names of
+the form <code>"[n,]"</code> to the result, so that it looks similar to the
+last lines of <code>x</code> when printed.  Setting <code>addrownums =
+    FALSE</code> suppresses this behaviour.
+</p>
+
+
+<h3>Value</h3>
+
+<p>An object (usually) like <code>x</code> but generally smaller.  For
+<code><a href="http://127.0.0.1:5678/library/utils/help/ftable">ftable</a></code> objects <code>x</code>, a transformed <code>format(x)</code>.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Patrick Burns, improved and corrected by R-Core. Negative argument
+added by Vincent Goulet.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+head(letters)
+head(letters, n = -6L)
+
+head(freeny.x, n = 10L)
+head(freeny.y)
+
+tail(letters)
+tail(letters, n = -6L)
+
+tail(freeny.x)
+tail(freeny.y)
+
+tail(library)
+
+head(stats::ftable(Titanic))
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>utils</em> version 3.3.2 <a href="http://127.0.0.1:5678/library/utils/html/00Index.html">Index</a>]</div>
+</body></html>
