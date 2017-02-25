@@ -33,7 +33,7 @@ foo = bar %>%
                 """
 require(ggplot2)
 
-ggplot(iris) + geom_point() +ggtitle("iris plot")+ facet_grid(~Species) + scale_x_log10()
+iris %>% ggplot()  + geom_point() +ggtitle("iris plot")+ facet_grid(~Species) + scale_x_log10()
 """,
                 """
 require(ggplot2)

@@ -87,9 +87,13 @@ public class RFormattingModelBuilder implements FormattingModelBuilder {
 //                .between(R_NUMERIC_LITERAL_EXPRESSION, R_OPERATOR).spaces()
 //                .around(ASSIGNMENTS)
 //                .around(ASSIGNMENTS).spaces(1)
+                //todo make this a preference or inhereit from other languages
+                .after(TokenSet.create(R_IF, R_ELSE, R_FOR, R_WHILE)).spaces(1)
+
                 .before(R_LBRACE).spaces(1) // if (%){
                 .around(R_OPERATOR).spaces(1)
-//                .around(OPERATORS).spaces(10)
+                .between(R_RPAR, R_CALL_EXPRESSION).spaces(1)
+                .between(R_RPAR, R_BLOCK_EXPRESSION).spaces(1)
 
                 .around(TokenSet.create(R_RBRACE, R_LPAR, R_RPAR, R_LBRACKET, R_RBRACKET)).spaces(0)
 
