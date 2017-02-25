@@ -57,10 +57,11 @@ public class RFindUsagesProvider implements FindUsagesProvider {
     @Override
     public String getDescriptiveName(@NotNull PsiElement element) {
         if (element instanceof RAssignmentStatement) {
-            PsiElement assginee = ((RAssignmentStatement) element).getAssignee();
-            return assginee.getText();
+            PsiElement assignee = ((RAssignmentStatement) element).getAssignee();
+            return assignee.getText();
         }
 
+        // this will be used e.g. when renaming function parameters
         return element.getText();
     }
 
