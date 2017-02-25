@@ -43,7 +43,7 @@ public class RReferenceImpl implements PsiPolyVariantReference {
         final List<ResolveResult> result = new ArrayList<ResolveResult>();
 
         if (RPsiUtils.isNamedArgument(myElement)) {
-            resolveNameArgument(myElement, myElement.getName(), result); // onlyusage
+            resolveNameArgument(myElement, myElement.getName(), result); // only usage
             return result.toArray(new ResolveResult[result.size()]);
         }
 
@@ -55,18 +55,13 @@ public class RReferenceImpl implements PsiPolyVariantReference {
             resolveWithNamespace(myElement.getProject(), elementName, namespace, result);
         }
 
-        resolveFunction(myElement, elementName, result);
+        resolveFunctionCall(myElement, elementName, result);
         if (!result.isEmpty()) {
             return result.toArray(new ResolveResult[result.size()]);
         }
 
-        //
-        // resolve locally in file (incl forward refs)
-        result.addAll(resolveWithoutNamespaceInFile(myElement, elementName));
-//        if (!result.isEmpty()) {
-//            return result.toArray(new ResolveResult[result.size()]);
-//        }
-        addFromSkeletonsAndRLibrary(myElement, result, elementName);
+        RResolver.resolveInFileOrLibrary(myElement, elementName, result);
+
         return result.toArray(new ResolveResult[result.size()]);
     }
 

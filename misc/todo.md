@@ -149,6 +149,12 @@ if(a=(function(){T})()){ print("foo")}
 ## but this seems very bad practice and should be flagged as well
 ```
 
+* flag double and single quoted operator defs
+ ```r
+"%foo%" <- function(a,b) 3;
+# suggest quickfix to use backticks instead
+```
+
 ### dependency management
 
 
@@ -272,6 +278,20 @@ Parser
 
 allow to embed urls. See xml-plugin
 ![](.todo_images/dec7861c.png)
+
+* Improve handling of forward refs in function expression
+```r
+## this is valid r, and the final call will return 1
+bla = function(){
+    ## don't flag this a forward, but as "potentially unresolved" depedning on calling environment, 
+     ## quickfixes; mark as resolved; convert to method parameter
+    x 
+}
+
+x = 1
+bla()
+
+```
  
 Documentation provider
 ----------------------
@@ -467,6 +487,10 @@ Package Manger
 
 Brainstorming
 =============
+
+* skeletonization
+    * How to deal with re-exported symbols e.e.g `%>%`
+    * Indicate in skeletons non-exported symbols as being part of the library (example [split_chain](https://github.com/tidyverse/magrittr/blob/master/R/split_chain.R)
 
 * resolve project sources to source_statemtns OR assume project sources to be always present in project files
 

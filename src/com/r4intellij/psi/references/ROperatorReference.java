@@ -28,16 +28,11 @@ public class ROperatorReference implements PsiPolyVariantReference {
         List<ResolveResult> result = new ArrayList<ResolveResult>();
 
         String text = myElement.getText();
-        String quotedText = "\"" + text + "\""; // todo why, are operators sometimes doublequoted? unit-test?
-        String backquotedText = "`" + text + "`";
+//        String doubleQuotedText = "\"" + text + "\"";
+//        String singleQuotedText = "'" + text + "'";
+//        String backquotedText = "`" + text + "`";
 
-        for (String name : new String[]{quotedText, backquotedText}) {
-            result.addAll(RResolver.resolveWithoutNamespaceInFile(myElement, name));
-        }
-
-        if (result.isEmpty()) {
-            RResolver.addFromSkeletonsAndRLibrary(myElement, result, quotedText, backquotedText);
-        }
+        RResolver.resolveInFileOrLibrary(myElement, text, result);
 
         return result.toArray(new ResolveResult[result.size()]);
     }

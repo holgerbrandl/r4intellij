@@ -56,7 +56,7 @@ public class UnusedVariableInspection extends RInspection {
                 return;
             }
 
-//            // don't warn about simple assingments which we tag as non-resolvable
+//            // don't warn about simple assignments which we tag as non-resolvable
 //            if (assignee instanceof RReferenceExpression &&
 //                    RPsiUtils.isVarDeclaration((RReferenceExpression) assignee)) {
 //                return;

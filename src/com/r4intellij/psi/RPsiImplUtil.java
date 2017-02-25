@@ -1,5 +1,6 @@
 package com.r4intellij.psi;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author Alefas
+ * @author holgerbrandl
  * @since 27/01/15.
  */
 public class RPsiImplUtil {
@@ -137,6 +139,15 @@ public class RPsiImplUtil {
         // for member assignments return the expression reference, e.g foo$bar = 1 # return foo
         if (assignment.getAssignee() instanceof RMemberExpression) {
             return ((RMemberExpression) assignment.getAssignee()).getExpression().getText();
+        }
+
+        // for operator definitions we strip leading or tailing quotes
+        CharMatcher charMatcher = CharMatcher.anyOf("`\"'");
+        String assigneeText = assignment.getAssignee().getText();
+
+        if (assignment.getAssignedValue() instanceof RFunctionExpression &&
+                charMatcher.matches(assigneeText.charAt(0))) {
+            return charMatcher.trimFrom(assigneeText);
         }
 
         return node != null ? node.getText() : null;
@@ -293,6 +304,13 @@ public class RPsiImplUtil {
         if (namespaceIndex > 0) {
             return text.substring(namespaceIndex + 2);
         }
+
+        // also support operator assignments here
+        if (referenceExpression.getParent() instanceof RAssignmentStatement) {
+            CharMatcher charMatcher = CharMatcher.anyOf("`\"'");
+            return charMatcher.trimFrom(text);
+        }
+
         return text;
     }
 

@@ -142,6 +142,11 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
+    public void testImportAfterUsage() {
+        doExprTest(unresolved("glimpse") + "(iris) ; require(dplyr)");
+    }
+
+
     // see https://github.com/tidyverse/tidyverse/issues/40
     public void testTransitiveTidyverseDependencies() {
         createLibraryFromPckgNames(myFixture, "dplyr", "datasets");
@@ -197,6 +202,12 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
+    @NotNull
+    private static String forwardRef(@NotNull String varName) {
+        return "<error descr=\"Forward reference\">" + varName + "</warning>";
+    }
+
+
     public void testForwardReference() {
 //        doExprTest("foo = <warning descr=\"Unresolved reference\">bar</warning>; bar = 1");
         doExprTest("foo = { <error descr=\"Forward reference\">bar</error> } ; bar = 1");
@@ -225,6 +236,27 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
     public void testNamedCallArgumentInFunctionBody() {
         doExprTest("function() head(x=<warning descr=\"Unresolved reference\">sdf</warning>)");
+    }
+
+
+    public void testDoubleQuotedOpDef() {
+        doExprTest("\"%foo%\" <- function(a,b) 3; 1 %foo% 3");
+    }
+
+
+    public void testBackTickOpDef() {
+        doExprTest("`%foo%` <- function(a,b) 3; 1 %foo% 3");
+    }
+
+
+    public void testOperatorReDef() {
+
+    }
+
+
+    @NotNull
+    private static String unresolved(@NotNull String varName) {
+        return "<error descr=\"Unresolved reference\">" + varName + "</error>";
     }
 
 

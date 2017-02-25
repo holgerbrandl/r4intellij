@@ -1,5 +1,6 @@
 package com.r4intellij.psi.references;
 
+import com.google.common.base.CharMatcher;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
@@ -214,6 +215,7 @@ public class RResolver {
         }
 
         // more specific lookup was not successful, so search complete file
+        // FIXME that is wrong, because we need to start from local conext and escalate until we find hit
         final PsiFile file = element.getContainingFile();
         resolveInContextByBlockRecursion(file, element, elementName, result);
 
@@ -241,7 +243,7 @@ public class RResolver {
             @Override
             public void visitIfStatement(@NotNull RIfStatement o) {
                 super.visitIfStatement(o);
-//                resolveFromAssignmentInContext(element, elementName, result, o);
+//                resolveFromAssignmentInContext(element, elementName, result, o);O
 
 //                PsiTreeUtil.getNextSiblingOfType()
 //                PsiTreeUtil.nextVisibleLeaf(element)
@@ -264,12 +266,14 @@ public class RResolver {
         if (statements != null) {
             for (RAssignmentStatement statement : statements) {
                 final PsiElement assignee = statement.getAssignee();
-                if (assignee != null &&
-                        assignee.getText().equals(elementName) &&
-                        assignee != element // disallow self-references --> disabled to allow for correct usage search --> see design considerations in devel_notes.md
-//                        (assignee.equals(element) )
-//                        (assignee.equals(element) || !PsiTreeUtil.isAncestor(statement, element, true))
-                        ) {
+
+                // 2nd check necessary to disallow self-references
+                // --> disabled to allow for correct usage search
+                // --> see design considerations in devel_notes.md
+                if (assignee == null || assignee == element) continue;
+
+
+                if (assignee.getText().equals(elementName)) {
                     PsiElementResolveResult resolveResult = new PsiElementResolveResult(statement);
                     result.add(resolveResult);
                 }
@@ -281,6 +285,22 @@ public class RResolver {
                         result.add(new PsiElementResolveResult(statement));
                     }
                 }
+
+
+                // if assignee is a reference expression it could be a backticked operator definition
+                // same for assignees which are literal expression. R support those as well for defining operators
+                if (assignee instanceof RReferenceExpression || assignee instanceof RStringLiteralExpression) {
+                    CharMatcher charMatcher = CharMatcher.anyOf("`\"'");
+
+                    if (charMatcher.matches(assignee.getText().charAt(0))) {
+                        String operatorCandidate = charMatcher.trimFrom(assignee.getText());
+
+                        if (Objects.equals(operatorCandidate, elementName)) {
+                            result.add(new PsiElementResolveResult(statement));
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -307,22 +327,23 @@ public class RResolver {
 
 
     // TODO: massive refactoring awaits!!!
-    static void resolveFunction(PsiElement myElement, String name, List<ResolveResult> result) {
+    static void resolveFunctionCall(PsiElement myElement, String name, List<ResolveResult> result) {
         PsiElement parent = myElement.getParent();
 
         if (parent != null && parent instanceof RCallExpression) {
             RCallExpression call = ((RCallExpression) parent);
             List<RExpression> arguments = call.getArgumentList().getExpressionList();
 
+            List<ResolveResult> myResult = new ArrayList<ResolveResult>();
+
+            resolveInFileOrLibrary(myElement, name, myResult);
+
+            // since the downstream analysis relies on having an argument, we stop if the call does not have any args
             if (call.getExpression().equals(myElement) && !arguments.isEmpty()) {
-                RExpression firstArgument = arguments.get(0);
-                List<ResolveResult> myResult = new ArrayList<ResolveResult>();
 
-                result.addAll(resolveWithoutNamespaceInFile(myElement, name));
-                if (myResult.isEmpty()) {
-                    addFromSkeletonsAndRLibrary(myElement, myResult, name);
-                }
-
+                // we now process resolve candidates for the function call:
+                // if they are RHS function expression assignments we can try to infer the correct resolvant by
+                // comparing the provided argument (if present) type
                 for (ResolveResult resolveResult : myResult) {
                     PsiElement resolved = resolveResult.getElement();
 
@@ -333,21 +354,20 @@ public class RResolver {
                             RFunctionExpression function = ((RFunctionExpression) assignedValue);
                             List<RCallExpression> nestedCalls = PsiTreeUtil.getChildrenOfTypeAsList(function, RCallExpression.class);
 
+                            // we just care about nested UseMethod calls (i.e. S3 method dispatch)
+                            // see http://adv-r.had.co.nz/OO-essentials.html#s3
                             for (RCallExpression nestedCall : nestedCalls) {
                                 if ("UseMethod".equals(nestedCall.getExpression().getText())) {
+                                    RExpression firstArgument = arguments.get(0);
                                     RType firstType = RTypeProvider.getType(firstArgument);
                                     List<String> s3Classes = firstType.getS3Classes();
                                     s3Classes.add("default");
 
                                     for (String s3Class : s3Classes) {
                                         String genericName = name + "." + s3Class;
-                                        List<ResolveResult> genericResult = new ArrayList<ResolveResult>();
+                                        List<ResolveResult> genericResult = new ArrayList<>();
 
-                                        result.addAll(resolveWithoutNamespaceInFile(myElement, genericName));
-
-                                        if (genericResult.isEmpty()) {
-                                            addFromSkeletonsAndRLibrary(myElement, genericResult, genericName);
-                                        }
+                                        resolveInFileOrLibrary(myElement, genericName, genericResult);
 
                                         if (!genericResult.isEmpty()) {
                                             result.addAll(genericResult);
@@ -359,8 +379,18 @@ public class RResolver {
                         }
                     }
                 }
+
                 result.addAll(myResult);
             }
+        }
+    }
+
+
+    public static void resolveInFileOrLibrary(PsiElement myElement, String name, List<ResolveResult> myResult) {
+        myResult.addAll(resolveWithoutNamespaceInFile(myElement, name));
+
+        if (myResult.isEmpty()) {
+            addFromSkeletonsAndRLibrary(myElement, myResult, name);
         }
     }
 }

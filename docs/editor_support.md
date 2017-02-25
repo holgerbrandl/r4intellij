@@ -15,6 +15,11 @@ Renaming Support for
 * functions
 
 
+How does all this magic work?
+-----------------------------
+
+Most functions are enabled by running running a very efficient and powerful resolver, that can resolve variable, functions, and operators.
+
 Intentions
 ----------
 

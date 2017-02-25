@@ -164,6 +164,14 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
     }
 
 
+    public void testQuoteAgnosticOperatorsDefs() {
+        assertAllUsed(
+                "`%foo%` <- function(a,b) 3\n" +
+                        "'%bar%' <- function(a,b) 3;\n" +
+                        "1 %foo% 3;  2 %bar% 3");
+
+    }
+
     // this should if all be optional
 //    public void dontFlagLastExprInFile () {
 //        doExprTest("a = 3");
