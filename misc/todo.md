@@ -566,7 +566,7 @@ Markdown impro wishlist
 * highlight search results in preview
     * http://stackoverflow.com/questions/19418626/javafx-search-and-highlight-text-add-search-bar-for-loaded-web-page
 * search in preview
-* intention to unify header styles
+* intention to unify header styles (see [RUBY-19093](https://youtrack.jetbrains.com/issue/RUBY-19093))
 
 * line comment/uncomment see http://stackoverflow.com/questions/4823468/comments-in-markdown. Examples:
 <!---
