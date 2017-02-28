@@ -1,6 +1,5 @@
 package com.r4intellij.psi.references;
 
-import com.google.common.base.CharMatcher;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
@@ -47,7 +46,6 @@ public class RResolver {
 //            addFromLibrary(element, result, name, RSettingsConfigurable.R_SKELETONS);
 
             addFromImports(element, result, name, LibraryUtil.R_SKELETONS);
-
         }
     }
 
@@ -77,7 +75,7 @@ public class RResolver {
             if (!imports.contains(containingFile.getName().replaceAll(".r$", ""))) continue;
 
             final PsiElement assignee = statement.getAssignee();
-            if (assignee == null || containingFile.getName() == null) continue;
+            if (assignee == null) continue;
 
             result.add(new PsiElementResolveResult(statement));
         }
@@ -100,9 +98,9 @@ public class RResolver {
                 RAssignmentNameIndex.find(name, project, new LibraryScope(project, library));
 
         for (RAssignmentStatement statement : assignmentStatements) {
-            final PsiFile containingFile = statement.getContainingFile();
             final PsiElement assignee = statement.getAssignee();
-            if (assignee == null || containingFile.getName() == null) continue;
+            if (assignee == null) continue;
+
             result.add(new PsiElementResolveResult(statement));
         }
     }
@@ -181,128 +179,8 @@ public class RResolver {
     }
 
 
-    public static List<ResolveResult> resolveWithoutNamespaceInFile(@NotNull final PsiElement element, String elementName) {
-        List<ResolveResult> result = new ArrayList<>();
-
-
-        // walk up local block hierarchy to resolve symbol in context
-        RBlockExpression rBlock = PsiTreeUtil.getParentOfType(element, RBlockExpression.class);
-        while (rBlock != null) {
-            resolveFromAssignmentInContext(element, elementName, result, rBlock);
-            rBlock = PsiTreeUtil.getParentOfType(rBlock, RBlockExpression.class);
-        }
-
-        // are we resolving a loop variable?
-        // todo unit-test and fix local loops in blocks: { a = 12; for(a in 1:3) print(a); }
-        RForStatement rLoop = PsiTreeUtil.getParentOfType(element, RForStatement.class);
-        while (rLoop != null) {
-            final RExpression target = rLoop.getTarget();
-            if (elementName.equals(target.getName())) {
-                result.add(new PsiElementResolveResult(target));
-            }
-            rLoop = PsiTreeUtil.getParentOfType(rLoop, RForStatement.class);
-        }
-
-        // are we resolving a symbol in a function expression?
-        final RFunctionExpression rFunction = PsiTreeUtil.getParentOfType(element, RFunctionExpression.class);
-        if (rFunction != null) {
-            final RParameterList list = rFunction.getParameterList();
-            for (RParameter parameter : list.getParameterList()) {
-                if (elementName.equals(parameter.getName())) {
-                    result.add(new PsiElementResolveResult(parameter));
-                }
-            }
-        }
-
-        // more specific lookup was not successful, so search complete file
-        // FIXME that is wrong, because we need to start from local conext and escalate until we find hit
-        final PsiFile file = element.getContainingFile();
-        resolveInContextByBlockRecursion(file, element, elementName, result);
-
-        PsiElement resolveBarrier = PsiTreeUtil.getContextOfType(element, RFunctionExpression.class);
-        if (resolveBarrier != null) {
-            resolveInContextByBlockRecursion(resolveBarrier, element, elementName, result);
-        }
-
-        return result;
-    }
-
-
-    private static void resolveInContextByBlockRecursion(PsiElement context, @NotNull final PsiElement element, final String elementName, final List<ResolveResult> result) {
-        resolveFromAssignmentInContext(element, elementName, result, context);
-
-        // also recurse into blocks, if and elses of current context
-        context.acceptChildren(new RVisitor() {
-            @Override
-            public void visitBlockExpression(@NotNull RBlockExpression o) {
-                resolveFromAssignmentInContext(element, elementName, result, o);
-                o.acceptChildren(this);
-            }
-
-
-            @Override
-            public void visitIfStatement(@NotNull RIfStatement o) {
-                super.visitIfStatement(o);
-//                resolveFromAssignmentInContext(element, elementName, result, o);O
-
-//                PsiTreeUtil.getNextSiblingOfType()
-//                PsiTreeUtil.nextVisibleLeaf(element)
-//                PsiElement nextSibling = PsiTreeUtil.skipSiblingsBackward(o.getElse(), LeafPsiElement.class);
-//                if(nextSibling!=null)
-                o.acceptChildren(this);
-            }
-        });
-    }
-
-
     public static <T> Predicate<T> not(Predicate<T> t) {
         return t.negate();
-    }
-
-
-    private static void resolveFromAssignmentInContext(PsiElement element, String elementName, @NotNull List<ResolveResult> result, PsiElement context) {
-        final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(context, RAssignmentStatement.class);
-
-        if (statements != null) {
-            for (RAssignmentStatement statement : statements) {
-                final PsiElement assignee = statement.getAssignee();
-
-                // 2nd check necessary to disallow self-references
-                // --> disabled to allow for correct usage search
-                // --> see design considerations in devel_notes.md
-                if (assignee == null || assignee == element) continue;
-
-
-                if (assignee.getText().equals(elementName)) {
-                    PsiElementResolveResult resolveResult = new PsiElementResolveResult(statement);
-                    result.add(resolveResult);
-                }
-
-                // also resolve member expressions
-                if (assignee instanceof RMemberExpression) {
-                    RExpression expr = ((RMemberExpression) assignee).getExpression();
-                    if (expr.getText().equals(elementName) && expr != element) { // disallow self-references
-                        result.add(new PsiElementResolveResult(statement));
-                    }
-                }
-
-
-                // if assignee is a reference expression it could be a backticked operator definition
-                // same for assignees which are literal expression. R support those as well for defining operators
-                if (assignee instanceof RReferenceExpression || assignee instanceof RStringLiteralExpression) {
-                    CharMatcher charMatcher = CharMatcher.anyOf("`\"'");
-
-                    if (charMatcher.matches(assignee.getText().charAt(0))) {
-                        String operatorCandidate = charMatcher.trimFrom(assignee.getText());
-
-                        if (Objects.equals(operatorCandidate, elementName)) {
-                            result.add(new PsiElementResolveResult(statement));
-                        }
-                    }
-                }
-
-            }
-        }
     }
 
 
@@ -386,11 +264,11 @@ public class RResolver {
     }
 
 
-    public static void resolveInFileOrLibrary(PsiElement myElement, String name, List<ResolveResult> myResult) {
-        myResult.addAll(resolveWithoutNamespaceInFile(myElement, name));
+    public static void resolveInFileOrLibrary(PsiElement element, String name, List<ResolveResult> myResult) {
+        myResult.addAll(new FileContextResolver().resolveFromInner(element, element, name));
 
         if (myResult.isEmpty()) {
-            addFromSkeletonsAndRLibrary(myElement, myResult, name);
+            addFromSkeletonsAndRLibrary(element, myResult, name);
         }
     }
 }

@@ -18,7 +18,7 @@
       <excludeFolder url="file://$MODULE_DIR$/r-helpers/r-skeletons" />
       <excludeFolder url="file://$MODULE_DIR$/r-helpers/r-user-skeletons" />
     </content>
-    <orderEntry type="jdk" jdkName="IntelliJ IDEA IU-163.11103.6" jdkType="IDEA JDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" scope="TEST">
       <library>
@@ -52,5 +52,6 @@
     </orderEntry>
     <orderEntry type="library" name="R Skeletons" level="project" />
     <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>

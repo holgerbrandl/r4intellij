@@ -116,7 +116,15 @@ public class UnresolvedReferenceInspection extends RInspection {
 
                     myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 } else if (RPsiUtils.isForwardReference(resolve, element)) {
+//                    // try to find forward references in file
+//                    FileContextResolver fileContextResolver = new FileContextResolver();
+//                    fileContextResolver.setForwardRefs(true);
+//
+//                    List<ResolveResult> forwardRefs = fileContextResolver.resolveFromInner(element, element, element.getName());
+//
+//                    if(!forwardRefs.isEmpty()) {
                     myProblemHolder.registerProblem(element, "Forward reference", ProblemHighlightType.GENERIC_ERROR);
+//                    }
                 }
             }
         }

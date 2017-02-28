@@ -38,8 +38,9 @@ Consider kotlin DSL for ui aspects, see
 API Doc Comments
 ================
 * visitor pattern pretty powerful allows for type specific visiting. see com.r4intellij.psi.api.RVisitor
-* necessity of 
-```
+* necessity of
+
+```java
 application.invokeLater(new Runnable() {
     @Override
     public void run() {
@@ -180,6 +181,8 @@ Usecases
 * missing arg inspection does not recognize dplyr piping --> Ignore first arg if right-hand-size of pipe 
 
 
+* bash-support: `$foo` register as global variable intention shows how to wrap into undo/redo framework --> do same for "register argument as bare column argument"
+
 ### source_url and source support
 
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000086390-How-to-embed-external-resource-file-into-PsiElement-tree-
@@ -195,6 +198,22 @@ See com.intellij.psi.impl.source.resolve.reference.impl.providers.URLReference
 ```java
 PsiFile document = ExternalResourceManager.getInstance().getResourceLocation(canonicalText, containingFile, tag.getAttributeValue("version"));
 
+```
+
+Open Problems
+-------------
+
+Because of scoping certain constructs can not be properly resolved
+```r
+x = 1
+
+if(T){
+    x = 1
+}else{
+    x = 2
+    x + 3
+}
+x +2
 ```
 
 Documentation Provider

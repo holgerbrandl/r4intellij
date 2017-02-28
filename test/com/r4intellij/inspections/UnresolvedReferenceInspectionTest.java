@@ -50,18 +50,10 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     // much the inspection code
 
 
-    public void testSimpleAssignment() {
-        doExprTest("foo = 23; 16 + foo");
-    }
 
 
     public void testIrisReassignment() {
         doExprTest("iris = iris");
-    }
-
-
-    public void testLocalFunctionCall() {
-        doExprTest("foo = function(x) x; foo(3)");
     }
 
 
@@ -142,8 +134,8 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
-    public void testImportAfterUsage() {
-        doExprTest(unresolved("glimpse") + "(iris) ; require(dplyr)");
+    public void testForwardImportAfterUsage() {
+        doExprTest(forwardRef("glimpse") + "(iris) ; require(dplyr)");
     }
 
 
@@ -195,22 +187,28 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
-    public void testSelfAssignment() {
-//        doExprTest("sdf = ls(<warning descr=\"Unresolved reference\">sdf</warning>)");
-        doExprTest("sdf = { <error descr=\"Forward reference\">sdf</error> }");
-//        doExprTest("sdf = <warning descr=\"Unresolved reference\">foo</warning>");
+    public void testForwardSelfAssignment() {
+        doExprTest("sdf = { " + forwardRef("sdf") + " }");
     }
 
 
     @NotNull
     private static String forwardRef(@NotNull String varName) {
-        return "<error descr=\"Forward reference\">" + varName + "</warning>";
+        return "<error descr=\"Forward reference\">" + varName + "</error>";
     }
 
 
     public void testForwardReference() {
 //        doExprTest("foo = <warning descr=\"Unresolved reference\">bar</warning>; bar = 1");
         doExprTest("foo = { <error descr=\"Forward reference\">bar</error> } ; bar = 1");
+    }
+
+
+    public void testFindFirstForwardReference() {
+//        doExprTest("foo = <warning descr=\"Unresolved reference\">bar</warning>; bar = 1");
+        CodeInsightTestFixture fixture = doExprTest("foo = { <error descr=\"Forward reference\">bar</error> } ; bar = 1");
+        PsiElement psiElement = fixture.getFile().getChildren()[0];
+        // todo finish test implementation
     }
 
 

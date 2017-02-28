@@ -14,6 +14,42 @@ import org.intellij.lang.annotations.Language
  */
 class ResolverTest : RTestCase() {
 
+
+    fun testSimpleAssignment() {
+        createPsi("foo = 23; 16 + foo")
+    }
+
+    fun testBlockResolve() {
+        createPsi("""
+        foo = 3
+
+        {
+            foo + 1
+        }
+        """)
+    }
+
+    fun testBlockAssignment() {
+        createPsi("""
+        foo = { 1 + 1 }
+        foo
+        """)
+    }
+
+
+    fun testVarUsedInIf() {
+        createPsi("""
+            x=3
+            if(T){
+                x + 3
+            }
+            """)
+    }
+
+    fun testLocalFunctionCall() {
+        createPsi("foo = function(x) x; foo(3)")
+    }
+
     fun testOperatorQuoteModes() {
         // we should resolve both ops and also find their usage
         createPsi("""

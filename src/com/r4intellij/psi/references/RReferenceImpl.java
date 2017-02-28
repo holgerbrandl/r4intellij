@@ -60,7 +60,16 @@ public class RReferenceImpl implements PsiPolyVariantReference {
             return result.toArray(new ResolveResult[result.size()]);
         }
 
+//        if (!result.isEmpty()) {
         RResolver.resolveInFileOrLibrary(myElement, elementName, result);
+//        }
+
+        // is still empty also include forward references
+        if (result.isEmpty()) {
+            FileContextResolver forwardResolver = new FileContextResolver();
+            forwardResolver.setForwardRefs(true);
+            result.addAll(forwardResolver.resolveFromInner(myElement, myElement, elementName));
+        }
 
         return result.toArray(new ResolveResult[result.size()]);
     }
@@ -87,7 +96,7 @@ public class RReferenceImpl implements PsiPolyVariantReference {
 
 
     @Nullable
-    public PsiElement resolve(boolean includeForwardRefs) {
+    public PsiElement resolve(boolean includeFwdRefs) {
         List<ResolveResult> results = Arrays.asList(multiResolve(false));
 
         Predicate<ResolveResult> fwdRefPredicate = RPsiUtils.createForwardRefPredicate(this.getElement());
@@ -99,10 +108,10 @@ public class RReferenceImpl implements PsiPolyVariantReference {
 
         ResolveResult bestRef;
 
-        if (includeForwardRefs) {
-            // or first forward reference
+        if (includeFwdRefs) {
+//            // or first forward reference
             bestRef = mostLocalRef.orElse(Iterables.getFirst(results, null));
-
+//
         } else {
             bestRef = mostLocalRef.orElse(null);
         }
@@ -164,6 +173,7 @@ public class RReferenceImpl implements PsiPolyVariantReference {
     }
 
 
+    // somehow needed to provide reference completion
     @NotNull
     @Override
     public Object[] getVariants() {
