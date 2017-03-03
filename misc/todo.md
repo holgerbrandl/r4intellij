@@ -42,6 +42,92 @@ jaacva.lang.ArrayIndexOutOfBoundsException: 1
 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
 	at java.lang.Thread.run(Thread.java:745)
 ```
+
+* exception when entering presentation view  
+```
+Write access is allowed from write-safe contexts only. Please ensure you're using invokeLater/invokeAndWait with a correct modality state (not "any"). See TransactionGuard documentation for details.
+  current modality=ModalityState.NON_MODAL
+  known modalities={ModalityState.NON_MODAL=true}
+java.lang.Throwable
+	at com.intellij.openapi.diagnostic.Logger.error(Logger.java:132)
+	at com.intellij.openapi.application.TransactionGuardImpl.assertWriteActionAllowed(TransactionGuardImpl.java:246)
+	at com.intellij.psi.impl.PsiModificationTrackerImpl.fireEvent(PsiModificationTrackerImpl.java:75)
+	at com.intellij.psi.impl.PsiModificationTrackerImpl.treeChanged(PsiModificationTrackerImpl.java:97)
+	at com.intellij.psi.impl.PsiManagerImpl.fireEvent(PsiManagerImpl.java:362)
+	at com.intellij.psi.impl.PsiManagerImpl.beforePropertyChange(PsiManagerImpl.java:278)
+	at com.intellij.psi.impl.file.impl.FileManagerImpl.firePropertyChangedForUnloadedPsi(FileManagerImpl.java:175)
+	at com.intellij.psi.impl.file.impl.PsiVFSListener.handleVfsChangeWithoutPsi(PsiVFSListener.java:704)
+	at com.intellij.psi.impl.file.impl.PsiVFSListener.access$200(PsiVFSListener.java:54)
+	at com.intellij.psi.impl.file.impl.PsiVFSListener$3.run(PsiVFSListener.java:146)
+	at com.intellij.openapi.application.impl.ApplicationImpl.runWriteAction(ApplicationImpl.java:934)
+	at com.intellij.psi.impl.file.impl.PsiVFSListener.fileCreated(PsiVFSListener.java:138)
+	at com.intellij.openapi.vfs.impl.BulkVirtualFileListenerAdapter.fireAfter(BulkVirtualFileListenerAdapter.java:80)
+	at com.intellij.openapi.vfs.impl.BulkVirtualFileListenerAdapter.after(BulkVirtualFileListenerAdapter.java:56)
+	at com.intellij.psi.impl.file.impl.PsiVFSListener$1.after(PsiVFSListener.java:97)
+	at sun.reflect.GeneratedMethodAccessor162.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.util.messages.impl.MessageBusConnectionImpl.deliverMessage(MessageBusConnectionImpl.java:117)
+	at com.intellij.util.messages.impl.MessageBusImpl.doPumpMessages(MessageBusImpl.java:381)
+	at com.intellij.util.messages.impl.MessageBusImpl.pumpMessages(MessageBusImpl.java:368)
+	at com.intellij.util.messages.impl.MessageBusImpl.sendMessage(MessageBusImpl.java:347)
+	at com.intellij.util.messages.impl.MessageBusImpl.access$200(MessageBusImpl.java:42)
+	at com.intellij.util.messages.impl.MessageBusImpl$2.invoke(MessageBusImpl.java:230)
+	at com.sun.proxy.$Proxy23.after(Unknown Source)
+	at com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl.processEvents(PersistentFSImpl.java:775)
+	at com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl.b(PersistentFSImpl.java:672)
+	at com.intellij.openapi.vfs.newvfs.persistent.PersistentFSImpl.createChildDirectory(PersistentFSImpl.java:424)
+	at com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry.createChildDirectory(VirtualFileSystemEntry.java:290)
+	at com.r4intellij.run.graphics.RGraphicsUtils$2.run(Unknown Source)
+	at com.intellij.openapi.application.impl.ApplicationImpl.runWriteAction(ApplicationImpl.java:934)
+	at com.r4intellij.run.graphics.RGraphicsUtils.createSnapshotDir(Unknown Source)
+	at com.r4intellij.run.graphics.RGraphicsUtils.getSnapshotDir(Unknown Source)
+	at com.r4intellij.run.graphics.RGraphicsUtils.getSnapshotDir(Unknown Source)
+	at com.r4intellij.run.graphics.RGraphicsUtils.getGraphicsState(Unknown Source)
+	at com.r4intellij.run.graphics.RGraphicsToolWindowFactory.createToolWindowContent(Unknown Source)
+	at com.intellij.openapi.wm.impl.ToolWindowImpl.ensureContentInitialized(ToolWindowImpl.java:568)
+	at com.intellij.openapi.wm.impl.ToolWindowImpl.getContentManager(ToolWindowImpl.java:402)
+	at com.intellij.ide.ui.laf.LafManagerImpl.updateToolWindows(LafManagerImpl.java:576)
+	at com.intellij.ide.ui.laf.LafManagerImpl.updateUI(LafManagerImpl.java:514)
+	at com.intellij.ide.actions.TogglePresentationModeAction.b(TogglePresentationModeAction.java:127)
+	at com.intellij.ide.actions.TogglePresentationModeAction.a(TogglePresentationModeAction.java:86)
+	at com.intellij.openapi.util.ExecutionCallback.setExecuted(ExecutionCallback.java:58)
+	at com.intellij.openapi.util.ActionCallback.setDone(ActionCallback.java:72)
+	at com.intellij.ui.mac.MacMainFrameDecorator$10.windowEnteredFullScreen(MacMainFrameDecorator.java:351)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at com.intellij.util.EventDispatcher.dispatch(EventDispatcher.java:99)
+	at com.intellij.util.EventDispatcher.access$200(EventDispatcher.java:35)
+	at com.intellij.util.EventDispatcher$2.invoke(EventDispatcher.java:79)
+	at com.intellij.ui.mac.$Proxy64.windowEnteredFullScreen(Unknown Source)
+	at com.intellij.ui.mac.MacMainFrameDecorator$7.windowEnteredFullScreen(MacMainFrameDecorator.java:222)
+	at com.apple.eawt.FullScreenHandler.notifyListener(FullScreenHandler.java:107)
+	at com.apple.eawt.FullScreenHandler$1.run(FullScreenHandler.java:82)
+	at java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:311)
+	at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:756)
+	at java.awt.EventQueue.access$500(EventQueue.java:97)
+	at java.awt.EventQueue$3.run(EventQueue.java:709)
+	at java.awt.EventQueue$3.run(EventQueue.java:703)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:80)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:90)
+	at java.awt.EventQueue$4.run(EventQueue.java:731)
+	at java.awt.EventQueue$4.run(EventQueue.java:729)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:80)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:728)
+	at com.intellij.ide.IdeEventQueue.b(IdeEventQueue.java:843)
+	at com.intellij.ide.IdeEventQueue._dispatchEvent(IdeEventQueue.java:679)
+	at com.intellij.ide.IdeEventQueue.dispatchEvent(IdeEventQueue.java:391)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:201)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:116)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:105)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:93)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
+```
 * threading issues when doing skeletonization
 * null assignments remove columns and should not be flagged as unused if the df is still used
 ```r
@@ -70,6 +156,13 @@ list(
 pdModel = model_glmnet
 )
 ```
+
+* newline after pipe is indented but should no (not in markdown chunks for some unknown reason)
+    * to make it more interesting: Kotlin is affected as well
+```r
+iris %>% mutate
+```
+
 
 ## Next Steps
 
@@ -101,6 +194,8 @@ http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_suppo
 
 
 * fix gradle build to include resource files in zip (see https://github.com/JetBrains/gradle-intellij-plugin/issues/180#issuecomment-280377767) 
+    * also use gradle for EAP releases (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000113284-EAP-channel-for-plugins)
+    
 * improve test coverage, see http://www.jetbrains.org/intellij/sdk/docs/tutorials/writing_tests_for_plugins/reference_test.html
 * [parameter info](https://intellij-support.jetbrains.com/hc/en-us/community/posts/206791995-Parameter-Info)
 
@@ -143,7 +238,7 @@ log(1,2,3,4)
 if(a=3){}
 filter(iris, Species="setosa")
 subset(iris, Species="setosa")
-
+```
 ## Note: technially certain assignment can evaluate to boolean
 if(a=(function(){T})()){ print("foo")}
 ## but this seems very bad practice and should be flagged as well
@@ -293,6 +388,19 @@ bla()
 
 ```
  
+* don't flag `else` branch as unused in 
+```r
+if(sdf){
+    publications = mutate(summary = map(pubmed_id, get_pubmed_summary)) %>% unnest(summary)
+
+}else{
+    publications = read_tsv(add_prefix("pubmed_raw.txt"))
+}
+
+publications
+
+```
+
 Documentation provider
 ----------------------
 
@@ -527,6 +635,7 @@ Brainstorming
 
 * learn from `/Users/brandl/projects/jb/intellij-community/platform/platform-resources/src/META-INF/JsonPlugin.xml`
     
+* 
     
 Send To Console Improvements
 ============================

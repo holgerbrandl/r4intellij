@@ -2,10 +2,6 @@ package com.r4intellij.inspections;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-
-import static com.r4intellij.inspections.UnresolvedReferenceInspectionTest.createLibraryFromPckgNames;
-
 public class TypeCheckerInspectionTest extends RInspectionTest {
 
 
@@ -41,13 +37,6 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
     }
 
 
-    @NotNull
-    // todo make generic
-    public static File getSkeletonPath(final String pckgName) {
-        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/r_skeletons/1842261700/" + pckgName + ".r");
-    }
-
-
     public void testMultipleFormalArgMatches() {
         doTest("MultipleFormalArgMatches.R");
     }
@@ -62,6 +51,12 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
         doExprTest("myfun=function(a, ...) a; myfun(23, b=4)"); // b should not be tagged
     }
 
+
+    public void testPipe() {
+        createLibraryFromPckgNames(myFixture, "datasets", "dplyr");
+        doExprTest("require(dplyr); iris %>% count()");
+        System.out.println();
+    }
 
 
     public void testOptional() {

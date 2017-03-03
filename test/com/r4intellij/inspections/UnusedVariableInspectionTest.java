@@ -3,8 +3,6 @@ package com.r4intellij.inspections;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import org.jetbrains.annotations.NotNull;
 
-import static com.r4intellij.inspections.UnresolvedReferenceInspectionTest.createLibraryFromPckgNames;
-
 public class UnusedVariableInspectionTest extends RInspectionTest {
 
     // TODO test annotation options to whitelist symobls and functions
