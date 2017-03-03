@@ -214,12 +214,14 @@ public class RPsiUtils {
             functionType = (RFunctionType) type;
         }
         Map<RExpression, RParameter> matchedParams = new HashMap<RExpression, RParameter>();
-        List<RExpression> matchedByTripleDot = new ArrayList<RExpression>();
+
         try {
-            RTypeChecker.matchArgs(callExpression.getArgumentList().getExpressionList(), matchedParams, matchedByTripleDot, functionType);
+            List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
+            RTypeChecker.matchArgs(arguments, matchedParams, new ArrayList<>(), functionType);
         } catch (MatchingException e) {
             return Collections.emptyMap();
         }
+
         Map<String, RExpression> result = new HashMap<String, RExpression>();
         for (Map.Entry<RExpression, RParameter> entry : matchedParams.entrySet()) {
             String parameterName = entry.getValue().getName();

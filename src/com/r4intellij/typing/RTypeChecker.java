@@ -1,9 +1,8 @@
 package com.r4intellij.typing;
 
-import com.r4intellij.psi.api.RAssignmentStatement;
-import com.r4intellij.psi.api.RExpression;
-import com.r4intellij.psi.api.RFunctionExpression;
-import com.r4intellij.psi.api.RParameter;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
+import com.r4intellij.psi.api.*;
 import com.r4intellij.typing.types.*;
 
 import java.util.ArrayList;
@@ -13,19 +12,153 @@ import java.util.Map;
 
 public class RTypeChecker {
 
-    public static void checkTypes(List<RExpression> arguments, RFunctionExpression functionExpression) throws MatchingException {
+    public static void checkArguments(PsiReference referenceToFunction, List<RExpression> arguments) throws MatchingException {
+        if (referenceToFunction != null) {
+            PsiElement assignmentStatement = referenceToFunction.resolve();
+
+            if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
+                RAssignmentStatement assignment = (RAssignmentStatement) assignmentStatement;
+                RPsiElement assignedValue = assignment.getAssignedValue();
+
+                if (assignedValue != null && assignedValue instanceof RFunctionExpression) {
+                    RFunctionExpression function = (RFunctionExpression) assignedValue;
+
+                    checkTypes(arguments, function);
+                }
+            }
+        }
+    }
+
+
+    private static void checkTypes(List<RExpression> arguments, RFunctionExpression functionExpression) throws MatchingException {
         Map<RExpression, RParameter> matchedParams = new HashMap<RExpression, RParameter>();
-        List<RExpression> matchedByTripleDot = new ArrayList<RExpression>();
-//        RType type = RTypeProvider.getType(functionExpression);
+        //        RType type = RTypeProvider.getType(functionExpression);
 //        if (!RFunctionType.class.isInstance(type)) {
 //            return; // TODO: fix me properly
 //        }
 //        RFunctionType functionType = (RFunctionType) type;
         RFunctionType functionType = new RFunctionType(functionExpression);
 
-        matchArgs(arguments, matchedParams, matchedByTripleDot, functionType);
+        matchArgs(arguments, matchedParams, new ArrayList<>(), functionType);
+
+        // todo re-enable once type system is back
 //        checkArgumentTypes(matchedParams, functionType);
     }
+
+
+    public static void matchArgs(List<RExpression> arguments,
+                                 Map<RExpression, RParameter> matchedParams,
+                                 List<RExpression> matchedByTripleDot,
+                                 // function type just needed to get optional parameter list
+                                 RFunctionType functionType) throws MatchingException {
+        List<RParameter> formalArguments = functionType.getFormalArguments();
+        List<RExpression> suppliedArguments = new ArrayList<>(arguments);
+
+        exactMatching(formalArguments, suppliedArguments, matchedParams);
+        partialMatching(formalArguments, suppliedArguments, matchedParams);
+        positionalMatching(formalArguments, suppliedArguments, matchedParams, matchedByTripleDot, functionType);
+    }
+
+
+    private static void partialMatching(List<RParameter> formalArguments,
+                                        List<RExpression> suppliedArguments,
+                                        Map<RExpression, RParameter> matchedParams) throws MatchingException {
+        matchParams(formalArguments, suppliedArguments, true, matchedParams);
+    }
+
+
+    private static void exactMatching(List<RParameter> formalArguments,
+                                      List<RExpression> suppliedArguments,
+                                      Map<RExpression, RParameter> matchedParams) throws MatchingException {
+        matchParams(formalArguments, suppliedArguments, false, matchedParams);
+    }
+
+
+    private static void matchParams(List<RParameter> parameters, List<RExpression> arguments,
+                                    boolean usePartialMatching,
+                                    Map<RExpression, RParameter> matchedParams) throws MatchingException {
+        List<RExpression> namedArguments = getNamedArguments(arguments);
+        for (RExpression namedArg : namedArguments) {
+            String name = namedArg.getName();
+            List<RParameter> matches = getMatches(name, parameters, usePartialMatching);
+            if (matches.size() > 1) {
+                throw new MatchingException("formal argument " + name + " matched by multiply actual arguments");
+            }
+            if (matches.size() == 1) {
+                matchedParams.put(namedArg, matches.get(0));
+            }
+        }
+
+        for (Map.Entry<RExpression, RParameter> entry : matchedParams.entrySet()) {
+            arguments.remove(entry.getKey());
+            parameters.remove(entry.getValue());
+        }
+    }
+
+
+    private static void positionalMatching(List<RParameter> formalArguments,
+                                           List<RExpression> suppliedArguments,
+                                           Map<RExpression, RParameter> matchedParams,
+                                           List<RExpression> matchedByTripleDot,
+                                           RFunctionType functionType) throws MatchingException {
+        List<RExpression> matchedArguments = new ArrayList<RExpression>();
+        List<RParameter> matchedParameter = new ArrayList<RParameter>();
+        int suppliedSize = suppliedArguments.size();
+        boolean wasTripleDot = false;
+        for (int i = 0; i < formalArguments.size(); i++) {
+            RParameter param = formalArguments.get(i);
+            if (param.getText().equals("...")) {
+                wasTripleDot = true;
+                break;
+            }
+            if (i >= suppliedSize) {
+                break;
+            }
+            RExpression arg = suppliedArguments.get(i);
+            if (arg instanceof RAssignmentStatement && ((RAssignmentStatement) arg).isEqual()) {
+                String argName = ((RAssignmentStatement) arg).getAssignee().getText();
+                if (!argName.equals(param.getName())) {
+                    wasTripleDot = true;
+                    break;
+                }
+            }
+            matchedArguments.add(arg);
+            matchedParameter.add(param);
+            matchedParams.put(arg, param);
+        }
+
+        formalArguments.removeAll(matchedParameter);
+        suppliedArguments.removeAll(matchedArguments);
+
+        if (wasTripleDot) {
+            matchedByTripleDot.addAll(suppliedArguments);
+            suppliedArguments.clear();
+        }
+
+        List<RParameter> unmatched = new ArrayList<RParameter>();
+        for (RParameter parameter : formalArguments) {
+            if (parameter.getText().equals("...")) {
+                continue;
+            }
+            RExpression defaultValue = parameter.getExpression();
+            if (defaultValue != null) {
+                matchedParams.put(defaultValue, parameter);
+            } else {
+                unmatched.add(parameter);
+            }
+        }
+        if (!unmatched.isEmpty()) {
+            unmatched.removeAll(functionType.getOptionalParams());
+            if (!unmatched.isEmpty()) {
+                throw new MatchingException(generateMissingArgErrorMessage(unmatched, 0));
+            }
+        }
+
+        if (!suppliedArguments.isEmpty()) {
+            checkUnmatchedArgs(suppliedArguments);
+        }
+    }
+
 
 
     private static void checkArgumentTypes(Map<RExpression, RParameter> matchedParams, RFunctionType functionType) throws MatchingException {
@@ -35,8 +168,10 @@ public class RTypeChecker {
             if (paramType == null || paramType instanceof RUnknownType) {
                 continue;
             }
+
             boolean isOptional = functionType.isOptional(parameter.getName());
             RType argType = RTypeProvider.getType(entry.getKey());
+
             if (argType != null && !RUnknownType.class.isInstance(argType)) {
                 if (!matchTypes(paramType, argType, isOptional)) {
                     throw new MatchingException(parameter.getText() + " expected to be of type " + paramType +
@@ -106,97 +241,6 @@ public class RTypeChecker {
         return type.equals(replacementType) || RTypeProvider.isSubtype(replacementType, type);
     }
 
-
-    public static void matchArgs(List<RExpression> arguments,
-                                 Map<RExpression, RParameter> matchedParams,
-                                 List<RExpression> matchedByTripleDot,
-                                 RFunctionType functionType) throws MatchingException {
-        List<RParameter> formalArguments = functionType.getFormalArguments();
-        List<RExpression> suppliedArguments = new ArrayList<RExpression>(arguments);
-        exactMatching(formalArguments, suppliedArguments, matchedParams);
-        partialMatching(formalArguments, suppliedArguments, matchedParams);
-        positionalMatching(formalArguments, suppliedArguments, matchedParams, matchedByTripleDot, functionType);
-    }
-
-
-    static void partialMatching(List<RParameter> formalArguments,
-                                List<RExpression> suppliedArguments,
-                                Map<RExpression, RParameter> matchedParams) throws MatchingException {
-        matchParams(formalArguments, suppliedArguments, true, matchedParams);
-    }
-
-
-    static void exactMatching(List<RParameter> formalArguments,
-                              List<RExpression> suppliedArguments,
-                              Map<RExpression, RParameter> matchedParams) throws MatchingException {
-        matchParams(formalArguments, suppliedArguments, false, matchedParams);
-    }
-
-
-    static void positionalMatching(List<RParameter> formalArguments,
-                                   List<RExpression> suppliedArguments,
-                                   Map<RExpression, RParameter> matchedParams,
-                                   List<RExpression> matchedByTripleDot,
-                                   RFunctionType functionType) throws MatchingException {
-        List<RExpression> matchedArguments = new ArrayList<RExpression>();
-        List<RParameter> matchedParameter = new ArrayList<RParameter>();
-        int suppliedSize = suppliedArguments.size();
-        boolean wasTripleDot = false;
-        for (int i = 0; i < formalArguments.size(); i++) {
-            RParameter param = formalArguments.get(i);
-            if (param.getText().equals("...")) {
-                wasTripleDot = true;
-                break;
-            }
-            if (i >= suppliedSize) {
-                break;
-            }
-            RExpression arg = suppliedArguments.get(i);
-            if (arg instanceof RAssignmentStatement && ((RAssignmentStatement) arg).isEqual()) {
-                String argName = ((RAssignmentStatement) arg).getAssignee().getText();
-                if (!argName.equals(param.getName())) {
-                    wasTripleDot = true;
-                    break;
-                }
-            }
-            matchedArguments.add(arg);
-            matchedParameter.add(param);
-            matchedParams.put(arg, param);
-        }
-
-        formalArguments.removeAll(matchedParameter);
-        suppliedArguments.removeAll(matchedArguments);
-
-        if (wasTripleDot) {
-            matchedByTripleDot.addAll(suppliedArguments);
-            suppliedArguments.clear();
-        }
-
-        List<RParameter> unmatched = new ArrayList<RParameter>();
-        for (RParameter parameter : formalArguments) {
-            if (parameter.getText().equals("...")) {
-                continue;
-            }
-            RExpression defaultValue = parameter.getExpression();
-            if (defaultValue != null) {
-                matchedParams.put(defaultValue, parameter);
-            } else {
-                unmatched.add(parameter);
-            }
-        }
-        if (!unmatched.isEmpty()) {
-            unmatched.removeAll(functionType.getOptionalParams());
-            if (!unmatched.isEmpty()) {
-                throw new MatchingException(generateMissingArgErrorMessage(unmatched, 0));
-            }
-        }
-
-        if (!suppliedArguments.isEmpty()) {
-            checkUnmatchedArgs(suppliedArguments);
-        }
-    }
-
-
     private static String generateMissingArgErrorMessage(List<RParameter> parameters, int i) {
         String noDefaultMessage = " missing, with no default";
         if (i == parameters.size() - 1) {
@@ -243,28 +287,6 @@ public class RTypeChecker {
             }
         }
         return namedArgs;
-    }
-
-
-    private static void matchParams(List<RParameter> parameters, List<RExpression> arguments,
-                                    boolean usePartialMatching,
-                                    Map<RExpression, RParameter> matchedParams) throws MatchingException {
-        List<RExpression> namedArguments = getNamedArguments(arguments);
-        for (RExpression namedArg : namedArguments) {
-            String name = namedArg.getName();
-            List<RParameter> matches = getMatches(name, parameters, usePartialMatching);
-            if (matches.size() > 1) {
-                throw new MatchingException("formal argument " + name + " matched by multiply actual arguments");
-            }
-            if (matches.size() == 1) {
-                matchedParams.put(namedArg, matches.get(0));
-            }
-        }
-
-        for (Map.Entry<RExpression, RParameter> entry : matchedParams.entrySet()) {
-            arguments.remove(entry.getKey());
-            parameters.remove(entry.getValue());
-        }
     }
 
 

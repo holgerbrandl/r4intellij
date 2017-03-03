@@ -37,6 +37,7 @@ public class TypeCheckerInspection extends RInspection {
 
 
     private class Visitor extends RVisitor {
+
         private final ProblemsHolder myProblemHolder;
 
 
@@ -49,10 +50,12 @@ public class TypeCheckerInspection extends RInspection {
         public void visitCallExpression(@NotNull RCallExpression callExpression) {
             PsiReference referenceToFunction = callExpression.getExpression().getReference();
             List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
-            checkFunctionCall(callExpression, referenceToFunction, arguments);
+
+            checkArguments(callExpression, referenceToFunction, arguments);
+
             visitExpression(callExpression);
 
-            // all disabled because unclear need (sideeffects) and creates dead-lock
+            // unclear need (but seems to have side-effects side effects)
             RTypeProvider.getType(callExpression);
         }
 
@@ -63,10 +66,22 @@ public class TypeCheckerInspection extends RInspection {
             if (operator == null) {
                 return;
             }
+
             PsiReference referenceToFunction = operator.getReference();
             List<RExpression> arguments = PsiTreeUtil.getChildrenOfTypeAsList(operatorExpression, RExpression.class);
-            checkFunctionCall(operatorExpression, referenceToFunction, arguments);
+
+            checkArguments(operatorExpression, referenceToFunction, arguments);
+
             RTypeProvider.getType(operatorExpression);
+        }
+
+
+        private void checkArguments(PsiElement argUsage, PsiReference referenceToFunction, List<RExpression> arguments) {
+            try {
+                RTypeChecker.checkArguments(referenceToFunction, arguments);
+            } catch (MatchingException e) {
+                myProblemHolder.registerProblem(argUsage, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            }
         }
 
 
@@ -88,23 +103,6 @@ public class TypeCheckerInspection extends RInspection {
         }
 
 
-        private void checkFunctionCall(PsiElement callSite, PsiReference referenceToFunction, List<RExpression> arguments) {
-            if (referenceToFunction != null) {
-                PsiElement assignmentStatement = referenceToFunction.resolve();
-                if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
-                    RAssignmentStatement assignment = (RAssignmentStatement) assignmentStatement;
-                    RPsiElement assignedValue = assignment.getAssignedValue();
-                    if (assignedValue != null && assignedValue instanceof RFunctionExpression) {
-                        RFunctionExpression function = (RFunctionExpression) assignedValue;
-                        try {
-                            RTypeChecker.checkTypes(arguments, function);
-                        } catch (MatchingException e) {
-                            myProblemHolder.registerProblem(callSite, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                        }
-                    }
-                }
-            }
-        }
     }
 
 

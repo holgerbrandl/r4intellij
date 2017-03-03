@@ -16,7 +16,6 @@ import com.r4intellij.documentation.RHelpParser;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.psi.RRecursiveElementVisitor;
 import com.r4intellij.psi.api.*;
-import com.r4intellij.settings.RSettings;
 import com.r4intellij.typing.*;
 import com.r4intellij.typing.types.RType;
 import com.r4intellij.typing.types.RUnknownType;
@@ -214,7 +213,7 @@ class TypedFunctionVisitor extends RVisitor {
                     + "print(myValueType)";
 
             String stdout = RHelperUtil.runCommand(programString);
-            String rPath = RSettings.getInstance().getInterpreterPath();
+//            String rPath = RSettings.getInstance().getInterpreterPath();
 
             RType evaluatedType = RSkeletonGeneratorHelper.findType(stdout);
             myOk = RTypeChecker.matchTypes(myCandidate, evaluatedType);
@@ -234,22 +233,13 @@ class TypedFunctionVisitor extends RVisitor {
 
         @Override
         public void visitCallExpression(@NotNull RCallExpression callExpression) {
-            PsiReference referenceToFunction = callExpression.getExpression().getReference();
-            if (referenceToFunction != null) {
-                PsiElement assignmentStatement = referenceToFunction.resolve();
-                if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
-                    RAssignmentStatement assignment = (RAssignmentStatement) assignmentStatement;
-                    RPsiElement assignedValue = assignment.getAssignedValue();
-                    if (assignedValue != null && assignedValue instanceof RFunctionExpression) {
-                        RFunctionExpression function = (RFunctionExpression) assignedValue;
-                        List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
-                        try {
-                            RTypeChecker.checkTypes(arguments, function);
-                        } catch (MatchingException e) {
-                            hasErrors = true;
-                        }
-                    }
-                }
+            try {
+                PsiReference referenceToFunction = callExpression.getExpression().getReference();
+                List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
+
+                RTypeChecker.checkArguments(referenceToFunction, arguments);
+            } catch (MatchingException e) {
+                hasErrors = true;
             }
         }
 
