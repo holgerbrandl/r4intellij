@@ -1,12 +1,13 @@
 package com.r4intellij.parser
 
+import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.r4intellij.RTestCase
 import com.r4intellij.inspections.UnresolvedReferenceInspection
 import com.r4intellij.inspections.UnusedVariableInspection
-import com.r4intellij.psi.api.ROperator
 import com.r4intellij.psi.api.ROperatorExpression
+import com.r4intellij.psi.api.RReferenceExpression
 import org.intellij.lang.annotations.Language
 
 /**
@@ -64,12 +65,26 @@ class ResolverTest : RTestCase() {
 
         // do additional testing here
         val symbol = PsiTreeUtil.findChildrenOfType(myFixture.file, ROperatorExpression::class.java).last().operator
-        assertResolvant(symbol, "'%bar%' <- function(a,b) 3")
+        assertResolvant("'%bar%' <- function(a,b) 3", symbol.reference!!)
     }
 
 
-    private fun assertResolvant(symbol: ROperator, expected: String) {
-        val operatorResolvant = symbol.reference!!.resolve()
+    fun testResolveToDiamonOpReassignment() {
+        // we should resolve both ops and also find their usage
+        myFixture.configureByText("a.R", """
+        my_data = iris
+        my_data %<>% transform(foo='bar')
+        my_data
+        """)
+
+        // do additional testing here
+        val symbol = PsiTreeUtil.findChildrenOfType(myFixture.file, RReferenceExpression::class.java).last()
+        assertResolvant("my_data %<>% transform(foo='bar')", symbol.reference!!)
+    }
+
+
+    private fun assertResolvant(expected: String, reference: PsiReference) {
+        val operatorResolvant = reference.resolve()
 
         assertEquals(expected, operatorResolvant!!.text)
     }

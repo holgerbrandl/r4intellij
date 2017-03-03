@@ -162,6 +162,7 @@ public class RResolver {
             return;
         }
 
+        // todo why don't we use the stub-index here, it should be much faster than parsing the file
         final PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
 
         final RAssignmentStatement[] statements =
