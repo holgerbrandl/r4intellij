@@ -3,16 +3,26 @@ package com.r4intellij.typing;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.r4intellij.psi.api.*;
-import com.r4intellij.typing.types.*;
+import com.r4intellij.typing.types.RFunctionType;
+import com.r4intellij.typing.types.RType;
+import com.r4intellij.typing.types.RUnknownType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RTypeChecker {
+public class ArgumentMatcher {
 
-    public static void checkArguments(PsiReference referenceToFunction, List<RExpression> arguments) throws MatchingException {
+    private boolean firstArgInjected;
+
+
+    public void setFirstArgInjected(boolean firstArgInjected) {
+        this.firstArgInjected = firstArgInjected;
+    }
+
+
+    public void checkArguments(PsiReference referenceToFunction, List<RExpression> arguments) throws MatchingException {
         if (referenceToFunction != null) {
             PsiElement assignmentStatement = referenceToFunction.resolve();
 
@@ -30,7 +40,7 @@ public class RTypeChecker {
     }
 
 
-    private static void checkTypes(List<RExpression> arguments, RFunctionExpression functionExpression) throws MatchingException {
+    private void checkTypes(List<RExpression> arguments, RFunctionExpression functionExpression) throws MatchingException {
         Map<RExpression, RParameter> matchedParams = new HashMap<RExpression, RParameter>();
         //        RType type = RTypeProvider.getType(functionExpression);
 //        if (!RFunctionType.class.isInstance(type)) {
@@ -46,17 +56,18 @@ public class RTypeChecker {
     }
 
 
-    public static void matchArgs(List<RExpression> arguments,
-                                 Map<RExpression, RParameter> matchedParams,
-                                 List<RExpression> matchedByTripleDot,
-                                 // function type just needed to get optional parameter list
-                                 RFunctionType functionType) throws MatchingException {
+    public void matchArgs(List<RExpression> arguments,
+                          Map<RExpression, RParameter> matchedParams,
+                          List<RExpression> matchedByTripleDot,
+                          // function type just needed to get optional parameter list
+                          RFunctionType functionType) throws MatchingException {
+
         List<RParameter> formalArguments = functionType.getFormalArguments();
         List<RExpression> suppliedArguments = new ArrayList<>(arguments);
 
         exactMatching(formalArguments, suppliedArguments, matchedParams);
         partialMatching(formalArguments, suppliedArguments, matchedParams);
-        positionalMatching(formalArguments, suppliedArguments, matchedParams, matchedByTripleDot, functionType);
+        positionalMatching(formalArguments, suppliedArguments, matchedParams, matchedByTripleDot, functionType, firstArgInjected);
     }
 
 
@@ -100,11 +111,18 @@ public class RTypeChecker {
                                            List<RExpression> suppliedArguments,
                                            Map<RExpression, RParameter> matchedParams,
                                            List<RExpression> matchedByTripleDot,
-                                           RFunctionType functionType) throws MatchingException {
-        List<RExpression> matchedArguments = new ArrayList<RExpression>();
-        List<RParameter> matchedParameter = new ArrayList<RParameter>();
+                                           RFunctionType functionType,
+                                           boolean isPipeInjected) throws MatchingException {
+
+        List<RExpression> matchedArguments = new ArrayList<>();
+        List<RParameter> matchedParameter = new ArrayList<>();
         int suppliedSize = suppliedArguments.size();
         boolean wasTripleDot = false;
+
+        if (isPipeInjected) {
+            formalArguments = formalArguments.subList(1, formalArguments.size());
+        }
+
         for (int i = 0; i < formalArguments.size(); i++) {
             RParameter param = formalArguments.get(i);
             if (param.getText().equals("...")) {
@@ -147,6 +165,7 @@ public class RTypeChecker {
                 unmatched.add(parameter);
             }
         }
+
         if (!unmatched.isEmpty()) {
             unmatched.removeAll(functionType.getOptionalParams());
             if (!unmatched.isEmpty()) {
@@ -158,7 +177,6 @@ public class RTypeChecker {
             checkUnmatchedArgs(suppliedArguments);
         }
     }
-
 
 
     private static void checkArgumentTypes(Map<RExpression, RParameter> matchedParams, RFunctionType functionType) throws MatchingException {
@@ -173,7 +191,7 @@ public class RTypeChecker {
             RType argType = RTypeProvider.getType(entry.getKey());
 
             if (argType != null && !RUnknownType.class.isInstance(argType)) {
-                if (!matchTypes(paramType, argType, isOptional)) {
+                if (!TypeUtil.matchTypes(paramType, argType, isOptional)) {
                     throw new MatchingException(parameter.getText() + " expected to be of type " + paramType +
                             ", found type " + argType);
                 }
@@ -181,65 +199,6 @@ public class RTypeChecker {
         }
     }
 
-
-    public static boolean matchTypes(RType type, RType replacementType) {
-        return matchTypes(type, replacementType, false);
-    }
-
-
-    public static boolean matchTypes(RType type, RType replacementType, boolean isOptional) {
-        if (replacementType instanceof RUnknownType) {
-            return true;
-        }
-        if (type instanceof RUnknownType) {
-            return true;
-        }
-        if (isOptional && replacementType instanceof RNullType) {
-            return true;
-        }
-        if (type instanceof RUnionType) {
-            for (RType t : ((RUnionType) type).getTypes()) {
-                if (matchTypes(t, replacementType)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        if (replacementType instanceof RUnionType) {
-            for (RType t : ((RUnionType) replacementType).getTypes()) {
-                if (!matchTypes(type, t)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        if (replacementType instanceof RS4ClassType) {
-            RType superClass = ((RS4ClassType) replacementType).getSuperClass();
-            if (superClass != null && matchTypes(type, superClass)) {
-                return true;
-            }
-        }
-        if (type instanceof RListType) {
-            if (!RListType.class.isInstance(replacementType)) {
-                return false;
-            }
-            RListType listType = (RListType) type;
-            RListType replacementList = (RListType) replacementType;
-            for (String field : listType.getFields()) {
-                if (!replacementList.hasField(field)) {
-                    return false;
-                }
-                if (!matchTypes(listType.getFieldType(field), replacementList.getFieldType(field))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        if (replacementType instanceof RNumericType && type instanceof RIntegerType) {
-            return true; // yeah yeah
-        }
-        return type.equals(replacementType) || RTypeProvider.isSubtype(replacementType, type);
-    }
 
     private static String generateMissingArgErrorMessage(List<RParameter> parameters, int i) {
         String noDefaultMessage = " missing, with no default";
@@ -304,4 +263,6 @@ public class RTypeChecker {
             throw new MatchingException(errorMessage.delete(lastComma, lastComma + 1).toString());
         }
     }
+
+
 }

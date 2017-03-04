@@ -55,7 +55,12 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
     public void testPipe() {
         createLibraryFromPckgNames(myFixture, "datasets", "dplyr");
         doExprTest("require(dplyr); iris %>% count()");
-        System.out.println();
+    }
+
+
+    public void testDiamondReassignment() {
+        createLibraryFromPckgNames(myFixture, "datasets", "dplyr", "magrittr");
+        doExprTest("require(dplyr); iris %<>% mutate(foo=1)");
     }
 
 

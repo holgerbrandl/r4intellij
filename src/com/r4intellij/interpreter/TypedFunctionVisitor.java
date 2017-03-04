@@ -216,7 +216,7 @@ class TypedFunctionVisitor extends RVisitor {
 //            String rPath = RSettings.getInstance().getInterpreterPath();
 
             RType evaluatedType = RSkeletonGeneratorHelper.findType(stdout);
-            myOk = RTypeChecker.matchTypes(myCandidate, evaluatedType);
+            myOk = TypeUtil.matchTypes(myCandidate, evaluatedType);
 
         }
 
@@ -237,7 +237,7 @@ class TypedFunctionVisitor extends RVisitor {
                 PsiReference referenceToFunction = callExpression.getExpression().getReference();
                 List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
 
-                RTypeChecker.checkArguments(referenceToFunction, arguments);
+                new ArgumentMatcher().checkArguments(referenceToFunction, arguments);
             } catch (MatchingException e) {
                 hasErrors = true;
             }

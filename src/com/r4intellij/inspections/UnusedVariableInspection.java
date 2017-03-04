@@ -93,16 +93,17 @@ public class UnusedVariableInspection extends RInspection {
             // Check if we can resolve it into a accessor setter
 
             // See https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Attributes
-            // See https://cran.r-project.org/doc/manuals/r-release/R-lang.html#Function-calls
+            // See https://cran.r -project.org/doc/manuals/r-release/R-lang.html#Function-calls
 
-            String methodName = callExpression.getExpression().getReference().getCanonicalText();
+            // check if it can be resolved it into an accessor function
+            PsiReference reference = callExpression.getExpression().getReference();
+            String accessorMethodName = "`" + reference.getCanonicalText() + "<-`()";
 
-            // see if we can resolve it into an accessor function
-            PsiElement accesorResolvant = RElementFactory.createFuncallFromText(
-                    assignee.getProject(), "`" + methodName + "<-`()"
-            ).getExpression().getReference().resolve();
+            PsiElement accessorResolvant = RElementFactory
+                    .createFuncallFromText(assignee.getProject(), accessorMethodName)
+                    .getExpression().getReference().resolve();
 
-            return accesorResolvant != null;
+            return accessorResolvant != null;
         }
 
 

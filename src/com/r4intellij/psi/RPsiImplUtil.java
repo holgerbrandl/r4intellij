@@ -311,7 +311,11 @@ public class RPsiImplUtil {
             return charMatcher.trimFrom(text);
         }
 
-        return text;
+        // since any r method can be called with surrunding backticks we discard them here since they are not part of the stub index
+        CharMatcher charMatcher = CharMatcher.anyOf("`");
+        return charMatcher.trimFrom(text);
+
+//        return text;
     }
 
 

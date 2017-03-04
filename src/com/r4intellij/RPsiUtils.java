@@ -15,8 +15,8 @@ import com.intellij.util.containers.Predicate;
 import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
+import com.r4intellij.typing.ArgumentMatcher;
 import com.r4intellij.typing.MatchingException;
-import com.r4intellij.typing.RTypeChecker;
 import com.r4intellij.typing.RTypeProvider;
 import com.r4intellij.typing.types.RFunctionType;
 import com.r4intellij.typing.types.RType;
@@ -217,7 +217,7 @@ public class RPsiUtils {
 
         try {
             List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
-            RTypeChecker.matchArgs(arguments, matchedParams, new ArrayList<>(), functionType);
+            new ArgumentMatcher().matchArgs(arguments, matchedParams, new ArrayList<>(), functionType);
         } catch (MatchingException e) {
             return Collections.emptyMap();
         }

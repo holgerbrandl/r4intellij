@@ -219,7 +219,7 @@ public class RTypeProvider {
                     if (!s4Class.hasSlot(slotName)) {
                         return new RErrorType("Invalid slot " + slotName);
                     }
-                    if (!RTypeChecker.matchTypes(s4Class.getSlotType(slotName), getType(value))) {
+                    if (!TypeUtil.matchTypes(s4Class.getSlotType(slotName), getType(value))) {
                         return new RErrorType("Wrong type of slot " + slotName);
                     }
                 }
@@ -239,7 +239,7 @@ public class RTypeProvider {
         List<RExpression> matchedByTripleDot = new ArrayList<RExpression>();
 
         try {
-            RTypeChecker.matchArgs(arguments, matchedParams, matchedByTripleDot, functionType);
+            new ArgumentMatcher().matchArgs(arguments, matchedParams, matchedByTripleDot, functionType);
         } catch (MatchingException e) {
             return RUnknownType.INSTANCE;
         }
@@ -337,7 +337,7 @@ public class RTypeProvider {
                         }
                         ruleType = env.getType(variableName);
                     }
-                    if (!RTypeChecker.matchTypes(ruleType, exprConf.getType())) {
+                    if (!TypeUtil.matchTypes(ruleType, exprConf.getType())) {
                         continue rulefor;
                     }
                 }
