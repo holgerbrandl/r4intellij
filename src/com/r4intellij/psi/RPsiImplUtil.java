@@ -328,7 +328,7 @@ public class RPsiImplUtil {
 
 
     public static ROperator getOperator(ROperatorExpression expr) {
-        return (ROperator) expr.getChildren()[1];
+        return PsiTreeUtil.findChildOfType(expr, ROperator.class);
     }
 
 
@@ -341,15 +341,21 @@ public class RPsiImplUtil {
         //redo with
 //        Collection<RPsiElement> psiChildren = PsiTreeUtil.findChildrenOfAnyType(expr, RExpression.class, ROperator.class);
 
-        return (RExpression) expr.getChildren()[0];
+        PsiElement psiElement = expr.getChildren()[0];
+        if (psiElement instanceof RExpression) {
+            return (RExpression) psiElement;
+        }
+
+        return null;
     }
 
 
     public static RExpression getRightExpr(ROperatorExpression expr) {
-//        Collection<RPsiElement> psiChildren = PsiTreeUtil.findChildrenOfAnyType(expr, RExpression.class, ROperator.class);
+        RExpression[] expressions = PsiTreeUtil.getChildrenOfType(expr, RExpression.class);
 
-        PsiElement[] children = expr.getChildren();
-        return (RExpression) children[children.length - 1];
+        if (expressions == null || expressions.length != 2) return null;
+
+        return expressions[1];
     }
 
 
