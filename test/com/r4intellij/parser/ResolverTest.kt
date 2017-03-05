@@ -1,19 +1,13 @@
 package com.r4intellij.parser
 
-import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
-import com.r4intellij.RTestCase
-import com.r4intellij.inspections.UnresolvedReferenceInspection
-import com.r4intellij.inspections.UnusedVariableInspection
 import com.r4intellij.psi.api.ROperatorExpression
 import com.r4intellij.psi.api.RReferenceExpression
-import org.intellij.lang.annotations.Language
 
 /**
  * @author Holger Brandl
  */
-class ResolverTest : RTestCase() {
+class ResolverTest : AbstractResolverTest() {
 
 
     fun testSimpleAssignment() {
@@ -80,22 +74,5 @@ class ResolverTest : RTestCase() {
         // do additional testing here
         val symbol = PsiTreeUtil.findChildrenOfType(myFixture.file, RReferenceExpression::class.java).last()
         assertResolvant("my_data %<>% transform(foo='bar')", symbol.reference!!)
-    }
-
-
-    private fun assertResolvant(expected: String, reference: PsiReference) {
-        val operatorResolvant = reference.resolve()
-
-        assertEquals(expected, operatorResolvant!!.text)
-    }
-
-
-    private fun createPsi(@Language("R") expressionList: String): CodeInsightTestFixture {
-        myFixture.configureByText("a.R", expressionList)
-
-        myFixture.enableInspections(UnusedVariableInspection::class.java, UnresolvedReferenceInspection::class.java);
-        myFixture.testHighlighting(true, false, false)
-
-        return myFixture
     }
 }

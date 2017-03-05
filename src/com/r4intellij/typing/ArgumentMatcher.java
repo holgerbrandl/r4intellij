@@ -8,10 +8,13 @@ import com.r4intellij.psi.api.*;
 import com.r4intellij.typing.types.RFunctionType;
 import com.r4intellij.typing.types.RType;
 import com.r4intellij.typing.types.RUnknownType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.r4intellij.inspections.TypeCheckerInspection.isPipeContext;
 
 public class ArgumentMatcher {
 
@@ -51,32 +54,32 @@ public class ArgumentMatcher {
     }
 
 
-    public ArgumentMatcher(RCallExpression callExpression) throws MatchingException {
+    public ArgumentMatcher(@NotNull RCallExpression callExpression) throws MatchingException {
         RFunctionExpression function = RPsiUtils.getFunction(callExpression);
+
         if (function != null) {
             functionType = new RFunctionType(function);
+
         } else {
             RType type = RTypeProvider.getType(callExpression.getExpression());
+
             if (!RFunctionType.class.isInstance(type)) {
                 throw new MatchingException("function type does not match");
 //                return Collections.emptyMap();
             }
+
             functionType = (RFunctionType) type;
+            firstArgInjected = isPipeContext(callExpression);
         }
     }
 
 
-    public void setFirstArgInjected(boolean firstArgInjected) {
-        this.firstArgInjected = firstArgInjected;
-    }
-
-
-    public ArgumentsMatchResult checkArguments(RArgumentList argumentList) throws MatchingException {
+    public ArgumentsMatchResult matchArgs(RArgumentList argumentList) throws MatchingException {
         return matchArgs(argumentList.getExpressionList());
     }
 
 
-    public ArgumentsMatchResult checkArguments(ROperatorExpression operatorExpression) throws MatchingException {
+    public ArgumentsMatchResult matchArgs(ROperatorExpression operatorExpression) throws MatchingException {
         List<RExpression> arguments = PsiTreeUtil.getChildrenOfTypeAsList(operatorExpression, RExpression.class);
 
         return matchArgs(arguments);
@@ -87,7 +90,7 @@ public class ArgumentMatcher {
         List<RParameter> formalArguments = functionType.getFormalArguments();
 
         List<RExpression> suppliedArguments = new ArrayList<>(arguments);
-        ArgumentsMatchResult matchResult = new ArgumentsMatchResult();
+        ArgumentsMatchResult matchResult = new ArgumentsMatchResult(functionType);
 
         exactMatching(formalArguments, suppliedArguments, matchResult);
         partialMatching(formalArguments, suppliedArguments, matchResult);

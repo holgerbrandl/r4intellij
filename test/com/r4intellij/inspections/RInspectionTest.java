@@ -112,7 +112,7 @@ public abstract class RInspectionTest extends RTestCase {
     }
 
 
-    protected static void createLibraryFromPckgNames(CodeInsightTestFixture myFixture, String... packageNames) {
+    public static void createLibraryFromPckgNames(CodeInsightTestFixture myFixture, String... packageNames) {
         Module myModule = myFixture.getModule();
 
         LocalFileSystem fileSystem = LocalFileSystem.getInstance();

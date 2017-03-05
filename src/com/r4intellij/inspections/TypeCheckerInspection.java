@@ -3,6 +3,7 @@ package com.r4intellij.inspections;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -37,7 +38,7 @@ public class TypeCheckerInspection extends RInspection {
     }
 
 
-    public static boolean isPipeContext(RCallExpression callExpression) {
+    public static boolean isPipeContext(@NotNull RCallExpression callExpression) {
         // see https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html
 
         boolean hasDotArg = callExpression
@@ -50,8 +51,12 @@ public class TypeCheckerInspection extends RInspection {
         // TODO convert to settings item
         List<String> pipeOps = Arrays.asList("%>%", "%<>%", "%T>", "%$");
 
-        if (callExpression.getParent() instanceof ROperatorExpression) {
-            String opText = ((ROperatorExpression) callExpression.getParent()).getOperator().getText();
+        PsiElement callExParent = callExpression.getParent();
+        if (callExParent != null && callExParent instanceof ROperatorExpression) {
+            ROperator operator = ((ROperatorExpression) callExParent).getOperator();
+            if (operator == null) return false;
+
+            String opText = operator.getText();
             return pipeOps.contains(opText);
         }
 
@@ -76,11 +81,7 @@ public class TypeCheckerInspection extends RInspection {
             try {
                 ArgumentMatcher argumentMatcher = new ArgumentMatcher(callExpression);
 
-                if (isPipeContext(callExpression)) {
-                    argumentMatcher.setFirstArgInjected(true);
-                }
-
-                argumentMatcher.checkArguments(callExpression.getArgumentList());
+                argumentMatcher.matchArgs(callExpression.getArgumentList());
             } catch (MatchingException e) {
                 myProblemHolder.registerProblem(callExpression, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
@@ -109,7 +110,7 @@ public class TypeCheckerInspection extends RInspection {
             PsiReference referenceToFunction = operator.getReference();
 
             try {
-                new ArgumentMatcher(referenceToFunction).checkArguments(operatorExpression);
+                new ArgumentMatcher(referenceToFunction).matchArgs(operatorExpression);
             } catch (MatchingException e) {
                 myProblemHolder.registerProblem(operatorExpression, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }

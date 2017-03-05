@@ -237,7 +237,7 @@ class TypedFunctionVisitor extends RVisitor {
         @Override
         public void visitCallExpression(@NotNull RCallExpression callExpression) {
             try {
-                new ArgumentMatcher(callExpression).checkArguments(callExpression.getArgumentList());
+                new ArgumentMatcher(callExpression).matchArgs(callExpression.getArgumentList());
             } catch (MatchingException e) {
                 hasErrors = true;
             }

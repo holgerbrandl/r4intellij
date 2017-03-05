@@ -5,6 +5,12 @@ import org.jetbrains.annotations.NotNull;
 public class TypeCheckerInspectionTest extends RInspectionTest {
 
 
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+
     public void testNoWarnings() {
 
         doTest("NoWarnings.R");
@@ -64,6 +70,21 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
     }
 
 
+    public void testNamedArgsInStrangeOrder() {
+        createLibraryFromPckgNames(myFixture, "datasets", "dplyr");
+        doExprTest("dplyr::inner_join(by='Species', y=iris, x=iris)");
+    }
+
+
+    // todo reenable for v1.1
+    public void _testDontCheckArgsIfFundefIsMissing() {
+        createLibraryFromPckgNames(myFixture, "datasets");
+        myFixture.enableInspections(getInspection(), MissingPackageInspection.class, UnresolvedReferenceInspection.class);
+
+        doExprTest("<warning descr=\"'mutate' has been detected in a package (dplyr, plyr, SparkR, plotly) which does not seem to be imported yet.\">mutate</warning>(iris, foo=1)");
+    }
+
+
     public void testOptional() {
         doTest("TestOptional.R");
     }
@@ -89,7 +110,6 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
     public void _testIfElseType() {
         doTest("IfElseType.R");
     }
-
 
 
     public void _testList() {

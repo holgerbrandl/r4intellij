@@ -19,14 +19,14 @@ import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.RReferenceImpl;
+import com.r4intellij.typing.ArgumentMatcher;
+import com.r4intellij.typing.ArgumentsMatchResult;
+import com.r4intellij.typing.MatchingException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static com.r4intellij.inspections.TypeCheckerInspection.isPipeContext;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class UnresolvedReferenceInspection extends RInspection {
 
@@ -109,14 +109,6 @@ public class UnresolvedReferenceInspection extends RInspection {
             if (RPsiUtils.isNamespacePrefix(element)) return;
 
 
-            // exclude white-listed argument positions containing unquoted variable names
-            List<String> whiteList = Arrays.asList("dplyr::count(2)", "dplyr::count(2-)");
-            boolean isFirstArgInjected = isPipeContext(callExpression);
-
-//            new ArgumentMatcher().matchArgs();
-
-
-
             // resolve normally
             RReferenceImpl reference = element.getReference();
 
@@ -124,6 +116,9 @@ public class UnresolvedReferenceInspection extends RInspection {
                 PsiElement resolve = reference.resolve(true);
 
                 if (resolve == null) {
+
+                    // exclude white-listed argument positions containing unquoted variable names
+                    if (isInUnquotedContext(element)) return;
 
                     myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
                 } else if (RPsiUtils.isForwardReference(resolve, element)) {
@@ -197,6 +192,52 @@ public class UnresolvedReferenceInspection extends RInspection {
 
             return true;
         }
-
     }
+
+
+    private boolean isInUnquotedContext(RReferenceExpression element) {
+        RCallExpression callExpression = PsiTreeUtil.getParentOfType(element, RCallExpression.class);
+
+        if (callExpression == null) return false;
+
+        ArgumentsMatchResult matchResult = null;
+
+        try {
+            matchResult = new ArgumentMatcher(callExpression).matchArgs(callExpression.getArgumentList());
+
+        } catch (MatchingException e) {
+            // we failed to match the args, so we can not apply white-listing rules
+            return false;
+        }
+
+
+        // todo externalize and make a settings entry + add intention actions to add rules from code
+        List<String> whiteList = Arrays.asList("dplyr::count[... wt sort]",
+                "dplyr::mutate[...]",
+                "base::with.default[expr]");
+
+        List<UnquotedArgsRule> wlRules = whiteList.stream()
+                .map(UnquotedArgsRule::fromString)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+
+        // find parameter of given `element`
+        RParameter rParameter = matchResult.matchedParams.entrySet().stream().filter(pair -> {
+//            pair.getKey()==element
+            return PsiTreeUtil.isAncestor(pair.getKey(), element, true);
+//            return commonContext != callExpression;
+        }).map(Map.Entry::getValue).findFirst().orElse(null);
+
+        if (rParameter != null) { // is it white-listed?
+            return wlRules.stream().anyMatch(rule -> rule.matches(rParameter));
+        }
+
+        // if it's not a named parameter, is must be a triple dot match
+        ArgumentsMatchResult finalMatchResult = matchResult;
+        return wlRules.stream().anyMatch(rule ->
+                rule.matchesTripleDot(finalMatchResult.functionType.getFunctionExpression())
+        );
+    }
+
 }

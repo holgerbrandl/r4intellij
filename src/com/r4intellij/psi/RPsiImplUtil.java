@@ -327,6 +327,7 @@ public class RPsiImplUtil {
     }
 
 
+    @Nullable
     public static ROperator getOperator(ROperatorExpression expr) {
         return PsiTreeUtil.findChildOfType(expr, ROperator.class);
     }
@@ -376,5 +377,18 @@ public class RPsiImplUtil {
             return RNumericType.INSTANCE;
         }
         return RUnknownType.INSTANCE;
+    }
+
+
+    /**
+     * Returns method name if function expression is not an anoymous function definition.
+     */
+    @Nullable
+    public static String getName(@NotNull RFunctionExpression functionExpression) {
+        if (functionExpression.getParent() instanceof RAssignmentStatement) {
+            return ((RAssignmentStatementImpl) functionExpression.getParent()).getName();
+        }
+
+        return null;
     }
 }
