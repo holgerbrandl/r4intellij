@@ -93,12 +93,19 @@ public class TypeCheckerInspection extends RInspection {
         }
 
 
+
         @Override
         public void visitOperatorExpression(@NotNull ROperatorExpression operatorExpression) {
+            //NOTE Visiting ops would just make sense once the type system is reenabled.
+            // At the moment it's just eating CPU time
+
             ROperator operator = PsiTreeUtil.getChildOfType(operatorExpression, ROperator.class);
             if (operator == null) {
                 return;
             }
+
+            // ignore binary ops (for now). E.g. `-` is not resolved to an unary function and it's not clear why
+            if (!operatorExpression.isBinary()) return;
 
             PsiReference referenceToFunction = operator.getReference();
             List<RExpression> arguments = PsiTreeUtil.getChildrenOfTypeAsList(operatorExpression, RExpression.class);
