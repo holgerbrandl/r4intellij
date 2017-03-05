@@ -235,20 +235,18 @@ public class RTypeProvider {
             return functionType.getReturnType();
         }
 
-        Map<RExpression, RParameter> matchedParams = new HashMap<RExpression, RParameter>();
-        List<RExpression> matchedByTripleDot = new ArrayList<RExpression>();
+        ArgumentsMatchResult matchResult;
 
         try {
-            new ArgumentMatcher().matchArgs(arguments, matchedParams, matchedByTripleDot, functionType);
+            matchResult = new ArgumentMatcher(functionType).matchArgs(arguments);
         } catch (MatchingException e) {
             return RUnknownType.INSTANCE;
         }
 
-        Map<String, RParameterConfiguration> paramToSuppliedConfiguration =
-                new HashMap<String, RParameterConfiguration>();
+        Map<String, RParameterConfiguration> paramToSuppliedConfiguration = new HashMap<String, RParameterConfiguration>();
 
         // step 2: check @type annotation
-        if (!isMatchedTypes(functionType, matchedParams, matchedByTripleDot, paramToSuppliedConfiguration)) {
+        if (!isMatchedTypes(functionType, matchResult, paramToSuppliedConfiguration)) {
             return RUnknownType.INSTANCE;
         }
 
@@ -272,10 +270,9 @@ public class RTypeProvider {
 
 
     private static boolean isMatchedTypes(RFunctionType functionType,
-                                          Map<RExpression, RParameter> matchedParams,
-                                          List<RExpression> matchedByTripleDot,
+                                          ArgumentsMatchResult matchResult,
                                           Map<String, RParameterConfiguration> paramToSuppliedConfiguration) {
-        for (Map.Entry<RExpression, RParameter> entry : matchedParams.entrySet()) {
+        for (Map.Entry<RExpression, RParameter> entry : matchResult.matchedParams.entrySet()) {
             RExpression expr = entry.getKey();
             RParameter parameter = entry.getValue();
 
@@ -294,9 +291,9 @@ public class RTypeProvider {
             }
         }
 
-        if (!matchedByTripleDot.isEmpty()) {
+        if (!matchResult.matchedByTripleDot.isEmpty()) {
             List<RType> types = new ArrayList<RType>();
-            for (RExpression expr : matchedByTripleDot) {
+            for (RExpression expr : matchResult.matchedByTripleDot) {
                 types.add(getType(expr));
             }
             paramToSuppliedConfiguration.put("...", new RParameterConfiguration(new RTypeSequence(types), null));

@@ -62,6 +62,7 @@ public class RResolver {
         Project project = element.getProject();
         LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
         final Library library = libraryTable.getLibraryByName(libraryName);
+
         if (library == null) {
             return;
         }

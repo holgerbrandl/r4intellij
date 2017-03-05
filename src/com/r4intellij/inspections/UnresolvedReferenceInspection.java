@@ -23,7 +23,10 @@ import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static com.r4intellij.inspections.TypeCheckerInspection.isPipeContext;
 
 public class UnresolvedReferenceInspection extends RInspection {
 
@@ -104,6 +107,14 @@ public class UnresolvedReferenceInspection extends RInspection {
             // prevent package names to show up as unresolved in packageName-calls, because they are handled separately by
             // the missing package inspection
             if (RPsiUtils.isNamespacePrefix(element)) return;
+
+
+            // exclude white-listed argument positions containing unquoted variable names
+            List<String> whiteList = Arrays.asList("dplyr::count(2)", "dplyr::count(2-)");
+            boolean isFirstArgInjected = isPipeContext(callExpression);
+
+//            new ArgumentMatcher().matchArgs();
+
 
 
             // resolve normally

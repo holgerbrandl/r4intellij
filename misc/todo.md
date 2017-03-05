@@ -129,38 +129,15 @@ java.lang.Throwable
 	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
 ```
 * threading issues when doing skeletonization
-* null assignments remove columns and should not be flagged as unused if the df is still used
-```r
-require(datasets)
-foo = data.frame() 
-foo$bar <- NULL
-head(foo)
-```
 
-* negative array access shows false-positive warning
-```r
-splitIndex = 1
-trainSplit <- iris[splitIndex,]
-testSplit <- iris[-splitIndex,]
 
-## problem is more generic
-foo = -splitIndex
-
-```
-
-* function inlineing is broken
+* function expression inlining is broken
 ```r
 train_glm = function(trainData){   train(is_group_leader ~ ., data = trainData, trControl = trainCtrl, method = "glm")}
 
 list(
-pdModel = model_glmnet
+pdModel = train_glm
 )
-```
-
-* newline after pipe is indented but should no (not in markdown chunks for some unknown reason)
-    * to make it more interesting: Kotlin is affected as well
-```r
-iris %>% mutate
 ```
 
 

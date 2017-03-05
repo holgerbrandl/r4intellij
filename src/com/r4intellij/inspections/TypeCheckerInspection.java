@@ -37,7 +37,7 @@ public class TypeCheckerInspection extends RInspection {
     }
 
 
-    private boolean isPipeContext(RCallExpression callExpression) {
+    public static boolean isPipeContext(RCallExpression callExpression) {
         // see https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html
 
         boolean hasDotArg = callExpression
@@ -71,17 +71,16 @@ public class TypeCheckerInspection extends RInspection {
 
         @Override
         public void visitCallExpression(@NotNull RCallExpression callExpression) {
-            PsiReference referenceToFunction = callExpression.getExpression().getReference();
             List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
 
             try {
-                ArgumentMatcher argumentMatcher = new ArgumentMatcher();
+                ArgumentMatcher argumentMatcher = new ArgumentMatcher(callExpression);
 
                 if (isPipeContext(callExpression)) {
                     argumentMatcher.setFirstArgInjected(true);
                 }
 
-                argumentMatcher.checkArguments(referenceToFunction, arguments);
+                argumentMatcher.checkArguments(callExpression.getArgumentList());
             } catch (MatchingException e) {
                 myProblemHolder.registerProblem(callExpression, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }
@@ -108,10 +107,9 @@ public class TypeCheckerInspection extends RInspection {
             if (!operatorExpression.isBinary()) return;
 
             PsiReference referenceToFunction = operator.getReference();
-            List<RExpression> arguments = PsiTreeUtil.getChildrenOfTypeAsList(operatorExpression, RExpression.class);
 
             try {
-                new ArgumentMatcher().checkArguments(referenceToFunction, arguments);
+                new ArgumentMatcher(referenceToFunction).checkArguments(operatorExpression);
             } catch (MatchingException e) {
                 myProblemHolder.registerProblem(operatorExpression, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
             }

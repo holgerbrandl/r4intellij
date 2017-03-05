@@ -2,19 +2,68 @@ package com.r4intellij.typing;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
+import com.intellij.psi.util.PsiTreeUtil;
+import com.r4intellij.RPsiUtils;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.typing.types.RFunctionType;
 import com.r4intellij.typing.types.RType;
 import com.r4intellij.typing.types.RUnknownType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ArgumentMatcher {
 
+
+    private RFunctionType functionType;
+
     private boolean firstArgInjected;
+
+
+    public ArgumentMatcher(RFunctionType functionType) {
+        this.functionType = functionType;
+    }
+
+
+    public ArgumentMatcher(PsiReference referenceToFunction) {
+        PsiElement assignmentStatement = referenceToFunction.resolve();
+
+        if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
+            RAssignmentStatement assignment = (RAssignmentStatement) assignmentStatement;
+            RPsiElement assignedValue = assignment.getAssignedValue();
+
+            if (assignedValue != null && assignedValue instanceof RFunctionExpression) {
+                RFunctionExpression function = (RFunctionExpression) assignedValue;
+
+                //        RType type = RTypeProvider.getType(functionExpression);
+                //        if (!RFunctionType.class.isInstance(type)) {
+                //            return; // TODO: fix me properly
+                //        }
+                //        RFunctionType functionType = (RFunctionType) type;
+                functionType = new RFunctionType(function);
+
+                // todo re-enable once type system is back
+                //        checkArgumentTypes(matchedParams, functionType);
+
+            }
+        }
+    }
+
+
+    public ArgumentMatcher(RCallExpression callExpression) throws MatchingException {
+        RFunctionExpression function = RPsiUtils.getFunction(callExpression);
+        if (function != null) {
+            functionType = new RFunctionType(function);
+        } else {
+            RType type = RTypeProvider.getType(callExpression.getExpression());
+            if (!RFunctionType.class.isInstance(type)) {
+                throw new MatchingException("function type does not match");
+//                return Collections.emptyMap();
+            }
+            functionType = (RFunctionType) type;
+        }
+    }
 
 
     public void setFirstArgInjected(boolean firstArgInjected) {
@@ -22,72 +71,49 @@ public class ArgumentMatcher {
     }
 
 
-    public void checkArguments(PsiReference referenceToFunction, List<RExpression> arguments) throws MatchingException {
-        if (referenceToFunction != null) {
-            PsiElement assignmentStatement = referenceToFunction.resolve();
-
-            if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
-                RAssignmentStatement assignment = (RAssignmentStatement) assignmentStatement;
-                RPsiElement assignedValue = assignment.getAssignedValue();
-
-                if (assignedValue != null && assignedValue instanceof RFunctionExpression) {
-                    RFunctionExpression function = (RFunctionExpression) assignedValue;
-
-                    checkTypes(arguments, function);
-                }
-            }
-        }
+    public ArgumentsMatchResult checkArguments(RArgumentList argumentList) throws MatchingException {
+        return matchArgs(argumentList.getExpressionList());
     }
 
 
-    private void checkTypes(List<RExpression> arguments, RFunctionExpression functionExpression) throws MatchingException {
-        Map<RExpression, RParameter> matchedParams = new HashMap<RExpression, RParameter>();
-        //        RType type = RTypeProvider.getType(functionExpression);
-//        if (!RFunctionType.class.isInstance(type)) {
-//            return; // TODO: fix me properly
-//        }
-//        RFunctionType functionType = (RFunctionType) type;
-        RFunctionType functionType = new RFunctionType(functionExpression);
+    public ArgumentsMatchResult checkArguments(ROperatorExpression operatorExpression) throws MatchingException {
+        List<RExpression> arguments = PsiTreeUtil.getChildrenOfTypeAsList(operatorExpression, RExpression.class);
 
-        matchArgs(arguments, matchedParams, new ArrayList<>(), functionType);
-
-        // todo re-enable once type system is back
-//        checkArgumentTypes(matchedParams, functionType);
+        return matchArgs(arguments);
     }
 
 
-    public void matchArgs(List<RExpression> arguments,
-                          Map<RExpression, RParameter> matchedParams,
-                          List<RExpression> matchedByTripleDot,
-                          // function type just needed to get optional parameter list
-                          RFunctionType functionType) throws MatchingException {
-
+    public ArgumentsMatchResult matchArgs(List<RExpression> arguments) throws MatchingException {
         List<RParameter> formalArguments = functionType.getFormalArguments();
-        List<RExpression> suppliedArguments = new ArrayList<>(arguments);
 
-        exactMatching(formalArguments, suppliedArguments, matchedParams);
-        partialMatching(formalArguments, suppliedArguments, matchedParams);
-        positionalMatching(formalArguments, suppliedArguments, matchedParams, matchedByTripleDot, functionType, firstArgInjected);
+        List<RExpression> suppliedArguments = new ArrayList<>(arguments);
+        ArgumentsMatchResult matchResult = new ArgumentsMatchResult();
+
+        exactMatching(formalArguments, suppliedArguments, matchResult);
+        partialMatching(formalArguments, suppliedArguments, matchResult);
+        positionalMatching(formalArguments, suppliedArguments, matchResult, functionType, firstArgInjected);
+
+        return matchResult;
     }
 
 
     private static void partialMatching(List<RParameter> formalArguments,
                                         List<RExpression> suppliedArguments,
-                                        Map<RExpression, RParameter> matchedParams) throws MatchingException {
-        matchParams(formalArguments, suppliedArguments, true, matchedParams);
+                                        ArgumentsMatchResult matchResult) throws MatchingException {
+        matchParams(formalArguments, suppliedArguments, true, matchResult);
     }
 
 
     private static void exactMatching(List<RParameter> formalArguments,
                                       List<RExpression> suppliedArguments,
-                                      Map<RExpression, RParameter> matchedParams) throws MatchingException {
-        matchParams(formalArguments, suppliedArguments, false, matchedParams);
+                                      ArgumentsMatchResult matchResult) throws MatchingException {
+        matchParams(formalArguments, suppliedArguments, false, matchResult);
     }
 
 
     private static void matchParams(List<RParameter> parameters, List<RExpression> arguments,
                                     boolean usePartialMatching,
-                                    Map<RExpression, RParameter> matchedParams) throws MatchingException {
+                                    ArgumentsMatchResult matchResult) throws MatchingException {
         List<RExpression> namedArguments = getNamedArguments(arguments);
         for (RExpression namedArg : namedArguments) {
             String name = namedArg.getName();
@@ -96,11 +122,11 @@ public class ArgumentMatcher {
                 throw new MatchingException("formal argument " + name + " matched by multiply actual arguments");
             }
             if (matches.size() == 1) {
-                matchedParams.put(namedArg, matches.get(0));
+                matchResult.matchedParams.put(namedArg, matches.get(0));
             }
         }
 
-        for (Map.Entry<RExpression, RParameter> entry : matchedParams.entrySet()) {
+        for (Map.Entry<RExpression, RParameter> entry : matchResult.matchedParams.entrySet()) {
             arguments.remove(entry.getKey());
             parameters.remove(entry.getValue());
         }
@@ -109,8 +135,7 @@ public class ArgumentMatcher {
 
     private static void positionalMatching(List<RParameter> formalArguments,
                                            List<RExpression> suppliedArguments,
-                                           Map<RExpression, RParameter> matchedParams,
-                                           List<RExpression> matchedByTripleDot,
+                                           ArgumentsMatchResult matchResult,
                                            RFunctionType functionType,
                                            boolean isPipeInjected) throws MatchingException {
 
@@ -142,14 +167,14 @@ public class ArgumentMatcher {
             }
             matchedArguments.add(arg);
             matchedParameter.add(param);
-            matchedParams.put(arg, param);
+            matchResult.matchedParams.put(arg, param);
         }
 
         formalArguments.removeAll(matchedParameter);
         suppliedArguments.removeAll(matchedArguments);
 
         if (wasTripleDot) {
-            matchedByTripleDot.addAll(suppliedArguments);
+            matchResult.matchedByTripleDot.addAll(suppliedArguments);
             suppliedArguments.clear();
         }
 
@@ -160,7 +185,7 @@ public class ArgumentMatcher {
             }
             RExpression defaultValue = parameter.getExpression();
             if (defaultValue != null) {
-                matchedParams.put(defaultValue, parameter);
+                matchResult.matchedParams.put(defaultValue, parameter);
             } else {
                 unmatched.add(parameter);
             }

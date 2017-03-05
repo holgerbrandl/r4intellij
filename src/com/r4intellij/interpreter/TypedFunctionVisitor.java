@@ -7,7 +7,10 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.DocumentUtil;
 import com.intellij.util.FileContentUtil;
 import com.r4intellij.RStaticAnalyzerHelper;
@@ -234,10 +237,7 @@ class TypedFunctionVisitor extends RVisitor {
         @Override
         public void visitCallExpression(@NotNull RCallExpression callExpression) {
             try {
-                PsiReference referenceToFunction = callExpression.getExpression().getReference();
-                List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
-
-                new ArgumentMatcher().checkArguments(referenceToFunction, arguments);
+                new ArgumentMatcher(callExpression).checkArguments(callExpression.getArgumentList());
             } catch (MatchingException e) {
                 hasErrors = true;
             }

@@ -16,10 +16,8 @@ import com.r4intellij.parsing.RElementTypes;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
 import com.r4intellij.typing.ArgumentMatcher;
+import com.r4intellij.typing.ArgumentsMatchResult;
 import com.r4intellij.typing.MatchingException;
-import com.r4intellij.typing.RTypeProvider;
-import com.r4intellij.typing.types.RFunctionType;
-import com.r4intellij.typing.types.RType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -202,28 +200,19 @@ public class RPsiUtils {
 
 
     public static Map<String, RExpression> findParameterValues(RCallExpression callExpression, String... params) {
-        RFunctionExpression function = RPsiUtils.getFunction(callExpression);
-        final RFunctionType functionType;
-        if (function != null) {
-            functionType = new RFunctionType(function);
-        } else {
-            RType type = RTypeProvider.getType(callExpression.getExpression());
-            if (!RFunctionType.class.isInstance(type)) {
-                return Collections.emptyMap();
-            }
-            functionType = (RFunctionType) type;
-        }
-        Map<RExpression, RParameter> matchedParams = new HashMap<RExpression, RParameter>();
+
+
+        ArgumentsMatchResult matchResult;
 
         try {
             List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
-            new ArgumentMatcher().matchArgs(arguments, matchedParams, new ArrayList<>(), functionType);
+            matchResult = new ArgumentMatcher(callExpression).matchArgs(arguments);
         } catch (MatchingException e) {
             return Collections.emptyMap();
         }
 
         Map<String, RExpression> result = new HashMap<String, RExpression>();
-        for (Map.Entry<RExpression, RParameter> entry : matchedParams.entrySet()) {
+        for (Map.Entry<RExpression, RParameter> entry : matchResult.matchedParams.entrySet()) {
             String parameterName = entry.getValue().getName();
             RExpression expression = entry.getKey();
             if (expression instanceof RAssignmentStatement) {
