@@ -1,7 +1,5 @@
 package com.r4intellij.parser
 
-import com.r4intellij.inspections.RInspectionTest
-
 /**
  * @author Holger Brandl
  */
@@ -10,10 +8,10 @@ class UnquotedVariablesTest : AbstractResolverTest() {
 
 
     fun testUnquotedMultidots() {
-        RInspectionTest.createLibraryFromPckgNames(myFixture, "dplyr")
+        createSkeletonLibrary("dplyr")
 
         // nothing should be detected as unresolved
-        createPsi("""
+        checkExpression("""
             require(dplyr)
             count(iris, Species, Sepal.Length)
         """
@@ -21,10 +19,10 @@ class UnquotedVariablesTest : AbstractResolverTest() {
     }
 
     fun testNamedArgsInStrangeOrder() {
-        RInspectionTest.createLibraryFromPckgNames(myFixture, "dplyr")
+        createSkeletonLibrary("dplyr")
 
         // nothing should be detected as unresolved
-        createPsi("""
+        checkExpression("""
             dplyr::inner_join(by="Species", y=iris, x=iris)
         """
         )
@@ -32,9 +30,9 @@ class UnquotedVariablesTest : AbstractResolverTest() {
 
 
     fun testWithScope() {
-        RInspectionTest.createLibraryFromPckgNames(myFixture, "base", "datasets")
+        createSkeletonLibrary("base", "datasets")
 
-        createPsi("""
+        checkExpression("""
            with(iris, Sepal.Length + Sepal.Width)
         """
         )
@@ -42,20 +40,40 @@ class UnquotedVariablesTest : AbstractResolverTest() {
 
 
     fun testSimpleMutate() {
-        RInspectionTest.createLibraryFromPckgNames(myFixture, "base", "datasets", "dplyr")
+        createSkeletonLibrary("base", "datasets", "dplyr")
 
-        createPsi("""
+        checkExpression("""
            dplyr::mutate(iris, foo=Species)
         """
         )
     }
 
     fun testCascadedMutate() {
-        RInspectionTest.createLibraryFromPckgNames(myFixture, "base", "datasets", "dplyr")
+        createSkeletonLibrary("base", "datasets", "dplyr")
 
-        createPsi("""
-            requir(dplyr)
-           mutate(iris, foo=paste("prefix", Species))
+        checkExpression("""
+            require(dplyr)
+            mutate(iris, foo=paste("prefix", Species))
+        """
+        )
+    }
+
+    fun testUnaryTildeFormula() {
+        createSkeletonLibrary("tibble")
+
+        checkExpression("""
+            require(tibble)
+            frame_data(~foo, "bar")
+        """
+        )
+    }
+
+    fun testBinaryTildeFormula() {
+        createSkeletonLibrary("stats", "datasets")
+
+        checkExpression("""
+            require(tibble)
+            lm(Species ~ Sepal.Length + Sepal.Width, data=iris2)
         """
         )
     }

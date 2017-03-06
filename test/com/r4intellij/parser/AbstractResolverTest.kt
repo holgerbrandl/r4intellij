@@ -17,7 +17,7 @@ open class AbstractResolverTest : RTestCase() {
         assertEquals(expected, operatorResolvant!!.text)
     }
 
-    protected fun createPsi(@Language("R") expressionList: String, testWarnings: Boolean = true): CodeInsightTestFixture {
+    protected fun checkExpression(@Language("R") expressionList: String, testWarnings: Boolean = true): CodeInsightTestFixture {
         myFixture.configureByText("a.R", expressionList)
 
         myFixture.enableInspections(

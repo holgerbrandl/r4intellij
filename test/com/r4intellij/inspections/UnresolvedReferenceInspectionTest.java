@@ -27,7 +27,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 //        RPackageService.getInstance().refreshIndex();
 
         // add base packages for testing
-        createLibraryFromPckgNames(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));
+        createSkeletonLibrary(ArrayUtil.toStringArray(DEFAULT_PACKAGES));
     }
 
 
@@ -49,8 +49,8 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
     public void testResolveNamespaceCall() {
 //        addPckgsToSkeletonLibrary(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));
-//        createLibraryFromPckgNames(myFixture, "dplyr", "datasets");
-        addPckgsToSkeletonLibrary(myFixture, "dplyr");
+//        createLibraryFromPckgNames("dplyr", "datasets");
+        addPckgsToSkeletonLibrary("dplyr");
 //        doExprTest("foo = dplyr::group_by(iris)");
         doExprTest("dplyr::group_by(iris)");
     }
@@ -63,7 +63,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
         // myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
 
         // rather use actual library here to see if stub-index is working correctly
-        createLibraryFromPckgNames(myFixture, "datasets");
+        createSkeletonLibrary("datasets");
         doExprTest("iris");
     }
 
@@ -74,7 +74,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testNasaWithDplyr() {
-        createLibraryFromPckgNames(myFixture, "dplyr");
+        createSkeletonLibrary("dplyr");
         doExprTest("require(dplyr); nasa");
     }
 
@@ -92,7 +92,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
     // see https://github.com/tidyverse/tidyverse/issues/40
     public void testTransitiveTidyverseDependencies() {
-        createLibraryFromPckgNames(myFixture, "dplyr", "datasets");
+        createSkeletonLibrary("dplyr", "datasets");
 
         doExprTest("require(tidyverse); group_by(iris)");
     }

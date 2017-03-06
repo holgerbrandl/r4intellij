@@ -28,7 +28,7 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
 //        }
 
 //        myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
-        createLibraryFromPckgNames(myFixture, "utils");
+        createSkeletonLibrary("utils");
 
 //        Module myModule = myFixture.getModule();
 //        PsiTestUtil.addLibrary(myModule, 'lib', tempDir.getFile('').path, [] as String[], [''] as String[])
@@ -59,26 +59,26 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
 
 
     public void testPipe() {
-        createLibraryFromPckgNames(myFixture, "datasets", "dplyr");
+        createSkeletonLibrary("datasets", "dplyr");
         doExprTest("require(dplyr); iris %>% count()");
     }
 
 
     public void testDiamondReassignment() {
-        createLibraryFromPckgNames(myFixture, "datasets", "dplyr", "magrittr");
+        createSkeletonLibrary("datasets", "dplyr", "magrittr");
         doExprTest("require(dplyr); iris %<>% mutate(foo=1)");
     }
 
 
     public void testNamedArgsInStrangeOrder() {
-        createLibraryFromPckgNames(myFixture, "datasets", "dplyr");
+        createSkeletonLibrary("datasets", "dplyr");
         doExprTest("dplyr::inner_join(by='Species', y=iris, x=iris)");
     }
 
 
     // todo reenable for v1.1
     public void _testDontCheckArgsIfFundefIsMissing() {
-        createLibraryFromPckgNames(myFixture, "datasets");
+        createSkeletonLibrary("datasets");
         myFixture.enableInspections(getInspection(), MissingPackageInspection.class, UnresolvedReferenceInspection.class);
 
         doExprTest("<warning descr=\"'mutate' has been detected in a package (dplyr, plyr, SparkR, plotly) which does not seem to be imported yet.\">mutate</warning>(iris, foo=1)");

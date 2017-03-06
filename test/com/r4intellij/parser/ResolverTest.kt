@@ -11,11 +11,11 @@ class ResolverTest : AbstractResolverTest() {
 
 
     fun testSimpleAssignment() {
-        createPsi("foo = 23; 16 + foo")
+        checkExpression("foo = 23; 16 + foo")
     }
 
     fun testBlockResolve() {
-        createPsi("""
+        checkExpression("""
         foo = 3
 
         {
@@ -25,7 +25,7 @@ class ResolverTest : AbstractResolverTest() {
     }
 
     fun testBlockAssignment() {
-        createPsi("""
+        checkExpression("""
         foo = { 1 + 1 }
         foo
         """)
@@ -33,7 +33,7 @@ class ResolverTest : AbstractResolverTest() {
 
 
     fun testVarUsedInIf() {
-        createPsi("""
+        checkExpression("""
             x=3
             if(T){
                 x + 3
@@ -42,12 +42,12 @@ class ResolverTest : AbstractResolverTest() {
     }
 
     fun testLocalFunctionCall() {
-        createPsi("foo = function(x) x; foo(3)")
+        checkExpression("foo = function(x) x; foo(3)")
     }
 
     fun testOperatorQuoteModes() {
         // we should resolve both ops and also find their usage
-        createPsi("""
+        checkExpression("""
         `%foo%` <- function(a,b) 3
 
         1 %foo% 3

@@ -91,7 +91,7 @@ public class UnusedVariableInspectionTest extends RInspectionTest {
      * TODO also ensure that rownames resolves to the correct <code>`rownames<-`</code>. TBD: Where would it matter?
      */
     public void testDedicatedAccessorFunction() {
-        createLibraryFromPckgNames(myFixture, "base");
+        createSkeletonLibrary("base");
 
         doExprTest("a = data.frame(col1=1:3, col2=NA); rownames(a) = c('foo', 'bar');  a");
 
