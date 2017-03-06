@@ -31,7 +31,13 @@ public class RHelpParser {
 
 
         List<String> headerSection = sectionsRaw.remove(0);
+        if (headerSection.size() < 2)
+            throw new IllegalArgumentException("could not parse help string:" + documentationText);
+
         String[] splitDocHeader = headerSection.get(1).split("[ ]+");
+        if (splitDocHeader.length < 2)
+            throw new IllegalArgumentException("could not parse help string:" + documentationText);
+
         docHeader = splitDocHeader[1].replace("package:", "") + "::" + splitDocHeader[0];
 
         title = sectionsRaw.remove(0).get(0).replaceAll("_\b", "").replaceAll(":$", "");

@@ -19,7 +19,7 @@ import static com.r4intellij.inspections.TypeCheckerInspection.isPipeContext;
 public class ArgumentMatcher {
 
 
-    private RFunctionType functionType;
+    private final RFunctionType functionType;
 
     private boolean firstArgInjected;
 
@@ -29,7 +29,7 @@ public class ArgumentMatcher {
     }
 
 
-    public ArgumentMatcher(PsiReference referenceToFunction) {
+    public ArgumentMatcher(PsiReference referenceToFunction) throws MatchingException {
         PsiElement assignmentStatement = referenceToFunction.resolve();
 
         if (assignmentStatement != null && assignmentStatement instanceof RAssignmentStatement) {
@@ -51,6 +51,8 @@ public class ArgumentMatcher {
 
             }
         }
+
+        throw new MatchingException("Could not detect function type");
     }
 
 

@@ -48,14 +48,21 @@ class UnquotedVariablesTest : AbstractResolverTest() {
         )
     }
 
-    fun testCascadedMutate() {
+    fun testCascadedCallAsTripleDot() {
         createSkeletonLibrary("base", "datasets", "dplyr")
 
         checkExpression("""
             require(dplyr)
-            mutate(iris, foo=paste("prefix", Species))
+            mutate(iris, foo=paste("prefix", Species)) ## Species should be ignored
         """
         )
+    }
+
+    fun testCascadedCallAsNamedArg() {
+        // todo come up with an example. Something like gather(iris, key=my_key_transform(Species)) but more real
+
+        // not if if there is any use-case to call a function with an unquoted variable name and use the result
+        // as a named parameter
     }
 
     fun testUnaryTildeFormula() {

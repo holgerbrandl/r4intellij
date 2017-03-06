@@ -195,12 +195,12 @@ public class UnresolvedReferenceInspection extends RInspection {
     }
 
 
-    private boolean isInUnquotedContext(RReferenceExpression element) {
+    private boolean isInUnquotedContext(PsiElement element) {
         RCallExpression callExpression = PsiTreeUtil.getParentOfType(element, RCallExpression.class);
 
         if (callExpression == null) return false;
 
-        ArgumentsMatchResult matchResult = null;
+        ArgumentsMatchResult matchResult;
 
         try {
             matchResult = new ArgumentMatcher(callExpression).matchArgs(callExpression.getArgumentList());
@@ -212,9 +212,23 @@ public class UnresolvedReferenceInspection extends RInspection {
 
 
         // todo externalize and make a settings entry + add intention actions to add rules from code
-        List<String> whiteList = Arrays.asList("dplyr::count[... wt sort]",
+        List<String> whiteList = Arrays.asList(
+                "base::with.default[expr]",
+                "dplyr::count[... wt sort]",
                 "dplyr::mutate[...]",
-                "base::with.default[expr]");
+                "dplyr::transmute[...]",
+                "dplyr::filter[...]",
+                "dplyr::select[...]",
+                "dplyr::rename[...]",
+                "dplyr::arrange[...]",
+                "dplyr::summarize[...]",
+                "dplyr::count[...]",
+                "dplyr::vars[...]",
+                "tidyr::gather[key value ...]",
+                "tidyr::spread[key value]",
+                "tidyr::unite[...]",
+                "ggplot2::aes[...]"
+        );
 
         List<UnquotedArgsRule> wlRules = whiteList.stream()
                 .map(UnquotedArgsRule::fromString)
@@ -230,14 +244,17 @@ public class UnresolvedReferenceInspection extends RInspection {
         }).map(Map.Entry::getValue).findFirst().orElse(null);
 
         if (rParameter != null) { // is it white-listed?
+            // see com.r4intellij.parser.UnquotedVariablesTest.testCascadedCallAsNamedArg()
             return wlRules.stream().anyMatch(rule -> rule.matches(rParameter));
         }
 
         // if it's not a named parameter, is must be a triple dot match
         ArgumentsMatchResult finalMatchResult = matchResult;
-        return wlRules.stream().anyMatch(rule ->
+        boolean isWhiteListedTD = wlRules.stream().anyMatch(rule ->
                 rule.matchesTripleDot(finalMatchResult.functionType.getFunctionExpression())
         );
+
+        return isWhiteListedTD || isInUnquotedContext(callExpression.getParent());
     }
 
 }
