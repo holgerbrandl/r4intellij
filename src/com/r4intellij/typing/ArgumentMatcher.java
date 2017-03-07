@@ -53,7 +53,7 @@ public class ArgumentMatcher {
             }
         }
 
-        throw new MatchingException("Could not detect function type");
+        throw new UnknownTypeException("Could not detect function type");
     }
 
 

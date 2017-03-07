@@ -94,8 +94,8 @@ public class TypeCheckerInspection extends RInspection {
 
         @Override
         public void visitOperatorExpression(@NotNull ROperatorExpression operatorExpression) {
-            //NOTE Visiting ops would just make sense once the type system is reenabled.
-            // At the moment it's just eating CPU time
+            //NOTE Visiting ops would just make real sense only if the type system would be re-enabled.
+            // At the moment it's just eating CPU time, but we keep it for easy "renablility"
 
             ROperator operator = PsiTreeUtil.getChildOfType(operatorExpression, ROperator.class);
             if (operator == null) {
@@ -111,6 +111,8 @@ public class TypeCheckerInspection extends RInspection {
                 new ArgumentMatcher(referenceToFunction).matchArgs(operatorExpression);
             } catch (MatchingException e) {
                 myProblemHolder.registerProblem(operatorExpression, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            } catch (UnknownTypeException e) {
+                return;
             }
 
             RTypeProvider.getType(operatorExpression);

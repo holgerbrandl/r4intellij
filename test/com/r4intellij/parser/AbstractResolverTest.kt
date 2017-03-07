@@ -10,7 +10,7 @@ import org.intellij.lang.annotations.Language
 /**
  * @author Holger Brandl
  */
-open class AbstractResolverTest : RTestCase() {
+abstract class AbstractResolverTest : RTestCase() {
     protected fun assertResolvant(expected: String, reference: PsiReference) {
         val operatorResolvant = reference.resolve()
 

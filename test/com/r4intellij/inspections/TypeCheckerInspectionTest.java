@@ -66,7 +66,7 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
 
     public void testDiamondReassignment() {
         createSkeletonLibrary("datasets", "dplyr", "magrittr");
-        doExprTest("require(dplyr); iris %<>% mutate(foo=1)");
+        doExprTest("require(dplyr); require(magrittr); iris %<>% mutate(foo=1)");
     }
 
 
@@ -75,6 +75,13 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
         doExprTest("dplyr::inner_join(by='Species', y=iris, x=iris)");
     }
 
+
+    public void testSkipArgCheckMissingPipeOp() {
+        createSkeletonLibrary("datasets", "utils");
+
+        // actually we would just expect a missing import quickfix for %>% here nothing more
+        doExprTest("iris %>% head()");
+    }
 
     // todo reenable for v1.1
     public void _testDontCheckArgsIfFundefIsMissing() {
