@@ -329,7 +329,7 @@ public class RPsiImplUtil {
 
     @Nullable
     public static ROperator getOperator(ROperatorExpression expr) {
-        return PsiTreeUtil.findChildOfType(expr, ROperator.class);
+        return PsiTreeUtil.getChildOfType(expr, ROperator.class);
     }
 
 

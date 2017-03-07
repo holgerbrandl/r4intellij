@@ -123,10 +123,8 @@ public class RFormatterBlock implements ASTBlock {
             // is first than indent(ROperatorExpression)childNode.getPsi())
             ROperatorExpression parentOpExpr = (ROperatorExpression) childPsi.getParent();
 
-            PsiElementPattern.Capture<ROperatorExpression> chainOpCapture =
-                    buildOpExpCapture(parentOpExpr.getOperator());
-
-
+//            PsiElementPattern.Capture<ROperatorExpression> chainOpCapture = buildOpExpCapture(parentOpExpr.getOperator());
+//
 //            if (getSameOpChainRoot((ROperatorExpression) childPsi.getParent()) == childPsi.getParent()) {
             // is last opexpr in chain with same operator
 //            if (chainOpCapture.accepts(parentOpExpr) && !psiElement().withChild(chainOpCapture).accepts(parentOpExpr)) {
@@ -173,7 +171,7 @@ public class RFormatterBlock implements ASTBlock {
         ROperatorExpression chainRootExpr = getSameOpChainRoot(opExpr);
 
 
-        // is actual chain to avoid wrapping of simlple binary operator expressions
+        // is actual chain to avoid wrapping of simple binary operator expressions
         PsiElementPattern.Capture<ROperatorExpression> opCapture = buildOpExpCapture(chainRootExpr.getOperator());
         // at least chain of 3
         if (!opCapture.withChild(opCapture).accepts(chainRootExpr)) return false;
