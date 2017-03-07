@@ -35,19 +35,16 @@ public abstract class RInspectionTest extends RTestCase {
     }
 
 
-    protected CodeInsightTestFixture doExprTest(@NotNull String expressionList) {
-        myFixture.configureByText("a.R", expressionList);
+    @Override
+    protected void configureFixture(@NotNull CodeInsightTestFixture myFixture) {
+        super.configureFixture(myFixture);
         myFixture.enableInspections(getInspection());
-        myFixture.testHighlighting(true, false, false);
-
-        return myFixture;
     }
 
 
     protected String readTestDataFile() {
         Path testDataPath = Paths.get(getTestDataPath(), getTestName(true) + ".R");
         return readFileAsString(testDataPath);
-
     }
 
 

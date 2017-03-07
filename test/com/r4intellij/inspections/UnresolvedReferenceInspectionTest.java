@@ -47,57 +47,6 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
-    public void testResolveNamespaceCall() {
-//        addPckgsToSkeletonLibrary(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));
-//        createLibraryFromPckgNames("dplyr", "datasets");
-        addPckgsToSkeletonLibrary("dplyr");
-//        doExprTest("foo = dplyr::group_by(iris)");
-        doExprTest("dplyr::group_by(iris)");
-    }
-
-
-    /**
-     * since it is associated with base the package should be resolvable. This should come from  stub-index
-     */
-    public void testIris() {
-        // myFixture.addFileToProject("base.R", readFileAsString(getSkeletonPath("utils").toPath()));
-
-        // rather use actual library here to see if stub-index is working correctly
-        createSkeletonLibrary("datasets");
-        doExprTest("iris");
-    }
-
-
-    public void testNasaWithoutDplyr() {
-        doExprTest("<warning descr=\"Unresolved reference\">nasa</warning>");
-    }
-
-
-    public void testNasaWithDplyr() {
-        createSkeletonLibrary("dplyr");
-        doExprTest("require(dplyr); nasa");
-    }
-
-
-    public void testTransitiveDependencies() {
-//        addPckgsToSkeletonLibrary("datasets");
-        doExprTest("require(caret); ggplot(iris)");
-    }
-
-
-    public void testForwardImportAfterUsage() {
-        doExprTest(forwardRef("glimpse") + "(iris) ; require(dplyr)");
-    }
-
-
-    // see https://github.com/tidyverse/tidyverse/issues/40
-    public void testTransitiveTidyverseDependencies() {
-        createSkeletonLibrary("dplyr", "datasets");
-
-        doExprTest("require(tidyverse); group_by(iris)");
-    }
-
-
     public void testOutsideBlockUsage() {
         // outside a should be resolvable
         doExprTest("{ a = 3; }; a");
@@ -110,17 +59,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
-    public void testUnquotedVarUsageInTidyverse() {
-        doExprTest("require(tidyverse); count(iris, Species)");
-    }
-
-
     // negative tests: symbols that should not be resolvable
-
-
-    public void testTidyrImportMissing() {
-        doTest(getTestName(true) + ".R");
-    }
 
 
     public void testUnresovableSymbolInScope() {
@@ -144,7 +83,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     @NotNull
-    private static String forwardRef(@NotNull String varName) {
+    public static String forwardRef(@NotNull String varName) {
         return "<error descr=\"Forward reference\">" + varName + "</error>";
     }
 
@@ -198,8 +137,8 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
     }
 
 
-    public void testOperatorReDef() {
-
+    public void testOperatorReDefinition() {
+        // todo
     }
 
 

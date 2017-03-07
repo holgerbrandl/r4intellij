@@ -18,8 +18,19 @@ class UnquotedVariablesTest : AbstractResolverTest() {
         )
     }
 
+    /** Make sure that most common whitelisting ruels from base package are correctly working. */
+    fun testBaseSubsetAndTransform() {
+        createSkeletonLibrary("base", "datasets")
+
+        checkExpression("""
+            someIris = subset(iris, -Species)
+            transform(someIris, total_length=Sepal.Length + Petal.Length)
+        """
+        )
+    }
+
     fun testNamedArgsInStrangeOrder() {
-        createSkeletonLibrary("dplyr")
+        createSkeletonLibrary("datasets", "dplyr")
 
         // nothing should be detected as unresolved
         checkExpression("""
@@ -53,7 +64,7 @@ class UnquotedVariablesTest : AbstractResolverTest() {
 
         checkExpression("""
             require(dplyr)
-            mutate(iris, foo=paste("prefix", Species)) ## Species should be ignored
+            mutate(iris, foo=paste("prefix", Species)) ## Species should not pop here but should be ignored
         """
         )
     }
@@ -63,6 +74,16 @@ class UnquotedVariablesTest : AbstractResolverTest() {
 
         // not if if there is any use-case to call a function with an unquoted variable name and use the result
         // as a named parameter
+    }
+
+    fun testIgnoreAllArgs() {
+        createSkeletonLibrary("ggplot2")
+
+        checkExpression("""
+            require(ggplot2)
+            ggplot(iris, aes(Species, y=Sepal.Width, fill=Sepal.Width)) # no arg of aes should be flagged
+        """)
+
     }
 
     fun testUnaryTildeFormula() {
@@ -76,11 +97,11 @@ class UnquotedVariablesTest : AbstractResolverTest() {
     }
 
     fun testBinaryTildeFormula() {
-        createSkeletonLibrary("stats", "datasets")
+        createSkeletonLibrary("stats", "datasets", "tibble")
 
         checkExpression("""
             require(tibble)
-            lm(Species ~ Sepal.Length + Sepal.Width, data=iris2)
+            lm(Species ~ Sepal.Length + Sepal.Width, data=iris)
         """
         )
     }

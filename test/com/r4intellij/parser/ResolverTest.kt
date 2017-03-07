@@ -10,6 +10,17 @@ import com.r4intellij.psi.api.RReferenceExpression
 class ResolverTest : AbstractResolverTest() {
 
 
+    fun testSpecialConstantsFromBase() {
+        checkExpression("""
+        NaN
+        NA
+        Inf
+        """)
+
+        // todo are there others?
+    }
+
+
     fun testSimpleAssignment() {
         checkExpression("foo = 23; 16 + foo")
     }
@@ -58,10 +69,17 @@ class ResolverTest : AbstractResolverTest() {
         """)
 
         // do additional testing here
-        val symbol = PsiTreeUtil.findChildrenOfType(myFixture.file, ROperatorExpression::class.java).last().operator
+        val symbol = PsiTreeUtil.findChildrenOfType(myFixture.file!!, ROperatorExpression::class.java).last().operator
         assertResolvant("'%bar%' <- function(a,b) 3", symbol.reference!!)
     }
 
+
+    fun testDotUsageInPipe() {
+        checkExpression("""
+        irisModel = lm(Sepal.Length ~  Species * Sepal.Width, data=iris)
+        lmiris %>% transform(., Y = exp(predict(irisModel, newdata=.)))
+        """)
+    }
 
     fun testResolveToDiamonOpReassignment() {
         // we should resolve both ops and also find their usage

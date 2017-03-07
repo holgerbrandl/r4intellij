@@ -17,6 +17,7 @@ import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
 import com.intellij.util.ArrayUtil;
 import com.r4intellij.settings.LibraryUtil;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -65,6 +66,22 @@ public abstract class RTestCase extends UsefulTestCase {
         myFixture.tearDown();
         super.tearDown();
     }
+
+
+    protected CodeInsightTestFixture doExprTest(@Language("R") @NotNull String expressionList) {
+        myFixture.configureByText("a.R", expressionList);
+        configureFixture(myFixture);
+        myFixture.testHighlighting(true, false, false);
+
+        return myFixture;
+    }
+
+
+    protected void configureFixture(@NotNull CodeInsightTestFixture myFixture) {
+    }
+
+
+    ;
 
 
     public void addPckgsToSkeletonLibrary(String... packageNames) {
