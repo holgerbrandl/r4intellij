@@ -72,8 +72,9 @@ public class ArgumentMatcher {
             }
 
             functionType = (RFunctionType) type;
-            firstArgInjected = isPipeContext(callExpression);
         }
+
+        firstArgInjected = isPipeContext(callExpression);
     }
 
 
