@@ -110,6 +110,7 @@
         <lang.braceMatcher language="R" implementationClass="com.r4intellij.highlighting.RBraceMatcher"/>
         <quoteHandler className="com.r4intellij.editor.RQuoteHandler" fileType="R"/>
 
+        <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
 
         <!-- Codeinsight -->
         <!--todo finalize impl for release of disable -->
@@ -133,12 +134,14 @@
 
         <!-- Settings -->
         <projectConfigurable groupId="language" instance="com.r4intellij.settings.RSettingsConfigurable"
-                             id="com.r4intellij.settings.RSettingsConfigurable" displayName="R Language"/>
-        <lang.foldingBuilder language="R" implementationClass="com.r4intellij.editor.RFoldingBuilder"/>
+                             id="RSettings" displayName="R Language">
+            <configurable instance="com.r4intellij.settings.CodeInsightConfigurable"
+                          id="CodeInsightConfigurable" displayName="Code Insight"/>
+        </projectConfigurable>
 
+        <applicationService serviceImplementation="com.r4intellij.settings.RSettings"/>
+        <applicationService serviceImplementation="com.r4intellij.settings.RCodeInsightSettings"/>
 
-        <applicationService serviceInterface="com.r4intellij.settings.RSettings"
-                            serviceImplementation="com.r4intellij.settings.RSettings"/>
         <applicationService serviceInterface="com.r4intellij.packages.RPackageService"
                             serviceImplementation="com.r4intellij.packages.RPackageService"/>
 

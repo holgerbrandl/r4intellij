@@ -6,6 +6,7 @@ import com.r4intellij.psi.RPsiImplUtil;
 import com.r4intellij.psi.api.RFunctionExpression;
 import com.r4intellij.psi.api.RParameter;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -16,7 +17,9 @@ import java.util.regex.Pattern;
  * @author Holger Brandl
  */
 @SuppressWarnings("SimplifiableIfStatement")
-public class UnquotedArgsRule {
+public class UnquotedArgsRule implements Serializable {
+
+    private static final long serialVersionUID = 4858882213447068456L;
 
     private String packageName;
     private String methodName;
@@ -59,7 +62,7 @@ public class UnquotedArgsRule {
 
         if (!Objects.equals(this.methodName, methodName)) return false;
 
-        return unquotedArgs.contains(rParameter.getName());
+        return unquotedArgs.contains("*") || unquotedArgs.contains(rParameter.getName());
     }
 
 

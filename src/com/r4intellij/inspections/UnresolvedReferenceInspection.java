@@ -19,14 +19,17 @@ import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.RReferenceImpl;
+import com.r4intellij.settings.RCodeInsightSettings;
 import com.r4intellij.typing.ArgumentMatcher;
 import com.r4intellij.typing.ArgumentsMatchResult;
 import com.r4intellij.typing.MatchingException;
+import com.r4intellij.typing.UnknownTypeException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class UnresolvedReferenceInspection extends RInspection {
 
@@ -109,6 +112,11 @@ public class UnresolvedReferenceInspection extends RInspection {
             if (RPsiUtils.isNamespacePrefix(element)) return;
 
 
+            // ignore symbols in formulae. Those are by design unquoted and not resolved statically
+            if (PsiTreeUtil.getParentOfType(element, RUnaryTildeExpression.class, RTildeExpression.class) != null) {
+                return;
+            }
+
             // resolve normally
             RReferenceImpl reference = element.getReference();
 
@@ -138,6 +146,7 @@ public class UnresolvedReferenceInspection extends RInspection {
 
         // todo do once all current unit-tests are fixed:
         // todo thise should go into the RResolver and complement or replace com.r4intellij.psi.references.RResolver.resolveFunction*() !!
+        // todo because we do this here and not in the resolver com.r4intellij.inspections.DependencyTests.testTransitiveDependencies() is not passing
         private boolean resolveInPackages(RCallExpression psiElement, ProblemsHolder problemsHolder) {
             // is it a locally defined function?
             RFunctionExpression function = RPsiUtils.getFunction(psiElement);
@@ -186,12 +195,16 @@ public class UnresolvedReferenceInspection extends RInspection {
                 fixes.add(new ImportLibraryFix(funPackageName));
             }
 
-            String descriptionTemplate = "'" + functionName + "' has been detected in a package (" +
-                    Joiner.on(", ").join(contPackageNames) + ") which does not seem to be imported yet.";
+            String descriptionTemplate = missingImportMsg(functionName, contPackageNames);
             problemsHolder.registerProblem(funExpr, descriptionTemplate, fixes.toArray(new LocalQuickFix[0]));
 
             return true;
         }
+    }
+
+
+    public static String missingImportMsg(String symbol, List<String> foundIn) {
+        return "'" + symbol + "' has been detected in a package (" + Joiner.on(", ").join(foundIn) + ") which does not seem to be imported yet.";
     }
 
 
@@ -205,36 +218,13 @@ public class UnresolvedReferenceInspection extends RInspection {
         try {
             matchResult = new ArgumentMatcher(callExpression).matchArgs(callExpression.getArgumentList());
 
-        } catch (MatchingException e) {
+        } catch (MatchingException | UnknownTypeException e) {
             // we failed to match the args, so we can not apply white-listing rules
             return false;
         }
 
 
-        // todo externalize and make a settings entry + add intention actions to add rules from code
-        List<String> whiteList = Arrays.asList(
-                "base::with.default[expr]",
-                "dplyr::count[... wt sort]",
-                "dplyr::mutate[...]",
-                "dplyr::transmute[...]",
-                "dplyr::filter[...]",
-                "dplyr::select[...]",
-                "dplyr::rename[...]",
-                "dplyr::arrange[...]",
-                "dplyr::summarize[...]",
-                "dplyr::count[...]",
-                "dplyr::vars[...]",
-                "tidyr::gather[key value ...]",
-                "tidyr::spread[key value]",
-                "tidyr::unite[...]",
-                "ggplot2::aes[...]"
-        );
-
-        List<UnquotedArgsRule> wlRules = whiteList.stream()
-                .map(UnquotedArgsRule::fromString)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
+        List<UnquotedArgsRule> wlRules = RCodeInsightSettings.getInstance().getWhitelistModel();
 
         // find parameter of given `element`
         RParameter rParameter = matchResult.matchedParams.entrySet().stream().filter(pair -> {
@@ -254,7 +244,8 @@ public class UnresolvedReferenceInspection extends RInspection {
                 rule.matchesTripleDot(finalMatchResult.functionType.getFunctionExpression())
         );
 
-        return isWhiteListedTD || isInUnquotedContext(callExpression.getParent());
+        return isWhiteListedTD || isInUnquotedContext(callExpression);
     }
+
 
 }

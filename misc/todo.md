@@ -61,14 +61,17 @@ pdModel = train_glm
 )
 ```
 
+* formal arguments can be be missing in R. Allow to whitelist function
+```r
+iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
+
+?missing
+
+```
+
 
 ## Next Steps
-
 * process forum replies
-
-* **fix basic formatting**
-* fix resolver for unquoted variable names see [here](../misc/devel_notes.md)
-* formula show up ans non-resolvable: `pw_present~.`
 * remove deprecated api usage
 * resolve all infix op and tag as unresolved
 
@@ -94,7 +97,7 @@ http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_suppo
 * better error recovery in parser (see https://github.com/JetBrains/Grammar-Kit#attributes-for-error-recovery-and-reporting)
 * more rigorous unit test for [operator presedence](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html)
 
-
+* make help window to show help even if caret is moven (auto-update from source disabling might be broken?)
 
 Intentions & inspections
 ------------------------
@@ -124,6 +127,7 @@ log(1,2,3,4)
     * "add braces for if/else statement" intention
 
 * inspection: warn about usage of T and F
+* warn if `base::atttach` is used (and suggest to rather use `with`)
 
 * warn about assignment usage when boolean result is expected:
 ```r
@@ -158,7 +162,7 @@ detach("package:tibble", unload=TRUE)
 * create missing function intention (by considering   
     * see `codeInsight.unresolvedReferenceQuickFixProvider implementation="com.intellij.psi.impl.source.resolve.reference.impl.providers.SchemaReferenceQuickFixProvider"`)
     * use: `QuickFixFactory.getInstance().createAddMethodFix() ` (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/206142769-Triggering-Create-Method-intention )
-```r
+```
 result = myfancyfun(sdf)  ### show myfancyfun in RED
 
 ## intention should change it into
@@ -366,6 +370,12 @@ iris %$% Species ## so what?
 
 ```
 
+* show library import suggestions also for function pipes without call brackets
+```r
+require(magrittr)
+iris %>% glimpse ## import warning on glimpse expected
+```
+
 * intention to remove unused parameter from method signature
 
 
@@ -527,7 +537,7 @@ Brainstorming
 
 * learn from `/Users/brandl/projects/jb/intellij-community/platform/platform-resources/src/META-INF/JsonPlugin.xml`
     
-* 
+* always inject bash (if installed) in `base:system` calls (see  Prefs->Editor->LangInject)
     
 Send To Console Improvements
 ============================
@@ -556,7 +566,7 @@ Windows Support
 Markdown impro wishlist
 =======================
 
-* Useful structure view **[done]**
+* Useful structure view **done**
 * Click to to jump to code
 * synced scrolling
 * synced caret http://codepen.io/ArtemGordinsky/pen/GnLBq
@@ -578,4 +588,4 @@ unfortunately doesn't work in GitHub Markdown
 
 
 
-Also see [OpenApi notes](openapi_notes.md)
+Also see [OpenApi notes](devel_notes.md)

@@ -8,7 +8,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.r4intellij.interpreter.RInterpreterUtil;
 import org.jetbrains.annotations.NotNull;
 
-@State(name = "RSettings", storages = {@Storage(file = "rSettings.xml")})
+@State(name = "RSettings", storages = @Storage("rSettings.xml"))
 public class RSettings implements PersistentStateComponent<RSettings> {
 
     public String interpreterPath = RInterpreterUtil.suggestHomePath();

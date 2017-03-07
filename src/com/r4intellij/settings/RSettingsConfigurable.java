@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.ArrayList;
 
-public class RSettingsConfigurable implements SearchableConfigurable, Configurable.NoScroll {
+public class RSettingsConfigurable implements SearchableConfigurable.Parent, Configurable.NoScroll {
     private final Project myProject;
 
     private JPanel settingsPanel;
@@ -146,5 +146,17 @@ public class RSettingsConfigurable implements SearchableConfigurable, Configurab
 
         final FileChooserDescriptor interpreterDescriptor = FileChooserDescriptorFactory.createSingleLocalFileDescriptor();
         interpreterPathField.addBrowseFolderListener("Choose Interpreter Path", "Choose interpreter path", myProject, interpreterDescriptor);
+    }
+
+
+    @Override
+    public Configurable[] getConfigurables() {
+        return new Configurable[0];
+    }
+
+
+    @Override
+    public boolean hasOwnContent() {
+        return true;
     }
 }
