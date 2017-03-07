@@ -45,6 +45,7 @@ public class ArgumentMatcher {
                 //        }
                 //        RFunctionType functionType = (RFunctionType) type;
                 functionType = new RFunctionType(function);
+                return;
 
                 // todo re-enable once type system is back
                 //        checkArgumentTypes(matchedParams, functionType);
@@ -66,7 +67,7 @@ public class ArgumentMatcher {
             RType type = RTypeProvider.getType(callExpression.getExpression());
 
             if (!RFunctionType.class.isInstance(type)) {
-                throw new MatchingException("function type does not match");
+                throw new UnknownTypeException("function type does not match");
 //                return Collections.emptyMap();
             }
 

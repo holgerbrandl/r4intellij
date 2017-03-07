@@ -8,10 +8,7 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.api.*;
-import com.r4intellij.typing.ArgumentMatcher;
-import com.r4intellij.typing.MatchingException;
-import com.r4intellij.typing.RTypeContext;
-import com.r4intellij.typing.RTypeProvider;
+import com.r4intellij.typing.*;
 import com.r4intellij.typing.types.RErrorType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -76,20 +73,21 @@ public class TypeCheckerInspection extends RInspection {
 
         @Override
         public void visitCallExpression(@NotNull RCallExpression callExpression) {
-            List<RExpression> arguments = callExpression.getArgumentList().getExpressionList();
-
             try {
                 ArgumentMatcher argumentMatcher = new ArgumentMatcher(callExpression);
 
                 argumentMatcher.matchArgs(callExpression.getArgumentList());
             } catch (MatchingException e) {
                 myProblemHolder.registerProblem(callExpression, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            } catch (UnknownTypeException e) {
+                //stop visiting if we can resolve the function (i.e. its type is Unknown)
+                return;
             }
 
             visitExpression(callExpression);
 
             // unclear need (but seems to have side-effects side effects)
-            RTypeProvider.getType(callExpression);
+//            RTypeProvider.getType(callExpression);
         }
 
 
