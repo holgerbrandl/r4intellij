@@ -76,7 +76,7 @@ class DependencyTests : RTestCase() {
     fun testMissingOperatorImport() {
         addPckgsToSkeletonLibrary("dplyr")
 
-        // note: rexporting packages are not listed intentionally, because orign should be preferred over rexport
+        // note: re-exporting packages are not listed intentionally, because origin should be preferred over rexport
         doExprTest("iris ${noImportWarning("%>%", listOf("magrittr"))} head")
     }
 

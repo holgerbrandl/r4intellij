@@ -76,21 +76,24 @@ class ResolverTest : AbstractResolverTest() {
 
     fun testDotUsageInPipe() {
         checkExpression("""
+        require(dplyr)
         irisModel = lm(Sepal.Length ~  Species * Sepal.Width, data=iris)
-        lmiris %>% transform(., Y = exp(predict(irisModel, newdata=.)))
+        iris %>% transform(., Y = exp(predict(irisModel, newdata=.)))
         """)
     }
 
-    fun testResolveToDiamonOpReassignment() {
-        // we should resolve both ops and also find their usage
+    fun testResolveToDiamondOpReassignment() {
         myFixture.configureByText("a.R", """
         my_data = iris
         my_data %<>% transform(foo='bar')
         my_data
         """)
 
-        // do additional testing here
+        // make sure that the last line resolves to the second and NOT to the initial declaration
         val symbol = PsiTreeUtil.findChildrenOfType(myFixture.file, RReferenceExpression::class.java).last()
         assertResolvant("my_data %<>% transform(foo='bar')", symbol.reference!!)
+
+        // todo in a very strict sense this is wrong, since %<>% might be overloaded. and the resolver should
+        // resolve to either first or second line depending on how %<>% is defined
     }
 }

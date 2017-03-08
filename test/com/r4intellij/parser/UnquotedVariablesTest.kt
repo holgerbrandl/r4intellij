@@ -79,11 +79,11 @@ class UnquotedVariablesTest : AbstractResolverTest() {
     fun testIgnoreAllArgs() {
         createSkeletonLibrary("ggplot2")
 
+        // aes is whitelisting all its args with a  *, make sure that this works
         checkExpression("""
             require(ggplot2)
             ggplot(iris, aes(Species, y=Sepal.Width, fill=Sepal.Width)) # no arg of aes should be flagged
         """)
-
     }
 
     fun testUnaryTildeFormula() {

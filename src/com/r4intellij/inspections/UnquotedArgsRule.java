@@ -74,6 +74,6 @@ public class UnquotedArgsRule implements Serializable {
 
         if (!Objects.equals(this.methodName, methodName)) return false;
 
-        return unquotedArgs.contains("...");
+        return unquotedArgs.contains("*") || unquotedArgs.contains("...");
     }
 }
