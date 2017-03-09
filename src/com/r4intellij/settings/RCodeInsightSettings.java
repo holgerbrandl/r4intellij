@@ -66,8 +66,10 @@ public class RCodeInsightSettings implements PersistentStateComponent<RCodeInsig
                 "dplyr::summarize[...]",
                 "dplyr::count[...]",
                 "dplyr::vars[...]",
-                "base::subset[select]",
-                "base::transform[...]",
+                "base::subset.default[subset select]",
+                "base::subset.data.frame[subset select]",  // not really applicable without type system
+                "base::transform.default[...]",
+                "base::transform.data.frame[...]", // not really applicable without type system (see com/r4intellij/psi/references/RResolver.java:209
                 "tidyr::gather[key value ...]",
                 "tidyr::spread[key value]", // specific names denote args as in method signature
                 "tidyr::unite[...]", // tilde denotes just triple dot args

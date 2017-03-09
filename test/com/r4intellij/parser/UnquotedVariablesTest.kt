@@ -77,7 +77,7 @@ class UnquotedVariablesTest : AbstractResolverTest() {
     }
 
     fun testIgnoreAllArgs() {
-        createSkeletonLibrary("ggplot2")
+        createSkeletonLibrary("datasets", "ggplot2")
 
         // aes is whitelisting all its args with a  *, make sure that this works
         checkExpression("""

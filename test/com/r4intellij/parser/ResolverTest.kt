@@ -70,7 +70,7 @@ class ResolverTest : AbstractResolverTest() {
 
         // do additional testing here
         val symbol = PsiTreeUtil.findChildrenOfType(myFixture.file!!, ROperatorExpression::class.java).last().operator
-        assertResolvant("'%bar%' <- function(a,b) 3", symbol.reference!!)
+        assertResolvant("'%bar%' <- function(a,b) 3", symbol!!.reference!!)
     }
 
 
