@@ -7,6 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface ROperatorExpression extends RExpression {
 
+  @Nullable
   ROperator getOperator();
 
   boolean isBinary();

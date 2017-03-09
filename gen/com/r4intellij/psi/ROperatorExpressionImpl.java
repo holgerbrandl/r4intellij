@@ -25,6 +25,7 @@ public class ROperatorExpressionImpl extends RExpressionImpl implements ROperato
     else super.accept(visitor);
   }
 
+  @Nullable
   public ROperator getOperator() {
     return RPsiImplUtil.getOperator(this);
   }

@@ -17,6 +17,8 @@
   psiPackage="com.r4intellij.psi.api"
   psiImplPackage="com.r4intellij.psi"
 
+  tokens=[
+
   SEMI=";"
   LEFT_ASSIGN="<-"
   LEFT_COMPLEX_ASSIGN="<<-"
@@ -56,7 +58,7 @@
   LDBRACKET="[["
   RBRACKET="]"
   LBRACKET="["
-  
+  ]
 
   extends(".*statement|.*expression")=expression
   implements("assignment_statement|parameter")="com.r4intellij.psi.api.RNamedElement"

@@ -103,10 +103,12 @@ public interface RElementTypes {
   IElementType R_SEMI = new RElementType(";");
   IElementType R_STRING = new RElementType("string");
   IElementType R_T = new RElementType("T");
+  IElementType R_TICK = new RElementType("`");
   IElementType R_TILDE = new RElementType("~");
   IElementType R_TRIPLECOLON = new RElementType(":::");
   IElementType R_TRIPLE_DOTS = new RElementType("TRIPLE_DOTS");
   IElementType R_TRUE = new RElementType("TRUE");
+  IElementType R_UNDERSCORE = new RElementType("_");
   IElementType R_WHILE = new RElementType("while");
 
   class Factory {
