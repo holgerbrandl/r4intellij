@@ -41,8 +41,9 @@ RFile:EmptyKeywordArgument.r
                   PsiElement(identifier)('block')
                 PsiElement(,)(',')
                 PsiWhiteSpace(' ')
-                R_LOGICAL_LITERAL_EXPRESSION
-                  PsiElement(TRUE)('TRUE')
+                R_REFERENCE_EXPRESSION
+                  R_BOOLEAN_LITERAL
+                    PsiElement(TRUE)('TRUE')
                 PsiElement())(')')
             PsiElement())(')')
       PsiElement(,)(',')
@@ -69,8 +70,9 @@ RFile:EmptyKeywordArgument.r
                   PsiElement(identifier)('block')
                 PsiElement(,)(',')
                 PsiWhiteSpace(' ')
-                R_LOGICAL_LITERAL_EXPRESSION
-                  PsiElement(TRUE)('TRUE')
+                R_REFERENCE_EXPRESSION
+                  R_BOOLEAN_LITERAL
+                    PsiElement(TRUE)('TRUE')
                 PsiElement())(')')
             PsiElement())(')')
       PsiElement())(')')

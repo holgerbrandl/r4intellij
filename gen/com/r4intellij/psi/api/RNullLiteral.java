@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface RNullLiteralExpression extends RExpression {
+public interface RNullLiteral extends RPsiElement {
 
   @NotNull
   PsiElement getNull();

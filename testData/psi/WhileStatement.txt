@@ -8,7 +8,7 @@ RFile:WhileStatement.r
       R_OPERATOR
         PsiElement(!=)('!=')
       R_NUMERIC_LITERAL_EXPRESSION
-        PsiElement(numeric)('0')
+        PsiElement(NUMERIC)('0')
     PsiElement())(')')
     PsiElement(nl)('\n')
     R_BLOCK_EXPRESSION
@@ -21,7 +21,7 @@ RFile:WhileStatement.r
         R_ARGUMENT_LIST
           PsiElement(()('(')
           R_NUMERIC_LITERAL_EXPRESSION
-            PsiElement(numeric)('1')
+            PsiElement(NUMERIC)('1')
           PsiElement())(')')
       PsiElement(nl)('\n')
       PsiWhiteSpace('  ')
@@ -40,7 +40,7 @@ RFile:WhileStatement.r
             PsiElement(-)('-')
           PsiWhiteSpace(' ')
           R_NUMERIC_LITERAL_EXPRESSION
-            PsiElement(numeric)('1')
+            PsiElement(NUMERIC)('1')
       PsiElement(nl)('\n')
       PsiWhiteSpace('  ')
       R_CALL_EXPRESSION

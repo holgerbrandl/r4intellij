@@ -32,7 +32,7 @@ RFile:BinaryExpressionNewLine.r
             PsiElement(==)('==')
           PsiWhiteSpace(' ')
           R_NUMERIC_LITERAL_EXPRESSION
-            PsiElement(numeric)('1')
+            PsiElement(NUMERIC)('1')
       PsiWhiteSpace(' ')
       R_OPERATOR
         PsiElement(&&)('&&')
@@ -84,7 +84,7 @@ RFile:BinaryExpressionNewLine.r
           PsiElement(==)('==')
         PsiWhiteSpace(' ')
         R_NUMERIC_LITERAL_EXPRESSION
-          PsiElement(numeric)('0')
+          PsiElement(NUMERIC)('0')
       PsiElement(nl)('\n')
       PsiWhiteSpace('              ')
       R_OPERATOR

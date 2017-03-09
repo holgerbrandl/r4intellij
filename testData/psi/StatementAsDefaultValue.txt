@@ -41,8 +41,9 @@ RFile:StatementAsDefaultValue.r
                 PsiElement())(')')
             PsiElement())(')')
             PsiWhiteSpace(' ')
-            R_LOGICAL_LITERAL_EXPRESSION
-              PsiElement(TRUE)('TRUE')
+            R_REFERENCE_EXPRESSION
+              R_BOOLEAN_LITERAL
+                PsiElement(TRUE)('TRUE')
             PsiWhiteSpace(' ')
             PsiElement(else)('else')
             PsiWhiteSpace(' ')
@@ -60,7 +61,7 @@ RFile:StatementAsDefaultValue.r
                 PsiElement(==)('==')
               PsiWhiteSpace(' ')
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('1')
+                PsiElement(NUMERIC)('1')
         PsiElement())(')')
       PsiElement(nl)('\n')
       R_BLOCK_EXPRESSION

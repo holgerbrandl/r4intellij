@@ -22,7 +22,7 @@ RFile:ReprAsKeywordArgument.r
             R_ARGUMENT_LIST
               PsiElement(()('(')
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('21')
+                PsiElement(NUMERIC)('21')
               PsiElement())(')')
         PsiElement(,)(',')
         PsiWhiteSpace(' ')
@@ -36,11 +36,11 @@ RFile:ReprAsKeywordArgument.r
               R_OPERATOR
                 PsiElement(-)('-')
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('10')
+                PsiElement(NUMERIC)('10')
             R_OPERATOR
               PsiElement(:)(':')
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('10.')
+              PsiElement(NUMERIC)('10.')
         PsiElement(,)(',')
         PsiWhiteSpace(' ')
         R_ASSIGNMENT_STATEMENT
@@ -50,6 +50,7 @@ RFile:ReprAsKeywordArgument.r
           R_OPERATOR
             PsiElement(=)('=')
           PsiWhiteSpace(' ')
-          R_LOGICAL_LITERAL_EXPRESSION
-            PsiElement(FALSE)('FALSE')
+          R_REFERENCE_EXPRESSION
+            R_BOOLEAN_LITERAL
+              PsiElement(FALSE)('FALSE')
         PsiElement())(')')

@@ -7,4 +7,4 @@ RFile:Assignment.r
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('1')
+      PsiElement(NUMERIC)('1')

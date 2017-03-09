@@ -31,7 +31,7 @@ RFile:BlockAsArgument.r
                   R_ARGUMENT_LIST
                     PsiElement(()('(')
                     R_NUMERIC_LITERAL_EXPRESSION
-                      PsiElement(numeric)('100000')
+                      PsiElement(NUMERIC)('100000')
                     PsiElement())(')')
               PsiElement(,)(',')
               PsiWhiteSpace(' ')
@@ -46,7 +46,7 @@ RFile:BlockAsArgument.r
                   R_ARGUMENT_LIST
                     PsiElement(()('(')
                     R_NUMERIC_LITERAL_EXPRESSION
-                      PsiElement(numeric)('100000')
+                      PsiElement(NUMERIC)('100000')
                     PsiElement())(')')
               PsiElement(,)(',')
               PsiWhiteSpace(' ')
@@ -61,7 +61,7 @@ RFile:BlockAsArgument.r
                   R_ARGUMENT_LIST
                     PsiElement(()('(')
                     R_NUMERIC_LITERAL_EXPRESSION
-                      PsiElement(numeric)('100000')
+                      PsiElement(NUMERIC)('100000')
                     PsiElement())(')')
               PsiElement())(')')
         PsiElement(nl)('\n')

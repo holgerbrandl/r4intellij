@@ -6,7 +6,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.r4intellij.psi.RElementFactory;
-import com.r4intellij.psi.api.RLogicalLiteralExpression;
+import com.r4intellij.psi.api.RBooleanLiteral;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -74,8 +74,7 @@ public class TtoTrueIntention extends AbstractRIntention {
     private static class MergeElseIfPredicate implements PsiElementPredicate {
 
         public boolean satisfiedBy(PsiElement element) {
-            // todo what's the difference with RBooleanLiteralExpression??
-            return PsiTreeUtil.getParentOfType(element, RLogicalLiteralExpression.class) != null &&
+            return PsiTreeUtil.getParentOfType(element, RBooleanLiteral.class) != null &&
                     Arrays.asList("T", "F").contains(element.getText());
 
         }

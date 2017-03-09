@@ -5,11 +5,11 @@ RFile:FunctionCall.r
     R_ARGUMENT_LIST
       PsiElement(()('(')
       R_NUMERIC_LITERAL_EXPRESSION
-        PsiElement(numeric)('1')
+        PsiElement(NUMERIC)('1')
       PsiElement(,)(',')
       PsiWhiteSpace(' ')
       R_NUMERIC_LITERAL_EXPRESSION
-        PsiElement(numeric)('2')
+        PsiElement(NUMERIC)('2')
       PsiElement(,)(',')
       PsiWhiteSpace(' ')
       R_ASSIGNMENT_STATEMENT
@@ -20,5 +20,5 @@ RFile:FunctionCall.r
           PsiElement(=)('=')
         PsiWhiteSpace(' ')
         R_NUMERIC_LITERAL_EXPRESSION
-          PsiElement(numeric)('2')
+          PsiElement(NUMERIC)('2')
       PsiElement())(')')

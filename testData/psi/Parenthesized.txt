@@ -7,12 +7,12 @@ RFile:Parenthesized.r
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('2')
+      PsiElement(NUMERIC)('2')
   PsiElement(nl)('\n')
   R_OPERATOR_EXPRESSION
     R_OPERATOR_EXPRESSION
       R_NUMERIC_LITERAL_EXPRESSION
-        PsiElement(numeric)('1')
+        PsiElement(NUMERIC)('1')
       R_OPERATOR
         PsiElement(:)(':')
       R_REFERENCE_EXPRESSION
@@ -20,7 +20,7 @@ RFile:Parenthesized.r
     R_OPERATOR
       PsiElement(-)('-')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('1')
+      PsiElement(NUMERIC)('1')
   PsiWhiteSpace(' ')
   PsiComment(END_OF_LINE_COMMENT)('# this means (1:i) - 1, not 1:(i-1)')
   PsiElement(nl)('\n')
@@ -29,7 +29,7 @@ RFile:Parenthesized.r
   PsiElement(nl)('\n')
   R_OPERATOR_EXPRESSION
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('1')
+      PsiElement(NUMERIC)('1')
     R_OPERATOR
       PsiElement(:)(':')
     R_PARENTHESIZED_EXPRESSION
@@ -40,5 +40,5 @@ RFile:Parenthesized.r
         R_OPERATOR
           PsiElement(-)('-')
         R_NUMERIC_LITERAL_EXPRESSION
-          PsiElement(numeric)('1')
+          PsiElement(NUMERIC)('1')
       PsiElement())(')')

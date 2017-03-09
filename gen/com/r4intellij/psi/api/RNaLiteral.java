@@ -6,7 +6,7 @@ import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 import com.r4intellij.typing.types.RType;
 
-public interface RNaLiteralExpression extends RExpression {
+public interface RNaLiteral extends RPsiElement {
 
   @Nullable
   PsiElement getNa();

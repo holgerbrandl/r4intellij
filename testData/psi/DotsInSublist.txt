@@ -19,5 +19,6 @@ RFile:DotsInSublist.r
       R_OPERATOR
         PsiElement(<-)('<-')
       PsiWhiteSpace(' ')
-      R_NULL_LITERAL_EXPRESSION
-        PsiElement(NULL)('NULL')
+      R_REFERENCE_EXPRESSION
+        R_NULL_LITERAL
+          PsiElement(NULL)('NULL')

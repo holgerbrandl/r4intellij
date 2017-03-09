@@ -3,6 +3,8 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+* send expression to console does not work from injected chunks
+
 * stats.r can not fully be parsed because of
 ```r
 mod$T[1L:p, 1L] <- phi
@@ -98,6 +100,9 @@ http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_suppo
 * more rigorous unit test for [operator presedence](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html)
 
 * make help window to show help even if caret is moven (auto-update from source disabling might be broken?)
+
+* Make sure that `?NA` and `?Inf` provide correct help pages
+
 
 Intentions & inspections
 ------------------------

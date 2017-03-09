@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface RLogicalLiteralExpression extends RExpression {
+public interface RBooleanLiteral extends RPsiElement {
 
   @Nullable
   PsiElement getF();
@@ -18,5 +18,9 @@ public interface RLogicalLiteralExpression extends RExpression {
 
   @Nullable
   PsiElement getTrue();
+
+  boolean isTrue();
+
+  boolean isFalse();
 
 }

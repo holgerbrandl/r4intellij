@@ -17,19 +17,19 @@ RFile:KeywordArg.r
           R_ARGUMENT_LIST
             PsiElement(()('(')
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('14.084')
+              PsiElement(NUMERIC)('14.084')
             PsiElement(,)(',')
             R_OPERATOR_EXPRESSION
               R_OPERATOR
                 PsiElement(-)('-')
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('3.4107')
+                PsiElement(NUMERIC)('3.4107')
             PsiElement(,)(',')
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('0.0015')
+              PsiElement(NUMERIC)('0.0015')
             PsiElement(,)(',')
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('1.8832')
+              PsiElement(NUMERIC)('1.8832')
             PsiElement(,)(',')
             R_REFERENCE_EXPRESSION
               PsiElement(identifier)('timepoints')

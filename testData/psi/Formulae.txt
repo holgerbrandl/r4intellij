@@ -25,8 +25,9 @@ RFile:Formulae.r
           PsiElement(identifier)('pretty')
         R_OPERATOR
           PsiElement(=)('=')
-        R_LOGICAL_LITERAL_EXPRESSION
-          PsiElement(TRUE)('TRUE')
+        R_REFERENCE_EXPRESSION
+          R_BOOLEAN_LITERAL
+            PsiElement(TRUE)('TRUE')
       PsiElement(,)(',')
       PsiWhiteSpace(' ')
       R_ASSIGNMENT_STATEMENT
@@ -34,8 +35,9 @@ RFile:Formulae.r
           PsiElement(identifier)('contour')
         R_OPERATOR
           PsiElement(=)('=')
-        R_LOGICAL_LITERAL_EXPRESSION
-          PsiElement(TRUE)('TRUE')
+        R_REFERENCE_EXPRESSION
+          R_BOOLEAN_LITERAL
+            PsiElement(TRUE)('TRUE')
       PsiElement(,)(',')
       PsiWhiteSpace(' ')
       R_ASSIGNMENT_STATEMENT

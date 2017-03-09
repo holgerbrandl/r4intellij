@@ -21,11 +21,11 @@ RFile:EmptyExpressionInSubscription.r
           PsiElement([)('[')
           R_OPERATOR_EXPRESSION
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('7')
+              PsiElement(NUMERIC)('7')
             R_OPERATOR
               PsiElement(:)(':')
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('8')
+              PsiElement(NUMERIC)('8')
           PsiElement(,)(',')
           R_EMPTY_EXPRESSION
             <empty list>
@@ -36,7 +36,8 @@ RFile:EmptyExpressionInSubscription.r
               PsiElement(identifier)('drop')
             R_OPERATOR
               PsiElement(=)('=')
-            R_LOGICAL_LITERAL_EXPRESSION
-              PsiElement(FALSE)('FALSE')
+            R_REFERENCE_EXPRESSION
+              R_BOOLEAN_LITERAL
+                PsiElement(FALSE)('FALSE')
           PsiElement(])(']')
         PsiElement())(')')

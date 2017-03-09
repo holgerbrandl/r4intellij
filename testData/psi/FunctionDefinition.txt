@@ -34,7 +34,7 @@ RFile:FunctionDefinition.r
                 R_OPERATOR
                   PsiElement(=)('=')
                 R_STRING_LITERAL_EXPRESSION
-                  PsiElement(string)('"Enter an integer: "')
+                  PsiElement(STRING)('"Enter an integer: "')
               PsiElement())(')')
         PsiElement(nl)('\n')
         PsiWhiteSpace('  ')

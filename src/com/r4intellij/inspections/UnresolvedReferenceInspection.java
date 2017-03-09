@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.r4intellij.psi.RPsiImplUtil.BUILTIN_CONSTANTS;
+
 public class UnresolvedReferenceInspection extends RInspection {
 
 
@@ -70,6 +72,9 @@ public class UnresolvedReferenceInspection extends RInspection {
                 return;
             }
 
+            if (BUILTIN_CONSTANTS.contains(element.getFirstChild().getNode().getElementType())) {
+                return;
+            }
 
             // don't tag initial declarations of variables as unresolvable
             if (RPsiUtils.isVarDeclaration(element)) {

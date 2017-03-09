@@ -19,7 +19,7 @@ RFile:IfShortForm.r
         R_ARGUMENT_LIST
           PsiElement(()('(')
           R_NUMERIC_LITERAL_EXPRESSION
-            PsiElement(numeric)('0')
+            PsiElement(NUMERIC)('0')
           PsiElement())(')')
       PsiElement(nl)('\n')
       PsiWhiteSpace('    ')
@@ -36,7 +36,7 @@ RFile:IfShortForm.r
             R_ARGUMENT_LIST
               PsiElement(()('(')
               R_STRING_LITERAL_EXPRESSION
-                PsiElement(string)('"list"')
+                PsiElement(STRING)('"list"')
               PsiElement(,)(',')
               PsiWhiteSpace(' ')
               R_ASSIGNMENT_STATEMENT

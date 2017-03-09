@@ -71,26 +71,26 @@
 root ::= expression_list
 private expression_list ::= expression? (semicolon+ expression?)*
 
-private constant ::= numeric_literal_expression | string_literal_expression | logical_literal_expression | null_literal_expression | na_literal_expression
-numeric_literal_expression ::= integer | numeric | complex
-string_literal_expression ::= string
-logical_literal_expression ::= TRUE | FALSE | T | F
-null_literal_expression ::= NULL
-na_literal_expression ::= NA | NA_INTEGER | NA_REAL | NA_COMPLEX | NA_CHARACTER {
-  methods = [getType]
-}
-private special_constant ::= INF | NAN
-private keyword ::= NA_INTEGER | NA_REAL | NA_COMPLEX | NA_CHARACTER |
-  TRIPLE_DOTS | if | else | repeat | while |
-  function | for | in | next | break
+
+private constant ::=  string_literal_expression | numeric_literal_expression | builtin_constant_expression
+
+numeric_literal_expression ::= INTEGER | NUMERIC | COMPLEX
+string_literal_expression ::= STRING
+
+builtin_constant_expression ::=  boolean_literal  | na_literal | null_literal | boundary_literal {elementType=reference_expression}
+boolean_literal ::= TRUE | FALSE | T | F { methods = [isTrue isFalse]}
+null_literal ::= NULL
+na_literal ::= NA | NA_INTEGER | NA_REAL | NA_COMPLEX | NA_CHARACTER { methods = [getType] }
+boundary_literal ::= INF | NAN
+
 
 expression ::=
-  if_statement | while_statement | for_statement | repeat_statement | break_statement | next_statement |
-  block_expression | help_expression | parenthesized_expression |
-  function_expression | left_assign_expression | eq_assign_expression | right_assign_expression |
-  tilde_group | or_expression | and_expression | unary_not_expression | compare_expression | plusminus_expression |
-  muldiv_expression | infix_expression | colon_expression | unary_plusminus_expression | exp_expression | subscription_expression |
-  call_expression | member_expression | at_expression | namespace_access_expression | primitive_expression
+    if_statement | while_statement | for_statement | repeat_statement | break_statement | next_statement |
+    block_expression | help_expression | parenthesized_expression |
+    function_expression | left_assign_expression | eq_assign_expression | right_assign_expression |
+    tilde_group | or_expression | and_expression | unary_not_expression | compare_expression | plusminus_expression |
+    muldiv_expression | infix_expression | colon_expression | unary_plusminus_expression | exp_expression | subscription_expression |
+    call_expression | member_expression | at_expression | namespace_access_expression | primitive_expression
 
 //operators
 assignment_statement ::= {
@@ -167,10 +167,15 @@ break_statement ::= break break_next_expression?
 next_statement ::= next break_next_expression?
 private break_next_expression ::= nl* '(' nl* (expression nl*)? ')'
 block_expression ::= '{' nl* expression_list? nl* '}'
+
+private keyword ::= NA_INTEGER | NA_REAL | NA_COMPLEX | NA_CHARACTER |
+  TRIPLE_DOTS | if | else | repeat | while |
+  function | for | in | next | break
+
 help_expression ::= help (nl* help)? nl* (keyword | expression) //todo: check that here is expr
 
 //other expressions
-reference_expression ::= identifier | special_constant {
+reference_expression ::= identifier {
   methods = [ getReference getNamespace getName ]
 }
 private primitive_expression ::= reference_expression | constant

@@ -22,7 +22,7 @@ RFile:AssignmentInSubscription.r
           R_ARGUMENT_LIST
             PsiElement(()('(')
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('1')
+              PsiElement(NUMERIC)('1')
             PsiElement(,)(',')
             R_CALL_EXPRESSION
               R_REFERENCE_EXPRESSION
@@ -39,7 +39,7 @@ RFile:AssignmentInSubscription.r
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
     R_STRING_LITERAL_EXPRESSION
-      PsiElement(string)('"gray"')
+      PsiElement(STRING)('"gray"')
   PsiElement(nl)('\n')
   R_ASSIGNMENT_STATEMENT
     R_SUBSCRIPTION_EXPRESSION
@@ -59,7 +59,7 @@ RFile:AssignmentInSubscription.r
           R_ARGUMENT_LIST
             PsiElement(()('(')
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('1')
+              PsiElement(NUMERIC)('1')
             PsiElement(,)(',')
             R_CALL_EXPRESSION
               R_REFERENCE_EXPRESSION
@@ -81,4 +81,4 @@ RFile:AssignmentInSubscription.r
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
     R_STRING_LITERAL_EXPRESSION
-      PsiElement(string)('"gray"')
+      PsiElement(STRING)('"gray"')

@@ -14,6 +14,8 @@ public interface RElementTypes {
   IElementType R_ASSIGNMENT_STATEMENT = RElementTypeFactory.getElementTypeByName("R_ASSIGNMENT_STATEMENT");
   IElementType R_AT_EXPRESSION = new RElementType("R_AT_EXPRESSION");
   IElementType R_BLOCK_EXPRESSION = new RElementType("R_BLOCK_EXPRESSION");
+  IElementType R_BOOLEAN_LITERAL = new RElementType("R_BOOLEAN_LITERAL");
+  IElementType R_BOUNDARY_LITERAL = new RElementType("R_BOUNDARY_LITERAL");
   IElementType R_BREAK_STATEMENT = new RElementType("R_BREAK_STATEMENT");
   IElementType R_CALL_EXPRESSION = new RElementType("R_CALL_EXPRESSION");
   IElementType R_EMPTY_EXPRESSION = new RElementType("R_EMPTY_EXPRESSION");
@@ -22,11 +24,10 @@ public interface RElementTypes {
   IElementType R_FUNCTION_EXPRESSION = new RElementType("R_FUNCTION_EXPRESSION");
   IElementType R_HELP_EXPRESSION = new RElementType("R_HELP_EXPRESSION");
   IElementType R_IF_STATEMENT = new RElementType("R_IF_STATEMENT");
-  IElementType R_LOGICAL_LITERAL_EXPRESSION = new RElementType("R_LOGICAL_LITERAL_EXPRESSION");
   IElementType R_MEMBER_EXPRESSION = new RElementType("R_MEMBER_EXPRESSION");
-  IElementType R_NA_LITERAL_EXPRESSION = new RElementType("R_NA_LITERAL_EXPRESSION");
+  IElementType R_NA_LITERAL = new RElementType("R_NA_LITERAL");
   IElementType R_NEXT_STATEMENT = new RElementType("R_NEXT_STATEMENT");
-  IElementType R_NULL_LITERAL_EXPRESSION = new RElementType("R_NULL_LITERAL_EXPRESSION");
+  IElementType R_NULL_LITERAL = new RElementType("R_NULL_LITERAL");
   IElementType R_NUMERIC_LITERAL_EXPRESSION = new RElementType("R_NUMERIC_LITERAL_EXPRESSION");
   IElementType R_OPERATOR = new RElementType("R_OPERATOR");
   IElementType R_OPERATOR_EXPRESSION = new RElementType("R_OPERATOR_EXPRESSION");
@@ -47,7 +48,7 @@ public interface RElementTypes {
   IElementType R_BREAK = new RElementType("break");
   IElementType R_COLON = new RElementType(":");
   IElementType R_COMMA = new RElementType(",");
-  IElementType R_COMPLEX = new RElementType("complex");
+  IElementType R_COMPLEX = new RElementType("COMPLEX");
   IElementType R_DIV = new RElementType("/");
   IElementType R_DOUBLECOLON = new RElementType("::");
   IElementType R_ELSE = new RElementType("else");
@@ -66,7 +67,7 @@ public interface RElementTypes {
   IElementType R_IN = new RElementType("in");
   IElementType R_INF = new RElementType("INF");
   IElementType R_INFIX_OP = new RElementType("INFIX_OP");
-  IElementType R_INTEGER = new RElementType("integer");
+  IElementType R_INTEGER = new RElementType("INTEGER");
   IElementType R_LBRACE = new RElementType("{");
   IElementType R_LBRACKET = new RElementType("[");
   IElementType R_LDBRACKET = new RElementType("[[");
@@ -89,7 +90,7 @@ public interface RElementTypes {
   IElementType R_NOT = new RElementType("!");
   IElementType R_NOTEQ = new RElementType("!=");
   IElementType R_NULL = new RElementType("NULL");
-  IElementType R_NUMERIC = new RElementType("numeric");
+  IElementType R_NUMERIC = new RElementType("NUMERIC");
   IElementType R_OR = new RElementType("|");
   IElementType R_OROR = new RElementType("||");
   IElementType R_PLUS = new RElementType("+");
@@ -101,7 +102,7 @@ public interface RElementTypes {
   IElementType R_RIGHT_COMPLEX_ASSIGN = new RElementType("->>");
   IElementType R_RPAR = new RElementType(")");
   IElementType R_SEMI = new RElementType(";");
-  IElementType R_STRING = new RElementType("string");
+  IElementType R_STRING = new RElementType("STRING");
   IElementType R_T = new RElementType("T");
   IElementType R_TICK = new RElementType("`");
   IElementType R_TILDE = new RElementType("~");
@@ -126,6 +127,12 @@ public interface RElementTypes {
       else if (type == R_BLOCK_EXPRESSION) {
         return new RBlockExpressionImpl(node);
       }
+      else if (type == R_BOOLEAN_LITERAL) {
+        return new RBooleanLiteralImpl(node);
+      }
+      else if (type == R_BOUNDARY_LITERAL) {
+        return new RBoundaryLiteralImpl(node);
+      }
       else if (type == R_BREAK_STATEMENT) {
         return new RBreakStatementImpl(node);
       }
@@ -147,20 +154,17 @@ public interface RElementTypes {
       else if (type == R_IF_STATEMENT) {
         return new RIfStatementImpl(node);
       }
-      else if (type == R_LOGICAL_LITERAL_EXPRESSION) {
-        return new RLogicalLiteralExpressionImpl(node);
-      }
       else if (type == R_MEMBER_EXPRESSION) {
         return new RMemberExpressionImpl(node);
       }
-      else if (type == R_NA_LITERAL_EXPRESSION) {
-        return new RNaLiteralExpressionImpl(node);
+      else if (type == R_NA_LITERAL) {
+        return new RNaLiteralImpl(node);
       }
       else if (type == R_NEXT_STATEMENT) {
         return new RNextStatementImpl(node);
       }
-      else if (type == R_NULL_LITERAL_EXPRESSION) {
-        return new RNullLiteralExpressionImpl(node);
+      else if (type == R_NULL_LITERAL) {
+        return new RNullLiteralImpl(node);
       }
       else if (type == R_NUMERIC_LITERAL_EXPRESSION) {
         return new RNumericLiteralExpressionImpl(node);

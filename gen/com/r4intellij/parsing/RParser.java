@@ -29,11 +29,23 @@ public class RParser implements PsiParser, LightPsiParser {
     else if (t == R_ASSIGNMENT_STATEMENT) {
       r = assignment_statement(b, 0);
     }
+    else if (t == R_BOOLEAN_LITERAL) {
+      r = boolean_literal(b, 0);
+    }
+    else if (t == R_BOUNDARY_LITERAL) {
+      r = boundary_literal(b, 0);
+    }
     else if (t == R_EMPTY_EXPRESSION) {
       r = empty_expression(b, 0);
     }
     else if (t == R_EXPRESSION) {
       r = expression(b, 0, -1);
+    }
+    else if (t == R_NA_LITERAL) {
+      r = na_literal(b, 0);
+    }
+    else if (t == R_NULL_LITERAL) {
+      r = null_literal(b, 0);
     }
     else if (t == R_OPERATOR) {
       r = operator(b, 0);
@@ -60,11 +72,10 @@ public class RParser implements PsiParser, LightPsiParser {
   public static final TokenSet[] EXTENDS_SETS_ = new TokenSet[] {
     create_token_set_(R_ASSIGNMENT_STATEMENT, R_AT_EXPRESSION, R_BLOCK_EXPRESSION, R_BREAK_STATEMENT,
       R_CALL_EXPRESSION, R_EMPTY_EXPRESSION, R_EXPRESSION, R_FOR_STATEMENT,
-      R_FUNCTION_EXPRESSION, R_HELP_EXPRESSION, R_IF_STATEMENT, R_LOGICAL_LITERAL_EXPRESSION,
-      R_MEMBER_EXPRESSION, R_NA_LITERAL_EXPRESSION, R_NEXT_STATEMENT, R_NULL_LITERAL_EXPRESSION,
-      R_NUMERIC_LITERAL_EXPRESSION, R_OPERATOR_EXPRESSION, R_PARENTHESIZED_EXPRESSION, R_REFERENCE_EXPRESSION,
-      R_REPEAT_STATEMENT, R_STRING_LITERAL_EXPRESSION, R_SUBSCRIPTION_EXPRESSION, R_TILDE_EXPRESSION,
-      R_UNARY_TILDE_EXPRESSION, R_WHILE_STATEMENT),
+      R_FUNCTION_EXPRESSION, R_HELP_EXPRESSION, R_IF_STATEMENT, R_MEMBER_EXPRESSION,
+      R_NEXT_STATEMENT, R_NUMERIC_LITERAL_EXPRESSION, R_OPERATOR_EXPRESSION, R_PARENTHESIZED_EXPRESSION,
+      R_REFERENCE_EXPRESSION, R_REPEAT_STATEMENT, R_STRING_LITERAL_EXPRESSION, R_SUBSCRIPTION_EXPRESSION,
+      R_TILDE_EXPRESSION, R_UNARY_TILDE_EXPRESSION, R_WHILE_STATEMENT),
   };
 
   /* ********************************************************** */
@@ -223,6 +234,33 @@ public class RParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     exit_section_(b, m, R_ASSIGNMENT_STATEMENT, true);
     return true;
+  }
+
+  /* ********************************************************** */
+  // TRUE | FALSE | T | F
+  public static boolean boolean_literal(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "boolean_literal")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, R_BOOLEAN_LITERAL, "<boolean literal>");
+    r = consumeToken(b, R_TRUE);
+    if (!r) r = consumeToken(b, R_FALSE);
+    if (!r) r = consumeToken(b, R_T);
+    if (!r) r = consumeToken(b, R_F);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // INF | NAN
+  public static boolean boundary_literal(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "boundary_literal")) return false;
+    if (!nextTokenIs(b, "<boundary literal>", R_INF, R_NAN)) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, R_BOUNDARY_LITERAL, "<boundary literal>");
+    r = consumeToken(b, R_INF);
+    if (!r) r = consumeToken(b, R_NAN);
+    exit_section_(b, l, m, r, false, null);
+    return r;
   }
 
   /* ********************************************************** */
@@ -501,6 +539,21 @@ public class RParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // NA | NA_INTEGER | NA_REAL | NA_COMPLEX | NA_CHARACTER
+  public static boolean na_literal(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "na_literal")) return false;
+    boolean r;
+    Marker m = enter_section_(b, l, _NONE_, R_NA_LITERAL, "<na literal>");
+    r = consumeToken(b, R_NA);
+    if (!r) r = consumeToken(b, R_NA_INTEGER);
+    if (!r) r = consumeToken(b, R_NA_REAL);
+    if (!r) r = consumeToken(b, R_NA_COMPLEX);
+    if (!r) r = consumeToken(b, R_NA_CHARACTER);
+    exit_section_(b, l, m, r, false, null);
+    return r;
+  }
+
+  /* ********************************************************** */
   // '!'
   public static boolean not_operator(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "not_operator")) return false;
@@ -509,6 +562,18 @@ public class RParser implements PsiParser, LightPsiParser {
     Marker m = enter_section_(b);
     r = consumeToken(b, R_NOT);
     exit_section_(b, m, R_OPERATOR, r);
+    return r;
+  }
+
+  /* ********************************************************** */
+  // NULL
+  public static boolean null_literal(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "null_literal")) return false;
+    if (!nextTokenIs(b, R_NULL)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeToken(b, R_NULL);
+    exit_section_(b, m, R_NULL_LITERAL, r);
     return r;
   }
 
@@ -724,19 +789,6 @@ public class RParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // INF | NAN
-  static boolean special_constant(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "special_constant")) return false;
-    if (!nextTokenIs(b, "", R_INF, R_NAN)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeToken(b, R_INF);
-    if (!r) r = consumeToken(b, R_NAN);
-    exit_section_(b, m, null, r);
-    return r;
-  }
-
-  /* ********************************************************** */
   // '...' | expression | external_empty_expression
   static boolean subscription_expr_elem(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "subscription_expr_elem")) return false;
@@ -867,8 +919,7 @@ public class RParser implements PsiParser, LightPsiParser {
   // 26: POSTFIX(member_expression)
   // 27: POSTFIX(at_expression)
   // 28: POSTFIX(namespace_access_expression)
-  // 29: ATOM(reference_expression) ATOM(numeric_literal_expression) ATOM(string_literal_expression) ATOM(logical_literal_expression)
-  //    ATOM(null_literal_expression) ATOM(na_literal_expression)
+  // 29: ATOM(reference_expression) ATOM(string_literal_expression) ATOM(numeric_literal_expression) ATOM(builtin_constant_expression)
   public static boolean expression(PsiBuilder b, int l, int g) {
     if (!recursion_guard_(b, l, "expression")) return false;
     addVariant(b, "<expression>");
@@ -888,11 +939,9 @@ public class RParser implements PsiParser, LightPsiParser {
     if (!r) r = unary_not_expression(b, l + 1);
     if (!r) r = unary_plusminus_expression(b, l + 1);
     if (!r) r = reference_expression(b, l + 1);
-    if (!r) r = numeric_literal_expression(b, l + 1);
     if (!r) r = string_literal_expression(b, l + 1);
-    if (!r) r = logical_literal_expression(b, l + 1);
-    if (!r) r = null_literal_expression(b, l + 1);
-    if (!r) r = na_literal_expression(b, l + 1);
+    if (!r) r = numeric_literal_expression(b, l + 1);
+    if (!r) r = builtin_constant_expression(b, l + 1);
     p = r;
     r = r && expression_0(b, l + 1, g);
     exit_section_(b, l, m, null, r, p, null);
@@ -2110,18 +2159,29 @@ public class RParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // identifier | special_constant
+  // identifier
   public static boolean reference_expression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "reference_expression")) return false;
+    if (!nextTokenIsSmart(b, R_IDENTIFIER)) return false;
     boolean r;
-    Marker m = enter_section_(b, l, _NONE_, R_REFERENCE_EXPRESSION, "<reference expression>");
+    Marker m = enter_section_(b);
     r = consumeTokenSmart(b, R_IDENTIFIER);
-    if (!r) r = special_constant(b, l + 1);
-    exit_section_(b, l, m, r, false, null);
+    exit_section_(b, m, R_REFERENCE_EXPRESSION, r);
     return r;
   }
 
-  // integer | numeric | complex
+  // STRING
+  public static boolean string_literal_expression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "string_literal_expression")) return false;
+    if (!nextTokenIsSmart(b, R_STRING)) return false;
+    boolean r;
+    Marker m = enter_section_(b);
+    r = consumeTokenSmart(b, R_STRING);
+    exit_section_(b, m, R_STRING_LITERAL_EXPRESSION, r);
+    return r;
+  }
+
+  // INTEGER | NUMERIC | COMPLEX
   public static boolean numeric_literal_expression(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "numeric_literal_expression")) return false;
     boolean r;
@@ -2133,51 +2193,15 @@ public class RParser implements PsiParser, LightPsiParser {
     return r;
   }
 
-  // string
-  public static boolean string_literal_expression(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "string_literal_expression")) return false;
-    if (!nextTokenIsSmart(b, R_STRING)) return false;
+  // boolean_literal  | na_literal | null_literal | boundary_literal
+  public static boolean builtin_constant_expression(PsiBuilder b, int l) {
+    if (!recursion_guard_(b, l, "builtin_constant_expression")) return false;
     boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokenSmart(b, R_STRING);
-    exit_section_(b, m, R_STRING_LITERAL_EXPRESSION, r);
-    return r;
-  }
-
-  // TRUE | FALSE | T | F
-  public static boolean logical_literal_expression(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "logical_literal_expression")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, R_LOGICAL_LITERAL_EXPRESSION, "<logical literal expression>");
-    r = consumeTokenSmart(b, R_TRUE);
-    if (!r) r = consumeTokenSmart(b, R_FALSE);
-    if (!r) r = consumeTokenSmart(b, R_T);
-    if (!r) r = consumeTokenSmart(b, R_F);
-    exit_section_(b, l, m, r, false, null);
-    return r;
-  }
-
-  // NULL
-  public static boolean null_literal_expression(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "null_literal_expression")) return false;
-    if (!nextTokenIsSmart(b, R_NULL)) return false;
-    boolean r;
-    Marker m = enter_section_(b);
-    r = consumeTokenSmart(b, R_NULL);
-    exit_section_(b, m, R_NULL_LITERAL_EXPRESSION, r);
-    return r;
-  }
-
-  // NA | NA_INTEGER | NA_REAL | NA_COMPLEX | NA_CHARACTER
-  public static boolean na_literal_expression(PsiBuilder b, int l) {
-    if (!recursion_guard_(b, l, "na_literal_expression")) return false;
-    boolean r;
-    Marker m = enter_section_(b, l, _NONE_, R_NA_LITERAL_EXPRESSION, "<na literal expression>");
-    r = consumeTokenSmart(b, R_NA);
-    if (!r) r = consumeTokenSmart(b, R_NA_INTEGER);
-    if (!r) r = consumeTokenSmart(b, R_NA_REAL);
-    if (!r) r = consumeTokenSmart(b, R_NA_COMPLEX);
-    if (!r) r = consumeTokenSmart(b, R_NA_CHARACTER);
+    Marker m = enter_section_(b, l, _NONE_, R_REFERENCE_EXPRESSION, "<builtin constant expression>");
+    r = boolean_literal(b, l + 1);
+    if (!r) r = na_literal(b, l + 1);
+    if (!r) r = null_literal(b, l + 1);
+    if (!r) r = boundary_literal(b, l + 1);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

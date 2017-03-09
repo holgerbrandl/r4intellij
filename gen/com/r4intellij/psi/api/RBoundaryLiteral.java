@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface RBooleanLiteralExpression extends RExpression {
+public interface RBoundaryLiteral extends RPsiElement {
 
   @Nullable
-  PsiElement getFalse();
+  PsiElement getInf();
 
   @Nullable
-  PsiElement getTrue();
+  PsiElement getNan();
 
 }

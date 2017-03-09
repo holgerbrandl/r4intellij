@@ -95,7 +95,8 @@ private Stack<IElementType> myExpectedBracketsStack = new Stack<IElementType>();
 {LONG_INTEGER}              { return RElementTypes.R_INTEGER; }
 
 // string constants
-{STRING}                    { return RElementTypes.R_STRING; }
+{STRING}
+                  { return RElementTypes.R_STRING; }
 // special constants
 "NULL"                      { return RElementTypes.R_NULL; }
 "NA"                        { return RElementTypes.R_NA; }

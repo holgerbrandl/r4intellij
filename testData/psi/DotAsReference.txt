@@ -21,7 +21,7 @@ RFile:DotAsReference.r
                   R_OPERATOR
                     PsiElement(+)('+')
                   R_NUMERIC_LITERAL_EXPRESSION
-                    PsiElement(numeric)('2.5')
+                    PsiElement(NUMERIC)('2.5')
                 PsiElement())(')')
             PsiWhiteSpace(' ')
             R_OPERATOR
@@ -33,7 +33,7 @@ RFile:DotAsReference.r
               R_OPERATOR
                 PsiElement(^)('^')
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('4')
+                PsiElement(NUMERIC)('4')
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
           R_ASSIGNMENT_STATEMENT

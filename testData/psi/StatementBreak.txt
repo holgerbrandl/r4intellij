@@ -1,19 +1,19 @@
 RFile:StatementBreak.r
   R_OPERATOR_EXPRESSION
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('13')
+      PsiElement(NUMERIC)('13')
     PsiWhiteSpace(' ')
     R_OPERATOR
       PsiElement(+)('+')
     PsiWhiteSpace(' ')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('4')
+      PsiElement(NUMERIC)('4')
   PsiElement(nl)('\n')
   R_OPERATOR_EXPRESSION
     R_OPERATOR
       PsiElement(-)('-')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('7')
+      PsiElement(NUMERIC)('7')
   PsiElement(nl)('\n')
   R_CALL_EXPRESSION
     R_REFERENCE_EXPRESSION
@@ -22,6 +22,6 @@ RFile:StatementBreak.r
       PsiElement(()('(')
       PsiElement(nl)('\n')
       R_NUMERIC_LITERAL_EXPRESSION
-        PsiElement(numeric)('1')
+        PsiElement(NUMERIC)('1')
       PsiElement(nl)('\n')
       PsiElement())(')')

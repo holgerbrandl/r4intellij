@@ -100,6 +100,7 @@ RFile:DotAsFunctionParameter.r
           PsiElement(,)(',')
           PsiElement(nl)('\n')
           PsiWhiteSpace('                           ')
-          R_NA_LITERAL_EXPRESSION
-            PsiElement(NA)('NA')
+          R_REFERENCE_EXPRESSION
+            R_NA_LITERAL
+              PsiElement(NA)('NA')
           PsiElement())(')')

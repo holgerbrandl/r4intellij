@@ -19,7 +19,7 @@ RFile:IfStatementAsArgument.r
         PsiElement())(')')
         PsiWhiteSpace(' ')
         R_STRING_LITERAL_EXPRESSION
-          PsiElement(string)('"..."')
+          PsiElement(STRING)('"..."')
         PsiWhiteSpace('  ')
         PsiElement(else)('else')
         PsiWhiteSpace(' ')

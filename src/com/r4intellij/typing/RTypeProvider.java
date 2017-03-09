@@ -40,14 +40,14 @@ public class RTypeProvider {
         if (element instanceof RNumericLiteralExpression) {
             return getNumericType((RNumericLiteralExpression) element);
         }
-        if (element instanceof RLogicalLiteralExpression) {
+        if (element instanceof RBooleanLiteral) {
             return RLogicalType.INSTANCE;
         }
-        if (element instanceof RNullLiteralExpression) {
+        if (element instanceof RNullLiteral) {
             return RNullType.INSTANCE;
         }
-        if (element instanceof RNaLiteralExpression) {
-            return ((RNaLiteralExpression) element).getType();
+        if (element instanceof RNaLiteral) {
+            return ((RNaLiteral) element).getType();
         }
 
         if (element instanceof RReferenceExpression) {
@@ -106,9 +106,6 @@ public class RTypeProvider {
             RMemberExpression memberExpression = (RMemberExpression) element;
             RType elementType = getType(memberExpression.getExpression());
             return elementType.getMemberType(memberExpression.getTag());
-        }
-        if (element instanceof RSliceExpression) {
-            return RNumericType.INSTANCE; // TODO: think!
         }
         if (element instanceof ROperatorExpression) {
             return getBinaryExpressionType((ROperatorExpression) element);

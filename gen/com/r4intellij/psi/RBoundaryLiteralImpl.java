@@ -10,14 +10,14 @@ import com.intellij.psi.util.PsiTreeUtil;
 import static com.r4intellij.parsing.RElementTypes.*;
 import com.r4intellij.psi.api.*;
 
-public class RNullLiteralExpressionImpl extends RExpressionImpl implements RNullLiteralExpression {
+public class RBoundaryLiteralImpl extends RElementImpl implements RBoundaryLiteral {
 
-  public RNullLiteralExpressionImpl(ASTNode node) {
+  public RBoundaryLiteralImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull RVisitor visitor) {
-    visitor.visitNullLiteralExpression(this);
+    visitor.visitBoundaryLiteral(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -26,9 +26,15 @@ public class RNullLiteralExpressionImpl extends RExpressionImpl implements RNull
   }
 
   @Override
-  @NotNull
-  public PsiElement getNull() {
-    return notNullChild(findChildByType(R_NULL));
+  @Nullable
+  public PsiElement getInf() {
+    return findChildByType(R_INF);
+  }
+
+  @Override
+  @Nullable
+  public PsiElement getNan() {
+    return findChildByType(R_NAN);
   }
 
 }

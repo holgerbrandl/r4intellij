@@ -10,7 +10,7 @@ RFile:Precedence.r
         R_ARGUMENT_LIST
           PsiElement(()('(')
           R_NUMERIC_LITERAL_EXPRESSION
-            PsiElement(numeric)('1000')
+            PsiElement(NUMERIC)('1000')
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
           R_OPERATOR_EXPRESSION
@@ -46,6 +46,6 @@ RFile:Precedence.r
               PsiElement(<)('<')
             PsiWhiteSpace(' ')
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('0.05')
+              PsiElement(NUMERIC)('0.05')
           PsiElement())(')')
       PsiElement())(')')

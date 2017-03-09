@@ -9,16 +9,15 @@ import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.r4intellij.parsing.RElementTypes.*;
 import com.r4intellij.psi.api.*;
-import com.r4intellij.typing.types.RType;
 
-public class RNaLiteralExpressionImpl extends RExpressionImpl implements RNaLiteralExpression {
+public class RBooleanLiteralImpl extends RElementImpl implements RBooleanLiteral {
 
-  public RNaLiteralExpressionImpl(ASTNode node) {
+  public RBooleanLiteralImpl(ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull RVisitor visitor) {
-    visitor.visitNaLiteralExpression(this);
+    visitor.visitBooleanLiteral(this);
   }
 
   public void accept(@NotNull PsiElementVisitor visitor) {
@@ -28,36 +27,34 @@ public class RNaLiteralExpressionImpl extends RExpressionImpl implements RNaLite
 
   @Override
   @Nullable
-  public PsiElement getNa() {
-    return findChildByType(R_NA);
+  public PsiElement getF() {
+    return findChildByType(R_F);
   }
 
   @Override
   @Nullable
-  public PsiElement getNaCharacter() {
-    return findChildByType(R_NA_CHARACTER);
+  public PsiElement getFalse() {
+    return findChildByType(R_FALSE);
   }
 
   @Override
   @Nullable
-  public PsiElement getNaComplex() {
-    return findChildByType(R_NA_COMPLEX);
+  public PsiElement getT() {
+    return findChildByType(R_T);
   }
 
   @Override
   @Nullable
-  public PsiElement getNaInteger() {
-    return findChildByType(R_NA_INTEGER);
+  public PsiElement getTrue() {
+    return findChildByType(R_TRUE);
   }
 
-  @Override
-  @Nullable
-  public PsiElement getNaReal() {
-    return findChildByType(R_NA_REAL);
+  public boolean isTrue() {
+    return RPsiImplUtil.isTrue(this);
   }
 
-  public RType getType() {
-    return RPsiImplUtil.getType(this);
+  public boolean isFalse() {
+    return RPsiImplUtil.isFalse(this);
   }
 
 }

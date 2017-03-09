@@ -53,7 +53,7 @@ RFile:HelpOnKeyword.r
     PsiElement(help)('?')
     PsiElement(help)('?')
     R_STRING_LITERAL_EXPRESSION
-      PsiElement(string)('"multivariate normal"')
+      PsiElement(STRING)('"multivariate normal"')
   PsiElement(nl)('\n')
   R_CALL_EXPRESSION
     R_REFERENCE_EXPRESSION
@@ -61,7 +61,7 @@ RFile:HelpOnKeyword.r
     R_ARGUMENT_LIST
       PsiElement(()('(')
       R_STRING_LITERAL_EXPRESSION
-        PsiElement(string)('"multivariate normal"')
+        PsiElement(STRING)('"multivariate normal"')
       PsiElement())(')')
   PsiElement(nl)('\n')
   PsiElement(nl)('\n')

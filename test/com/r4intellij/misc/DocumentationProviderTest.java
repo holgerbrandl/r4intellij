@@ -7,11 +7,14 @@ import com.r4intellij.documentation.RDocumentationProvider;
 import com.r4intellij.psi.RReferenceExpressionImpl;
 import com.r4intellij.psi.api.RCallExpression;
 import com.r4intellij.psi.api.RExpression;
+import com.r4intellij.psi.api.RReferenceExpression;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -43,6 +46,22 @@ public class DocumentationProviderTest extends RTestCase {
 
         // assert that doc is as expcted
         compareWIthTestData(doc);
+    }
+
+
+    public void testHelpForSpecialConstants() throws IOException {
+        // special constants
+        List<String> constants = Arrays.asList("NULL", "NA", "Inf", "NaN", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_",
+                "if", "else", "repeat", "while", "function", "for", "in", "next", "break");
+
+        for (String specialConstant : constants) {
+            myFixture.configureByText("a.R", "NA; NaN; Inf, ");
+
+            RReferenceExpression refExpr = PsiTreeUtil.findChildOfType(myFixture.getFile(), RReferenceExpression.class);
+            String doc = new RDocumentationProvider().generateDoc(refExpr, refExpr.getIdentifier());
+
+            assertTrue(doc.contains(specialConstant) && doc.contains("Description"));
+        }
     }
 
 

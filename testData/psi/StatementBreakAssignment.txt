@@ -8,11 +8,11 @@ RFile:StatementBreakAssignment.r
     PsiElement(nl)('\n')
     R_OPERATOR_EXPRESSION
       R_NUMERIC_LITERAL_EXPRESSION
-        PsiElement(numeric)('1')
+        PsiElement(NUMERIC)('1')
       R_OPERATOR
         PsiElement(:)(':')
       R_NUMERIC_LITERAL_EXPRESSION
-        PsiElement(numeric)('5')
+        PsiElement(NUMERIC)('5')
   PsiElement(nl)('\n')
   PsiElement(nl)('\n')
   R_CALL_EXPRESSION
@@ -30,16 +30,16 @@ RFile:StatementBreakAssignment.r
   PsiElement(nl)('\n')
   R_OPERATOR_EXPRESSION
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('1')
+      PsiElement(NUMERIC)('1')
     PsiWhiteSpace(' ')
     R_OPERATOR
       PsiElement(+)('+')
     PsiWhiteSpace(' ')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('2')
+      PsiElement(NUMERIC)('2')
   PsiElement(nl)('\n')
   R_OPERATOR_EXPRESSION
     R_OPERATOR
       PsiElement(-)('-')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('3')
+      PsiElement(NUMERIC)('3')

@@ -10,4 +10,4 @@ RFile:ReferenceWithAt.r
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
     R_STRING_LITERAL_EXPRESSION
-      PsiElement(string)('"B"')
+      PsiElement(STRING)('"B"')

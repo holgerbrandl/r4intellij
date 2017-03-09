@@ -2,16 +2,16 @@ RFile:Binary.r
   R_OPERATOR_EXPRESSION
     R_OPERATOR_EXPRESSION
       R_NUMERIC_LITERAL_EXPRESSION
-        PsiElement(numeric)('1')
+        PsiElement(NUMERIC)('1')
       PsiWhiteSpace(' ')
       R_OPERATOR
         PsiElement(*)('*')
       PsiWhiteSpace(' ')
       R_NUMERIC_LITERAL_EXPRESSION
-        PsiElement(numeric)('2')
+        PsiElement(NUMERIC)('2')
     PsiWhiteSpace(' ')
     R_OPERATOR
       PsiElement(+)('+')
     PsiWhiteSpace(' ')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('3')
+      PsiElement(NUMERIC)('3')

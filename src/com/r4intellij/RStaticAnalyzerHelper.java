@@ -401,7 +401,7 @@ public class RStaticAnalyzerHelper {
             return thenResult.merge(elseResult);
         }
 
-        if (where instanceof ROperatorExpression || where instanceof RPrefixExpression) {
+        if (where instanceof ROperatorExpression) {
             RExpression[] expressions = PsiTreeUtil.getChildrenOfType(where, RExpression.class);
             if (expressions == null) {
                 return parentResult;
@@ -468,15 +468,11 @@ public class RStaticAnalyzerHelper {
             return analyzeSequence(subscriptionExpression.getExpressionList(), parentResult);
         }
 
-        if (where instanceof RSliceExpression) {
-            RSliceExpression sliceExpression = (RSliceExpression) where;
-            return analyzeSequence(sliceExpression.getExpressionList(), parentResult);
-        }
-
         if (where instanceof RMemberExpression) {
             RMemberExpression memberExpression = (RMemberExpression) where;
             return analyze(memberExpression.getExpression(), parentResult);
         }
+
         if (where instanceof RForStatement) {
             RForStatement forStatement = (RForStatement) where;
             StaticAnalysisResult afterRange = analyze(forStatement.getRange(), parentResult);

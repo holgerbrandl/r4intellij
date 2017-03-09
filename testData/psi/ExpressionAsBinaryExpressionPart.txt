@@ -1,7 +1,7 @@
 RFile:ExpressionAsBinaryExpressionPart.r
   R_OPERATOR_EXPRESSION
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('1')
+      PsiElement(NUMERIC)('1')
     PsiWhiteSpace(' ')
     R_OPERATOR
       PsiElement(+)('+')
@@ -17,11 +17,11 @@ RFile:ExpressionAsBinaryExpressionPart.r
       PsiWhiteSpace(' ')
       R_OPERATOR_EXPRESSION
         R_NUMERIC_LITERAL_EXPRESSION
-          PsiElement(numeric)('1')
+          PsiElement(NUMERIC)('1')
         R_OPERATOR
           PsiElement(:)(':')
         R_NUMERIC_LITERAL_EXPRESSION
-          PsiElement(numeric)('4')
+          PsiElement(NUMERIC)('4')
       PsiElement())(')')
       PsiWhiteSpace(' ')
       R_REFERENCE_EXPRESSION

@@ -70,10 +70,13 @@ public class RResolver {
         final Collection<RAssignmentStatement> assignmentStatements =
                 RAssignmentNameIndex.find(name, project, new LibraryScope(project, library));
 
+        //RAssignmentNameIndex.allKeys(project).stream().filter(f->f.equals("head")).collect(Collectors.toList())
+
         for (RAssignmentStatement statement : assignmentStatements) {
             final PsiFile containingFile = statement.getContainingFile();
 
-            if (!imports.contains(containingFile.getName().replaceAll(".r$", ""))) continue;
+            String containingPckgs = containingFile.getName().replaceAll(".r$", "");
+            if (!imports.contains(containingPckgs)) continue;
 
             final PsiElement assignee = statement.getAssignee();
             if (assignee == null) continue;

@@ -12,7 +12,7 @@ RFile:RepeatBlockStatement.r
         R_ARGUMENT_LIST
           PsiElement(()('(')
           R_STRING_LITERAL_EXPRESSION
-            PsiElement(string)('"Swag"')
+            PsiElement(STRING)('"Swag"')
           PsiElement())(')')
       PsiElement(nl)('\n')
       PsiWhiteSpace('  ')
@@ -22,7 +22,7 @@ RFile:RepeatBlockStatement.r
         R_ARGUMENT_LIST
           PsiElement(()('(')
           R_NUMERIC_LITERAL_EXPRESSION
-            PsiElement(numeric)('15')
+            PsiElement(NUMERIC)('15')
           PsiElement())(')')
       PsiElement(nl)('\n')
       PsiElement(})('}')

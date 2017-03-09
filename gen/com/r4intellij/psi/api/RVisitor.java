@@ -22,6 +22,14 @@ public class RVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
+  public void visitBooleanLiteral(@NotNull RBooleanLiteral o) {
+    visitPsiElement(o);
+  }
+
+  public void visitBoundaryLiteral(@NotNull RBoundaryLiteral o) {
+    visitPsiElement(o);
+  }
+
   public void visitBreakStatement(@NotNull RBreakStatement o) {
     visitExpression(o);
   }
@@ -54,24 +62,20 @@ public class RVisitor extends PsiElementVisitor {
     visitExpression(o);
   }
 
-  public void visitLogicalLiteralExpression(@NotNull RLogicalLiteralExpression o) {
-    visitExpression(o);
-  }
-
   public void visitMemberExpression(@NotNull RMemberExpression o) {
     visitExpression(o);
   }
 
-  public void visitNaLiteralExpression(@NotNull RNaLiteralExpression o) {
-    visitExpression(o);
+  public void visitNaLiteral(@NotNull RNaLiteral o) {
+    visitPsiElement(o);
   }
 
   public void visitNextStatement(@NotNull RNextStatement o) {
     visitExpression(o);
   }
 
-  public void visitNullLiteralExpression(@NotNull RNullLiteralExpression o) {
-    visitExpression(o);
+  public void visitNullLiteral(@NotNull RNullLiteral o) {
+    visitPsiElement(o);
   }
 
   public void visitNumericLiteralExpression(@NotNull RNumericLiteralExpression o) {

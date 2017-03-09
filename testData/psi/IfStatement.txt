@@ -27,7 +27,7 @@ RFile:IfStatement.r
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
           R_STRING_LITERAL_EXPRESSION
-            PsiElement(string)('">"')
+            PsiElement(STRING)('">"')
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
           R_REFERENCE_EXPRESSION
@@ -35,7 +35,7 @@ RFile:IfStatement.r
           PsiElement(,)(',')
           PsiWhiteSpace(' ')
           R_STRING_LITERAL_EXPRESSION
-            PsiElement(string)('"\n"')
+            PsiElement(STRING)('"\n"')
           PsiElement())(')')
       PsiElement(nl)('\n')
       PsiElement(})('}')

@@ -23,7 +23,7 @@ RFile:Operator.r
         R_OPERATOR_EXPRESSION
           R_OPERATOR_EXPRESSION
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('2')
+              PsiElement(NUMERIC)('2')
             R_OPERATOR
               PsiElement(*)('*')
             R_REFERENCE_EXPRESSION
@@ -34,7 +34,7 @@ RFile:Operator.r
           PsiWhiteSpace(' ')
           R_OPERATOR_EXPRESSION
             R_NUMERIC_LITERAL_EXPRESSION
-              PsiElement(numeric)('2')
+              PsiElement(NUMERIC)('2')
             R_OPERATOR
               PsiElement(*)('*')
             R_REFERENCE_EXPRESSION
@@ -46,24 +46,24 @@ RFile:Operator.r
   PsiElement(nl)('\n')
   R_OPERATOR_EXPRESSION
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('1')
+      PsiElement(NUMERIC)('1')
     PsiWhiteSpace(' ')
     R_OPERATOR
       PsiElement(INFIX_OP)('%myop%')
     PsiWhiteSpace(' ')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('1')
+      PsiElement(NUMERIC)('1')
   PsiElement(nl)('\n')
   PsiComment(END_OF_LINE_COMMENT)('#[1] 4')
   PsiElement(nl)('\n')
   R_OPERATOR_EXPRESSION
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('1')
+      PsiElement(NUMERIC)('1')
     PsiWhiteSpace(' ')
     R_OPERATOR
       PsiElement(INFIX_OP)('%myop%')
     PsiWhiteSpace(' ')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('2')
+      PsiElement(NUMERIC)('2')
   PsiElement(nl)('\n')
   PsiComment(END_OF_LINE_COMMENT)('#[1] 6')

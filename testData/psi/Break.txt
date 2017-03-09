@@ -7,7 +7,7 @@ RFile:Break.r
       PsiElement(<-)('<-')
     PsiWhiteSpace(' ')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('0')
+      PsiElement(NUMERIC)('0')
   PsiElement(nl)('\n')
   R_REPEAT_STATEMENT
     PsiElement(repeat)('repeat')
@@ -31,7 +31,7 @@ RFile:Break.r
             PsiElement(+)('+')
           PsiWhiteSpace(' ')
           R_NUMERIC_LITERAL_EXPRESSION
-            PsiElement(numeric)('1')
+            PsiElement(NUMERIC)('1')
       PsiElement(nl)('\n')
       PsiWhiteSpace('  ')
       R_CALL_EXPRESSION
@@ -55,7 +55,7 @@ RFile:Break.r
             PsiElement(>)('>')
           PsiWhiteSpace(' ')
           R_NUMERIC_LITERAL_EXPRESSION
-            PsiElement(numeric)('100')
+            PsiElement(NUMERIC)('100')
         PsiElement())(')')
         PsiWhiteSpace(' ')
         R_BREAK_STATEMENT

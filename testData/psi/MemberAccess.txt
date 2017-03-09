@@ -25,7 +25,7 @@ RFile:MemberAccess.r
   R_REFERENCE_EXPRESSION
     PsiElement(identifier)('out')
   PsiElement($)('$')
-  PsiErrorElement:'...', identifier or string expected, got 'F'
+  PsiErrorElement:'...', STRING or identifier expected, got 'F'
     PsiElement(FALSE)('F')
   PsiElement(DUMMY_BLOCK)
     PsiElement(nl)('\n')

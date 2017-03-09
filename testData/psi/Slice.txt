@@ -1,8 +1,8 @@
 RFile:Slice.r
   R_OPERATOR_EXPRESSION
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('1')
+      PsiElement(NUMERIC)('1')
     R_OPERATOR
       PsiElement(:)(':')
     R_NUMERIC_LITERAL_EXPRESSION
-      PsiElement(numeric)('10')
+      PsiElement(NUMERIC)('10')

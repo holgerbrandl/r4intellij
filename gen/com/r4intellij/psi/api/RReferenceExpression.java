@@ -8,13 +8,7 @@ import com.r4intellij.psi.references.RReferenceImpl;
 
 public interface RReferenceExpression extends RExpression {
 
-  @Nullable
-  PsiElement getInf();
-
-  @Nullable
-  PsiElement getNan();
-
-  @Nullable
+  @NotNull
   PsiElement getIdentifier();
 
   RReferenceImpl getReference();

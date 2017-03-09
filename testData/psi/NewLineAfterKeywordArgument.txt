@@ -23,14 +23,14 @@ RFile:NewLineAfterKeywordArgument.r
             PsiWhiteSpace(' ')
             R_OPERATOR_EXPRESSION
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('1')
+                PsiElement(NUMERIC)('1')
               R_OPERATOR
                 PsiElement(/)('/')
               R_PARENTHESIZED_EXPRESSION
                 PsiElement(()('(')
                 R_OPERATOR_EXPRESSION
                   R_NUMERIC_LITERAL_EXPRESSION
-                    PsiElement(numeric)('2')
+                    PsiElement(NUMERIC)('2')
                   R_OPERATOR
                     PsiElement(*)('*')
                   R_CALL_EXPRESSION
@@ -59,12 +59,12 @@ RFile:NewLineAfterKeywordArgument.r
                 R_ARGUMENT_LIST
                   PsiElement(()('(')
                   R_NUMERIC_LITERAL_EXPRESSION
-                    PsiElement(numeric)('3')
+                    PsiElement(NUMERIC)('3')
                   PsiElement())(')')
               R_OPERATOR
                 PsiElement(/)('/')
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('6')
+                PsiElement(NUMERIC)('6')
           PsiElement(,)(',')
           PsiElement(nl)('\n')
           PsiWhiteSpace('                      ')
@@ -82,12 +82,12 @@ RFile:NewLineAfterKeywordArgument.r
                 R_ARGUMENT_LIST
                   PsiElement(()('(')
                   R_NUMERIC_LITERAL_EXPRESSION
-                    PsiElement(numeric)('6')
+                    PsiElement(NUMERIC)('6')
                   PsiElement())(')')
               R_OPERATOR
                 PsiElement(/)('/')
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('9')
+                PsiElement(NUMERIC)('9')
           PsiElement(,)(',')
           PsiElement(nl)('\n')
           PsiWhiteSpace('                      ')
@@ -100,14 +100,14 @@ RFile:NewLineAfterKeywordArgument.r
             PsiWhiteSpace(' ')
             R_OPERATOR_EXPRESSION
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('3')
+                PsiElement(NUMERIC)('3')
               R_OPERATOR
                 PsiElement(/)('/')
               R_PARENTHESIZED_EXPRESSION
                 PsiElement(()('(')
                 R_OPERATOR_EXPRESSION
                   R_NUMERIC_LITERAL_EXPRESSION
-                    PsiElement(numeric)('5')
+                    PsiElement(NUMERIC)('5')
                   R_OPERATOR
                     PsiElement(*)('*')
                   R_CALL_EXPRESSION
@@ -116,7 +116,7 @@ RFile:NewLineAfterKeywordArgument.r
                     R_ARGUMENT_LIST
                       PsiElement(()('(')
                       R_NUMERIC_LITERAL_EXPRESSION
-                        PsiElement(numeric)('5')
+                        PsiElement(NUMERIC)('5')
                       PsiElement())(')')
                 PsiElement())(')')
           PsiElement(,)(',')
@@ -132,7 +132,7 @@ RFile:NewLineAfterKeywordArgument.r
             R_OPERATOR_EXPRESSION
               R_OPERATOR_EXPRESSION
                 R_NUMERIC_LITERAL_EXPRESSION
-                  PsiElement(numeric)('5')
+                  PsiElement(NUMERIC)('5')
                 R_OPERATOR
                   PsiElement(*)('*')
                 R_CALL_EXPRESSION
@@ -141,12 +141,12 @@ RFile:NewLineAfterKeywordArgument.r
                   R_ARGUMENT_LIST
                     PsiElement(()('(')
                     R_NUMERIC_LITERAL_EXPRESSION
-                      PsiElement(numeric)('7')
+                      PsiElement(NUMERIC)('7')
                     PsiElement())(')')
               R_OPERATOR
                 PsiElement(/)('/')
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('49')
+                PsiElement(NUMERIC)('49')
           PsiElement(,)(',')
           PsiElement(nl)('\n')
           PsiWhiteSpace('                      ')
@@ -160,11 +160,11 @@ RFile:NewLineAfterKeywordArgument.r
             R_OPERATOR_EXPRESSION
               R_OPERATOR_EXPRESSION
                 R_NUMERIC_LITERAL_EXPRESSION
-                  PsiElement(numeric)('3')
+                  PsiElement(NUMERIC)('3')
                 R_OPERATOR
                   PsiElement(/)('/')
                 R_NUMERIC_LITERAL_EXPRESSION
-                  PsiElement(numeric)('4')
+                  PsiElement(NUMERIC)('4')
               R_OPERATOR
                 PsiElement(*)('*')
               R_CALL_EXPRESSION
@@ -175,18 +175,18 @@ RFile:NewLineAfterKeywordArgument.r
                   R_OPERATOR_EXPRESSION
                     R_OPERATOR_EXPRESSION
                       R_NUMERIC_LITERAL_EXPRESSION
-                        PsiElement(numeric)('1')
+                        PsiElement(NUMERIC)('1')
                       R_OPERATOR
                         PsiElement(/)('/')
                       R_NUMERIC_LITERAL_EXPRESSION
-                        PsiElement(numeric)('3')
+                        PsiElement(NUMERIC)('3')
                     PsiWhiteSpace(' ')
                     R_OPERATOR
                       PsiElement(-)('-')
                     PsiWhiteSpace(' ')
                     R_OPERATOR_EXPRESSION
                       R_NUMERIC_LITERAL_EXPRESSION
-                        PsiElement(numeric)('2')
+                        PsiElement(NUMERIC)('2')
                       R_OPERATOR
                         PsiElement(/)('/')
                       R_OPERATOR_EXPRESSION
@@ -195,7 +195,7 @@ RFile:NewLineAfterKeywordArgument.r
                         R_OPERATOR
                           PsiElement(^)('^')
                         R_NUMERIC_LITERAL_EXPRESSION
-                          PsiElement(numeric)('2')
+                          PsiElement(NUMERIC)('2')
                   PsiElement())(')')
           PsiElement(,)(',')
           PsiElement(nl)('\n')
@@ -216,12 +216,12 @@ RFile:NewLineAfterKeywordArgument.r
                     PsiElement(()('(')
                     R_OPERATOR_EXPRESSION
                       R_NUMERIC_LITERAL_EXPRESSION
-                        PsiElement(numeric)('1')
+                        PsiElement(NUMERIC)('1')
                       R_OPERATOR
                         PsiElement(-)('-')
                       R_OPERATOR_EXPRESSION
                         R_NUMERIC_LITERAL_EXPRESSION
-                          PsiElement(numeric)('8')
+                          PsiElement(NUMERIC)('8')
                         R_OPERATOR
                           PsiElement(/)('/')
                         R_OPERATOR_EXPRESSION
@@ -230,7 +230,7 @@ RFile:NewLineAfterKeywordArgument.r
                           R_OPERATOR
                             PsiElement(^)('^')
                           R_NUMERIC_LITERAL_EXPRESSION
-                            PsiElement(numeric)('2')
+                            PsiElement(NUMERIC)('2')
                     PsiElement())(')')
                 R_OPERATOR
                   PsiElement(*)('*')
@@ -240,11 +240,11 @@ RFile:NewLineAfterKeywordArgument.r
                   R_OPERATOR
                     PsiElement(^)('^')
                   R_NUMERIC_LITERAL_EXPRESSION
-                    PsiElement(numeric)('2')
+                    PsiElement(NUMERIC)('2')
               R_OPERATOR
                 PsiElement(/)('/')
               R_NUMERIC_LITERAL_EXPRESSION
-                PsiElement(numeric)('16')
+                PsiElement(NUMERIC)('16')
           PsiElement(nl)('\n')
           PsiWhiteSpace('                      ')
           PsiElement())(')')

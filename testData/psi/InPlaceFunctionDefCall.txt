@@ -9,7 +9,7 @@ RFile:InPlaceFunctionDefCall.r
         PsiElement({)('{')
         PsiWhiteSpace(' ')
         R_NUMERIC_LITERAL_EXPRESSION
-          PsiElement(numeric)('1')
+          PsiElement(NUMERIC)('1')
         PsiWhiteSpace(' ')
         PsiElement(})('}')
       R_ARGUMENT_LIST
