@@ -40,6 +40,11 @@ public class RParsingTest extends ParsingTestCase {
     }
 
 
+    public void testBooleanExpressions() {
+        doTest();
+    }
+
+
     public void testFunctionCall() {
         doTest();
     }

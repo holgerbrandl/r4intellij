@@ -8,13 +8,7 @@ import com.intellij.psi.PsiElement;
 public interface RBooleanLiteral extends RPsiElement {
 
   @Nullable
-  PsiElement getF();
-
-  @Nullable
   PsiElement getFalse();
-
-  @Nullable
-  PsiElement getT();
 
   @Nullable
   PsiElement getTrue();

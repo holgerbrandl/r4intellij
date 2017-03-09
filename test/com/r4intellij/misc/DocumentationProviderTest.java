@@ -55,10 +55,10 @@ public class DocumentationProviderTest extends RTestCase {
                 "if", "else", "repeat", "while", "function", "for", "in", "next", "break");
 
         for (String specialConstant : constants) {
-            myFixture.configureByText("a.R", "NA; NaN; Inf, ");
+            myFixture.configureByText("a.R", specialConstant);
 
             RReferenceExpression refExpr = PsiTreeUtil.findChildOfType(myFixture.getFile(), RReferenceExpression.class);
-            String doc = new RDocumentationProvider().generateDoc(refExpr, refExpr.getIdentifier());
+            String doc = new RDocumentationProvider().generateDoc(refExpr, refExpr);
 
             assertTrue(doc.contains(specialConstant) && doc.contains("Description"));
         }

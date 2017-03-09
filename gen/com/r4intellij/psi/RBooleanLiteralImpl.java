@@ -27,20 +27,8 @@ public class RBooleanLiteralImpl extends RElementImpl implements RBooleanLiteral
 
   @Override
   @Nullable
-  public PsiElement getF() {
-    return findChildByType(R_F);
-  }
-
-  @Override
-  @Nullable
   public PsiElement getFalse() {
     return findChildByType(R_FALSE);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getT() {
-    return findChildByType(R_T);
   }
 
   @Override

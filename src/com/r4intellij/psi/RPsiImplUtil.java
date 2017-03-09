@@ -367,7 +367,7 @@ public class RPsiImplUtil {
 
     public static boolean isTrue(RBooleanLiteral boolExpr) {
         ASTNode node = boolExpr.getNode();
-        return node.findChildByType(TokenSet.create(R_TRUE, R_T)) != null;
+        return node.findChildByType(TokenSet.create(R_TRUE)) != null;
     }
 
 

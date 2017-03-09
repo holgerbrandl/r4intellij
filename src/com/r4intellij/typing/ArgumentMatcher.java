@@ -14,18 +14,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.r4intellij.inspections.TypeCheckerInspection.isPipeContext;
-
 public class ArgumentMatcher {
 
 
     private final RFunctionType functionType;
+    private final PipeInfo pipeInfo;
 
-    private boolean firstArgInjected;
+
+    public RFunctionType getFunctionType() {
+        return functionType;
+    }
+
+
+    public PipeInfo getPipeInfo() {
+        return pipeInfo;
+    }
 
 
     public ArgumentMatcher(RFunctionType functionType) {
         this.functionType = functionType;
+        pipeInfo = PipeInfo.NONE;
     }
 
 
@@ -45,6 +53,7 @@ public class ArgumentMatcher {
                 //        }
                 //        RFunctionType functionType = (RFunctionType) type;
                 functionType = new RFunctionType(function);
+                pipeInfo = PipeInfo.NONE;
                 return;
 
                 // todo re-enable once type system is back
@@ -74,7 +83,7 @@ public class ArgumentMatcher {
             functionType = (RFunctionType) type;
         }
 
-        firstArgInjected = isPipeContext(callExpression);
+        pipeInfo = PipeInfo.fromCallExpression(callExpression);
     }
 
 
@@ -94,11 +103,12 @@ public class ArgumentMatcher {
         List<RParameter> formalArguments = functionType.getFormalArguments();
 
         List<RExpression> suppliedArguments = new ArrayList<>(arguments);
-        ArgumentsMatchResult matchResult = new ArgumentsMatchResult(functionType);
+        ArgumentsMatchResult matchResult = new ArgumentsMatchResult(this);
 
         exactMatching(formalArguments, suppliedArguments, matchResult);
         partialMatching(formalArguments, suppliedArguments, matchResult);
-        positionalMatching(formalArguments, suppliedArguments, matchResult, functionType, firstArgInjected);
+        positionalMatching(formalArguments, suppliedArguments,
+                matchResult, functionType, pipeInfo.firstArgInjected);
 
         return matchResult;
     }

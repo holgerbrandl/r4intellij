@@ -75,6 +75,7 @@ class ResolverTest : AbstractResolverTest() {
 
 
     fun testDotUsageInPipe() {
+        createSkeletonLibrary("datasets", "magrittr", "dplyr")
         checkExpression("""
         require(dplyr)
         irisModel = lm(Sepal.Length ~  Species * Sepal.Width, data=iris)

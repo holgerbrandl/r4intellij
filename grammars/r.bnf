@@ -78,7 +78,11 @@ numeric_literal_expression ::= INTEGER | NUMERIC | COMPLEX
 string_literal_expression ::= STRING
 
 builtin_constant_expression ::=  boolean_literal  | na_literal | null_literal | boundary_literal {elementType=reference_expression}
-boolean_literal ::= TRUE | FALSE | T | F { methods = [isTrue isFalse]}
+
+// disabled because they are not reserved keywords in r but just default assignments to TRUE and FALSE
+//boolean_literal ::= TRUE | FALSE | T | F { methods = [isTrue isFalse]}
+boolean_literal ::= TRUE | FALSE { methods = [isTrue isFalse]}
+
 null_literal ::= NULL
 na_literal ::= NA | NA_INTEGER | NA_REAL | NA_COMPLEX | NA_CHARACTER { methods = [getType] }
 boundary_literal ::= INF | NAN

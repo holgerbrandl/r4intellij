@@ -55,7 +55,6 @@ public interface RElementTypes {
   IElementType R_EQ = new RElementType("=");
   IElementType R_EQEQ = new RElementType("==");
   IElementType R_EXP = new RElementType("^");
-  IElementType R_F = new RElementType("F");
   IElementType R_FALSE = new RElementType("FALSE");
   IElementType R_FOR = new RElementType("for");
   IElementType R_FUNCTION = new RElementType("function");
@@ -103,7 +102,6 @@ public interface RElementTypes {
   IElementType R_RPAR = new RElementType(")");
   IElementType R_SEMI = new RElementType(";");
   IElementType R_STRING = new RElementType("STRING");
-  IElementType R_T = new RElementType("T");
   IElementType R_TICK = new RElementType("`");
   IElementType R_TILDE = new RElementType("~");
   IElementType R_TRIPLECOLON = new RElementType(":::");

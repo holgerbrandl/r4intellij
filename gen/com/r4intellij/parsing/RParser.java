@@ -237,15 +237,14 @@ public class RParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // TRUE | FALSE | T | F
+  // TRUE | FALSE
   public static boolean boolean_literal(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "boolean_literal")) return false;
+    if (!nextTokenIs(b, "<boolean literal>", R_FALSE, R_TRUE)) return false;
     boolean r;
     Marker m = enter_section_(b, l, _NONE_, R_BOOLEAN_LITERAL, "<boolean literal>");
     r = consumeToken(b, R_TRUE);
     if (!r) r = consumeToken(b, R_FALSE);
-    if (!r) r = consumeToken(b, R_T);
-    if (!r) r = consumeToken(b, R_F);
     exit_section_(b, l, m, r, false, null);
     return r;
   }

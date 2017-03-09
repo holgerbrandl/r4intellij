@@ -3,7 +3,6 @@ package com.r4intellij.inspections;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.codeInspection.ProblemsHolder;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -13,10 +12,7 @@ import com.r4intellij.typing.types.RErrorType;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class TypeCheckerInspection extends RInspection {
 
@@ -32,32 +28,6 @@ public class TypeCheckerInspection extends RInspection {
     @Override
     public PsiElementVisitor buildVisitor(@NotNull ProblemsHolder holder, boolean isOnTheFly, @NotNull LocalInspectionToolSession session) {
         return new Visitor(holder);
-    }
-
-
-    public static boolean isPipeContext(@NotNull RCallExpression callExpression) {
-        // see https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html
-
-        boolean hasDotArg = callExpression
-                .getArgumentList().getExpressionList()
-                .stream()
-                .anyMatch(ex -> Objects.equals(ex.getText(), "."));
-
-        if (hasDotArg) return false;
-
-        // TODO convert to settings item
-        List<String> pipeOps = Arrays.asList("%>%", "%<>%", "%T>", "%$");
-
-        PsiElement callExParent = callExpression.getParent();
-        if (callExParent != null && callExParent instanceof ROperatorExpression) {
-            ROperator operator = ((ROperatorExpression) callExParent).getOperator();
-            if (operator == null) return false;
-
-            String opText = operator.getText();
-            return pipeOps.contains(opText);
-        }
-
-        return false;
     }
 
 

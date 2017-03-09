@@ -81,8 +81,9 @@ private Stack<IElementType> myExpectedBracketsStack = new Stack<IElementType>();
 // logical constants
 "TRUE"                      { return RElementTypes.R_TRUE; }
 "FALSE"                     { return RElementTypes.R_FALSE; }
-"T"                         { return RElementTypes.R_TRUE; }
-"F"                         { return RElementTypes.R_FALSE; }
+// disabled because they are not reserved keywords in r but just default assignments to TRUE and FALSE
+//"T"                         { return RElementTypes.R_TRUE; }
+//"F"                         { return RElementTypes.R_FALSE; }
 
 // numeric constants
 {INTEGER}                   { return RElementTypes.R_NUMERIC; }

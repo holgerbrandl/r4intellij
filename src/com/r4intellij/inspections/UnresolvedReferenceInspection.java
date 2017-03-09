@@ -20,10 +20,7 @@ import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.RReferenceImpl;
 import com.r4intellij.settings.RCodeInsightSettings;
-import com.r4intellij.typing.ArgumentMatcher;
-import com.r4intellij.typing.ArgumentsMatchResult;
-import com.r4intellij.typing.MatchingException;
-import com.r4intellij.typing.UnknownTypeException;
+import com.r4intellij.typing.*;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -213,7 +210,7 @@ public class UnresolvedReferenceInspection extends RInspection {
     }
 
 
-    private boolean isInUnquotedContext(PsiElement element) {
+    private static boolean isInUnquotedContext(PsiElement element) {
         RCallExpression callExpression = PsiTreeUtil.getParentOfType(element, RCallExpression.class);
 
         if (callExpression == null) return false;
@@ -228,6 +225,11 @@ public class UnresolvedReferenceInspection extends RInspection {
             return false;
         }
 
+        // ignore dots if call is pipe-target
+        PipeInfo pipeInfo = matchResult.getMatcher().getPipeInfo();
+        if (pipeInfo.isPipeTarget && element.getText().equals(".")) {
+            return true;
+        }
 
         List<UnquotedArgsRule> wlRules = RCodeInsightSettings.getInstance().getWhitelistModel();
 
@@ -246,7 +248,7 @@ public class UnresolvedReferenceInspection extends RInspection {
         // if it's not a named parameter, is must be a triple dot match
         ArgumentsMatchResult finalMatchResult = matchResult;
         boolean isWhiteListedTD = wlRules.stream().anyMatch(rule ->
-                rule.matchesTripleDot(finalMatchResult.functionType.getFunctionExpression())
+                rule.matchesTripleDot(finalMatchResult.getFunctionType().getFunctionExpression())
         );
 
         return isWhiteListedTD || isInUnquotedContext(callExpression);

@@ -1,0 +1,50 @@
+RFile:BooleanExpressions.r
+  R_ASSIGNMENT_STATEMENT
+    R_REFERENCE_EXPRESSION
+      PsiElement(identifier)('T')
+    PsiWhiteSpace(' ')
+    R_OPERATOR
+      PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    R_NUMERIC_LITERAL_EXPRESSION
+      PsiElement(NUMERIC)('1')
+  PsiElement(nl)('\n')
+  PsiElement(nl)('\n')
+  R_ASSIGNMENT_STATEMENT
+    R_MEMBER_EXPRESSION
+      R_REFERENCE_EXPRESSION
+        PsiElement(identifier)('iris')
+      PsiElement($)('$')
+      PsiElement(identifier)('F')
+    PsiWhiteSpace(' ')
+    R_OPERATOR
+      PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    R_NUMERIC_LITERAL_EXPRESSION
+      PsiElement(NUMERIC)('2')
+  PsiElement(nl)('\n')
+  PsiElement(nl)('\n')
+  PsiElement(nl)('\n')
+  R_ASSIGNMENT_STATEMENT
+    R_REFERENCE_EXPRESSION
+      PsiElement(identifier)('myfun')
+    PsiWhiteSpace(' ')
+    R_OPERATOR
+      PsiElement(=)('=')
+    PsiWhiteSpace(' ')
+    R_FUNCTION_EXPRESSION
+      PsiElement(function)('function')
+      R_PARAMETER_LIST
+        PsiElement(()('(')
+        R_PARAMETER
+          PsiElement(identifier)('F')
+        PsiElement(,)(',')
+        PsiWhiteSpace(' ')
+        R_PARAMETER
+          PsiElement(identifier)('T')
+          PsiElement(=)('=')
+          R_NUMERIC_LITERAL_EXPRESSION
+            PsiElement(NUMERIC)('3')
+        PsiElement())(')')
+      PsiErrorElement:<builtin constant expression> or <expression> expected, unexpected end of file
+        <empty list>

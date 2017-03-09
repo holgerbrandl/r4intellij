@@ -76,6 +76,8 @@ public class RCodeInsightSettings implements PersistentStateComponent<RCodeInsig
                 "ggplot2::aes[*]" // star denotes all
         );
 
+        // todo how to add "%$%" here?
+
         return whiteList.stream()
                 .map(UnquotedArgsRule::fromString)
                 .filter(Objects::nonNull)

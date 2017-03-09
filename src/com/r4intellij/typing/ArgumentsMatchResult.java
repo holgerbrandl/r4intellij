@@ -13,13 +13,24 @@ import java.util.Map;
  * @author Holger Brandl
  */
 public class ArgumentsMatchResult {
-    public final RFunctionType functionType;
+
+    private final ArgumentMatcher matcher;
 
     public final Map<RExpression, RParameter> matchedParams = new HashMap<>();
     public final List<RExpression> matchedByTripleDot = new ArrayList<>();
 
 
-    public ArgumentsMatchResult(RFunctionType functionType) {
-        this.functionType = functionType;
+    public ArgumentsMatchResult(ArgumentMatcher matcher) {
+        this.matcher = matcher;
+    }
+
+
+    public RFunctionType getFunctionType() {
+        return getMatcher().getFunctionType();
+    }
+
+
+    public ArgumentMatcher getMatcher() {
+        return matcher;
     }
 }
