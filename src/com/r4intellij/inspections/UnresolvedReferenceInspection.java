@@ -59,6 +59,18 @@ public class UnresolvedReferenceInspection extends RInspection {
 
 
         @Override
+        public void visitOperator(@NotNull ROperator element) {
+            PsiElement resolve = element.getReference().resolve();
+            if (resolve == null) {
+                myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+            } else if (RPsiUtils.isForwardReference(resolve, element)) {
+                myProblemHolder.registerProblem(element, "Forward reference", ProblemHighlightType.GENERIC_ERROR);
+//                    }
+            }
+        }
+
+
+        @Override
         public void visitReferenceExpression(@NotNull RReferenceExpression element) {
             // how does/should it work:
             // exclude (ie. white-list) certain situations to show up as unresolved, but generally use
@@ -147,8 +159,7 @@ public class UnresolvedReferenceInspection extends RInspection {
 
 
         // todo do once all current unit-tests are fixed:
-        // todo thise should go into the RResolver and complement or replace com.r4intellij.psi.references.RResolver.resolveFunction*() !!
-        // todo because we do this here and not in the resolver com.r4intellij.inspections.DependencyTests.testTransitiveDependencies() is not passing
+        // todo this should go into the RResolver and complement or replace com.r4intellij.psi.references.RResolver.resolveFunction*() !!
         private boolean resolveInPackages(RCallExpression psiElement, ProblemsHolder problemsHolder) {
             // is it a locally defined function?
             RFunctionExpression function = RPsiUtils.getFunction(psiElement);

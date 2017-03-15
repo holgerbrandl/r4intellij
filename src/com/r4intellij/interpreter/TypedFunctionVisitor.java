@@ -14,7 +14,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.util.DocumentUtil;
 import com.intellij.util.FileContentUtil;
 import com.r4intellij.RStaticAnalyzerHelper;
-import com.r4intellij.documentation.RDocumentationProvider;
 import com.r4intellij.documentation.RHelpParser;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.psi.RRecursiveElementVisitor;
@@ -23,12 +22,15 @@ import com.r4intellij.typing.*;
 import com.r4intellij.typing.types.RType;
 import com.r4intellij.typing.types.RUnknownType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.r4intellij.packages.RHelperUtil.runHelperWithArgs;
 
 /**
  * @author Holger Brandl
@@ -71,6 +73,40 @@ class TypedFunctionVisitor extends RVisitor {
     }
 
 
+    /**
+     * If packageName parameter equals null we do not load package
+     */
+    @Nullable
+    @Deprecated
+    // use embedded server to fetch help
+    public static String getHelpForFunction(@NotNull final String assignee, @Nullable final String packageName) {
+        if (assignee.isEmpty()) {
+            return null;
+        }
+
+        final RHelperUtil.PluginResourceFile helpHelper = new RHelperUtil.PluginResourceFile(packageName != null ? "r-help.r" : "r-help-without-package.r");
+
+        RHelperUtil.LOG.info("fetching help with" + helpHelper.getFile());
+
+        String[] args = packageName != null ? new String[]{packageName, assignee} : new String[]{assignee};
+        RHelperUtil.RRunResult runResult = runHelperWithArgs(helpHelper, args);
+        if (runResult == null) return null;
+
+        String stdout = runResult.getStdOut();
+
+        if (stdout.startsWith("No documentation")) {
+            return null;
+        }
+
+
+        if (StringUtil.isNotEmpty(stdout)) {
+            return new RHelpParser(stdout).getFormattedString();
+        }
+
+        return null;
+    }
+
+
     @Override
     public void visitAssignmentStatement(@NotNull final RAssignmentStatement o) {
         RPsiElement assignedValue = o.getAssignedValue();
@@ -91,7 +127,7 @@ class TypedFunctionVisitor extends RVisitor {
                 System.out.println();
             }
 
-            String helpText = RDocumentationProvider.getHelpForFunction(assignee.getText(), myPackageName);
+            String helpText = getHelpForFunction(assignee.getText(), myPackageName);
             if (helpText != null) {
                 RHelpParser help = new RHelpParser(helpText);
 

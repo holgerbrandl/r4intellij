@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull
  *
  * @author Holger Brandl
  */
+//@RunWith(JUnit4::class) // http://stackoverflow.com/questions/2794407/how-to-configure-intellij-for-running-test-with-junit-4
 class DependencyTests : RTestCase() {
 
 

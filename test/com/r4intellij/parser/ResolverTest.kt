@@ -14,6 +14,11 @@ import com.r4intellij.psi.api.RReferenceExpression
  */
 class ResolverTest : AbstractResolverTest() {
 
+    fun testResolveFunctionWithoutCall() {
+        createSkeletonLibrary("dplyr")
+
+        checkExpression("require(dplyr); glimpse")
+    }
 
     fun testSpecialConstantsFromBase() {
         checkExpression("""
@@ -79,13 +84,13 @@ class ResolverTest : AbstractResolverTest() {
     }
 
 
-    // todo use compiled pattern in plugin code
     val dotMatcher: PsiElementPattern.Capture<RExpression> = psiElement(RExpression::class.java)
             .withText(".")
             .withParent(psiElement(RArgumentList::class.java))
 
 
-    fun testSimpleDotReferenceInPipe() {
+    // todo v1.2 reenable
+    fun _testResolveDotToBlockExpr() {
         createSkeletonLibrary("magrittr")
         checkExpression("""
         require(magrittr)
@@ -93,12 +98,12 @@ class ResolverTest : AbstractResolverTest() {
         """)
 
 
-
         //        https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000118964-Utility-methods-for-tree-processing-using-PsiElementPattern-
         val matches = SyntaxTraverser.psiTraverser(myFixture.file).filter(dotMatcher::accepts)
     }
 
-    fun testDotUsageInPipe() {
+    // todo v1.2 reenable
+    fun _testDotUsageInPipe() {
         createSkeletonLibrary("datasets", "magrittr", "dplyr")
         checkExpression("""
         require(dplyr)
@@ -106,22 +111,12 @@ class ResolverTest : AbstractResolverTest() {
         iris %>% transform(., Y = exp(predict(irisModel, newdata=.)))
         """)
 
-        // ensure that both dots are resolved correclty
+        // ensure that both dots are resolved correctly
     }
 
-    fun testResolveToBlockExpr() {
-        createSkeletonLibrary("magrittr")
 
-        checkExpression("""
-            require(magrittr)
-            { 1+1 } %>% length(.)
-        """)
-
-        // make sure that the . is resolved correctly
-
-    }
-
-    fun testResolveToDiamondOpReassignment() {
+    // todo v1.2 reenable
+    fun _testResolveToDiamondOpReassignment() {
         myFixture.configureByText("a.R", """
         my_data = iris
         my_data %<>% transform(foo='bar')

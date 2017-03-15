@@ -4,18 +4,11 @@ General
 
 http://stackoverflow.com/questions/1861875/upgrading-to-junit4-and-keeping-legacy-junit-3-tests-and-test-suites-by-running
 
+http://stackoverflow.com/questions/264680/best-way-to-automagically-migrate-tests-from-junit-3-to-junit-4
 
-•	Equipment
-•	Chemicals
-•	Consumables
-•	Enzymes
-•	GMO
-•	Antibodies
-•	DNA Constructs
-•	RNA Constructs
-•	Vectors
-•	Oligos
-
+http://stackoverflow.com/questions/2794407/how-to-configure-intellij-for-running-test-with-junit-4
+> It seems that IDEA defaults to the use of JUnit3 as a test runner for any classes that have junit.framework.TestCase
+> Force with @RunWith(JUnit4.class)
 
 
 

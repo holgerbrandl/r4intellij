@@ -1,13 +1,14 @@
 package com.r4intellij.misc;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.r4intellij.RTestCase;
 import com.r4intellij.documentation.RDocumentationProvider;
 import com.r4intellij.psi.RReferenceExpressionImpl;
 import com.r4intellij.psi.api.RCallExpression;
 import com.r4intellij.psi.api.RExpression;
-import com.r4intellij.psi.api.RReferenceExpression;
 
 import java.io.File;
 import java.io.IOException;
@@ -52,12 +53,15 @@ public class DocumentationProviderTest extends RTestCase {
     public void testHelpForSpecialConstants() throws IOException {
         // special constants
         List<String> constants = Arrays.asList("NULL", "NA", "Inf", "NaN", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_",
-                "if", "else", "repeat", "while", "function", "for", "in", "next", "break");
+                "if", "else", "repeat", "while", "function", "for", "next", "break");
 
         for (String specialConstant : constants) {
+            System.err.println("testing " + specialConstant);
             myFixture.configureByText("a.R", specialConstant);
 
-            RReferenceExpression refExpr = PsiTreeUtil.findChildOfType(myFixture.getFile(), RReferenceExpression.class);
+//            RPsiElement refExpr = PsiTreeUtil.findChildOfType(myFixture.getFile(), RPsiElement.class);
+            PsiElement refExpr = PsiUtilBase.getElementAtCaret(myFixture.getEditor());
+//            RPsiElement refExpr = (RPsiElement) myFixture.getElementAtCaret();
             String doc = new RDocumentationProvider().generateDoc(refExpr, refExpr);
 
             assertTrue(doc.contains(specialConstant) && doc.contains("Description"));

@@ -20,6 +20,8 @@ import com.r4intellij.packages.RPackageService;
 import com.r4intellij.settings.LibraryUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
+import org.junit.After;
+import org.junit.Before;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -37,6 +39,7 @@ public abstract class RTestCase extends UsefulTestCase {
 
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 
@@ -70,6 +73,7 @@ public abstract class RTestCase extends UsefulTestCase {
 
 
     @Override
+    @After
     public void tearDown() throws Exception {
         myFixture.tearDown();
         super.tearDown();
