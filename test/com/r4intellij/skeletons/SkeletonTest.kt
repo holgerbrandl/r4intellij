@@ -51,7 +51,7 @@ class SkeletonTest : RTestCase() {
         // numeric package constants
         assertTrue(File(TEST_DIRECTORY, "ggplot2.R").readLines().any {
             line ->
-            line == ".pt <- 2.845276"
+            line == ".pt <- 2.84527559055118"
         })
 
         // complex objects
