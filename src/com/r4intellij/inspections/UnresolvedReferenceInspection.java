@@ -91,12 +91,12 @@ public class UnresolvedReferenceInspection extends RInspection {
             }
 
             // ignore function calls here because they are handled by the missing import inspection
-            if (element.getParent() instanceof RCallExpression) {
-                if (resolveInPackages((RCallExpression) element.getParent(), myProblemHolder)) {
-                    // we could find it in a package or locally so it's somehow resolvable but not yet imported
-                    return;
-                }
-            }
+//            if (element.getParent() instanceof RCallExpression) {
+//                if (resolveInPackages((RCallExpression) element.getParent(), myProblemHolder)) {
+//                    // we could find it in a package or locally so it's somehow resolvable but not yet imported
+//                    return;
+//                }
+//            }
 
 
             RCallExpression callExpression = PsiTreeUtil.getParentOfType(element, RCallExpression.class);
