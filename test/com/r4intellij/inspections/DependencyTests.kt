@@ -42,7 +42,7 @@ class DependencyTests : RTestCase() {
 
 
     fun testTransitiveDependencies() {
-        //        addPckgsToSkeletonLibrary("caret", "ggplot2");
+        addPckgsToSkeletonLibrary("caret", "ggplot2");
         doExprTest("require(caret); ggplot(iris)")
     }
 

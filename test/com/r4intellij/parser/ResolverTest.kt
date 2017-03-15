@@ -1,6 +1,11 @@
 package com.r4intellij.parser
 
+import com.intellij.patterns.PlatformPatterns.psiElement
+import com.intellij.patterns.PsiElementPattern
+import com.intellij.psi.SyntaxTraverser
 import com.intellij.psi.util.PsiTreeUtil
+import com.r4intellij.psi.api.RArgumentList
+import com.r4intellij.psi.api.RExpression
 import com.r4intellij.psi.api.ROperatorExpression
 import com.r4intellij.psi.api.RReferenceExpression
 
@@ -46,7 +51,7 @@ class ResolverTest : AbstractResolverTest() {
     fun testVarUsedInIf() {
         checkExpression("""
             x=3
-            if(T){
+            if(TRUE){
                 x + 3
             }
             """)
@@ -74,6 +79,25 @@ class ResolverTest : AbstractResolverTest() {
     }
 
 
+    // todo use compiled pattern in plugin code
+    val dotMatcher: PsiElementPattern.Capture<RExpression> = psiElement(RExpression::class.java)
+            .withText(".")
+            .withParent(psiElement(RArgumentList::class.java))
+
+
+    fun testSimpleDotReferenceInPipe() {
+        createSkeletonLibrary("magrittr")
+        checkExpression("""
+        require(magrittr)
+        { 1+1 } %>% length(.)
+        """)
+
+
+
+        //        https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000118964-Utility-methods-for-tree-processing-using-PsiElementPattern-
+        val matches = SyntaxTraverser.psiTraverser(myFixture.file).filter(dotMatcher::accepts)
+    }
+
     fun testDotUsageInPipe() {
         createSkeletonLibrary("datasets", "magrittr", "dplyr")
         checkExpression("""
@@ -81,6 +105,20 @@ class ResolverTest : AbstractResolverTest() {
         irisModel = lm(Sepal.Length ~  Species * Sepal.Width, data=iris)
         iris %>% transform(., Y = exp(predict(irisModel, newdata=.)))
         """)
+
+        // ensure that both dots are resolved correclty
+    }
+
+    fun testResolveToBlockExpr() {
+        createSkeletonLibrary("magrittr")
+
+        checkExpression("""
+            require(magrittr)
+            { 1+1 } %>% length(.)
+        """)
+
+        // make sure that the . is resolved correctly
+
     }
 
     fun testResolveToDiamondOpReassignment() {

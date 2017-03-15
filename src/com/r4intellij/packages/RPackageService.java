@@ -104,12 +104,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
 
         // update index (no fancy sync anymore because it's superfast anyway)
-        ApplicationManager.getApplication().executeOnPooledThread(() -> {
-            boolean hasChanged = refreshIndex();
-
-            if (hasChanged) {
-            }
-        });
+        ApplicationManager.getApplication().executeOnPooledThread((Runnable) this::refreshIndex);
     }
 
 
@@ -138,7 +133,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
             return o;
         } catch (Throwable e) {
-            System.err.println("could not load R package index");
+            System.err.println("could not load R package index, error was:\n" + e);
         }
 
         return null;
@@ -170,7 +165,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
             allPackages.removeAll(noLongerInstalled);
         }
 
-        // todo refersh most commons packages first for better ux
+        // todo refresh most commons packages first for better ux
 
         // cut down packges to be refreshed to speed up calculations
 //        if(packageNames.length>0){

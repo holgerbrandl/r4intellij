@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static com.r4intellij.packages.RHelperUtil.PluginResourceFile;
 import static com.r4intellij.packages.RHelperUtil.RRunResult;
@@ -40,7 +43,7 @@ import static com.r4intellij.settings.LibraryUtil.createLibrary;
 public class RSkeletonGenerator {
     protected static final Logger LOG = Logger.getInstance("#" + RSkeletonGenerator.class.getName());
 
-    private static final PluginResourceFile SKELETONIZE_PACKAGE = new PluginResourceFile("skeletonize_package.R");
+    public static final PluginResourceFile SKELETONIZE_PACKAGE = new PluginResourceFile("skeletonize_package.R");
 
     public static final String SKELETON_DIR_NAME = "r_skeletons";
 
@@ -224,6 +227,8 @@ public class RSkeletonGenerator {
                 continue;
             }
 
+            // additional threading here kills the computer
+            ExecutorService es = Executors.newFixedThreadPool(3);
 
 //            // skip existing skeleton dir exists already
 //            File packageSkelDir = new File(skeletonsDir, rPackage.getName());
@@ -231,23 +236,33 @@ public class RSkeletonGenerator {
 //            if (packageSkelDir.exists() && packageSkelDir.listFiles().length > 0) {
 //                continue;
 //            }
-            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+            es.submit(() -> {
 
-                @Override
-                public void run() {
-                    RRunResult output = RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, skeletonsPath, rPackage.getName());
-                    if (output != null && output.getExitCode() != 0) {
-                        LOG.error("Failed to generate skeleton for '" + rPackage.getName() + "'. Exit code: " + output.getExitCode());
-                        LOG.error(output.getStdErr());
-                    }
+//            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
+//
+//                @Override
+//                public void run() {
+                RRunResult output = RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, skeletonsPath, rPackage.getName());
+                if (output != null && output.getExitCode() != 0) {
+                    LOG.error("Failed to generate skeleton for '" + rPackage.getName() + "'. Exit code: " + output.getExitCode());
+                    LOG.error(output.getStdErr());
                 }
+
             });
+
+
+            try {
+                es.shutdown();
+                es.awaitTermination(1, TimeUnit.HOURS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
 
     // note: just change in sync with ./r-helpers/skeletonize_package.R
-    public static final int SKELETONIZE_VERSION = 1;
+    public static final int SKELETONIZE_VERSION = 2;
 
 
     //todo refac to use to-be-impl Rpackage API here

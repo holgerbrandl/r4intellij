@@ -16,6 +16,7 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
 import com.intellij.util.ArrayUtil;
+import com.r4intellij.packages.RPackageService;
 import com.r4intellij.settings.LibraryUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
+
 public abstract class RTestCase extends UsefulTestCase {
 
     public static final String TEST_DATA_PATH = new File("testData").getAbsolutePath().replace(File.pathSeparatorChar, '/');
@@ -36,28 +39,33 @@ public abstract class RTestCase extends UsefulTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        initPlatformPrefix();
+
+        PlatformTestCase.doAutodetectPlatformPrefix();
+
+
         IdeaTestFixtureFactory factory = IdeaTestFixtureFactory.getFixtureFactory();
         TestFixtureBuilder<IdeaProjectTestFixture> fixtureBuilder = factory.createLightFixtureBuilder();
+
         final IdeaProjectTestFixture fixture = fixtureBuilder.getFixture();
-        myFixture = IdeaTestFixtureFactory.getFixtureFactory().createCodeInsightFixture(fixture, new LightTempDirTestFixtureImpl(true));
+
+        myFixture = IdeaTestFixtureFactory
+                .getFixtureFactory()
+                .createCodeInsightFixture(fixture, new LightTempDirTestFixtureImpl(true));
         myFixture.setUp();
         myFixture.setTestDataPath(getTestDataPath());
-    }
 
-//
-//    public void testDummy() {
-//
-//    }
+
+        // inject stub index here for more reproducible testing
+        RPackageService.getTestInstance();
+//        RPackageService.getInstance().refreshIndex();
+
+        // add base packages for testing
+        createSkeletonLibrary(ArrayUtil.toStringArray(DEFAULT_PACKAGES));
+    }
 
 
     protected String getTestDataPath() {
         return TEST_DATA_PATH;
-    }
-
-
-    private static void initPlatformPrefix() {
-        PlatformTestCase.autodetectPlatformPrefix();
     }
 
 

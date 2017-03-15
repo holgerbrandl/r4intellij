@@ -83,6 +83,7 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
         doExprTest("iris %>% head()");
     }
 
+
     // todo reenable for v1.1
     public void _testDontCheckArgsIfFundefIsMissing() {
         createSkeletonLibrary("datasets");

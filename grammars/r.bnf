@@ -158,6 +158,7 @@ at_expression ::= expression '@' nl* member_tag {
   methods = [ getTag ]
 }
 
+// todo replace expression with identifier here
 namespace_access_expression ::= expression ('::' | ':::') identifier { elementType=reference_expression }
 
 //statements

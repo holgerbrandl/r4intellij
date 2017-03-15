@@ -3,6 +3,42 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+* can not find element:
+```
+null
+java.lang.NullPointerException
+	at com.r4intellij.documentation.RDocumentationProvider.isLibraryElement(Unknown Source)
+	at com.r4intellij.documentation.RDocumentationProvider.generateDoc(Unknown Source)
+	at com.intellij.lang.documentation.CompositeDocumentationProvider.generateDoc(CompositeDocumentationProvider.java:144)
+	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:661)
+	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:884)
+	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:658)
+	at com.intellij.util.concurrency.QueueProcessor.runSafely(QueueProcessor.java:223)
+	at com.intellij.util.Alarm$Request$1.run(Alarm.java:387)
+	at com.intellij.util.Alarm$Request.run(Alarm.java:398)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at com.intellij.util.concurrency.SchedulingWrapper$MyScheduledFutureTask.run(SchedulingWrapper.java:237)
+	at com.intellij.util.concurrency.BoundedTaskExecutor$2.run(BoundedTaskExecutor.java:210)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+```
+
+* skeltons are not updated after version change on startup
+* incorrect forward ref
+```r
+foo = function(){
+    bar
+}
+
+bar=3
+
+foo()
+```
+
+* plugin must not provide help for non-r elements:
+* ![](.todo_images/89a38b5b.png)
 * send expression to console does not work from injected chunks
 
 * stats.r can not fully be parsed because of

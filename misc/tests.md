@@ -5,6 +5,17 @@ General
 http://stackoverflow.com/questions/1861875/upgrading-to-junit4-and-keeping-legacy-junit-3-tests-and-test-suites-by-running
 
 
+•	Equipment
+•	Chemicals
+•	Consumables
+•	Enzymes
+•	GMO
+•	Antibodies
+•	DNA Constructs
+•	RNA Constructs
+•	Vectors
+•	Oligos
+
 
 
 

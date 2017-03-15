@@ -3,6 +3,9 @@
   <component name="DevKit.ModuleBuildProperties" url="file://$MODULE_DIR$/META-INF/plugin.xml" />
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
+    <content url="file://$USER_HOME$/Desktop/skeleton">
+      <sourceFolder url="file://$USER_HOME$/Desktop/skeleton" isTestSource="false" />
+    </content>
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
@@ -52,6 +55,5 @@
     </orderEntry>
     <orderEntry type="library" name="R Skeletons" level="project" />
     <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>

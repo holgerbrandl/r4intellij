@@ -4,37 +4,18 @@ import com.google.common.collect.Iterables;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
-import com.intellij.util.ArrayUtil;
-import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RAssignmentStatement;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
-import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
 public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        // inject stub index here for more reproducible testing
-        RPackageService.getTestInstance();
-//        RPackageService.getInstance().refreshIndex();
-
-        // add base packages for testing
-        createSkeletonLibrary(ArrayUtil.toStringArray(DEFAULT_PACKAGES));
-    }
-
-
     // positive tests: symbols that should be resolvable. These test actually test the resolver itself and not so
     // much the inspection code
-
-
 
 
     public void testIrisReassignment() {
@@ -55,7 +36,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
     public void testUsageOutsideIfElse() {
         // outside a and b should be resolvable because of r scoping rules
-        doExprTest("if(T)\n{ a = 3; }else{\n b = 2; }; a ; b");
+        doExprTest("if(TRUE)\n{ a = 3; }else{\n b = 2; }; a ; b");
     }
 
 
