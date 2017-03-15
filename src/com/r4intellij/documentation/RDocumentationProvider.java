@@ -7,10 +7,9 @@ import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.RReferenceExpressionImpl;
@@ -28,7 +27,6 @@ import java.util.stream.Collectors;
 
 import static com.r4intellij.interpreter.RSkeletonGenerator.SKELETON_DIR_NAME;
 import static com.r4intellij.packages.RHelperUtil.LOG;
-import static com.r4intellij.packages.RHelperUtil.runHelperWithArgs;
 
 /**
  * For local function definitions provide doc string documentation (using docstring)
@@ -46,13 +44,28 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
     @Nullable
     @Override
+    public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
+//        return contextElement;
+//        if(contextElement== null || contextElement.getText().trim().isEmpty()) {
+//            return null;
+//        }
+
+        return contextElement;
+    }
+
+
+    @Nullable
+    @Override
     public String generateDoc(PsiElement reference, @Nullable PsiElement identifier) {
         if (reference instanceof RStringLiteralExpression) return null;
         // check if it's a library function and return help if it is
 
+
         if (identifier == null) return null;
 
         String elementText = identifier.getText();
+        if (elementText.trim().isEmpty()) return null;
+
 
         // first guess : process locally defined function definitions
         if (!isLibraryElement(reference)) {
@@ -184,46 +197,13 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     }
 
 
-    /**
-     * If packageName parameter equals null we do not load package
-     */
-    @Nullable
-    @Deprecated
-    // use embedded server to fetch help
-    public static String getHelpForFunction(@NotNull final String assignee, @Nullable final String packageName) {
-        if (assignee.isEmpty()) {
-            return null;
-        }
-
-        final RHelperUtil.PluginResourceFile helpHelper = new RHelperUtil.PluginResourceFile(packageName != null ? "r-help.r" : "r-help-without-package.r");
-
-        LOG.info("fetching help with" + helpHelper.getFile());
-
-        String[] args = packageName != null ? new String[]{packageName, assignee} : new String[]{assignee};
-        RHelperUtil.RRunResult runResult = runHelperWithArgs(helpHelper, args);
-        if (runResult == null) return null;
-
-        String stdout = runResult.getStdOut();
-
-        if (stdout.startsWith("No documentation")) {
-            return null;
-        }
-
-
-        if (StringUtil.isNotEmpty(stdout)) {
-            return new RHelpParser(stdout).getFormattedString();
-        }
-
-        return null;
-    }
-
-
     private List<RPackage> resolvePckgFromContext(String functionName, PsiFile psiFile) {
         // todo add Rmd chunk support here
-        // todo this should also take the position into account since not all import may be done in the script header
+        // todo This should also take the position into account since not all import may be done in the script header
         if (!(psiFile instanceof RFile)) {
             return Lists.newArrayList();
         }
+
         List<String> importNames = ((RFile) psiFile).getImportedPackages();
         List<RPackage> imports = RPackageService.getInstance().resolveDependencies(importNames);
 
