@@ -1,10 +1,6 @@
 package com.r4intellij.inspections;
 
-import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.codeInspection.LocalInspectionToolSession;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.ProblemHighlightType;
@@ -15,10 +11,9 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RPsiUtils;
 import com.r4intellij.editor.RCompletionContributor;
 import com.r4intellij.intentions.ImportLibraryFix;
-import com.r4intellij.packages.RPackage;
-import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.RReferenceImpl;
+import com.r4intellij.psi.references.ResolveResultWrapper;
 import com.r4intellij.settings.RCodeInsightSettings;
 import com.r4intellij.typing.*;
 import org.jetbrains.annotations.Nls;
@@ -60,13 +55,10 @@ public class UnresolvedReferenceInspection extends RInspection {
 
         @Override
         public void visitOperator(@NotNull ROperator element) {
-            PsiElement resolve = element.getReference().resolve();
-            if (resolve == null) {
-                myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-            } else if (RPsiUtils.isForwardReference(resolve, element)) {
-                myProblemHolder.registerProblem(element, "Forward reference", ProblemHighlightType.GENERIC_ERROR);
-//                    }
-            }
+            if (!element.getText().startsWith("%")) return;
+
+            ResolveResultWrapper resultWrapper = element.getReference().resolve(false);
+            handleResolveResult(element, resultWrapper);
         }
 
 
@@ -135,83 +127,40 @@ public class UnresolvedReferenceInspection extends RInspection {
             RReferenceImpl reference = element.getReference();
 
             if (reference != null) {
-                PsiElement resolve = reference.resolve(true);
+                ResolveResultWrapper resolve = reference.resolve(true);
 
-                if (resolve == null) {
-
-                    // exclude white-listed argument positions containing unquoted variable names
-                    if (isInUnquotedContext(element)) return;
-
-                    myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
-                } else if (RPsiUtils.isForwardReference(resolve, element)) {
-//                    // try to find forward references in file
-//                    FileContextResolver fileContextResolver = new FileContextResolver();
-//                    fileContextResolver.setForwardRefs(true);
-//
-//                    List<ResolveResult> forwardRefs = fileContextResolver.resolveFromInner(element, element, element.getName());
-//
-//                    if(!forwardRefs.isEmpty()) {
-                    myProblemHolder.registerProblem(element, "Forward reference", ProblemHighlightType.GENERIC_ERROR);
-//                    }
-                }
+                handleResolveResult(element, resolve);
             }
         }
 
 
-        // todo do once all current unit-tests are fixed:
-        // todo this should go into the RResolver and complement or replace com.r4intellij.psi.references.RResolver.resolveFunction*() !!
-        private boolean resolveInPackages(RCallExpression psiElement, ProblemsHolder problemsHolder) {
-            // is it a locally defined function?
-            RFunctionExpression function = RPsiUtils.getFunction(psiElement);
+        private void handleResolveResult(@NotNull RPsiElement element, ResolveResultWrapper resolveWrapper) {
+            PsiElement resolve = resolveWrapper.getBest();
 
-            boolean isLocalFunction = function != null && function.getContainingFile().equals(psiElement.getContainingFile());
-            if (isLocalFunction) {
-                return true;
+            if (resolve == null) {
+                // exclude white-listed argument positions containing unquoted variable names
+                if (isInUnquotedContext(element)) return;
+
+
+                // add import suggestions if available
+                List<String> packageOptions = resolveWrapper.getImportOptions();
+                if (!packageOptions.isEmpty()) {
+                    List<LocalQuickFix> fixes = new ArrayList<>();
+                    for (String funPackageName : packageOptions) {
+                        fixes.add(new ImportLibraryFix(funPackageName));
+                    }
+
+                    String descriptionTemplate = missingImportMsg(element.getName(), packageOptions);
+                    myProblemHolder.registerProblem(element, descriptionTemplate, fixes.toArray(new LocalQuickFix[0]));
+
+                } else {
+                    // we have no clue about the symbol, so flag it as unresolved
+                    myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                }
+
+            } else if (RPsiUtils.isForwardReference(resolve, element)) {
+                myProblemHolder.registerProblem(element, "Forward reference", ProblemHighlightType.GENERIC_ERROR);
             }
-
-            RPackageService packageService = RPackageService.getInstance();
-//            if (!packageService.isReady()) return true; // fixme!
-
-            // search packages by function name
-            RExpression funExpr = psiElement.getExpression();
-            String functionName = funExpr.getText();
-
-            List<RPackage> contPackages = packageService.getContainingPackages(functionName);
-            List<String> contPackageNames = Lists.newArrayList(Iterables.transform(contPackages, Functions.toStringFunction()));
-
-            if (contPackageNames.isEmpty())
-                return false;
-
-            // check if there's an import statement for any of them
-
-            List<RPackage> resolvedImports = packageService.resolveImports(psiElement);
-            List<String> importedPackages = Lists.newArrayList(Iterables.transform(resolvedImports, Functions.toStringFunction()));
-
-            // check whether the import list contains any of the packages
-            if (!Sets.intersection(Sets.newHashSet(importedPackages), Sets.newHashSet(contPackageNames)).isEmpty()) {
-                return true;
-            }
-
-            // no overlap --> highlight as error and suggest to import one!
-
-            // Also provide importing packages as options (like tidyverse for mutate)
-            // DISABLED: works but is adding too many confusing options
-//                    Set<String> funPckgByImport = funPackageNames.stream().
-//                            flatMap(pName -> packageService.getImporting(packageService.getByName(pName)).stream()).
-//                            map(RPackage::getName).
-//                            collect(Collectors.toSet());
-//                    funPackageNames.addAll(funPckgByImport);
-
-
-            List<LocalQuickFix> fixes = new ArrayList<LocalQuickFix>();
-            for (String funPackageName : contPackageNames) {
-                fixes.add(new ImportLibraryFix(funPackageName));
-            }
-
-            String descriptionTemplate = missingImportMsg(functionName, contPackageNames);
-            problemsHolder.registerProblem(funExpr, descriptionTemplate, fixes.toArray(new LocalQuickFix[0]));
-
-            return true;
         }
     }
 

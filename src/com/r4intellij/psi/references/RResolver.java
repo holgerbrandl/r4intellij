@@ -1,5 +1,6 @@
 package com.r4intellij.psi.references;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.FileIndexFacade;
@@ -13,7 +14,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScopeImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RPsiUtils;
-import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
@@ -28,6 +28,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class RResolver {
+
+    protected static final Logger LOG = Logger.getInstance("#" + RResolver.class.getName());
+
 
     static void addFromSkeletonsAndRLibrary(@NotNull final PsiElement element,
                                             @NotNull final List<ResolveResult> result,
@@ -45,26 +48,74 @@ public class RResolver {
             // too unspecific and does not reflect imports
 //            addFromLibrary(element, result, name, RSettingsConfigurable.R_SKELETONS);
 
-            addFromImports(element, result, name, LibraryUtil.R_SKELETONS);
+            ResolveResult importResolve = addFromImports(element, name);
+            if (importResolve != null) result.add(importResolve);
         }
     }
 
 
-    private static void addFromImports(@NotNull final PsiElement element,
-                                       @NotNull final List<ResolveResult> result,
-                                       @NotNull final String name,
-                                       @NotNull final String libraryName) {
+    private static ResolveResult addFromImports(@NotNull final PsiElement element, @NotNull final String name) {
 
         // get all imports for the current File
-        List<String> imports = RPackageService.getInstance().resolveImports(element).stream().
-                map(RPackage::getName).collect(Collectors.toList());
+        List<String> imports = RPackageService.getInstance().findImportsFor(element);
 
-        Project project = element.getProject();
+        // detect all libary elements with the same name
+        List<ResolveResult> indexResults = findSkeletonMatches(name, element.getProject());
+
+        // retain those for which there is an import statment
+        List<ResolveResult> imported = indexResults.stream()
+                .filter(resolve -> imports.contains(getSkeletonPckgName(resolve)))
+                .collect(Collectors.toList());
+
+
+        // resolve to match import order in file
+        imported.sort(Comparator.comparingInt(o -> imports.indexOf(getSkeletonPckgName(o))));
+
+        if (!imported.isEmpty()) {
+            // because of R environment rules we return the resolve from the last matching import before the element
+            return imported.get(0);
+
+        } else if (!indexResults.isEmpty()) {
+            // no overlap --> highlight as error and suggest to import one!
+            List<String> packageOptions = indexResults.stream()
+                    .map(RResolver::getSkeletonPckgName).collect(Collectors.toList());
+
+            return new MissingImportResolveResult(indexResults);
+        }
+
+        // we could neither resolve it nor find import options for the symbol
+        return null;
+
+
+        // Also provide importing packages as options (like tidyverse for mutate)
+        // DISABLED: works but is adding too many confusing options
+//                    Set<String> funPckgByImport = funPackageNames.stream().
+//                            flatMap(pName -> packageService.getImporting(packageService.getByName(pName)).stream()).
+//                            map(RPackage::getName).
+//                            collect(Collectors.toSet());
+//                    funPackageNames.addAll(funPckgByImport);
+
+    }
+
+
+    public static String getSkeletonPckgName(ResolveResult o1) {
+        final PsiFile containingFile = o1.getElement().getContainingFile();
+
+        return containingFile.getName().replaceAll(".R$", "");
+    }
+
+
+    @NotNull
+    private static List<ResolveResult> findSkeletonMatches(@NotNull String name, Project project) {
         LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
-        final Library library = libraryTable.getLibraryByName(libraryName);
+        final Library library = libraryTable.getLibraryByName(LibraryUtil.R_SKELETONS);
+
+
+        List<ResolveResult> indexResults = new ArrayList<>();
 
         if (library == null) {
-            return;
+            LOG.error("library is null when resolving " + name);
+            return indexResults;
         }
 
         final Collection<RAssignmentStatement> assignmentStatements =
@@ -73,16 +124,16 @@ public class RResolver {
         //RAssignmentNameIndex.allKeys(project).stream().filter(f->f.equals("head")).collect(Collectors.toList())
 
         for (RAssignmentStatement statement : assignmentStatements) {
-            final PsiFile containingFile = statement.getContainingFile();
-
-            String containingPckgs = containingFile.getName().replaceAll(".r$", "");
-            if (!imports.contains(containingPckgs)) continue;
+//            String containedPackage = getSkeletonPckgName(statement);
+//            if (!imports.contains(containedPackage)) continue;
 
             final PsiElement assignee = statement.getAssignee();
             if (assignee == null) continue;
 
-            result.add(new PsiElementResolveResult(statement));
+            indexResults.add(new PsiElementResolveResult(statement));
         }
+
+        return indexResults;
     }
 
 

@@ -19,14 +19,19 @@ public class RElementFactory {
 
 
     public static PsiElement createLeafFromText(Project project, String text) {
-        PsiFile fileFromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.getInstance(), text);
+        PsiFile fileFromText = buildRFileFromText(project, text);
         return PsiTreeUtil.getDeepestFirst(fileFromText);
+    }
+
+
+    public static PsiFile buildRFileFromText(Project project, String text) {
+        return PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.getInstance(), text);
     }
 
 
     //
     public static RCallExpression createFuncallFromText(Project project, String text) {
-        PsiFile fromText = PsiFileFactory.getInstance(project).createFileFromText("a.R", RLanguage.getInstance(), text);
+        PsiFile fromText = buildRFileFromText(project, text);
 //        return (RCallExpression) fromText.getFirstChild().getChildren()[0];
         return (RCallExpression) fromText.getFirstChild();
     }

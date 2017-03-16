@@ -1,5 +1,6 @@
 package com.r4intellij.interpreter;
 
+import com.google.common.collect.Ordering;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
@@ -27,13 +28,13 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
 import static com.r4intellij.packages.RHelperUtil.PluginResourceFile;
 import static com.r4intellij.packages.RHelperUtil.RRunResult;
 import static com.r4intellij.settings.LibraryUtil.R_SKELETONS;
@@ -197,6 +198,20 @@ public class RSkeletonGenerator {
     }
 
 
+    // extracted from https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages
+    public static final List<String> COMMON_PACKAGES = Arrays.asList("RSQLite", "xlsx", "foreign", "dplyr", "tidyr",
+            "stringr", "lubridate", "ggplot2", "ggvis", "rgl", "htmlwidgets", "googleVis", "car", "mgcv", "nlme",
+            "randomForest", "multcomp", "vcd", "glmnet", "elastic", "survival", "caret", "shiny", "non", "xtable",
+            "maptools", "maps", "ggmap", "zoo", "xts", "quantmod", "Rcpp", "table", "parallel", "XML", "jsonlite",
+            "httr", "devtools", "testthat", "roxygen2");
+
+
+    private static Integer getIndexPriority(RPackage r) {
+        if (DEFAULT_PACKAGES.contains(r.getName())) return 2;
+        if (COMMON_PACKAGES.contains(r.getName())) return 1;
+        return 0;
+    }
+
     private static void updateSkeletons(@Nullable ProgressIndicator indicator) {
         final String interpreter = RSettings.getInstance().getInterpreterPath();
 
@@ -205,7 +220,12 @@ public class RSkeletonGenerator {
 
         int processed = 0;
 
-        Set<RPackage> packages = RPackageService.getInstance().getPackages();
+        Collection<RPackage> packages = RPackageService.getInstance().getPackages();
+
+        // resort them so that the most popular ones are indexed first
+        packages = Ordering.natural().reverse().onResultOf(RSkeletonGenerator::getIndexPriority)
+                .sortedCopy(packages).stream().collect(Collectors.toList());
+
         for (RPackage rPackage : packages) {
             LOG.info("building skeleton for " + rPackage.getName());
 
@@ -223,12 +243,12 @@ public class RSkeletonGenerator {
 
             // skip if skeleton exists already and it is not outdated
             File skeletonFile = new File(skeletonsDir, rPackage.getName() + ".r");
-            if (skeletonFile.exists() && isCurrentVersion(skeletonFile)) {
+            if (skeletonFile.exists() && isComplete(skeletonFile) && isCurrentVersion(skeletonFile)) {
                 continue;
             }
 
             // additional threading here kills the computer
-            ExecutorService es = Executors.newFixedThreadPool(3);
+            ExecutorService es = Executors.newFixedThreadPool(6);
 
 //            // skip existing skeleton dir exists already
 //            File packageSkelDir = new File(skeletonsDir, rPackage.getName());
@@ -261,14 +281,35 @@ public class RSkeletonGenerator {
     }
 
 
+    /**
+     * Scan for final EOF tag in skeleton file.
+     */
+    private static boolean isComplete(File skeletonFile) {
+        boolean hasEOF = false;
+        try {
+            Scanner scanner = new Scanner(skeletonFile);
+
+            while (scanner.hasNextLine()) {
+                String curLine = scanner.nextLine().trim();
+                if (!curLine.isEmpty()) hasEOF = curLine.equals("## EOF");
+            }
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+
+        return hasEOF;
+    }
+
+
     // note: just change in sync with ./r-helpers/skeletonize_package.R
     public static final int SKELETONIZE_VERSION = 2;
 
 
-    //todo refac to use to-be-impl Rpackage API here
     private static boolean isCurrentVersion(File skeletonFile) {
 
-        // todo tbd why don't we use the stub here (should be faster)
+        // TODO why don't we use the stub here (should be faster)
+
+
 //        VirtualFile virtualFile = VfsTestUtil.findFileByCaseSensitivePath(skeletonFile.getAbsolutePath());
 //        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
 //

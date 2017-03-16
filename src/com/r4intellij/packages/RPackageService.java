@@ -286,6 +286,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
 
     @NotNull
+    @Deprecated
     public List<RPackage> getContainingPackages(String symbol) {
         return getPackages().stream().filter(pckg ->
                 pckg.hasFunction(symbol) || pckg.hasDataSet(symbol)
@@ -408,8 +409,16 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     public List<RPackage> resolveImports(PsiElement psiElement) {
         List<String> importedPackages = ((RFile) psiElement.getContainingFile()).getImportedPackages();
 
+        // todo filter for imports that actually apply to an element to prevent forward import-refs
         return resolveDependencies(importedPackages);
     }
+
+
+    public List<String> findImportsFor(@NotNull PsiElement element) {
+        return resolveImports(element).stream().
+                map(RPackage::getName).collect(Collectors.toList());
+    }
+
 
 
     public void refreshIndexInThread() {

@@ -54,8 +54,13 @@ public class ROperatorReference implements PsiPolyVariantReference {
     @Nullable
     @Override
     public PsiElement resolve() {
-        final ResolveResult[] results = multiResolve(false);
-        return results.length >= 1 ? results[0].getElement() : null;
+        return new ResolveResultWrapper(myElement, false, multiResolve(false)).getBest();
+    }
+
+
+    @NotNull
+    public ResolveResultWrapper resolve(boolean includeFwdRefs) {
+        return new ResolveResultWrapper(myElement, includeFwdRefs, multiResolve(false));
     }
 
 

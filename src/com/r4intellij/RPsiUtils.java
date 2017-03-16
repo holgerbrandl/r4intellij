@@ -265,7 +265,6 @@ public class RPsiUtils {
             return false;
         }
 
-
         boolean isSelfReference = (resolvant instanceof RAssignmentStatement) &&
                 ((RAssignmentStatement) resolvant).getAssignee().equals(element);
 

@@ -123,8 +123,10 @@ iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
   
 ### v1.1
 
+
 http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/additional_minor_features.html
 
+* embed custom error reporting service ![](.todo_images/error_report.png)
 
 * fix gradle build to include resource files in zip (see https://github.com/JetBrains/gradle-intellij-plugin/issues/180#issuecomment-280377767) 
     * also use gradle for EAP releases (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000113284-EAP-channel-for-plugins)
@@ -189,7 +191,8 @@ if(a=(function(){T})()){ print("foo")}
 
 ### dependency management
 
-
+* remember import choices and show them first in import popup
+* also allow to auto import certain whitelisted packages
 * somehow offer detach as option to resolve namespace conflicts
 ```r
 detach("package:tibble", unload=TRUE)

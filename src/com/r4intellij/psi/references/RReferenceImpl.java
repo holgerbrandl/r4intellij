@@ -1,6 +1,5 @@
 package com.r4intellij.psi.references;
 
-import com.google.common.collect.Iterables;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.ASTNode;
@@ -23,8 +22,9 @@ import com.r4intellij.settings.LibraryUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static com.r4intellij.psi.references.RResolver.*;
 
@@ -91,32 +91,13 @@ public class RReferenceImpl implements PsiPolyVariantReference {
     @Nullable
     @Override
     public PsiElement resolve() {
-        return resolve(false);
+        return resolve(false).getBest();
     }
 
 
-    @Nullable
-    public PsiElement resolve(boolean includeFwdRefs) {
-        List<ResolveResult> results = Arrays.asList(multiResolve(false));
-
-        Predicate<ResolveResult> fwdRefPredicate = RPsiUtils.createForwardRefPredicate(this.getElement());
-
-        // get most local backward reference
-        Optional<ResolveResult> mostLocalRef = results.stream()
-                .filter(not(fwdRefPredicate))
-                .reduce((first, second) -> second);
-
-        ResolveResult bestRef;
-
-        if (includeFwdRefs) {
-//            // or first forward reference
-            bestRef = mostLocalRef.orElse(Iterables.getFirst(results, null));
-//
-        } else {
-            bestRef = mostLocalRef.orElse(null);
-        }
-
-        return bestRef != null ? bestRef.getElement() : null;
+    @NotNull
+    public ResolveResultWrapper resolve(boolean includeFwdRefs) {
+        return new ResolveResultWrapper(myElement, includeFwdRefs, multiResolve(false));
     }
 
 

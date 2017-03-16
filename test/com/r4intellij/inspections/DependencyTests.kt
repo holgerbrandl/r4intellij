@@ -61,6 +61,7 @@ class DependencyTests : RTestCase() {
 
 
     fun testTidyrImportMissing() {
+        createSkeletonLibrary("tidyr", "datasets")
         doExprTest("${noImportWarning("gather", "tidyr")}(iris)")
     }
 
