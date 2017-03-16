@@ -10,6 +10,7 @@ import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.r4intellij.RFileType;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.RReferenceExpressionImpl;
@@ -57,6 +58,8 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     @Nullable
     @Override
     public String generateDoc(PsiElement reference, @Nullable PsiElement identifier) {
+        if (!(RFileType.INSTANCE.equals(reference.getContainingFile().getFileType()))) return null;
+
         if (reference instanceof RStringLiteralExpression) return null;
         // check if it's a library function and return help if it is
 
