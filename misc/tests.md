@@ -37,6 +37,8 @@ rm -rf index
 Todo
 ----
 
+* improve test coverage, see http://www.jetbrains.org/intellij/sdk/docs/tutorials/writing_tests_for_plugins/reference_test.html
+
 
 Unify to use common base class for testing, currently we use 3
 * UsefulTestCase

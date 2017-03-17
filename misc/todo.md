@@ -3,93 +3,34 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+* fix parser issues
+```r
+# wrong filter
+library(magrittr)
+library(dplyr)
+iris %>% filter(word1 %in% 1:3)
+
+
+## missing formal arg
+x <- c("abc", "def")
+str_replace_all(x, c("[ad]" = "!", "[cf]" = "?"))
+## or kable halt
+
+
+## named cascaded formal arg
+top_n(iris, 10, wt=abs(contribution))
+```
+
+
+
+* skeletons are not updated after version change on startup
+
 * can not parse `/Users/brandl/Library/Caches/IntelliJIdea2016.3/r_skeletons/1842261700/lubridate.r`
 
-* can not find element:
-```
-null
-java.lang.NullPointerException
-	at com.r4intellij.documentation.RDocumentationProvider.isLibraryElement(Unknown Source)
-	at com.r4intellij.documentation.RDocumentationProvider.generateDoc(Unknown Source)
-	at com.intellij.lang.documentation.CompositeDocumentationProvider.generateDoc(CompositeDocumentationProvider.java:144)
-	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:661)
-	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:884)
-	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:658)
-	at com.intellij.util.concurrency.QueueProcessor.runSafely(QueueProcessor.java:223)
-	at com.intellij.util.Alarm$Request$1.run(Alarm.java:387)
-	at com.intellij.util.Alarm$Request.run(Alarm.java:398)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at com.intellij.util.concurrency.SchedulingWrapper$MyScheduledFutureTask.run(SchedulingWrapper.java:237)
-	at com.intellij.util.concurrency.BoundedTaskExecutor$2.run(BoundedTaskExecutor.java:210)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-```
 
-* skeltons are not updated after version change on startup
-* incorrect forward ref
-```r
-foo = function(){
-    bar
-}
 
-bar=3
-
-foo()
-```
-
-* plugin must not provide help for non-r elements:
-* ![](.todo_images/89a38b5b.png)
 * send expression to console does not work from injected chunks
 
-* stats.r can not fully be parsed because of
-```r
-mod$T[1L:p, 1L] <- phi
-```
-
-* regression: unused even if used:
-```r
-train_glm = function(trainData){   train(is_group_leader ~ ., data = trainData, trControl = trainCtrl, method = "glm")}
-
-trainFunctions = list(
-    glm = train_glm,
-    glmnet = train_glmnet,
-    logit = train_logit,
-    rf = train_rf,
-    rf_pca = train_rf_pca,
-    rf_pp = train_rf_pp,
-    C5Tree = train_C5Tree
-)
-
-trainFunctions
-
-```
-
-* exception when opening project
-```
-jaacva.lang.ArrayIndexOutOfBoundsException: 1
-	at com.r4intellij.documentation.RHelpParser.<init>(Unknown Source)
-	at com.r4intellij.documentation.RDocumentationProvider.getHelpForFunction(Unknown Source)
-	at com.r4intellij.documentation.RDocumentationProvider.generateDoc(Unknown Source)
-	at com.intellij.lang.documentation.CompositeDocumentationProvider.generateDoc(CompositeDocumentationProvider.java:144)
-	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:661)
-	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:884)
-	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:658)
-	at com.intellij.util.concurrency.QueueProcessor.runSafely(QueueProcessor.java:223)
-	at com.intellij.util.Alarm$Request$1.run(Alarm.java:387)
-	at com.intellij.util.Alarm$Request.run(Alarm.java:398)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at com.intellij.util.concurrency.SchedulingWrapper$MyScheduledFutureTask.run(SchedulingWrapper.java:237)
-	at com.intellij.util.concurrency.BoundedTaskExecutor$2.run(BoundedTaskExecutor.java:210)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-```
-
-
-* threading issues when doing skeletonization
 
 
 * function expression inlining is broken
@@ -109,12 +50,11 @@ iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
 
 ```
 
-* god code is red in `/Users/brandl/Dropbox/projects/snippets/R/r_snippets.R`
 
 ## Next Steps
+
 * process forum replies
 * remove deprecated api usage
-* resolve all infix op and tag as unresolved
 
 
 ### v1.0
@@ -122,19 +62,18 @@ iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
     * also see org.jetbrains.plugins.groovy.actions.NewScriptAction
     * templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
-* replace RPackage service with on-the-fly model using stub-index (is possible because they still miss function titles)
-  
+* replace RPackage service with on-the-fly model using stub-index (is this possible because they still miss function titles?)
+
+
 ### v1.1
 
 
-http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/additional_minor_features.html
 
 * embed custom error reporting service ![](.todo_images/error_report.png)
 
 * fix gradle build to include resource files in zip (see https://github.com/JetBrains/gradle-intellij-plugin/issues/180#issuecomment-280377767) 
     * also use gradle for EAP releases (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000113284-EAP-channel-for-plugins)
     
-* improve test coverage, see http://www.jetbrains.org/intellij/sdk/docs/tutorials/writing_tests_for_plugins/reference_test.html
 * [parameter info](https://intellij-support.jetbrains.com/hc/en-us/community/posts/206791995-Parameter-Info)
 
 * better error recovery in parser (see https://github.com/JetBrains/Grammar-Kit#attributes-for-error-recovery-and-reporting)
@@ -142,7 +81,12 @@ http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_suppo
 
 * make help window to show help even if caret is moven (auto-update from source disabling might be broken?)
 
-* Make sure that `?NA` and `?Inf` provide correct help pages
+
+## v1.2
+
+* provide help for `tidy<caret>r::separate`
+
+* http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/additional_minor_features.html
 
 
 Intentions & inspections
@@ -233,7 +177,7 @@ result = myfancyfun(sdf)
 ### piping support
 
 * warn about dataframe arguments in pipe
-```r
+```
 iris %>% mutate %>% ggplot(iris, aes())
 iris %>% mutate %>% transmute(iris, avg_length=mean(Length))
 ```
@@ -244,13 +188,13 @@ iris %>% mutate %>% transmute(iris, avg_length=mean(Length))
     * apply post-fix reformatting of affected code-chunk
     * intention to also pipe simple function arguments (test initial but also non-initial positions)
     * Example: attribute may want to go out
-```r 
+```
     geneInfo <- biomaRt::getBM(attributes=c("ensembl_gene_id", "external_gene_name", "description", "gene_biotype"), mart=mart) %>% cache_it()
 ```
 
  * also allow to reverse pipes with intention (like non-sense 2 element pipes)
     * `see com.siyeh.ipp.concatenation.MakeCallChainIntoCallSequenceIntention`
- ```r
+ ```
 distinct(x) %>% nrow
 # should become
 nrow(distinct(x))
@@ -318,7 +262,7 @@ allow to embed urls. See xml-plugin
 ![](.todo_images/dec7861c.png)
 
 * Improve handling of forward refs in function expression
-```r
+```
 ## this is valid r, and the final call will return 1
 bla = function(){
     ## don't flag this a forward, but as "potentially unresolved" depedning on calling environment, 
@@ -332,7 +276,7 @@ bla()
 ```
  
 * don't flag `else` branch as unused in 
-```r
+```
 if(sdf){
     publications = mutate(summary = map(pubmed_id, get_pubmed_summary)) %>% unnest(summary)
 
@@ -360,7 +304,7 @@ Formatter
 ---------
 
 * also indent comments in wrapped pipes
-```r
+```
 varImpsPooled %>%
     filter(! str_detect(feature, "PC")) %>%
     ggplot(aes(feature, Overall)) +
@@ -378,7 +322,7 @@ see `CodeStyleManager.adjustLineIndent()`
 ```
 
 * ensure proper check indentation when using as pipe sink
-```r
+```
 pdStories %>%
     filter(!is.na(pub_time_category)) %>%
     group_by(labtype, pub_time_category) %>% summarize(
@@ -411,20 +355,7 @@ iris$f<caret>
     
 * after function name completion, cursor should end up between brackets
 
-* show library import suggestions also for infix operators (like %<>% --> magrittr) 
-```r
-iris %$% Species ## so what?
-
-```
-
-* show library import suggestions also for function pipes without call brackets
-```r
-require(magrittr)
-iris %>% glimpse ## import warning on glimpse expected
-```
-
 * intention to remove unused parameter from method signature
-
 
 * Make use of CompletionType enum to finetune/speed up auto-completion
 
@@ -435,7 +366,8 @@ iris %>% glimpse ## import warning on glimpse expected
 ```
 com<complete> # show all methods which start with com including their packacke prefix --> autoimport if not done is completion is accepted 
 ```
-    * preference schemes for certain packages (dplyr, ggplot, etc)
+* preference schemes for certain packages (dplyr, ggplot, etc)
+* 
 * better File path completion for nested directories
 
 * if running with console
@@ -446,7 +378,7 @@ Refactorings
 ------------
 
 * **FIXME**: renaming for loop variables is broken
-```r
+```
 for (name in packageNames) {
     if (paste(name, "r", sep=".") %in% list.files(path=args[1])) {
         next
@@ -580,59 +512,11 @@ Brainstorming
     * button to open examples in scratch-file
     * use syntax coloring in examples and usage
     
-* should we add `    <enterHandlerDelegate implementation="com.intellij.json.formatter.JsonEnterBetweenBracesHandler"/>`
+* should we add `<enterHandlerDelegate implementation="com.intellij.json.formatter.JsonEnterBetweenBracesHandler"/>`
 
 * learn from `/Users/brandl/projects/jb/intellij-community/platform/platform-resources/src/META-INF/JsonPlugin.xml`
     
 * always inject bash (if installed) in `base:system` calls (see  Prefs->Editor->LangInject)
     
-Send To Console Improvements
-============================
-
-* mandatory dependency on Send2Console / or add suggestion balloon
-
-Send to Console improvement:
-    * send to console: jump to next line after eval (option?) 
-    * eval current top-level expression (option?)
-    * also add options to send line to current run console instead 
-    * later: potentially add separate impl for R4intellij for more smooth integration
-    
-* shortcut to evaluate current expression and proceed
-
-
-* R Session has almost complete implementation for console, objects, etc
-
-Windows Support
-* I think FindWindow and SendMessage are the functions you want to use, in general.
-* Tinn-R: It also pops up additional menu and toolbar when it detects Rgui running on the same computer. These addons interact with the R console and allow to submit code in part or in whole and to control R directly. 
-    * It seems to have some limitations
-* Maybe DOM is a solution: rdom, RDCOMClient
-* Or most promising, we could try to use the windows API via VBScript or C#
-
-
-Markdown impro wishlist
-=======================
-
-* Useful structure view **done**
-* Click to to jump to code
-* synced scrolling
-* synced caret http://codepen.io/ArtemGordinsky/pen/GnLBq
-
-* make sure that https://youtrack.jetbrains.com/issue/RUBY-19204 is being fixed or fix it
-
-* aligned cursor with preview
-* highlight search results in preview
-    * http://stackoverflow.com/questions/19418626/javafx-search-and-highlight-text-add-search-bar-for-loaded-web-page
-* search in preview
-* intention to unify header styles (see [RUBY-19093](https://youtrack.jetbrains.com/issue/RUBY-19093))
-
-* line comment/uncomment see http://stackoverflow.com/questions/4823468/comments-in-markdown. Examples:
-<!---
-unfortunately doesn't work in GitHub Markdown
--->
-[//]: <> (seems more generic) 
-[//]: <> (seems more generic) 
-
-
 
 Also see [OpenApi notes](devel_notes.md)
