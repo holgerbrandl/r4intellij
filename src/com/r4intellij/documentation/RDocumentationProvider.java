@@ -1,8 +1,6 @@
 package com.r4intellij.documentation;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
@@ -11,8 +9,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.r4intellij.RFileType;
-import com.r4intellij.packages.RPackage;
-import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.RReferenceExpressionImpl;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.settings.RSettings;
@@ -22,9 +18,9 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 import static com.r4intellij.interpreter.RSkeletonGenerator.SKELETON_DIR_NAME;
 import static com.r4intellij.packages.RHelperUtil.LOG;
@@ -50,8 +46,13 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 //        if(contextElement== null || contextElement.getText().trim().isEmpty()) {
 //            return null;
 //        }
+//
+        List<String> keywords = Arrays.asList("for", "while", "next", "break", "function");
+        if (contextElement != null && keywords.contains(contextElement.getText())) {
+            return contextElement;
+        }
 
-        return contextElement;
+        return null;
     }
 
 
@@ -59,6 +60,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     @Override
     public String generateDoc(PsiElement reference, @Nullable PsiElement identifier) {
         if (!(RFileType.INSTANCE.equals(reference.getContainingFile().getFileType()))) return null;
+//        if (!(psiFile instanceof RFile)) {
 
         if (reference instanceof RStringLiteralExpression) return null;
         // check if it's a library function and return help if it is
@@ -92,18 +94,22 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
         }
 
-        // resolve method package from script dependencies
-        if (packageName == null) {
-            List<RPackage> origins = resolvePckgFromContext(elementText, identifier.getContainingFile());
-            if (!origins.isEmpty()) {
-                packageName = Iterables.getLast(origins).getName();
-            }
-        }
 
         // also make sure that we can provide help in skeleton files
         if (packageName == null && isLibraryElement(reference)) {
-            packageName = reference.getContainingFile().getVirtualFile().getName().replaceAll(".r$", "");
+            packageName = reference.getContainingFile().getVirtualFile().getName().replaceAll(".[rR]$", "");
         }
+
+        // make sure to pull correct help for rexported symbols
+        if (isLibraryElement(reference)) {
+            if (reference instanceof RAssignmentStatement) {
+                RPsiElement assignedValue = ((RAssignmentStatement) reference).getAssignedValue();
+                if (assignedValue instanceof RReferenceExpression) {
+                    packageName = ((RReferenceExpression) assignedValue).getNamespace();
+                }
+            }
+        }
+
 
         // run generic R help on symbol
         if (HELP_SERVER_PORT == null) try {
@@ -120,6 +126,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
         //
 //        return getHelpForFunction(elementText, packageName);
     }
+
 
     @Nullable
     private String getHelpFromLocalHelpServer(String elementText, String packageName) {
@@ -197,20 +204,5 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
                 Strings.nullToEmpty(
                         element.getContainingFile().getVirtualFile().getCanonicalPath()
                 ).contains(SKELETON_DIR_NAME);
-    }
-
-
-    private List<RPackage> resolvePckgFromContext(String functionName, PsiFile psiFile) {
-        // todo add Rmd chunk support here
-        // todo This should also take the position into account since not all import may be done in the script header
-        if (!(psiFile instanceof RFile)) {
-            return Lists.newArrayList();
-        }
-
-        List<String> importNames = ((RFile) psiFile).getImportedPackages();
-        List<RPackage> imports = RPackageService.getInstance().resolveDependencies(importNames);
-
-        // filter for those that contain given function
-        return imports.stream().distinct().filter(p -> p.hasFunction(functionName)).collect(Collectors.toList());
     }
 }

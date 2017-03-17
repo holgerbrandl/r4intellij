@@ -49,7 +49,7 @@ public class ImportLibraryFix implements LocalQuickFix {
             final PsiElement element = descriptor.getPsiElement();
 //            final BnfRule insertAfter = PsiTreeUtil.getParentOfType(element, BnfRule.class);
             RFileImpl file = (RFileImpl) element.getContainingFile();
-            List<RCallExpression> importStatements = file.getPckgImportExpressions();
+            List<RCallExpression> importStatements = file.getImportExpressions(element);
 
             PsiElement insertAfter = null;
             if (importStatements.size() > 0) {

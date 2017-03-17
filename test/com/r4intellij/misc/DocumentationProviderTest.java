@@ -37,6 +37,19 @@ public class DocumentationProviderTest extends RTestCase {
     }
 
 
+    public void testDocForRexportedSymbol() throws IOException {
+        createSkeletonLibrary("dplyr");
+
+        myFixture.configureByText("a.R", "require(dplyr); glimps<caret>e"); // TODO move caret to end
+        PsiElement refExpr = PsiUtilBase.getElementAtCaret(myFixture.getEditor());
+        PsiElement resolved = ((RReferenceExpressionImpl) refExpr.getParent()).getReference().resolve();
+        String doc = new RDocumentationProvider().generateDoc(resolved, refExpr);
+
+        assertTrue(doc.contains("This is like a transposed version of print"));
+    }
+
+
+
     public void testTidyrGroupBy() throws IOException {
         myFixture.configureByText("a.R", "dplyr::group_by(iris)");
 
@@ -72,12 +85,12 @@ public class DocumentationProviderTest extends RTestCase {
     public void testHead() throws IOException {
         myFixture.configureByText("a.R", "head(iris)");
 
-        RCallExpression callExpression = PsiTreeUtil.findChildOfType(myFixture.getFile(), RCallExpression.class);
-        RExpression funExpr = callExpression.getExpression();
-        String doc = new RDocumentationProvider().
-                generateDoc(funExpr, ((RReferenceExpressionImpl) funExpr).getIdentifier());
+        PsiElement refExpr = PsiUtilBase.getElementAtCaret(myFixture.getEditor());
+        PsiElement resolved = ((RReferenceExpressionImpl) refExpr.getParent()).getReference().resolve();
 
-        // assert that doc is as expcted
+        String doc = new RDocumentationProvider().generateDoc(resolved, refExpr);
+
+        // assert that doc is as expected
         compareWIthTestData(doc);
     }
 

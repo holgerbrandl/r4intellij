@@ -24,6 +24,28 @@ There are several types of testing to be considered:
 
 * End-to-end testing: This type of testing verifies if the operations of an entire system, under realistic conditions, produce desired results. For example, an analysis pipeline that starts with raw experimental data (considered representative of the actual data that the system is designed to analyze) transforms and munges this data, and results in some statistical analysis. Testing an entire workflows is considered end-to-end testing (see also continuous integration, below).
 
+Index issues when running unit tests
+------------------------------------
+
+remove the index of the idea plugin-dev environment
+```bash
+cd ~/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/test/system/
+rm -rf index
+```
+
+
+Todo
+----
+
+
+Unify to use common base class for testing, currently we use 3
+* UsefulTestCase
+* CodeInsightFixtureTestCase
+* LightPlatformCodeInsightFixtureTestCase
+
+* choose between light and heavy, see http://www.jetbrains.org/intellij/sdk/docs/basics/testing_plugins/light_and_heavy_tests.html
+
+See http://www.jetbrains.org/intellij/sdk/docs/basics/testing_plugins/tests_and_fixtures.html
 
 
 Missing Unit Tests

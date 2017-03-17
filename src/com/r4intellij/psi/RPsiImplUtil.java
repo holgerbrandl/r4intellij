@@ -137,23 +137,25 @@ public class RPsiImplUtil {
 
 
     public static String getName(RAssignmentStatement assignment) {
-        final ASTNode node = assignment.getNameNode();
 
         // for member assignments return the expression reference, e.g foo$bar = 1 # return foo
         if (assignment.getAssignee() instanceof RMemberExpression) {
             return ((RMemberExpression) assignment.getAssignee()).getExpression().getText();
         }
 
-        // for operator definitions we strip leading or tailing quotes
+        // because of operator definitions we strip leading or tailing quotes
         CharMatcher charMatcher = CharMatcher.anyOf("`\"'");
         String assigneeText = assignment.getAssignee().getText();
 
-        if (assignment.getAssignedValue() instanceof RFunctionExpression &&
-                charMatcher.matches(assigneeText.charAt(0))) {
+//        if (assignment.getAssignedValue() instanceof RFunctionExpression && charMatcher.matches(assigneeText.charAt(0))) {
+//        RPsiElement asigned = assignment.getAssignedValue();
+//        if (asigned instanceof RFunctionExpression || // is it an operator definition
+//                (asigned instanceof RReferenceExpression && ((RReferenceExpression)asigned).getNamespace()!=null)) { // needed for rexport syntax in skeletons
             return charMatcher.trimFrom(assigneeText);
-        }
+//        }
 
-        return node != null ? node.getText() : null;
+//        final ASTNode node = assignment.getNameNode();
+//        return node != null ? node.getText() : null;
     }
 
 

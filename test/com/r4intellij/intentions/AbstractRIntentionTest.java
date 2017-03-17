@@ -2,9 +2,14 @@ package com.r4intellij.intentions;
 
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
+import com.intellij.util.ArrayUtil;
+import com.r4intellij.packages.RPackageService;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+
+import static com.r4intellij.RTestCase.createSkeletonLibrary;
+import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
 
 /**
  * @author Holger Brandl
@@ -32,6 +37,13 @@ public abstract class AbstractRIntentionTest extends CodeInsightFixtureTestCase 
 //        String intentionDataPath = super.getTestDataPath() + "/inspections/" + getClass().getSimpleName().replace("Test", "");
         String intentionDataPath = TEST_DATA_PATH + "/intentions/" + getClass().getSimpleName().replace("Test", "");
         myFixture.setTestDataPath(intentionDataPath);
+
+        // inject stub index here for more reproducible testing
+        RPackageService.getTestInstance();
+//        RPackageService.getInstance().refreshIndex();
+
+        // add base packages for testing
+        createSkeletonLibrary(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));
     }
 
 

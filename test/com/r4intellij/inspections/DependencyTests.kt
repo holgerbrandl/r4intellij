@@ -2,8 +2,6 @@ package com.r4intellij.inspections
 
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.r4intellij.RTestCase
-import com.r4intellij.inspections.UnresolvedReferenceInspection.missingImportMsg
-import com.r4intellij.inspections.UnresolvedReferenceInspectionTest.forwardRef
 import org.jetbrains.annotations.NotNull
 
 /**
@@ -27,12 +25,13 @@ class DependencyTests : RTestCase() {
 
         // rather use actual library here to see if stub-index is working correctly
         createSkeletonLibrary("datasets")
+        //        addPckgsToSkeletonLibrary("dplyr")
         doExprTest("iris")
     }
 
 
     fun testPackageDataWithoutImport() {
-        doExprTest("<warning descr=\"Unresolved reference\">nasa</warning>") // todo why unresolved --> should be be captured by import inspection
+        doExprTest(unresolvedError("nasa")) // todo why unresolved --> should be be captured by import inspection
     }
 
 
@@ -49,7 +48,8 @@ class DependencyTests : RTestCase() {
 
 
     fun testForwardImportAfterUsage() {
-        doExprTest(forwardRef("glimpse") + "(iris) ; require(dplyr)")
+        createSkeletonLibrary("dplyr", "datasets")
+        doExprTest(noImportWarning("glimpse", "dplyr") + "(iris) ; require(dplyr)")
     }
 
 
@@ -66,7 +66,8 @@ class DependencyTests : RTestCase() {
     }
 
     fun testMissingImportInPipe() {
-        doExprTest("iris %>% ${noImportWarning("glimpse", "tibble")}")
+        createSkeletonLibrary("tibble", "magrittr", "datasets")
+        doExprTest("require(magrittr); iris %>% ${noImportWarning("glimpse", "tibble")}")
     }
 
 
@@ -76,20 +77,9 @@ class DependencyTests : RTestCase() {
     }
 
     fun testMissingOperatorImport() {
-        addPckgsToSkeletonLibrary("dplyr")
+        addPckgsToSkeletonLibrary("dplyr") // we use the rexported version here to see if its picked up correctly
 
-        // note: re-exporting packages are not listed intentionally, because origin should be preferred over rexport
-        doExprTest("iris ${noImportWarning("%>%", listOf("magrittr"))} head")
-    }
-
-
-    companion object {
-
-        fun noImportWarning(symbol: String, foundIn: String): String = noImportWarning(symbol, listOf(foundIn))
-
-
-        fun noImportWarning(symbol: String, foundIn: List<String> = emptyList()): String {
-            return """<warning descr="${missingImportMsg(symbol, foundIn)}">$symbol</warning>"""
-        }
+        // note: re-exporting packages are not listed intentionally, because origin should be preferred over reexport
+        doExprTest("iris ${noImportWarning("%>%", listOf("dplyr"))} head")
     }
 }

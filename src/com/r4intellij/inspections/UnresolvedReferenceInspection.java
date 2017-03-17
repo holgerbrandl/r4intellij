@@ -28,6 +28,8 @@ import static com.r4intellij.psi.RPsiImplUtil.BUILTIN_CONSTANTS;
 public class UnresolvedReferenceInspection extends RInspection {
 
 
+    public static String UNRESOLVED_MSG = "Unresolved reference";
+
     @Nls
     @NotNull
     @Override
@@ -155,7 +157,8 @@ public class UnresolvedReferenceInspection extends RInspection {
 
                 } else {
                     // we have no clue about the symbol, so flag it as unresolved
-                    myProblemHolder.registerProblem(element, "Unresolved reference", ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+//                    myProblemHolder.registerProblem(element, UNRESOLVED_MSG, ProblemHighlightType.GENERIC_ERROR_OR_WARNING);
+                    myProblemHolder.registerProblem(element, UNRESOLVED_MSG, ProblemHighlightType.GENERIC_ERROR);
                 }
 
             } else if (RPsiUtils.isForwardReference(resolve, element)) {

@@ -3,6 +3,8 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
+* can not parse `/Users/brandl/Library/Caches/IntelliJIdea2016.3/r_skeletons/1842261700/lubridate.r`
+
 * can not find element:
 ```
 null
@@ -107,6 +109,7 @@ iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
 
 ```
 
+* god code is red in `/Users/brandl/Dropbox/projects/snippets/R/r_snippets.R`
 
 ## Next Steps
 * process forum replies

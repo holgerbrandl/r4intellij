@@ -66,6 +66,11 @@ class ResolverTest : AbstractResolverTest() {
         checkExpression("foo = function(x) x; foo(3)")
     }
 
+    fun testNsOperatorRef() {
+        createSkeletonLibrary("dplyr")
+        checkExpression("""dplyr::`%>%`""")
+    }
+
     fun testOperatorQuoteModes() {
         // we should resolve both ops and also find their usage
         checkExpression("""

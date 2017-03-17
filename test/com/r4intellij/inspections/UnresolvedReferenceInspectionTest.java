@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+import static com.r4intellij.inspections.InspectionTestUtilKt.errorForwardRef;
+import static com.r4intellij.inspections.InspectionTestUtilKt.unresolvedError;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
@@ -59,13 +61,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testForwardSelfAssignment() {
-        doExprTest("sdf = { " + forwardRef("sdf") + " }");
-    }
-
-
-    @NotNull
-    public static String forwardRef(@NotNull String varName) {
-        return "<error descr=\"Forward reference\">" + varName + "</error>";
+        doExprTest("sdf = { " + errorForwardRef("sdf") + " }");
     }
 
 
@@ -99,12 +95,12 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testUnamedCallArgumentInFunctionBody() {
-        doExprTest("function() head(<warning descr=\"Unresolved reference\">sdf</warning>)");
+        doExprTest("function() head(" + unresolvedError("sdf") + ")");
     }
 
 
     public void testNamedCallArgumentInFunctionBody() {
-        doExprTest("function() head(x=<warning descr=\"Unresolved reference\">sdf</warning>)");
+        doExprTest("function() head(x=" + unresolvedError("sdf") + ")");
     }
 
 
@@ -122,11 +118,6 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
         // todo
     }
 
-
-    @NotNull
-    private static String unresolved(@NotNull String varName) {
-        return "<error descr=\"Unresolved reference\">" + varName + "</error>";
-    }
 
 
     @NotNull

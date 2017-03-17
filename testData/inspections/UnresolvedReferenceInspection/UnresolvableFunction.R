@@ -1,1 +1,1 @@
-<warning descr="Unresolved reference">lalelu</warning>("foo", "bar")
+<error descr="Unresolved reference">lalelu</error>("foo", "bar")

@@ -2,6 +2,11 @@ package com.r4intellij.inspections;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static com.r4intellij.inspections.UnresolvedReferenceInspection.missingImportMsg;
+
 public class TypeCheckerInspectionTest extends RInspectionTest {
 
 
@@ -89,7 +94,14 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
         createSkeletonLibrary("datasets");
         myFixture.enableInspections(getInspection(), MissingPackageInspection.class, UnresolvedReferenceInspection.class);
 
-        doExprTest("<warning descr=\"'mutate' has been detected in a package (dplyr, plyr, SparkR, plotly) which does not seem to be imported yet.\">mutate</warning>(iris, foo=1)");
+        String warnMissingImport = warnMissingImport("mutate", Arrays.asList("dplyr", "plyr", "SparkR", "plotly"));
+        doExprTest(warnMissingImport + "(iris, foo=1)");
+    }
+
+
+    private static String warnMissingImport(String symbol, List<String> foundIn) {
+        String importMsg = missingImportMsg(symbol, foundIn);
+        return "<warning descr=\"" + importMsg + "\">symbol</warning>";
     }
 
 

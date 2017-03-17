@@ -62,7 +62,7 @@ public class RResolver {
         // detect all libary elements with the same name
         List<ResolveResult> indexResults = findSkeletonMatches(name, element.getProject());
 
-        // retain those for which there is an import statment
+        // retain those for which there is an import statement
         List<ResolveResult> imported = indexResults.stream()
                 .filter(resolve -> imports.contains(getSkeletonPckgName(resolve)))
                 .collect(Collectors.toList());
@@ -101,7 +101,7 @@ public class RResolver {
     public static String getSkeletonPckgName(ResolveResult o1) {
         final PsiFile containingFile = o1.getElement().getContainingFile();
 
-        return containingFile.getName().replaceAll(".R$", "");
+        return containingFile.getName().replaceAll(".[rR]$", "");
     }
 
 
@@ -122,6 +122,7 @@ public class RResolver {
                 RAssignmentNameIndex.find(name, project, new LibraryScope(project, library));
 
         //RAssignmentNameIndex.allKeys(project).stream().filter(f->f.equals("head")).collect(Collectors.toList())
+        //RAssignmentNameIndex.allKeys(project).stream().filter(f->f.equals("iris")).collect(Collectors.toList())
 
         for (RAssignmentStatement statement : assignmentStatements) {
 //            String containedPackage = getSkeletonPckgName(statement);

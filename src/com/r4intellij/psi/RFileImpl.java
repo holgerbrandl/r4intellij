@@ -13,6 +13,7 @@ import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.util.Processor;
 import com.r4intellij.RFileType;
+import com.r4intellij.RPsiUtils;
 import com.r4intellij.psi.api.RCallExpression;
 import com.r4intellij.psi.api.RExpression;
 import com.r4intellij.psi.api.RFile;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.r4intellij.editor.RCompletionContributor.PACKAGE_IMPORT_METHODS;
@@ -58,39 +60,25 @@ public class RFileImpl extends PsiFileBase implements RFile {
 
 
     @Override
-    public List<RCallExpression> getPckgImportExpressions() {
+    public List<RCallExpression> getImportExpressions(PsiElement queryElement) {
         if (myImports == null) {
             myImports = CachedValuesManager.getManager(getProject()).createCachedValue(new CachedValueProvider<List<RCallExpression>>() {
                 @Override
                 public Result<List<RCallExpression>> compute() {
-                    return Result.create(findImportsInFile(), RFileImpl.this);
+                    return Result.create(findImports(), RFileImpl.this);
                 }
             }, false);
         }
 
-        return myImports.getValue();
+        List<RCallExpression> allImports = myImports.getValue();
+
+        Predicate<RCallExpression> beforeQueryPredicate = is -> RPsiUtils.isForwardReference(queryElement, is);
+        return allImports.stream().filter(beforeQueryPredicate).collect(Collectors.toList());
     }
 
 
-    @Override
-    public List<String> getImportedPackages() {
-        // use cache to get list of imported package names
-        List<String> imports = getPckgImportExpressions().stream().map(rCall -> {
-            List<RExpression> args = rCall.getArgumentList().getExpressionList();
+    private List<RCallExpression> findImports() {
 
-            if (!args.isEmpty())
-                return args.get(0).getText();
-            else
-                return null;
-
-        }).filter(Objects::nonNull).collect(Collectors.toList());
-
-        // prefix with default libraries
-        return Lists.newArrayList(Iterables.concat(DEFAULT_PACKAGES, imports));
-    }
-
-
-    private List<RCallExpression> findImportsInFile() {
         final List<RCallExpression> result = new ArrayList<RCallExpression>();
         processChildrenDummyAware(this, new Processor<PsiElement>() {
             @Override
@@ -106,6 +94,26 @@ public class RFileImpl extends PsiFileBase implements RFile {
         });
         return result;
     }
+
+
+    @Override
+    public List<String> getImportedPackages(PsiElement element) {
+        // use cache to get list of imported package names
+        List<String> imports = getImportExpressions(element).stream().map(rCall -> {
+            List<RExpression> args = rCall.getArgumentList().getExpressionList();
+
+            if (!args.isEmpty())
+                return args.get(0).getText();
+            else
+                return null;
+
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        // prefix with default libraries
+        return Lists.newArrayList(Iterables.concat(DEFAULT_PACKAGES, imports));
+    }
+
+
 
 
     private static boolean isImportStatement(PsiElement psiElement) {

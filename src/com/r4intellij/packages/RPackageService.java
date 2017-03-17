@@ -406,17 +406,10 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    public List<RPackage> resolveImports(PsiElement psiElement) {
-        List<String> importedPackages = ((RFile) psiElement.getContainingFile()).getImportedPackages();
-
-        // todo filter for imports that actually apply to an element to prevent forward import-refs
-        return resolveDependencies(importedPackages);
-    }
-
-
     public List<String> findImportsFor(@NotNull PsiElement element) {
-        return resolveImports(element).stream().
-                map(RPackage::getName).collect(Collectors.toList());
+        List<String> importedPackages = ((RFile) element.getContainingFile()).getImportedPackages(element);
+
+        return resolveDependencies(importedPackages).stream().map(RPackage::getName).collect(Collectors.toList());
     }
 
 
