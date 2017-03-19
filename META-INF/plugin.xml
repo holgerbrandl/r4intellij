@@ -5,6 +5,12 @@
     <vendor url="http://holgerbrandl.github.io/r4intellij/">Holger Brandl, Ekaterina Tuzova</vendor>
 
     <idea-version since-build="145.258.11"/>
+
+    <!-- ensure compatiblity with all intellij products-->
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.xdebugger</depends>
+
+
     <description><![CDATA[
         <html>
         <h3>R support for IntelliJ</h3>
