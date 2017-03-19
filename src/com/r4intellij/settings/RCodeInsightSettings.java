@@ -56,24 +56,36 @@ public class RCodeInsightSettings implements PersistentStateComponent<RCodeInsig
     private static List<UnquotedArgsRule> parseArgRules() {
         List<String> whiteList = Arrays.asList(
                 "base::with.default[expr]",
+                "base::subset.default[subset select]",
+                "base::subset.data.frame[subset select]",  // not really applicable without type system
+                "base::transform.default[...]",
+                "base::transform.data.frame[...]", // not really applicable without type system (see com/r4intellij/psi/references/RResolver.java:209
+
                 "dplyr::count[... wt sort]",
                 "dplyr::mutate[...]",
                 "dplyr::transmute[...]",
                 "dplyr::filter[...]",
+                "dplyr::top_n[wt]",
                 "dplyr::select[...]",
                 "dplyr::rename[...]",
                 "dplyr::arrange[...]",
                 "dplyr::summarize[...]",
                 "dplyr::count[...]",
                 "dplyr::vars[...]",
-                "base::subset.default[subset select]",
-                "base::subset.data.frame[subset select]",  // not really applicable without type system
-                "base::transform.default[...]",
-                "base::transform.data.frame[...]", // not really applicable without type system (see com/r4intellij/psi/references/RResolver.java:209
+                "dplyr::group_by[...]",
+
                 "tidyr::gather[key value ...]",
                 "tidyr::spread[key value]", // specific names denote args as in method signature
                 "tidyr::unite[...]", // tilde denotes just triple dot args
-                "ggplot2::aes[*]" // star denotes all
+                "tidyr::separate[col]",
+                "tidyr::drop_na[...]",
+
+                "ggplot2::aes[*]", // star denotes all
+
+                "tidytext::unnest_tokens[output input]",
+                "tidytext::cast_dtm[document term value]",
+                "tidytext::bind_tf_idf[term_col]",
+                "tidytext::cast_sparse[row column value]"
         );
 
         // todo how to add "%$%" here?
