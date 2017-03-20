@@ -8,7 +8,7 @@ class UnquotedVariablesTest : AbstractResolverTest() {
 
 
     fun testUnquotedMultidots() {
-        createSkeletonLibrary("dplyr")
+        createSkeletonLibrary("datasets", "dplyr")
 
         // nothing should be detected as unresolved
         checkExpression("""

@@ -5,7 +5,6 @@ R4Intellij Development Notes
 
 * fix parser issues
 ```r
-# wrong filter--> incorrecylt resolved to base.R **done** 
 library(magrittr)
 library(dplyr)
 

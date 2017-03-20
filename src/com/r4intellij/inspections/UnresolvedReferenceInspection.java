@@ -205,7 +205,9 @@ public class UnresolvedReferenceInspection extends RInspection {
 
         if (rParameter != null) { // is it white-listed?
             // see com.r4intellij.parser.UnquotedVariablesTest.testCascadedCallAsNamedArg()
-            return wlRules.stream().anyMatch(rule -> rule.matches(rParameter));
+            boolean isWhiteListedArg = wlRules.stream().anyMatch(rule -> rule.matches(rParameter));
+
+            return isWhiteListedArg || isInUnquotedContext(callExpression);
         }
 
         // if it's not a named parameter, is must be a triple dot match
