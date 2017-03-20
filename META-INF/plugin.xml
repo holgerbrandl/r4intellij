@@ -6,7 +6,7 @@
 
     <idea-version since-build="145.258.11"/>
 
-    <!-- ensure compatiblity with all intellij products-->
+    <!-- ensure compatibility with all intellij products-->
     <depends>com.intellij.modules.lang</depends>
     <depends>com.intellij.modules.xdebugger</depends>
 
@@ -64,11 +64,9 @@
   </change-notes>
 
     <application-components>
-        <!-- Add your application components here -->
     </application-components>
     <!--<depends optional="true">com.intellij.modules.python</depends>-->
     <project-components>
-        <!-- Add your project components here -->
     </project-components>
 
 
