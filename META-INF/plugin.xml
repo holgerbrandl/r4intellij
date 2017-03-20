@@ -103,6 +103,9 @@
 
     <extensions defaultExtensionNs="com.intellij">
 
+        <postStartupActivity implementation="com.r4intellij.interpreter.SkeletonUpdater"/>
+
+
         <fileTypeFactory implementation="com.r4intellij.RFileTypeFactory"/>
         <lang.syntaxHighlighterFactory language="R"
                                        implementationClass="com.r4intellij.highlighting.RSyntaxHighlighterFactory"/>

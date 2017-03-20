@@ -17,7 +17,7 @@ public class RSkeletonsGeneratorAction extends AnAction {
         final Project project = event.getProject();
         assert project != null;
 
-        RSkeletonGenerator.generateSkeletons(project);
+        RSkeletonGenerator.updateSkeletons(project);
     }
 
 

@@ -5,56 +5,33 @@ R4Intellij Development Notes
 
 * fix parser issues
 ```r
-# wrong filter
+# wrong filter--> incorrecylt resolved to base.R **done** 
 library(magrittr)
 library(dplyr)
-iris %>% filter(word1 %in% 1:3)
-
-
-## missing formal arg
-x <- c("abc", "def")
-str_replace_all(x, c("[ad]" = "!", "[cf]" = "?"))
-## or kable halt
-
 
 ## named cascaded formal arg
+##note this is because incorrect skeletonization of base: abs <- .Primitive("abs")
 top_n(iris, 10, wt=abs(contribution))
+# or same with as.character
+cat(with(iris, paste0(as.character(Item), " <- foo")))
+
+
+## missing formal named arg
+x <- c("abc", "def")
+require(stringr)
+str_replace_all(x, c("[ad]" = "!", "[cf]" = "?"))
+## or kable halt
+iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
+?missing
 ```
-
-
-
-* skeletons are not updated after version change on startup
-
-* can not parse `/Users/brandl/Library/Caches/IntelliJIdea2016.3/r_skeletons/1842261700/lubridate.r`
-
 
 
 * send expression to console does not work from injected chunks
-
-
-
-* function expression inlining is broken
-```r
-train_glm = function(trainData){   train(is_group_leader ~ ., data = trainData, trControl = trainCtrl, method = "glm")}
-
-list(
-pdModel = train_glm
-)
-```
-
-* formal arguments can be be missing in R. Allow to whitelist function
-```r
-iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
-
-?missing
-
-```
-
+* scratch inspections take forever because of incorrect scope
 
 ## Next Steps
 
 * process forum replies
-* remove deprecated api usage
 
 
 ### v1.0
@@ -68,6 +45,7 @@ iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
 ### v1.1
 
 
+* Remove deprecated api usage
 
 * embed custom error reporting service ![](.todo_images/error_report.png)
 
@@ -80,7 +58,17 @@ iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
 * more rigorous unit test for [operator presedence](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html)
 
 * make help window to show help even if caret is moven (auto-update from source disabling might be broken?)
+* good code is gray: in ```c("foo"=3)```
 
+
+* function expression inlining is broken
+```
+train_glm = function(trainData){   train(is_group_leader ~ ., data = trainData, trControl = trainCtrl, method = "glm")}
+
+list(
+pdModel = train_glm
+)
+```
 
 ## v1.2
 
@@ -118,6 +106,12 @@ log(1,2,3,4)
 
 * inspection: warn about usage of T and F
 * warn if `base::atttach` is used (and suggest to rather use `with`)
+
+* provide inspection/quickfix for incorrect NULL and NA tests
+```
+foo= NULL
+foo== NULL
+```
 
 * warn about assignment usage when boolean result is expected:
 ```r

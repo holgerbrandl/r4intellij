@@ -98,7 +98,7 @@ public class RSettingsConfigurable implements SearchableConfigurable.Parent, Con
         LibraryUtil.createLibrary(LibraryUtil.R_LIBRARY, Lists.newArrayList(), myProject);
 
 
-        RSkeletonGenerator.generateSkeletons(myProject);
+        RSkeletonGenerator.updateSkeletons(myProject);
 //        rSettings.setSourcesPath(sourcesPath);
         rSettings.setInterpreterPath(interpreterPath);
 

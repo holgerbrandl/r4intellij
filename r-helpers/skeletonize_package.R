@@ -3,28 +3,22 @@
 args <- commandArgs(TRUE)
 
 if (length(args) != 2) {
-    warning("Usage: skeletonize_package.R <skeleton_directoy> <package_name> ")
+    warning("Usage: skeletonize_package.R <package_name> <output_file>")
     quit(save = "no", status = 1, runLast = FALSE)
 }
 
 ## test invcation:
-# rm -rf  ~/Desktop/skeleton/clusterProfiler/ ~/Desktop/skeleton/clusterProfiler.r;
-# R -f /Users/brandl/projects/rplugin/r4intellij/r-helpers/skeletonize_package.R --args ~/Desktop/skeleton clusterProfiler
+# pName = "base"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
+# pName = "ggplot2"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
+# pName = "xlsx"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
+# pName = "dplyr"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
+# pName = "graphics"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
+# pName = "fields"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
+# pName = "R.utils"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 
-# args <- c("~/Desktop/skeleton", "base"); dir.create(args[1])
-# args <- c("~/Desktop/skeleton", "ggplot2"); dir.create(args[1])
-# args <- c("~/Desktop/skeleton", "dplyr"); dir.create(args[1])
 
-
-skelBaseDirectory = args[1]
-pName = args[2]
-#pName = "Rsamtools"
-#pName = "modeest"
-#pName = "config"
-#pName = "dplyr"
-#pName = "base"
-#pName = "ggplot2"
-
+pName = args[1]
+skeletonFile = args[2]
 
 searchPath <- search()
 
@@ -48,10 +42,10 @@ if (shouldLoadLibrary) {
 # http://stackoverflow.com/questions/9658518/list-exported-objects-from-r-package-without-attaching-it
 functions = getNamespaceExports(pName)
 
+# "filter" %in% functions
 
-dir.create(skelBaseDirectory)
+# dir.create(skelBaseDirectory)
 
-skeletonFile = file.path(skelBaseDirectory, paste0(pName, ".R"))
 print(paste("writing skeleton of ",pName, "into", skeletonFile))
 
 #' some symbols are defined as functions in base.R but our parser does not like it.
@@ -65,23 +59,66 @@ sink()
 
 # http://stackoverflow.com/questions/26174703/get-namespace-of-function
 detect_declaring_ns = function(symbol){
-    origin = getAnywhere(symbol)$where
-    last = origin[length(origin)]
-    unlist(strsplit(last, ":"))[2]
+    ## we need to distinguish reexported from masked symbols here (better solution?)
+    ## essentially there are 3 classes
+    # symbol="glimpse" ## true rexports
+    # symbol="filter"  ## masking stats-package methods
+    # symbol="mutate"  ## own ns-exports
+    # symbol="pairs.default"
+
+    resolveResult = getAnywhere(symbol)
+
+    ## remove masked symbols
+    # origin = resolveResult$where
+    # origin=resolveResult$where[resolveResult$dups]
+    # just keep namespaces and take the first one
+    origin = resolveResult$where
+    origin = origin[grepl("namespace:", origin)][1]
+    # last = origin[length(origin)]
+    unlist(strsplit(origin, ":"))[2]
 }
 
-get_text_of = function(obj){
-    tmpFileName <- tempfile(pattern = "tmp", tmpdir = tempdir(), fileext = "")
-    sink(tmpFileName)
-    # print(obj)
-    dput(obj)
+get_text_of_object = function(tmpFile, obj, use_dput){
+    sink(tmpFile)
+    if (use_dput) {
+        dput(obj)
+    }else {
+        # there is no print for certain methods like R.utils::symbol that's we we need to wrap it with tryCatch
+        # print(obj)
+        tryCatch(print(obj), error = function(e) "")
+    }
     sink()
 
-    fileObj <- file(tmpFileName)
+    ## read the result back into a character vector
+    fileObj <- file(tmpFile)
     lines <- readLines(fileObj)
     close(fileObj)
 
     lines
+}
+
+
+
+get_text_of = function(obj){
+    # obj = get("as.character")
+    # require(ggplot2); obj = get(".pt")
+    # require(ggplot2); obj = get("GeomBar")
+    # require(dplyr); obj = get("data_frame")
+    # require(lubridate); obj = get(".__C__Interval")
+
+    tmpFileName <- tempfile(pattern = "tmp", tmpdir = tempdir(), fileext = "")
+
+    lines = get_text_of_object(tmpFileName, obj, use_dput = FALSE)
+
+    ## use it if it's a function declaration
+    if (grepl('^(function|new)', lines[1])) {
+        return(lines)
+    }
+
+    ## and fall back to print if not
+    # http://stackoverflow.com/questions/31467732/does-r-have-function-startswith-or-endswith-like-python
+
+    raw_text = get_text_of_object(tmpFileName, obj, use_dput = TRUE)
 }
 
 # http://stackoverflow.com/questions/2261079/how-to-trim-leading-and-trailing-whitespace-in-r
@@ -106,7 +143,13 @@ for (symbol in functions) {
     # symbol = "geom_histogram"
     # symbol = "data_frame"
     # symbol = "count"
+    # symbol = "abs"
+    # symbol = "filter"
+    # symbol = "glimpse"
     # symbol = "%>%"
+    # symbol = "rat.diet"
+    # symbol = "pairs.default"
+    # symbol = "GenericSummary"
     # print(paste("processing symbol ", symbol))
 
     if (symbol %in% ignoreList)next
@@ -117,7 +160,6 @@ for (symbol in functions) {
     #     next
     # }
 
-    lines = get_text_of(obj)
 
     ## start writing the entry to the skeleton
     sink(skeletonFile, append = T)
@@ -136,6 +178,8 @@ for (symbol in functions) {
 
     # process non-function objects
     # TODO instead fo string we could/should write more typed placeholder structure here
+    lines = get_text_of(obj)
+
     if (substring(lines[[1]], 0, 1) == "<") {
         cat("\"", trim(lines[[1]]), "\"", sep = "")
         cat("\n\n")
@@ -148,6 +192,8 @@ for (symbol in functions) {
     # if (!inherits(errors, "try-error")) {
     for (line in lines) {
         line = gsub("<pointer: ([A-z0-9]*)>", "pointer(\"\\1\")", line)
+        # line = gsub("<S4 object ([A-z0-9]*)>", "(\"\\1\")", line)
+        line = gsub("<S4 object of class .*>", "S4_object()", line)
 
 
         # sub <- substring(line, 0, 10)
@@ -160,6 +206,10 @@ for (symbol in functions) {
         line = gsub("... = ...", "...", line, fixed = T)
         line = gsub("(... =", "(\"...\" =", line, fixed = T)
         line = gsub(" ... =", " \"...\" =", line, fixed = T)
+        line = gsub("<environment>", " \"<environment>\"", line, fixed = T)
+
+        if (grepl("^<environment", line))break
+        if (grepl("^<bytecode", line))break
 
         cat(line, append = TRUE)
         cat("\n", append = TRUE)
@@ -184,7 +234,11 @@ for (symbol in functions) {
 if(!(pName %in% c("base", "stats", "backports"))){
 dsets <- as.data.frame(data(package = pName)$result)
 
-    stopifnot(length(intersect(dsets$Item, functions)) == 0)
+    ## this fails for packages like 'fields' that export data as symbol and data
+    # stopifnot(length(intersect(dsets$Item, functions)) == 0)
+    ## .. thus we rather just remove such duplicates here
+    dsets = subset(dsets, ! (Item %in% functions))
+
 
     # remove columns with round brackets
 dsets  = subset(dsets, !(0:nrow(dsets) %in% grep("(", as.character(dsets$Item), fixed=TRUE))[-1])
@@ -248,7 +302,7 @@ cat(paste0(".skeleton_package_imports = \"", pckgImports, "\"\n\n"))
 cat("\n## Internal\n\n")
 
 ## import: just change in sync with com.r4intellij.interpreter.RSkeletonGenerator.SKELETONIZE_VERSION
-SKELETONIZE_VERSION = 2
+SKELETONIZE_VERSION = 4
 cat(paste0(".skeleton_version = ", SKELETONIZE_VERSION, "\n\n"))
 
 

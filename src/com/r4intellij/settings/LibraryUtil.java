@@ -24,7 +24,7 @@ public class LibraryUtil {
 
     public static final String R_LIBRARY = "R Library";
     public static final String R_SKELETONS = "R Skeletons";
-    public static final String USER_SKELETONS = "R User Skeletons";
+//    public static final String USER_SKELETONS = "R User Skeletons";
 
 
     public static void createLibrary(final String libraryName, @NotNull final java.util.List<String> paths, @NotNull final Project project) {

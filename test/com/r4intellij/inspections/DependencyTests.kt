@@ -1,7 +1,10 @@
 package com.r4intellij.inspections
 
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.r4intellij.RTestCase
+import com.r4intellij.psi.api.RCallExpression
+import junit.framework.TestCase
 import org.jetbrains.annotations.NotNull
 
 /**
@@ -46,6 +49,15 @@ class DependencyTests : RTestCase() {
         doExprTest("require(caret); ggplot(iris)")
     }
 
+    fun testResolveCorrectFilter() {
+        addPckgsToSkeletonLibrary("dplyr");
+        doExprTest("require(dplyr); filter(iris)")
+
+        // make sure that this is resolved to dplyr::filter and not stats::filter
+        val findChildrenOfType = PsiTreeUtil.findChildrenOfType(myFixture.file, RCallExpression::class.java).last()
+        val resolve = findChildrenOfType.expression.reference!!.resolve()
+        TestCase.assertTrue(resolve!!.containingFile.name.startsWith("dplyr"))
+    }
 
     fun testForwardImportAfterUsage() {
         createSkeletonLibrary("dplyr", "datasets")

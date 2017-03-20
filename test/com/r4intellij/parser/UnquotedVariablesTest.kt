@@ -40,7 +40,16 @@ class UnquotedVariablesTest : AbstractResolverTest() {
     }
 
 
-    fun testWithScope() {
+    fun testSimpleWithScopr() {
+        createSkeletonLibrary("base", "datasets")
+
+        checkExpression("""
+           with(iris, Species)
+        """
+        )
+    }
+
+    fun testWithExpressionScope() {
         createSkeletonLibrary("base", "datasets")
 
         checkExpression("""
@@ -70,11 +79,23 @@ class UnquotedVariablesTest : AbstractResolverTest() {
     }
 
     fun testCascadedCallAsNamedArg() {
-        // todo come up with an example. Something like gather(iris, key=my_key_transform(Species)) but more real
+        createSkeletonLibrary("base", "datasets", "dplyr")
 
-        // not if if there is any use-case to call a function with an unquoted variable name and use the result
-        // as a named parameter
+        checkExpression("""
+            require(dplyr)
+
+            ## without pipe
+            top_n(iris, 10, wt=abs(contribution))
+
+            ## with pipe
+            #iris %>% top_n(10, wt=abs(contribution))
+
+            # # or same with base::with
+            # with(iris, expr=paste0(as.character(Item), " <- foo"))
+        """
+        )
     }
+
 
     fun testIgnoreAllArgs() {
         createSkeletonLibrary("datasets", "ggplot2")

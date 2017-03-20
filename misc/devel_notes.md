@@ -321,9 +321,6 @@ skeletons are saved under  (see module deps --> libaries)
 Among other used to get paramter list of method see
 com.r4intellij.inspections.typing.RTypeChecker.getNamedArguments
 
-Seems built by manual invocation in
-`com.r4intellij.actions.RSkeletonsGeneratorAction.generateSkeletonsForPackage` which itself calls
-`updateSkeletons`
 
 tricky packages for skeletonizer
 * config

@@ -199,7 +199,7 @@ public class UnresolvedReferenceInspection extends RInspection {
         // find parameter of given `element`
         RParameter rParameter = matchResult.matchedParams.entrySet().stream().filter(pair -> {
 //            pair.getKey()==element
-            return PsiTreeUtil.isAncestor(pair.getKey(), element, true);
+            return PsiTreeUtil.isAncestor(pair.getKey(), element, false);
 //            return commonContext != callExpression;
         }).map(Map.Entry::getValue).findFirst().orElse(null);
 

@@ -1,5 +1,6 @@
 package com.r4intellij.psi.references;
 
+import com.google.common.collect.Iterables;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
 import com.intellij.openapi.project.Project;
@@ -68,12 +69,13 @@ public class RResolver {
                 .collect(Collectors.toList());
 
 
-        // resolve to match import order in file
+        // resort to match import order in file
         imported.sort(Comparator.comparingInt(o -> imports.indexOf(getSkeletonPckgName(o))));
 
         if (!imported.isEmpty()) {
             // because of R environment rules we return the resolve from the last matching import before the element
-            return imported.get(0);
+//            return imported.get(0);
+            return Iterables.getLast(imported);
 
         } else if (!indexResults.isEmpty()) {
             // no overlap --> highlight as error and suggest to import one!

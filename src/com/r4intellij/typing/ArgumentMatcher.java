@@ -73,6 +73,7 @@ public class ArgumentMatcher {
             functionType = new RFunctionType(function);
 
         } else {
+            //NOTE This will always return RUnknownType.INSTANCE as long as the type system is diabled
             RType type = RTypeProvider.getType(callExpression.getExpression());
 
             if (!RFunctionType.class.isInstance(type)) {
@@ -161,7 +162,7 @@ public class ArgumentMatcher {
         int suppliedSize = suppliedArguments.size();
         boolean wasTripleDot = false;
 
-        if (isPipeInjected) {
+        if (isPipeInjected && formalArguments.size() > 1) { // second test is needed since they may be just one argument
             formalArguments = formalArguments.subList(1, formalArguments.size());
         }
 

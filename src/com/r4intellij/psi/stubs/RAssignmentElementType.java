@@ -36,6 +36,13 @@ public class RAssignmentElementType extends RStubElementType<RAssignmentStub, RA
     public RAssignmentStub createStub(@NotNull RAssignmentStatement psi, StubElement parentStub) {
         final String name = psi.getName();
         final RPsiElement value = psi.getAssignedValue();
+
+//        assert value != null;
+
+//        if(value == null  || value.getParent()==null || value.getParent().getParent() == null){
+//            System.err.println("invalid stub element:" + psi);
+//        }
+
         boolean isTopLevelAssign = value.getParent() != null && value.getParent().getParent() != null && value.getParent().getParent() instanceof RFile;
 
         return new RAssignmentStubImpl(name, parentStub, this, value instanceof RFunctionExpression, isTopLevelAssign);

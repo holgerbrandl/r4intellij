@@ -1,10 +1,10 @@
-
-
 package com.r4intellij.skeletons
 
 import com.r4intellij.RTestCase
 import com.r4intellij.interpreter.RSkeletonGenerator.SKELETONIZE_PACKAGE
+import com.r4intellij.interpreter.RSkeletonGenerator.isValidSkeleton
 import com.r4intellij.packages.RHelperUtil
+import org.intellij.lang.annotations.Language
 import java.io.File
 
 /**
@@ -25,44 +25,54 @@ class SkeletonTest : RTestCase() {
     //    }
 
     fun testParsability() {
-        val testPackages = listOf("base", "ggplot2", "dplyr", "stats")
+        val testPackages = listOf("base", // must work
+                "stats", // must work
+                "dplyr", // must work
+                "ggplot2", // correct serialization of objects like GeomBar
+                "lubridate", // issues with embedded <s4 objects?
+                "R.utils", // issues with GenericSummary
+                "graphics"
+        )
 
         File(TEST_DIRECTORY).mkdir()
 
         val buildSkeleton = { pckg: String ->
-            RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, TEST_DIRECTORY, pckg)
+            RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, pckg, File(TEST_DIRECTORY, pckg + ".R").absolutePath)
         }
 
         assertFalse(testPackages.map(buildSkeleton).any { runResult -> runResult!!.exitCode != 0 })
 
-
         testPackages.forEach { pckg ->
-            myFixture.configureByFile(File(TEST_DIRECTORY, pckg + ".R").absolutePath)
+            val skeletonFile = File(TEST_DIRECTORY, pckg + ".R")
+
+            assertTrue(isValidSkeleton(skeletonFile))
+
+            myFixture.configureByFile(skeletonFile.absolutePath)
             myFixture.checkHighlighting() // should be all green
         }
 
         // test a few assumptions about what the skeletons should incldue
 
         // numeric package constants
-        assertTrue(File(TEST_DIRECTORY, "ggplot2.R").readLines().any {
-            line ->
-            line == ".pt <- 2.84527559055118"
-        })
+        assertContainsLine("ggplot2", """.pt <- 2.84527559055118""")
 
         // complex objects
-        assertTrue(File(TEST_DIRECTORY, "ggplot2.R").readLines().any {
-            line ->
-            line == """GeomBar <- "<environment>""""
-        })
+        assertContainsLine("ggplot2", """GeomBar <- "<environment>"""")
 
         // re-exported symbols
-        assertTrue(File(TEST_DIRECTORY, "dplyr.R").readLines().any { line ->
-            line.contains("data_frame <- tibble::data_frame")
-        })
+        assertContainsLine("dplyr", """data_frame <- tibble::data_frame""")
 
         // bundled data sets
-        assertTrue(File(TEST_DIRECTORY, "dplyr.R").readLines().any { line ->
-            line.contains("""nasa <- dplyr::nasa""")
+        assertContainsLine("dplyr", """nasa <- dplyr::nasa""")
+
+        // base tests
+        //        assertContainsLine("base", """nasa <- dplyr::nasa""")
+
+    }
+
+    private fun assertContainsLine(packageName: String, @Language("R") line: String) {
+        assertTrue(File(TEST_DIRECTORY, "$packageName.R").readLines().any { line ->
+            line.contains(line)
         })
     }
 }

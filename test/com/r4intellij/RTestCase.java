@@ -114,7 +114,7 @@ public abstract class RTestCase extends UsefulTestCase {
 
         if (libraryByName != null) {
             Stream<String> existingLibFiles = Arrays.stream(libraryByName.getFiles(OrderRootType.CLASSES)).
-                    map(f -> f.getName().replaceFirst("[.]r", ""));
+                    map(f -> f.getName().replaceFirst("[.][rR]$", ""));
             packageNames = Stream.concat(existingLibFiles, Arrays.stream(packageNames)).toArray(String[]::new);
 
         }
@@ -144,8 +144,13 @@ public abstract class RTestCase extends UsefulTestCase {
     @NotNull
     // todo make generic or add test-skeletons to test-data for better portability
     private static File getSkeletonPath(final String pckgName) {
-        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/r_skeletons/1842261700/" + pckgName + ".r");
+        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/r_skeletons/1842261700/", pckgName + ".R");
+//        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/system/r_skeletons/1842261700", pckgName + ".R");
+//        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/test/system/r_skeletons/1842261700/", pckgName + ".R");
     }
+
+    // cp  /Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/system/r_skeletons/1842261700/*.R /Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/test/system/r_skeletons/1842261700/
+    // cp  /Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/system/r_skeletons/1842261700/*.R /Users/brandl/Library/Caches/IntelliJIdea2016.3/r_skeletons/1842261700/
 
 }
 

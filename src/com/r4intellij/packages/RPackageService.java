@@ -64,9 +64,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
 
     public synchronized static RPackageService getInstance() {
-        RPackageService service = ServiceManager.getService(RPackageService.class);
-        service.loadPcgIndex();
-        return service;
+        return ServiceManager.getService(RPackageService.class);
     }
 
 
@@ -90,8 +88,8 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    // or use startupactivity https://www.cqse.eu/en/blog/intellij-plugin-tutorial/
-    private void loadPcgIndex() {
+    // or use startu pactivity https://www.cqse.eu/en/blog/intellij-plugin-tutorial/
+    public void loadPckgIndex() {
         if (allPackages != null) {
             return;
         }
@@ -159,10 +157,15 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     public boolean refreshIndex(String... packageNames) {
         Set<RPackage> installedPackages = LocalRUtil.getInstalledPackages();
 
+        final boolean[] hasChanged = {false};
+
         // remove packages from index that are no longer present
         if (packageNames.length == 0) {
             Sets.SetView<RPackage> noLongerInstalled = Sets.difference(allPackages, installedPackages);
-            allPackages.removeAll(noLongerInstalled);
+            if (!noLongerInstalled.isEmpty()) {
+                allPackages.removeAll(noLongerInstalled);
+                hasChanged[0] = true;
+            }
         }
 
         // todo refresh most commons packages first for better ux
@@ -176,7 +179,6 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
         ExecutorService executorService = Executors.newFixedThreadPool(5);
 
-        final boolean[] hasChanged = {false};
 
         // todo use ProgressManager.getInstance().run(new Task.Backgroundable ...
 

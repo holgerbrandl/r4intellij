@@ -28,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,45 +52,27 @@ public class RSkeletonGenerator {
 
 
     // entry point for configurable interface and action
-    public static void generateSkeletons(@NotNull final Project project) {
+    public static void updateSkeletons(@NotNull final Project project) {
 
         final Application application = ApplicationManager.getApplication();
 
-        application.runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                // add all paths to library
-                final String skeletonLibraryPath = RSkeletonGenerator.getSkeletonsPath();
+        // first (if not yet present create a library within the project that will contain the package skeletons
+        application.runWriteAction(() -> {
+            // add all paths to library
+            final String skeletonLibraryPath = RSkeletonGenerator.getSkeletonsPath();
 
-                File skeletonLibDir = new File(skeletonLibraryPath);
-                if (!skeletonLibDir.exists()) {
-                    if (!skeletonLibDir.mkdir()) {
-                        LOG.warn("Failed to create skeleton dir");
-                    }
+            File skeletonLibDir = new File(skeletonLibraryPath);
+            if (!skeletonLibDir.exists()) {
+                if (!skeletonLibDir.mkdir()) {
+                    LOG.warn("Failed to create skeleton dir");
                 }
-
-//                        String skeletons = RHelpersLocator.getHelperPath("r-skeletons");
-//                        File pregeneratedSkeletonsDir = new File(skeletons);
-//                        if (!pregeneratedSkeletonsDir.exists()) {
-//                            LOG.info("Pre-generated skeletons not found");
-//                        } else {
-//                            try {
-//                                FileUtil.copyDirContent(pregeneratedSkeletonsDir, skeletonLibDir);
-//                            } catch (IOException e) {
-//                                LOG.error(e);
-//                            }
-//                        }
-                createLibrary(R_SKELETONS, Collections.singletonList(skeletonLibraryPath), project);
-
-                //TODO still needed?
-//                        final String userSkeletonsPath = RHelpersLocator.getHelperPath("r-user-skeletons");
-//                        createLibrary(RSettingsConfigurable.USER_SKELETONS, userSkeletonsPath, project);
             }
+
+            createLibrary(R_SKELETONS, Collections.singletonList(skeletonLibraryPath), project);
         });
 
         // now do the actual work
         generateSmartSkeletons(project);
-        ;
     }
 
 
@@ -114,76 +98,10 @@ public class RSkeletonGenerator {
                             LOG.info("Failed to locate skeletons directory");
                             return;
                         }
-
-//                        int processed = 0;
-//                        for (final VirtualFile packageDir : skeletonDir.getChildren()) {
-//
-//                            if (!packageDir.isDirectory()) {
-//                                continue;
-//                            }
-//
-//                            ApplicationManager.getApplication().invokeLater(new Runnable() {
-////                            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-//                                        @Override
-//
-//                                        public void run() {
-//                                            indicator.setFraction((double) processed / skeletonDir.getChildren().length);
-//                                            indicator.setText("Indexing " + packageDir.getName());
-//
-//                                            generateSkeletonsForPackage(packageDir, project);
-//                                            try {
-//                                                packageDir.delete(this);
-//                                            } catch (IOException e) {
-//                                                LOG.error("Failed to delete " + packageDir.getPath());
-//                                            }
-//                                        }
-//                                    });
-//                                }
-//                            });
-//                        }
                     }
                 });
             }
         });
-    }
-
-
-    private static void generateSkeletonsForPackage(@NotNull final VirtualFile packageDir, @NotNull final Project project) {
-        String packageName = packageDir.getName();
-        //TODO: DELETE THIS CHECK!!! it is here only for speeding checks while developing
-//        if (!packageName.equals("base") && !packageName.equals("codetools")) {
-//            return;
-//        }
-
-        VirtualFile skeletonsDir = packageDir.getParent();
-        try {
-            VirtualFile packageFile = skeletonsDir.findOrCreateChildData(project, packageName + ".r");
-            final Document packageDocument = FileDocumentManager.getInstance().getDocument(packageFile);
-
-            assert packageDocument != null;
-            DocumentUtil.writeInRunUndoTransparentAction(new Runnable() {
-                @Override
-                public void run() {
-                    packageDocument.deleteString(0, packageDocument.getTextLength());
-                }
-            });
-
-            for (final VirtualFile file : packageDir.getChildren()) {
-                LOG.info("start processing " + file.getPath());
-                PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                assert psiFile != null;
-
-                // todo reenable typing
-                psiFile.acceptChildren(new SimpleFunctionVisitor(packageDocument, file, project, packageName));
-//                psiFile.acceptChildren(new TypedFunctionVisitor(packageDocument, file, project, packageName));
-            }
-
-        } catch (IOException e) {
-            LOG.error(e);
-        }
     }
 
 
@@ -212,6 +130,7 @@ public class RSkeletonGenerator {
         return 0;
     }
 
+
     private static void updateSkeletons(@Nullable ProgressIndicator indicator) {
         final String interpreter = RSettings.getInstance().getInterpreterPath();
 
@@ -226,8 +145,12 @@ public class RSkeletonGenerator {
         packages = Ordering.natural().reverse().onResultOf(RSkeletonGenerator::getIndexPriority)
                 .sortedCopy(packages).stream().collect(Collectors.toList());
 
+
+        // additional threading here kills the computer
+        ExecutorService es = Executors.newFixedThreadPool(4);
+
+
         for (RPackage rPackage : packages) {
-            LOG.info("building skeleton for " + rPackage.getName());
 
             if (indicator != null) {
                 indicator.setFraction((double) processed++ / (2 * packages.size()));
@@ -242,42 +165,58 @@ public class RSkeletonGenerator {
             }
 
             // skip if skeleton exists already and it is not outdated
-            File skeletonFile = new File(skeletonsDir, rPackage.getName() + ".r");
-            if (skeletonFile.exists() && isComplete(skeletonFile) && isCurrentVersion(skeletonFile)) {
+            String pckgName = rPackage.getName();
+            File skeletonFile = new File(skeletonsDir, pckgName + ".R");
+            if (isValidSkeleton(skeletonFile)) {
                 continue;
             }
 
-            // additional threading here kills the computer
-            ExecutorService es = Executors.newFixedThreadPool(6);
 
-//            // skip existing skeleton dir exists already
-//            File packageSkelDir = new File(skeletonsDir, rPackage.getName());
-//            //noinspection ConstantConditions
-//            if (packageSkelDir.exists() && packageSkelDir.listFiles().length > 0) {
-//                continue;
-//            }
             es.submit(() -> {
+                try {
 
 //            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
 //
 //                @Override
 //                public void run() {
-                RRunResult output = RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, skeletonsPath, rPackage.getName());
-                if (output != null && output.getExitCode() != 0) {
-                    LOG.error("Failed to generate skeleton for '" + rPackage.getName() + "'. Exit code: " + output.getExitCode());
-                    LOG.error(output.getStdErr());
+
+                    LOG.info("building skeleton for " + pckgName);
+
+
+                    // build the skeletons in tmp and move them once done so avoid incomplete file index failures
+                    File tempSkeleton = Files.createTempFile("r4j_skel_" + pckgName + "_", ".R").toFile();
+
+                    RRunResult output = RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, pckgName, tempSkeleton.getAbsolutePath());
+
+                    if (output != null && output.getExitCode() != 0) {
+                        LOG.error("Failed to generate skeleton for '" + pckgName + "'. Exit code: " + output.getExitCode());
+                        LOG.error(output.getStdErr());
+                    } else if (isValidSkeleton(tempSkeleton)) {
+                        Files.move(tempSkeleton.toPath(), skeletonFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    } else {
+                        LOG.error("Failed to generate skeleton for '" + pckgName + "'");
+                    }
+
+                } catch (IOException e) {
+                    LOG.error("Failed to generate skeleton for '" + pckgName + "' due to io issue", e);
+
                 }
-
             });
-
-
-            try {
-                es.shutdown();
-                es.awaitTermination(1, TimeUnit.HOURS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
+
+        // wait until all skeletons are built
+        try {
+            es.shutdown();
+            es.awaitTermination(1, TimeUnit.HOURS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public static boolean isValidSkeleton(File skeletonFile) {
+        return skeletonFile.exists() && isComplete(skeletonFile) && isCurrentVersion(skeletonFile);
     }
 
 
@@ -302,7 +241,7 @@ public class RSkeletonGenerator {
 
 
     // note: just change in sync with ./r-helpers/skeletonize_package.R
-    public static final int SKELETONIZE_VERSION = 2;
+    public static final int SKELETONIZE_VERSION = 4;
 
 
     private static boolean isCurrentVersion(File skeletonFile) {
@@ -336,4 +275,40 @@ public class RSkeletonGenerator {
         return SKELETONIZE_VERSION == fileVersion;
     }
 
+
+    // note keep since we want to bring back the type system some day
+    private static void generateTyopedSkeletonForPackage(@NotNull final VirtualFile packageDir, @NotNull final Project project) {
+        String packageName = packageDir.getName();
+        //TODO: DELETE THIS CHECK!!! it is here only for speeding checks while developing
+//        if (!packageName.equals("base") && !packageName.equals("codetools")) {
+//            return;
+//        }
+
+        VirtualFile skeletonsDir = packageDir.getParent();
+        try {
+            VirtualFile packageFile = skeletonsDir.findOrCreateChildData(project, packageName + ".r");
+            final Document packageDocument = FileDocumentManager.getInstance().getDocument(packageFile);
+
+            assert packageDocument != null;
+            DocumentUtil.writeInRunUndoTransparentAction(new Runnable() {
+                @Override
+                public void run() {
+                    packageDocument.deleteString(0, packageDocument.getTextLength());
+                }
+            });
+
+            for (final VirtualFile file : packageDir.getChildren()) {
+                LOG.info("start processing " + file.getPath());
+                PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                assert psiFile != null;
+
+                // todo reenable typing
+                psiFile.acceptChildren(new SimpleFunctionVisitor(packageDocument, file, project, packageName));
+//                psiFile.acceptChildren(new TypedFunctionVisitor(packageDocument, file, project, packageName));
+            }
+
+        } catch (IOException e) {
+            LOG.error(e);
+        }
+    }
 }

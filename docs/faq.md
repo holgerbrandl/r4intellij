@@ -21,3 +21,8 @@ Submit a ticket to our tracker. The indexing is known to fail occassionally, whi
 
 ## Why doesn't R4Intellij provide R-Session aware completion?
 Because all it does is static code analysis. We don't plan any kind of R console for now. But feel welcome to join our project and get started with it.
+
+
+## Why do I get an error when the plugin is indexing the 'xlsx' package?
+
+Make sure that the package is [installed corrected](http://stackoverflow.com/questions/34971966/how-does-one-configure-rjava-on-osx-to-select-the-right-jvm-jinit-failing).
