@@ -73,6 +73,7 @@ public class RCodeInsightSettings implements PersistentStateComponent<RCodeInsig
                 "dplyr::count[...]",
                 "dplyr::vars[...]",
                 "dplyr::group_by[...]",
+                "dplyr::distinct[...]",
 
                 "tidyr::gather[key value ...]",
                 "tidyr::spread[key value]", // specific names denote args as in method signature

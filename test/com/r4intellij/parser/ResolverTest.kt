@@ -107,8 +107,20 @@ class ResolverTest : AbstractResolverTest() {
         val matches = SyntaxTraverser.psiTraverser(myFixture.file).filter(dotMatcher::accepts)
     }
 
-    // todo v1.2 reenable
-    fun _testDotUsageInPipe() {
+
+    fun _testSimpleDotUsageInPipe() {
+        // todo v1.2
+        createSkeletonLibrary("datasets", "magrittr")
+
+        checkExpression("""
+        require(magrittr)
+        foo" %>% paste0(., ".gephi.txt")
+        """)
+    }
+
+    fun _testComplexDotUsageInPipe() {
+        // todo v1.2
+
         createSkeletonLibrary("datasets", "magrittr", "dplyr")
         checkExpression("""
         require(dplyr)
@@ -116,9 +128,24 @@ class ResolverTest : AbstractResolverTest() {
         iris %>% transform(., Y = exp(predict(irisModel, newdata=.)))
         """)
 
+        // other example
+
+
         // ensure that both dots are resolved correctly
     }
 
+    fun _testSubPipe() {
+        // todo v1.1 affects pipe-support and unquoted context detection
+        createSkeletonLibrary("datasets", "magrittr", "dplyr")
+
+        checkExpression("""
+        require(dplyr)
+        require(stringr)
+
+        iris %>% mutate(contig = str_split_fixed(contig, "[x]", 2) %>% paste("_suffix")) %>%
+        """)
+
+    }
 
     // todo v1.2 reenable
     fun _testResolveToDiamondOpReassignment() {
