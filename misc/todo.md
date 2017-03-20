@@ -3,27 +3,6 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
-* fix parser issues
-```r
-library(magrittr)
-library(dplyr)
-
-## named cascaded formal arg
-##note this is because incorrect skeletonization of base: abs <- .Primitive("abs")
-top_n(iris, 10, wt=abs(contribution))
-# or same with as.character
-cat(with(iris, paste0(as.character(Item), " <- foo")))
-
-
-## missing formal named arg
-x <- c("abc", "def")
-require(stringr)
-str_replace_all(x, c("[ad]" = "!", "[cf]" = "?"))
-## or kable halt
-iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
-?missing
-```
-
 
 * send expression to console does not work from injected chunks
 * scratch inspections take forever because of incorrect scope
@@ -57,7 +36,7 @@ iris %>% knitr::kable(caption="Positive additions for tricky authors}" )
 * more rigorous unit test for [operator presedence](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html)
 
 * make help window to show help even if caret is moven (auto-update from source disabling might be broken?)
-* good code is gray: in ```c("foo"=3)```
+* good code is gray: in ```c("foo"=3)``` see `com.r4intellij.parser.UnquotedVariablesTest._testQuotedNameInVector`
 
 
 * function expression inlining is broken

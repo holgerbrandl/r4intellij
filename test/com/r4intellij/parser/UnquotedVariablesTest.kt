@@ -127,6 +127,12 @@ class UnquotedVariablesTest : AbstractResolverTest() {
         )
     }
 
+    // this was not working in earlier versions of the inspection. Avoid regressions with this test
+    // todo v1.2 reenable and fix
+    fun _testQuotedNameInVector() {
+        checkExpression("""c("foo"=3)""")
+    }
+
 
     // todo test whitelisting (warning -> whitelist -> no warning) --> reset for future run
 

@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ArgumentMatcher {
 
@@ -211,7 +212,15 @@ public class ArgumentMatcher {
 
         if (!unmatched.isEmpty()) {
             unmatched.removeAll(functionType.getOptionalParams());
+
+            // final resort: remove unmatched ones that are occur as "missing(varName)" in function body
+            unmatched = unmatched.stream().filter(unmArg -> {
+                String funBody = functionType.getFunctionExpression().getText();
+                return !funBody.contains("missing(" + unmArg.getName() + ")");
+            }).collect(Collectors.toList());
+
             if (!unmatched.isEmpty()) {
+
                 throw new MatchingException(generateMissingArgErrorMessage(unmatched, 0));
             }
         }

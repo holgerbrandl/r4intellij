@@ -17,7 +17,6 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
 
 
     public void testNoWarnings() {
-
         doTest("NoWarnings.R");
     }
 
@@ -89,7 +88,20 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
     }
 
 
-    // todo reenable for v1.1
+    /**
+     * Ignore araguments that are checked as `missing(varName)` in function body
+     */
+    public void testIgnoreMissingCheckedInBody() {
+        createSkeletonLibrary("datasets", "stringr");
+
+        doExprTest("require(stringr); str_replace_all(c('abc', 'def'), c('[ad]' = '!', '[cf]' = '?'))");
+
+        createSkeletonLibrary("datasets", "knitr", "magrittr");
+        doExprTest("require(magrittr); iris %>% knitr::kable(caption=\"Positive additions for tricky authors}\" )");
+    }
+
+
+    // todo v1.1 reenable
     public void _testDontCheckArgsIfFundefIsMissing() {
         createSkeletonLibrary("datasets");
         myFixture.enableInspections(getInspection(), MissingPackageInspection.class, UnresolvedReferenceInspection.class);
@@ -100,8 +112,7 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
 
 
     private static String warnMissingImport(String symbol, List<String> foundIn) {
-        String importMsg = missingImportMsg(symbol, foundIn);
-        return "<warning descr=\"" + importMsg + "\">symbol</warning>";
+        return "<warning descr=\"" + missingImportMsg(symbol, foundIn) + "\">symbol</warning>";
     }
 
 
