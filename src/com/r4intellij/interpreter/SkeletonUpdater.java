@@ -24,12 +24,11 @@ public class SkeletonUpdater implements StartupActivity {
         // This code is executed after the project was opened.
 
         // this will go away once we use the skeletons for all lookups
-        ServiceManager.getService(RPackageService.class).loadPckgIndex();
+        ServiceManager.getService(RPackageService.class).loadSkeletonCache();
 
         // refresh the skeeltons
         System.out.println("Refreshing R skeletons...");
 
         RSkeletonGenerator.updateSkeletons(project);
     }
-
 }

@@ -13,7 +13,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.r4intellij.console.RConsoleRunner;
-import com.r4intellij.packages.RPackageService;
+import com.r4intellij.interpreter.RSkeletonGenerator;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -80,7 +80,7 @@ public class InstallLibraryFix implements LocalQuickFix {
                         runner.getConsoleExecuteActionHandler().processLine("quit(\"no\")");
 
                         // update package index
-                        RPackageService.getInstance().refreshIndexInThread();
+                        RSkeletonGenerator.updateSkeletons(project);
                     }
                 }
 

@@ -11,7 +11,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.PackageManagementService;
 import com.intellij.webcore.packaging.RepoPackage;
-import com.r4intellij.packages.LocalRUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +25,8 @@ import java.util.Map;
  * @author avesloguzova
  */
 public class RPackageManagementService extends PackageManagementService {
+
+    public static final String ARGUMENT_DELIMETER = " ";
 
     @NotNull
     private final Project myProject;
@@ -48,6 +49,17 @@ public class RPackageManagementService extends PackageManagementService {
             }
         }
         return null;
+    }
+
+
+    public static void setRepositories(@NotNull final List<String> defaultRepositories,
+                                       @NotNull final List<String> userRepositories) {
+        RPackageService service = RPackageService.getInstance();
+
+        service.enabledRepositories.clear();
+        service.enabledRepositories.addAll(defaultRepositories);
+        service.userRepositories.clear();
+        service.userRepositories.addAll(userRepositories);
     }
 
 
@@ -96,7 +108,7 @@ public class RPackageManagementService extends PackageManagementService {
                 userRepositories.add(repository.getUrl());
             }
         }
-        RPackageService.setRepositories(defaultRepositories, userRepositories);
+        setRepositories(defaultRepositories, userRepositories);
     }
 
 
@@ -114,7 +126,7 @@ public class RPackageManagementService extends PackageManagementService {
     private static List<RepoPackage> versionMapToPackageList(@NotNull final Map<String, String> packageToVersionMap) {
         final List<RepoPackage> packages = new ArrayList<RepoPackage>();
         for (Map.Entry<String, String> entry : packageToVersionMap.entrySet()) {
-            final String[] splitted = entry.getValue().split(LocalRUtil.ARGUMENT_DELIMETER);
+            final String[] splitted = entry.getValue().split(ARGUMENT_DELIMETER);
             // todo why this array fix
             packages.add(new RepoPackage(entry.getKey(), splitted.length > 2 ? splitted[1] : "", splitted[0]));
         }

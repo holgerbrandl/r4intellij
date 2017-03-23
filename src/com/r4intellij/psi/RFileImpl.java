@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.r4intellij.editor.RCompletionContributor.PACKAGE_IMPORT_METHODS;
-import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
+import static com.r4intellij.interpreter.RSkeletonGenerator.DEFAULT_PACKAGES;
 
 public class RFileImpl extends PsiFileBase implements RFile {
 

@@ -1,18 +1,16 @@
 package com.r4intellij.interpreter;
 
 import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
-import com.intellij.openapi.progress.util.ReadTask;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -21,13 +19,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.DocumentUtil;
-import com.r4intellij.documentation.RDocumentationProvider;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -40,7 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
+import static com.r4intellij.packages.PackageServiceUtilKt.getInstalledPackageVersions;
 import static com.r4intellij.packages.RHelperUtil.PluginResourceFile;
 import static com.r4intellij.packages.RHelperUtil.RRunResult;
 import static com.r4intellij.settings.LibraryUtil.R_SKELETONS;
@@ -48,6 +44,8 @@ import static com.r4intellij.settings.LibraryUtil.createLibrary;
 
 
 public class RSkeletonGenerator {
+    public static final Set<String> DEFAULT_PACKAGES = Sets.newHashSet("stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base");
+
     protected static final Logger LOG = Logger.getInstance("#" + RSkeletonGenerator.class.getName());
 
     public static final PluginResourceFile SKELETONIZE_PACKAGE = new PluginResourceFile("skeletonize_package.R");
@@ -84,66 +82,28 @@ public class RSkeletonGenerator {
         // http://stackoverflow.com/questions/18725340/create-a-background-task-in-intellij-plugin
 
         // http://www.jetbrains.org/intellij/sdk/docs/basics/architectural_overview/general_threading_rules.html
-        ReadTask readTask = new ReadTask() {
-            @Override
-            public void onCanceled(@NotNull ProgressIndicator progressIndicator) {
-
-            }
-
-
-            @Override
-            public Continuation runBackgroundProcess(@NotNull ProgressIndicator progressIndicator) throws ProcessCanceledException {
-                return super.runBackgroundProcess(progressIndicator);
-            }
-        };
-
-        ProgressIndicatorUtils.scheduleWithWriteActionPriority(readTask);
-
-//        DumbService.getInstance(project).smartInvokeLater(readTask);
-
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Fancy title") {
-            public void run(@NotNull ProgressIndicator progressIndicator) {
-
-                // start your process
-
-                // Set the progress bar percentage and text
-                progressIndicator.setFraction(0.10);
-                progressIndicator.setText("90% to finish");
-
-                RDocumentationProvider.sleep(2000);
-                // 50% done
-                progressIndicator.setFraction(0.50);
-                progressIndicator.setText("50% to finish");
-                RDocumentationProvider.sleep(2000);
-
-
-                // Finished
-                progressIndicator.setFraction(1.0);
-                progressIndicator.setText("finished");
-
-            }
-        });
-
-
 
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Skeletons", false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-                ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                    RSkeletonGenerator.updateSkeletons(indicator);
+//                ApplicationManager.getApplication().executeOnPooledThread(() -> {
+                List<String> updatedPackages = RSkeletonGenerator.updateSkeletons(indicator);
 
-                    // TBD seems to cause thread exeception. Needed?
+                // trigger index cache refresh
+                RPackageService.getInstance().refreshIndexCache(project, updatedPackages.toArray(new String[0]));
+
+                // TBD seems to cause thread exeception. Needed?
 //                        PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-                    String path = RSkeletonGenerator.getSkeletonsPath();
+                String path = RSkeletonGenerator.getSkeletonsPath();
 
-                    VirtualFile skeletonDir = VfsUtil.findFileByIoFile(new File(path), true);
+                VirtualFile skeletonDir = VfsUtil.findFileByIoFile(new File(path), true);
 
-                    if (skeletonDir == null) {
-                        LOG.info("Failed to locate skeletons directory");
-                        return;
-                    }
-                });
+                if (skeletonDir == null) {
+                    LOG.info("Failed to locate skeletons directory");
+                    return;
+                }
+//                });
             }
         });
     }
@@ -175,31 +135,60 @@ public class RSkeletonGenerator {
     }
 
 
-    private static void updateSkeletons(@Nullable ProgressIndicator indicator) {
+//        ApplicationManager.getApplication().invokeLater(() -> refreshIndexCache());
+
+
+    @NotNull
+    private static List<String> updateSkeletons(@NotNull ProgressIndicator indicator) {
         final String interpreter = RSettings.getInstance().getInterpreterPath();
 
-        if (StringUtil.isEmptyOrSpaces(interpreter)) return;
+        if (StringUtil.isEmptyOrSpaces(interpreter)) return new ArrayList<>();
 
 
         int processed = 0;
 
-        Collection<RPackage> packages = RPackageService.getInstance().getPackages();
+        Collection<RPackage> packageCache = RPackageService.getInstance().getPackages();
+
+        Map<String, String> packageVersions = getInstalledPackageVersions();
+
+        // remove skeletons of no longer installed packageCache
+        List<RPackage> noLongerInstalled = packageCache
+                .stream()
+                .filter(rpckg -> !packageVersions.containsKey(rpckg.getName()))
+                .collect(Collectors.toList());
+
+
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            noLongerInstalled.forEach(rmPckg -> {
+                        String skeletonFile = RSkeletonGenerator.getSkeletonsPath() + File.separator + rmPckg.getName() + ".R";
+                        new File(skeletonFile).delete();
+                    }
+            );
+        });
+
+        packageCache.removeAll(noLongerInstalled);
 
         // resort them so that the most popular ones are indexed first
-        packages = Ordering.natural().reverse().onResultOf(RSkeletonGenerator::getIndexPriority)
-                .sortedCopy(packages).stream().collect(Collectors.toList());
+        packageCache = Ordering.natural().reverse().onResultOf(RSkeletonGenerator::getIndexPriority)
+                .sortedCopy(packageCache);
 
 
         // additional threading here kills the computer
         ExecutorService es = Executors.newFixedThreadPool(4);
 
+        List<String> updated = new ArrayList<>();
 
-        for (RPackage rPackage : packages) {
+        for (RPackage rPackage : packageCache) {
 
-            if (indicator != null) {
-                indicator.setFraction((double) processed++ / (2 * packages.size()));
-                indicator.setText2("Indexing " + rPackage);
+            indicator.setFraction((double) processed++ / (2 * packageCache.size()));
+            indicator.setText("Refreshing skeletons");
+
+            String skelVersion = packageVersions.get(rPackage.getName());
+            if (Objects.equals(rPackage.getVersion(), skelVersion)) {
+                continue;
             }
+
+            indicator.setText("Refreshing skeleton of '" + rPackage.getName() + "'");
 
             final String skeletonsPath = getSkeletonsPath();
             final File skeletonsDir = new File(skeletonsPath);
@@ -211,6 +200,7 @@ public class RSkeletonGenerator {
             // skip if skeleton exists already and it is not outdated
             String pckgName = rPackage.getName();
             File skeletonFile = new File(skeletonsDir, pckgName + ".R");
+
             if (isValidSkeleton(skeletonFile)) {
                 continue;
             }
@@ -218,12 +208,6 @@ public class RSkeletonGenerator {
 
             es.submit(() -> {
                 try {
-
-//            ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-//
-//                @Override
-//                public void run() {
-
                     LOG.info("building skeleton for " + pckgName);
 
 
@@ -237,6 +221,8 @@ public class RSkeletonGenerator {
                         LOG.error(output.getStdErr());
                     } else if (isValidSkeleton(tempSkeleton)) {
                         Files.move(tempSkeleton.toPath(), skeletonFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                        updated.add(pckgName);
                     } else {
                         LOG.error("Failed to generate skeleton for '" + pckgName + "'");
                     }
@@ -256,6 +242,7 @@ public class RSkeletonGenerator {
             e.printStackTrace();
         }
 
+        return updated;
     }
 
 

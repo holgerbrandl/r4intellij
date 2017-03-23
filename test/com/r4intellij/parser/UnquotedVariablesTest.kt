@@ -145,6 +145,11 @@ class UnquotedVariablesTest : AbstractResolverTest() {
 
     }
 
+    fun _testNoImportQFforUnquotedVar() {
+        // todo v1.2 reenable and fix
+        checkExpression("""with(versions, paste(Package, Version, sep="\t")) %>% cat(sep="\n")")
+""")
+    }
     // todo test whitelisting (warning -> whitelist -> no warning) --> reset for future run
 
 }

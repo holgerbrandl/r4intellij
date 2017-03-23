@@ -37,7 +37,7 @@ public class InstallLibraryFixTest extends LightPlatformCodeInsightFixtureTestCa
         }
 
 
-        RPackageService.getInstance().refreshIndex("pals");
+        RPackageService.getInstance().refreshIndexCache(myFixture.getProject(), "pals");
 //        PsiFile psiFile = myFixture.configureByFile("...");
 
         myFixture.enableInspections(MissingPackageInspection.class);

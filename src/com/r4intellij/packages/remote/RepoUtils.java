@@ -12,7 +12,6 @@ import com.intellij.util.CatchingConsumer;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.RepoPackage;
 import com.r4intellij.RPsiUtils;
-import com.r4intellij.packages.LocalRUtil;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RHelperUtil.PluginResourceFile;
 import com.r4intellij.packages.RPackageService;
@@ -112,7 +111,7 @@ public class RepoUtils {
         final String[] splittedOutput = StringUtil.splitByLines(result.getStdOut());
 
         for (String line : splittedOutput) {
-            final List<String> packageAttributes = StringUtil.split(line, LocalRUtil.ARGUMENT_DELIMETER);
+            final List<String> packageAttributes = StringUtil.split(line, RPackageManagementService.ARGUMENT_DELIMETER);
             if (packageAttributes.size() >= 3) {
 
                 RepoPackage repoPackage = new RepoPackage(packageAttributes.get(1).replace("\"", ""), packageAttributes.get(3).replace("\"", ""),

@@ -1,16 +1,14 @@
 package com.r4intellij.packages;
 
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
@@ -21,12 +19,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.r4intellij.packages.PackageServiceUtilKt.rebuildIndex;
 
 /**
  * @author avesloguzova
@@ -39,6 +39,8 @@ import java.util.stream.Stream;
 @SuppressWarnings("WeakerAccess")
 @State(name = "RPackageService", storages = {@Storage(file = "rpackages.xml")})
 public class RPackageService implements PersistentStateComponent<RPackageService> {
+
+    public static final Logger LOG = Logger.getInstance("#" + RPackageService.class.getName());
 
     // private fields won't be serialized
     // see http://www.jetbrains.org/intellij/sdk/docs/basics/persisting_state_of_components.html
@@ -79,7 +81,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
         if (service.allPackages == null) {
             System.err.print("building package index for testing... ");
             service.allPackages = Sets.newConcurrentHashSet();
-            service.refreshIndex();
+//            service.refreshIndexCache();
             saveObject(service.allPackages, indexFile);
             System.err.println("Done");
         }
@@ -88,8 +90,7 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    // or use startu pactivity https://www.cqse.eu/en/blog/intellij-plugin-tutorial/
-    public void loadPckgIndex() {
+    public void loadSkeletonCache() {
         if (allPackages != null) {
             return;
         }
@@ -102,7 +103,8 @@ public class RPackageService implements PersistentStateComponent<RPackageService
 
 
         // update index (no fancy sync anymore because it's superfast anyway)
-        ApplicationManager.getApplication().executeOnPooledThread((Runnable) this::refreshIndex);
+        // disabled because trigger after skeleton-refresh now
+//        ApplicationManager.getApplication().executeOnPooledThread((Runnable) this::refreshIndex);
     }
 
 
@@ -150,165 +152,40 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
+
+
     /**
-     * @param packageNames Packages to be reindexd if version has changed or package has been installed since last
-     *                     indexing run.If non are provided all packages will be refreshed.
+     * @param packageNames Packages to be reindexd if version has changed or package has been installed since last indexing run.If non are provided all packages will be refreshed.
      */
-    public boolean refreshIndex(String... packageNames) {
-        Set<RPackage> installedPackages = LocalRUtil.getInstalledPackages();
+    public void refreshIndexCache(Project project, String... packageNames) {
+        rebuildIndex(project, packageNames);
 
-        final boolean[] hasChanged = {false};
+        saveObject(allPackages, getLibIndexFile());
 
-        // remove packages from index that are no longer present
-        if (packageNames.length == 0) {
-            Sets.SetView<RPackage> noLongerInstalled = Sets.difference(allPackages, installedPackages);
-            if (!noLongerInstalled.isEmpty()) {
-                allPackages.removeAll(noLongerInstalled);
-                hasChanged[0] = true;
+//        ApplicationManager.getApplication().invokeLater(new Runnable() {
+
+//        if (ApplicationManager.getApplication() != null) {
+//            Project[] projects = ProjectManager.getInstance().getOpenProjects();
+//            for (Project project : projects) {
+        if (project.isInitialized() && project.isOpen() && !project.isDefault()) {
+            SpellCheckerManager spellCheckerManager = SpellCheckerManager.getInstance(project);
+            EditableDictionary dictionary = spellCheckerManager.getUserDictionary();
+
+            for (RPackage rPackage : RPackageService.getInstance().allPackages) {
+                dictionary.addToDictionary(rPackage.getName());
+                dictionary.addToDictionary(rPackage.getFunctionNames());
+                dictionary.addToDictionary(rPackage.getDataSetNames());
             }
+
+            DaemonCodeAnalyzer.getInstance(project).restart();
         }
-
-        // todo refresh most commons packages first for better ux
-
-        // cut down packges to be refreshed to speed up calculations
-//        if(packageNames.length>0){
-//            installedPackages = installedPackages.stream().
-//                    filter(p -> Arrays.asList(packageNames).contains(p.getName())).
-//                    collect(Collectors.toSet());
+//            });
 //        }
-
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
-
-
-        // todo use ProgressManager.getInstance().run(new Task.Backgroundable ...
-
-        for (final RPackage rPackage : installedPackages) {
-            final RPackage indexPackage = getByName(rPackage.getName());
-
-            if (indexPackage != null && Objects.equals(indexPackage.getVersion(), rPackage.getVersion())) {
-                continue;
-            }
-
-            executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    reindexPackage(rPackage, indexPackage);
-                    hasChanged[0] = true;
-                }
-            });
-        }
-
-
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(1, TimeUnit.DAYS);
-            RHelperUtil.LOG.info("finished package indexing ");
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-//        allPackages.clear();
-//        allPackages.addAll(installedPackages);
-
-
-        if (hasChanged[0]) {
-            saveObject(allPackages, getLibIndexFile());
-
-            if (ApplicationManager.getApplication() != null) {
-                Project[] projects = ProjectManager.getInstance().getOpenProjects();
-                for (Project project : projects) {
-                    if (project.isInitialized() && project.isOpen() && !project.isDefault()) {
-                        SpellCheckerManager spellCheckerManager = SpellCheckerManager.getInstance(project);
-                        EditableDictionary dictionary = spellCheckerManager.getUserDictionary();
-
-                        for (RPackage rPackage : RPackageService.getInstance().allPackages) {
-                            dictionary.addToDictionary(rPackage.getName());
-                            dictionary.addToDictionary(rPackage.getFunctionNames());
-                            dictionary.addToDictionary(rPackage.getDataSetNames());
-                        }
-
-                        DaemonCodeAnalyzer.getInstance(project).restart();
-                    }
-                }
-            }
-        }
-
-        return hasChanged[0];
-    }
-
-
-    private void reindexPackage(RPackage rPackage, RPackage indexPackage) {
-        // replace package
-
-        RHelperUtil.LOG.info("detecting methods in " + rPackage.getName());
-
-
-        // get all package functions
-        String allFunsConcat = RHelperUtil.runCommand("cat(getNamespaceExports('" + rPackage.getName() + "'))").trim();
-        List<String> allFuns = Splitter.on(" ").trimResults().splitToList(allFunsConcat);
-
-        List<PckgFunction> functions = Lists.transform(allFuns, new com.google.common.base.Function<String, PckgFunction>() {
-            @Override
-            public PckgFunction apply(String funName) {
-                return new PckgFunction(funName);
-            }
-        });
-
-        rPackage.setFunctions(functions);
-
-        //get all package datasets
-        // pName="ggplot2"
-        // cat(with(as.data.frame(data(package = pName)$result), paste(Item, Title, sep="$$$")), sep="\n")
-
-        if (!Arrays.asList("base", "stats", "backports").contains(rPackage.getName())) {
-            String dsCmd = "cat(with(as.data.frame(data(package = '" + rPackage.getName() + "')$result), paste(Item, Title, sep='$$$')), sep='\\n')";
-            List<String> allDataConcat = Splitter.on("\n").trimResults().splitToList(RHelperUtil.runCommand(dsCmd));
-            List<PckgDataSet> dataSets = allDataConcat.stream().filter(f -> !f.trim().isEmpty()).
-                    map(line -> {
-                        List<String> splitLine = Splitter.on("$$$").trimResults().splitToList(line);
-                        return new PckgDataSet(splitLine.get(0), splitLine.get(1));
-                    }).
-                    collect(Collectors.toList());
-
-            rPackage.setDatSets(dataSets);
-        }
-
-        if (indexPackage != null) {
-            allPackages.remove(indexPackage);
-        }
-
-//        System.err.println("finished indexing of "+ rPackage.getName());
-        allPackages.add(rPackage);
     }
 
 
     public Set<RPackage> getPackages() {
         return allPackages;
-    }
-
-
-    @NotNull
-    @Deprecated
-    public List<RPackage> getContainingPackages(String symbol) {
-        return getPackages().stream().filter(pckg ->
-                pckg.hasFunction(symbol) || pckg.hasDataSet(symbol)
-        ).collect(Collectors.toList());
-    }
-
-
-    @NotNull
-    public Collection<RPackage> getDependencies(RPackage somePckge) {
-        Collection<RPackage> deps = new HashSet<RPackage>();
-
-        for (String dep : somePckge.getDependencies()) {
-            RPackage depPckg = getByName(dep);
-            if (depPckg == null)
-                continue;
-
-            deps.add(depPckg);
-        }
-
-        return deps;
     }
 
 
@@ -321,47 +198,6 @@ public class RPackageService implements PersistentStateComponent<RPackageService
         }
 
         return null;
-    }
-
-
-    public List<PckgFunction> getFunctionByName(String funName) {
-        List<PckgFunction> funList = new ArrayList<PckgFunction>();
-
-        for (RPackage aPackage : getInstance().getPackages()) {
-            PckgFunction function = aPackage.getFunction(funName);
-
-            if (function != null) {
-                funList.add(function);
-            }
-        }
-
-        return funList;
-    }
-
-
-    public static void setRepositories(@NotNull final List<String> defaultRepositories,
-                                       @NotNull final List<String> userRepositories) {
-        RPackageService service = getInstance();
-
-        service.enabledRepositories.clear();
-        service.enabledRepositories.addAll(defaultRepositories);
-        service.userRepositories.clear();
-        service.userRepositories.addAll(userRepositories);
-    }
-
-
-    // todo still needed
-    public static void restartInspections() {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            public void run() {
-                Project[] projects = ProjectManager.getInstance().getOpenProjects();
-                for (Project project : projects) {
-                    if (project.isInitialized() && project.isOpen() && !project.isDefault()) {
-                        DaemonCodeAnalyzer.getInstance(project).restart();
-                    }
-                }
-            }
-        });
     }
 
 
@@ -394,35 +230,10 @@ public class RPackageService implements PersistentStateComponent<RPackageService
     }
 
 
-    public Set<RPackage> getImporting(@NotNull RPackage rPackage) {
-        return allPackages.stream().
-                filter(p -> p.getImports().contains(rPackage.getName())).
-                collect(Collectors.toSet());
-
-    }
-
-
-    @Deprecated
-    public boolean isReady() {
-        return !allPackages.isEmpty();
-    }
-
 
     public List<String> findImportsFor(@NotNull PsiElement element) {
         List<String> importedPackages = ((RFile) element.getContainingFile()).getImportedPackages(element);
 
         return resolveDependencies(importedPackages).stream().map(RPackage::getName).collect(Collectors.toList());
-    }
-
-
-
-    public void refreshIndexInThread() {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                refreshIndex();
-            }
-        });
     }
 }

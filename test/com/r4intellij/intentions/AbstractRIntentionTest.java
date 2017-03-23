@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 
 import static com.r4intellij.RTestCase.createSkeletonLibrary;
-import static com.r4intellij.packages.LocalRUtil.DEFAULT_PACKAGES;
+import static com.r4intellij.interpreter.RSkeletonGenerator.DEFAULT_PACKAGES;
 
 /**
  * @author Holger Brandl
