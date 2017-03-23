@@ -25,3 +25,11 @@ fun unresolvedError(symbol: String) = """<error descr="${UnresolvedReferenceInsp
 fun errorForwardRef(varName: String): String {
     return "<error descr=\"Forward reference\">$varName</error>"
 }
+
+fun errorTooManyArgs(funCall: String): String {
+    return """<error descr="Too many arguments">${funCall}</error>""""
+}
+
+fun errorMissingArg(argName: String, funCall: String): String {
+    return """<warning descr="argument '${argName}' is missing, with no default">${funCall}</warning>"""
+}

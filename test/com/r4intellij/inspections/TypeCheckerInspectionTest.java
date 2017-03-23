@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.r4intellij.inspections.InspectionTestUtilKt.errorMissingArg;
 import static com.r4intellij.inspections.UnresolvedReferenceInspection.missingImportMsg;
 
 public class TypeCheckerInspectionTest extends RInspectionTest {
@@ -43,7 +44,8 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
 //        """)
 
 
-        doExprTest("<warning descr=\"argument 'x' is missing, with no default\">head()</warning>");
+        doExprTest(errorMissingArg("x", "head()"));
+//        doExprTest("<warning descr=\"argument 'x' is missing, with no default\">head()</warning>");
     }
 
 
@@ -89,7 +91,7 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
 
 
     /**
-     * Ignore araguments that are checked as `missing(varName)` in function body
+     * Ignore arguments that are checked as `missing(varName)` in function body
      */
     public void testIgnoreMissingCheckedInBody() {
         createSkeletonLibrary("datasets", "stringr");
@@ -98,6 +100,21 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
 
         createSkeletonLibrary("datasets", "knitr", "magrittr");
         doExprTest("require(magrittr); iris %>% knitr::kable(caption=\"Positive additions for tricky authors}\" )");
+    }
+
+
+    public void _testTooManyArgs() { //todo v1.2 enable and fix
+        createSkeletonLibrary("readr", "datasets");
+
+        doExprTest("require(readr); write_tsv(iris, foo='myfile.txt')"); // tbd add some warning here
+    }
+
+
+    public void testIncorrectRequiredNameArg() {
+        createSkeletonLibrary("readr", "datasets");
+
+        // should be called path but is call file. The latter is not a valid arf of write_tsv and should raise an error
+        doExprTest("require(readr); " + errorMissingArg("path", "write_tsv(iris, file = 'myfile.txt')"));
     }
 
 

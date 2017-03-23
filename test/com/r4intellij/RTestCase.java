@@ -144,7 +144,7 @@ public abstract class RTestCase extends UsefulTestCase {
     @NotNull
     // todo make generic or add test-skeletons to test-data for better portability
     private static File getSkeletonPath(final String pckgName) {
-        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/r_skeletons/1842261700/", pckgName + ".R");
+        return new File("/Users/brandl/Library/Caches/IntelliJIdea2017.1/r_skeletons/1842261700/", pckgName + ".R");
 //        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/system/r_skeletons/1842261700", pckgName + ".R");
 //        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/test/system/r_skeletons/1842261700/", pckgName + ".R");
     }
