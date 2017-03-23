@@ -128,11 +128,22 @@ class UnquotedVariablesTest : AbstractResolverTest() {
     }
 
     // this was not working in earlier versions of the inspection. Avoid regressions with this test
-    // todo v1.2 reenable and fix
+
     fun _testQuotedNameInVector() {
+        // todo v1.2 reenable and fix
         checkExpression("""c("foo"=3)""")
     }
 
+
+    fun _testMagrittrWithOp() {
+        // todo v1.2 reenable and fix
+        createSkeletonLibrary("base", "datasets", "magrittr")
+
+        // expected: %$% should prevent unresolved errors in the RHS argument
+        // tbd: can we solve this in a generic way using the whitelisting modle? `%$`[rhs] maybe.
+        checkExpression("""require(magrittr); iris %$% table(gender, has_sixpack)""")
+
+    }
 
     // todo test whitelisting (warning -> whitelist -> no warning) --> reset for future run
 

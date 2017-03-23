@@ -120,6 +120,8 @@ public class RResolver {
             return indexResults;
         }
 
+        // too wide scope in scratches?
+        // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000093684-Reference-search-scope-different-between-project-files-and-scratches-
         final Collection<RAssignmentStatement> assignmentStatements =
                 RAssignmentNameIndex.find(name, project, new LibraryScope(project, library));
 

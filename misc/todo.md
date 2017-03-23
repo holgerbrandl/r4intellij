@@ -4,15 +4,17 @@ R4Intellij Development Notes
 ## 0-day bugs
 
 
-* send expression to console does not work from injected chunks
-* scratch inspections take forever because of incorrect scope
+* missing argument code is not flagged/incorrect argument is not flagged in
+```r
+write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
+```
 
-## Next Steps
+Next Steps
+----------
 
-* process forum replies
 
-
-### v1.0
+v1.0
+----
 
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
     * also see org.jetbrains.plugins.groovy.actions.NewScriptAction
@@ -20,7 +22,8 @@ R4Intellij Development Notes
 * replace RPackage service with on-the-fly model using stub-index (is this possible because they still miss function titles?)
 
 
-### v1.1
+v1.1
+----
 
 
 * Remove deprecated api usage
@@ -389,7 +392,10 @@ require(dplyr) ## rename this to foo --> should not touch first import statment
 Rnotebook support
 -----------------
 
-dynmaic toolbar buttons
+* common pis accross chunks -> MultipleFilesPerDocumentFileViewProvider
+ https://intellij-support.jetbrains.com/hc/en-us/community/posts/206770455-PSI-for-all-injected-language-parts-in-a-file-
+
+* dynmaic toolbar buttons
 `https://intellij-support.jetbrains.com/hc/en-us/community/posts/206151289-How-to-add-icons-to-the-toolbar-`
 
 * implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
@@ -449,6 +455,7 @@ Package Manger
 Brainstorming
 =============
 
+* provide [quick action](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000118510-QuickActionPopup) popups for tooling integration
 * skeletonization
     * How to deal with re-exported symbols e.e.g `%>%`
     * Indicate in skeletons non-exported symbols as being part of the library (example [split_chain](https://github.com/tidyverse/magrittr/blob/master/R/split_chain.R)

@@ -45,6 +45,7 @@ public class DocumentationProviderTest extends RTestCase {
         PsiElement resolved = ((RReferenceExpressionImpl) refExpr.getParent()).getReference().resolve();
         String doc = new RDocumentationProvider().generateDoc(resolved, refExpr);
 
+        assertTrue(!doc.contains("http://127.")); // were all links replaces with psi_element links?
         assertTrue(doc.contains("This is like a transposed version of print"));
     }
 
@@ -77,6 +78,7 @@ public class DocumentationProviderTest extends RTestCase {
 //            RPsiElement refExpr = (RPsiElement) myFixture.getElementAtCaret();
             String doc = new RDocumentationProvider().generateDoc(refExpr, refExpr);
 
+            assertTrue(!doc.contains("http://127.")); // were all links replaces with psi_element links?
             assertTrue(doc.contains(specialConstant) && doc.contains("Description"));
         }
     }
@@ -107,7 +109,7 @@ public class DocumentationProviderTest extends RTestCase {
 
 
         if (!Objects.equals(doc, expected)) {
-            throw new FileComparisonFailure("documenation mismatch", expected, doc, testDataFile.getAbsolutePath());
+            throw new FileComparisonFailure("documentation mismatch", expected, doc, testDataFile.getAbsolutePath());
         }
     }
 }

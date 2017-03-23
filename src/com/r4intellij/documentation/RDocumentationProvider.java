@@ -1,14 +1,18 @@
 package com.r4intellij.documentation;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Strings;
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.execution.process.ProcessOutput;
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.patterns.PsiElementPattern;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.r4intellij.RFileType;
+import com.r4intellij.psi.RElementFactory;
 import com.r4intellij.psi.RReferenceExpressionImpl;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.settings.RSettings;
@@ -16,12 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.net.ConnectException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import static com.intellij.patterns.PlatformPatterns.psiElement;
 import static com.r4intellij.interpreter.RSkeletonGenerator.SKELETON_DIR_NAME;
 import static com.r4intellij.packages.RHelperUtil.LOG;
 
@@ -31,22 +37,12 @@ import static com.r4intellij.packages.RHelperUtil.LOG;
  */
 public class RDocumentationProvider extends AbstractDocumentationProvider {
 
-
-    static {
-        startHelpServer(null);
-    }
-
     private static Integer HELP_SERVER_PORT;
 
 
     @Nullable
     @Override
     public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
-//        return contextElement;
-//        if(contextElement== null || contextElement.getText().trim().isEmpty()) {
-//            return null;
-//        }
-//
         List<String> keywords = Arrays.asList("for", "while", "next", "break", "function");
         if (contextElement != null && keywords.contains(contextElement.getText())) {
             return contextElement;
@@ -56,17 +52,78 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     }
 
 
+    @Override
+    public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
+        URL restoredURL = restoreInterceptedLink(element);
+        if (restoredURL != null) {
+            return Arrays.asList(restoredURL.toString());
+        }
+
+        String elPckgage = detectPackage(element);
+
+        if (elPckgage == null) {
+            return new ArrayList<>();
+        }
+
+        String symbol;
+        if (originalElement != null) {
+            symbol = originalElement.getText();
+        } else { // this applies just when help links are clicked
+            symbol = element.getText();
+        }
+
+        return Arrays.asList("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + elPckgage + "/html/" + symbol + ".html");
+
+        // build link to local help
+//        return Arrays.asList("http://www.heise.de");
+    }
+
+
+    private static void ensureHelpServerAlive() {
+        // check if help server is alive and restart it if necessary
+        try {
+            new Scanner(new URL("http://127.0.0.1:" + HELP_SERVER_PORT)
+                    .openStream(), "UTF-8").useDelimiter("\\A").next();
+        } catch (IOException e) {
+            // if server is down or unresponsive, restart it under a different port
+//            e.printStackTrace();
+            HELP_SERVER_PORT = null;
+            startHelpServer(null);
+        }
+
+
+        // wait until it's ready (at least for a while
+        for (int i = 0; i < 5; i++) {
+            if (HELP_SERVER_PORT != null) break;
+            sleep(200);
+        }
+    }
+
+
     @Nullable
     @Override
     public String generateDoc(PsiElement reference, @Nullable PsiElement identifier) {
+
         if (!(RFileType.INSTANCE.equals(reference.getContainingFile().getFileType()))) return null;
 //        if (!(psiFile instanceof RFile)) {
+
+
+        // wait until help server is ready (do it here since we need the port to build the URL)
+        ensureHelpServerAlive();
+
+        // check if doc of internally rerouted doc-popup click
+        URL restoredURL = restoreInterceptedLink(reference);
+        if (restoredURL != null) {
+            return getHelpFromLocalHelpServer(restoredURL);
+        }
 
         if (reference instanceof RStringLiteralExpression) return null;
         // check if it's a library function and return help if it is
 
 
-        if (identifier == null) return null;
+//        if (identifier == null) return null;
+        // not identifier is null when
+        if (identifier == null) identifier = reference;
 
         String elementText = identifier.getText();
         if (elementText.trim().isEmpty()) return null;
@@ -84,6 +141,109 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
             }
         }
 
+        String packageName = detectPackage(reference);
+
+
+        URL localHelpURL;
+
+        assert HELP_SERVER_PORT != null;
+
+        if (packageName != null) {
+            localHelpURL = makeURL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + packageName + "/help/" + elementText);
+        } else {
+            localHelpURL = makeURL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/NULL/help/" + elementText);
+        }
+
+//        return getHelpForFunction(elementText, packageName);
+        return getHelpFromLocalHelpServer(localHelpURL);
+    }
+
+
+    /**
+     * Intercepts clicks in documentation popup if link starts with psi_element://
+     * <p>
+     * See https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000095710-Intercept-clicks-in-documentation-popup-
+     *
+     * @param psiManager
+     * @param link
+     * @param context
+     * @return
+     */
+    @Override
+    public PsiElement getDocumentationElementForLink(PsiManager psiManager, String link, PsiElement context) {
+        PsiElement linkIntercept = RElementFactory.buildRFileFromText(psiManager.getProject(), "help_url(\"" + link + "\")").getFirstChild();
+
+        if (linkIntercept != null) {
+            return linkIntercept;
+        } else {
+            return null;
+        }
+    }
+
+
+    @Nullable
+    private String getHelpFromLocalHelpServer(URL localHelpURL) {
+        try {
+
+            String htmlRaw = new Scanner(localHelpURL.openStream(), "UTF-8").useDelimiter("\\A").next();
+            htmlRaw.indexOf("</head><body>");
+
+            String htmlTrimmed = htmlRaw.substring(htmlRaw.indexOf("</head><body>") + 13, htmlRaw.length()).trim();
+
+            // fix relative URLs
+//            htmlTrimmed = htmlTrimmed.replace("href=\"../../", "href=\"http://127.0.0.1:" + HELP_SERVER_PORT + "/library/");
+            htmlTrimmed = htmlTrimmed.replace("../../", "http://127.0.0.1:" + HELP_SERVER_PORT + "/library/");
+
+            // fix package relative 00Index.html
+            String stringifiedURL = localHelpURL.toString();
+            int helpIndex = stringifiedURL.indexOf("/help/");
+            if (helpIndex > 0) {
+                String parentPath = stringifiedURL.substring(0, helpIndex);
+                htmlTrimmed = htmlTrimmed.replace("00Index.html", parentPath + "/html/00Index.html");
+
+            }
+
+            if (stringifiedURL.endsWith("00Index.html")) {
+                String parentPath = stringifiedURL.substring(0, stringifiedURL.indexOf("/html/"));
+
+                htmlTrimmed = htmlTrimmed.replace("href=\"", "href=\"" + parentPath + "/html/");
+                // todo  DESCRIPTION, NEWS and code demos links (are correct but not feteched) and alphabetical listing links are broken
+            }
+
+
+            // Replace links with internal ones that are correctly handled by
+            // com.intellij.codeInsight.documentation.DocumentationManager.navigateByLink()
+            // See https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000095710-Intercept-clicks-in-documentation-popup-
+//            htmlTrimmed = transformLinks(htmlTrimmed);
+            htmlTrimmed = htmlTrimmed.replace("http://127.0.0.1:" + HELP_SERVER_PORT + "/", "psi_element://");
+//            http://127.0.0.1:25593/library/base/html/file.info.html
+            return htmlTrimmed;
+        } catch (IOException e) {
+            // server timed out??
+//            if(e.getMessage().contains("response code: 500 "))
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    private static URL restoreInterceptedLink(PsiElement reference) {
+        PsiElementPattern.Capture<RCallExpression> localLinkPattern
+                = psiElement(RCallExpression.class).withChild(psiElement(RReferenceExpression.class).withText("help_url"));
+
+        if (!localLinkPattern.accepts(reference)) {
+            return null;
+        }
+
+        String linkPath = ((RCallExpression) reference).getArgumentList().getExpressionList().get(0).getText();
+        linkPath = CharMatcher.anyOf("\"").trimFrom(linkPath);
+
+        return makeURL("http://127.0.0.1:" + HELP_SERVER_PORT + "/" + linkPath);
+    }
+
+
+    @Nullable
+    private static String detectPackage(PsiElement reference) {
         // ease R documentation lookup by detecting package if possible
         String packageName = null;
 
@@ -109,60 +269,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
                 }
             }
         }
-
-
-        // run generic R help on symbol
-        if (HELP_SERVER_PORT == null) try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-//        return getHelpForFunction(elementText, packageName);
-        String htmlTrimmed = getHelpFromLocalHelpServer(elementText, packageName);
-        if (htmlTrimmed != null) return htmlTrimmed;
-
-        return null;
-        //
-//        return getHelpForFunction(elementText, packageName);
-    }
-
-
-    @Nullable
-    private String getHelpFromLocalHelpServer(String elementText, String packageName) {
-        try {
-            // check if help server is alive and restart it if necessary
-            try {
-                new Scanner(new URL("http://127.0.0.1:" + HELP_SERVER_PORT)
-                        .openStream(), "UTF-8").useDelimiter("\\A").next();
-            } catch (ConnectException e) {
-                e.printStackTrace();
-                startHelpServer(null);
-            }
-
-            URL localHelpURL;
-
-            if (packageName != null) {
-                localHelpURL = new URL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + packageName + "/help/" + elementText);
-            } else {
-                localHelpURL = new URL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/NULL/help/" + elementText);
-            }
-
-            String htmlRaw = new Scanner(localHelpURL.openStream(), "UTF-8").useDelimiter("\\A").next();
-            htmlRaw.indexOf("</head><body>");
-
-            String htmlTrimmed = htmlRaw.substring(htmlRaw.indexOf("</head><body>") + 13, htmlRaw.length()).trim();
-
-            // fix URLs
-            htmlTrimmed = htmlTrimmed.replace("href=\"../../", "href=\"http://127.0.0.1:" + HELP_SERVER_PORT + "/library/");
-            htmlTrimmed = htmlTrimmed.replace("00Index.html", "http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + packageName + "/html/00Index.html");
-
-
-            return htmlTrimmed;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return packageName;
     }
 
 
@@ -204,5 +311,23 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
                 Strings.nullToEmpty(
                         element.getContainingFile().getVirtualFile().getCanonicalPath()
                 ).contains(SKELETON_DIR_NAME);
+    }
+
+
+    public static URL makeURL(String url) {
+        try {
+            return new URL(url);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void sleep(int timeMS) {
+        try {
+            Thread.sleep(timeMS);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
