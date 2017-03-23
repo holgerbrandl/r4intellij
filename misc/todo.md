@@ -9,6 +9,8 @@ R4Intellij Development Notes
 write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
 ```
 
+* help for namespace is missing `biomar<caret>t::useMart()`
+
 Next Steps
 ----------
 

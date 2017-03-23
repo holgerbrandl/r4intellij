@@ -271,8 +271,10 @@ sink(skeletonFile, append=T)
 cat("\n\n\n## Package Info\n\n")
 
 ## report the title
-packageName = gsub("[\r\n]" , "", unlist(packageDescription(pName)["Title"]))
-cat(paste0(".skeleton_package_title = \"", packageName, "\"\n\n"))
+packageTitle = gsub("[\r\n]" , "", unlist(packageDescription(pName)["Title"]))
+## escape double quotes
+packageTitle = gsub('"', "'", packageTitle)
+cat(paste0(".skeleton_package_title = \"", packageTitle, "\"\n\n"))
 
 
 ## report the version
@@ -302,7 +304,7 @@ cat(paste0(".skeleton_package_imports = \"", pckgImports, "\"\n\n"))
 cat("\n## Internal\n\n")
 
 ## import: just change in sync with com.r4intellij.interpreter.RSkeletonGenerator.SKELETONIZE_VERSION
-SKELETONIZE_VERSION = 4
+SKELETONIZE_VERSION = 5
 cat(paste0(".skeleton_version = ", SKELETONIZE_VERSION, "\n\n"))
 
 

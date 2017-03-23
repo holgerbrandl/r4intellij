@@ -7,9 +7,12 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
+import com.intellij.openapi.progress.util.ReadTask;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -18,6 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.DocumentUtil;
+import com.r4intellij.documentation.RDocumentationProvider;
 import com.r4intellij.packages.RHelperUtil;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
@@ -79,25 +83,65 @@ public class RSkeletonGenerator {
     private static void generateSmartSkeletons(@NotNull final Project project) {
         // http://stackoverflow.com/questions/18725340/create-a-background-task-in-intellij-plugin
 
+        // http://www.jetbrains.org/intellij/sdk/docs/basics/architectural_overview/general_threading_rules.html
+        ReadTask readTask = new ReadTask() {
+            @Override
+            public void onCanceled(@NotNull ProgressIndicator progressIndicator) {
+
+            }
+
+
+            @Override
+            public Continuation runBackgroundProcess(@NotNull ProgressIndicator progressIndicator) throws ProcessCanceledException {
+                return super.runBackgroundProcess(progressIndicator);
+            }
+        };
+
+        ProgressIndicatorUtils.scheduleWithWriteActionPriority(readTask);
+
+//        DumbService.getInstance(project).smartInvokeLater(readTask);
+
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Fancy title") {
+            public void run(@NotNull ProgressIndicator progressIndicator) {
+
+                // start your process
+
+                // Set the progress bar percentage and text
+                progressIndicator.setFraction(0.10);
+                progressIndicator.setText("90% to finish");
+
+                RDocumentationProvider.sleep(2000);
+                // 50% done
+                progressIndicator.setFraction(0.50);
+                progressIndicator.setText("50% to finish");
+                RDocumentationProvider.sleep(2000);
+
+
+                // Finished
+                progressIndicator.setFraction(1.0);
+                progressIndicator.setText("finished");
+
+            }
+        });
+
+
+
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Skeletons", false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-                ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        RSkeletonGenerator.updateSkeletons(indicator);
+                ApplicationManager.getApplication().executeOnPooledThread(() -> {
+                    RSkeletonGenerator.updateSkeletons(indicator);
 
-                        // TBD seems to cause thread exeception. Needed?
+                    // TBD seems to cause thread exeception. Needed?
 //                        PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-                        String path = RSkeletonGenerator.getSkeletonsPath();
+                    String path = RSkeletonGenerator.getSkeletonsPath();
 
-                        VirtualFile skeletonDir = VfsUtil.findFileByIoFile(new File(path), true);
+                    VirtualFile skeletonDir = VfsUtil.findFileByIoFile(new File(path), true);
 
-                        if (skeletonDir == null) {
-                            LOG.info("Failed to locate skeletons directory");
-                            return;
-                        }
+                    if (skeletonDir == null) {
+                        LOG.info("Failed to locate skeletons directory");
+                        return;
                     }
                 });
             }
@@ -241,7 +285,7 @@ public class RSkeletonGenerator {
 
 
     // note: just change in sync with ./r-helpers/skeletonize_package.R
-    public static final int SKELETONIZE_VERSION = 4;
+    public static final int SKELETONIZE_VERSION = 5;
 
 
     private static boolean isCurrentVersion(File skeletonFile) {
@@ -277,7 +321,7 @@ public class RSkeletonGenerator {
 
 
     // note keep since we want to bring back the type system some day
-    private static void generateTyopedSkeletonForPackage(@NotNull final VirtualFile packageDir, @NotNull final Project project) {
+    private static void generateTypedSkeletonForPackage(@NotNull final VirtualFile packageDir, @NotNull final Project project) {
         String packageName = packageDir.getName();
         //TODO: DELETE THIS CHECK!!! it is here only for speeding checks while developing
 //        if (!packageName.equals("base") && !packageName.equals("codetools")) {

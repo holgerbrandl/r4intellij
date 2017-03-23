@@ -100,13 +100,6 @@ public class RResolver {
     }
 
 
-    public static String getSkeletonPckgName(ResolveResult o1) {
-        final PsiFile containingFile = o1.getElement().getContainingFile();
-
-        return containingFile.getName().replaceAll(".[rR]$", "");
-    }
-
-
     @NotNull
     private static List<ResolveResult> findSkeletonMatches(@NotNull String name, Project project) {
         LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
@@ -331,5 +324,15 @@ public class RResolver {
         if (myResult.isEmpty()) {
             addFromSkeletonsAndRLibrary(element, myResult, name);
         }
+    }
+
+
+    public static String getSkeletonPckgName(ResolveResult o1) {
+        return getTrimmedFileName(o1.getElement());
+    }
+
+
+    public static String getTrimmedFileName(PsiElement element) {
+        return element.getContainingFile().getVirtualFile().getName().replaceAll(".[rR]$", "");
     }
 }

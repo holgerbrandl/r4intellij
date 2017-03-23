@@ -15,6 +15,7 @@ import com.r4intellij.RFileType;
 import com.r4intellij.psi.RElementFactory;
 import com.r4intellij.psi.RReferenceExpressionImpl;
 import com.r4intellij.psi.api.*;
+import com.r4intellij.psi.references.RResolver;
 import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -257,7 +258,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
         // also make sure that we can provide help in skeleton files
         if (packageName == null && isLibraryElement(reference)) {
-            packageName = reference.getContainingFile().getVirtualFile().getName().replaceAll(".[rR]$", "");
+            packageName = RResolver.getTrimmedFileName(reference);
         }
 
         // make sure to pull correct help for rexported symbols
