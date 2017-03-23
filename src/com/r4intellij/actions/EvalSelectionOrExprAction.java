@@ -6,6 +6,7 @@ import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -20,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.r4intellij.RFileType;
 import com.r4intellij.console.RConsoleRunner;
 import com.r4intellij.psi.api.*;
 import org.jetbrains.annotations.NotNull;
@@ -73,11 +75,16 @@ public class EvalSelectionOrExprAction extends AnAction {
 
             // PsiManager psiManager = PsiManager.getInstance(project);
             // final PsiFile psiFile = psiManager.findFile(null);
-
             PsiFile psiFile = e.getData(PlatformDataKeys.PSI_FILE);
 
             if (psiFile != null) {
                 PsiElement element = getCaretElement(editor, psiFile);
+
+                // resolve injected chunk elements if file-type is not R
+                if (!element.getContainingFile().getFileType().equals(RFileType.INSTANCE)) {
+                    // from https://intellij-support.jetbrains.com/hc/en-us/community/posts/206116909-Access-editor-within-PsiReferenceContributor-Originally-injected-PsiElement
+                    element = InjectedLanguageManager.getInstance(project).findInjectedElementAt(psiFile, editor.getCaretModel().getOffset());
+                }
 
                 // grow until we reach expression barrier
                 PsiElement evalElement = PsiTreeUtil.findFirstParent(element, psiElement -> {
@@ -150,6 +157,9 @@ public class EvalSelectionOrExprAction extends AnAction {
 
     @Nullable
     private static PsiElement getCaretElement(Editor editor, PsiFile psiFile) {
+
+        // why not PsiUtilBase.getElementAtCaret(editor) ??
+
         // is caret at line start
         CaretModel caretModel = editor.getCaretModel();
         Caret curCaret = caretModel.getCurrentCaret();
