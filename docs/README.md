@@ -30,7 +30,7 @@ By implementing a parser for R, the plugin allows for syntax highlighting, intel
 Installation
 ------------
 
-1.  Get Intellij IDEA, which is available as pro and and as free open-source community edition from&nbsp;[JetBrains](http://jetbrains.com).
+1.  Get Intellij IDEA, which is available as pro and as free open-source community edition from&nbsp;[JetBrains](http://jetbrains.com).
 2.  To install the plugin, just open the plugin manager in Intellij Idea, search for "R4Intellij" , and finally click&nbsp;install.
 
 Support
