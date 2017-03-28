@@ -11,6 +11,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.intellij.webcore.packaging.PackageManagementService;
 import com.intellij.webcore.packaging.RepoPackage;
+import com.r4intellij.packages.RIndexCache;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.packages.RPackageService;
 import org.jetbrains.annotations.NotNull;
@@ -115,7 +116,7 @@ public class RPackageManagementService extends PackageManagementService {
     public static List<RepoPackage> getPckgNameVersionMap() {
         Map<String, String> nameVersionMap = Maps.newHashMap();
 
-        for (RPackage rPackage : RPackageService.getInstance().getPackages()) {
+        for (RPackage rPackage : RIndexCache.getInstance().getPackages()) {
             nameVersionMap.put(rPackage.getName(), rPackage.getVersion());
         }
 
@@ -149,7 +150,7 @@ public class RPackageManagementService extends PackageManagementService {
 
     @Override
     public Collection<InstalledPackage> getInstalledPackages() {
-        return Lists.newArrayList(Iterables.transform(RPackageService.getInstance().getPackages(), new Function<RPackage, InstalledPackage>() {
+        return Lists.newArrayList(Iterables.transform(RIndexCache.getInstance().getPackages(), new Function<RPackage, InstalledPackage>() {
             @Override
             public InstalledPackage apply(RPackage rPackage) {
                 return new InstalledPackage(rPackage.getName(), rPackage.getVersion());

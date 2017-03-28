@@ -3,17 +3,50 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
-
 * missing argument code is not flagged/incorrect argument is not flagged in
 ```r
 write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
 ```
 
+
 * help for namespace is missing `biomar<caret>t::useMart()`
+
+```plain text
+2017-03-29 00:03:14,553 [  64165]  ERROR - intellij.openapi.progress.Task - Please change caller according to com.intellij.openapi.project.IndexNotReadyException documentation 
+com.intellij.openapi.project.IndexNotReadyException: Please change caller according to com.intellij.openapi.project.IndexNotReadyException documentation
+	at com.intellij.util.indexing.FileBasedIndexImpl.a(FileBasedIndexImpl.java:714)
+	at com.intellij.util.indexing.FileBasedIndexImpl.ensureUpToDate(FileBasedIndexImpl.java:663)
+	at com.intellij.util.indexing.FileBasedIndexImpl.ensureUpToDate(FileBasedIndexImpl.java:646)
+	at com.intellij.psi.stubs.StubIndexImpl.a(StubIndexImpl.java:335)
+	at com.intellij.psi.stubs.StubIndexImpl.processElements(StubIndexImpl.java:316)
+	at com.intellij.psi.stubs.StubIndex.getElements(StubIndex.java:145)
+	at com.intellij.psi.stubs.StubIndex.getElements(StubIndex.java:134)
+	at com.r4intellij.psi.stubs.RAssignmentNameIndex.find(RAssignmentNameIndex.java:25)
+	at com.r4intellij.packages.PackageServiceUtilKt$rebuildIndex$$inlined$runReadAction$1.compute(PackageServiceUtil.kt:143)
+	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:946)
+	at com.r4intellij.packages.PackageServiceUtilKt.rebuildIndex(PackageServiceUtil.kt:143)
+	at com.r4intellij.packages.RPackageService.refreshIndexCache(RPackageService.java:165)
+	at com.r4intellij.interpreter.RSkeletonGenerator$1.run(RSkeletonGenerator.java:93)
+	at com.intellij.openapi.progress.impl.CoreProgressManager$TaskRunnable.run(CoreProgressManager.java:726)
+	at com.intellij.openapi.progress.impl.CoreProgressManager.a(CoreProgressManager.java:176)
+	at com.intellij.openapi.progress.impl.CoreProgressManager.a(CoreProgressManager.java:556)
+	at com.intellij.openapi.progress.impl.CoreProgressManager.executeProcessUnderProgress(CoreProgressManager.java:501)
+	at com.intellij.openapi.progress.impl.ProgressManagerImpl.executeProcessUnderProgress(ProgressManagerImpl.java:66)
+	at com.intellij.openapi.progress.impl.CoreProgressManager.runProcess(CoreProgressManager.java:163)
+	at com.intellij.openapi.progress.impl.ProgressManagerImpl$1.run(ProgressManagerImpl.java:137)
+	at com.intellij.openapi.application.impl.ApplicationImpl$2.run(ApplicationImpl.java:334)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
+```
 
 Next Steps
 ----------
 
+* add missing dplyr verbs to model (like select_* mutate_*)
+* symbol completion for loaded packages
 
 v1.0
 ----
@@ -21,7 +54,7 @@ v1.0
 * add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
     * also see org.jetbrains.plugins.groovy.actions.NewScriptAction
     * templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
-* replace RPackage service with on-the-fly model using stub-index (is this possible because they still miss function titles?)
+
 
 
 v1.1
@@ -50,6 +83,15 @@ train_glm = function(trainData){   train(is_group_leader ~ ., data = trainData, 
 
 list(
 pdModel = train_glm
+)
+```
+
+* bug: just first unquoted arg is tagged as such
+```
+flyGeneInfoSlim = transmute(
+    TargetID=ensembl_gene_id,
+    Description=description,
+    ChromosomalLocation=paste0(chromosome_name, ":", start_position, "-", end_position)
 )
 ```
 

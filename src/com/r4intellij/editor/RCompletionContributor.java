@@ -14,8 +14,8 @@ import com.intellij.patterns.PsiJavaPatterns;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.cache.impl.id.IdTableBuilding;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.r4intellij.packages.RIndexCache;
 import com.r4intellij.packages.RPackage;
-import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.api.RCallExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +64,7 @@ public class RCompletionContributor extends CompletionContributor {
         if (isPackageContext) {         // .. auto-completion for require and libary
 
 //            List<RepoPackage> allPackages = LocalRUtil.getPckgNameVersionMap();
-            Set<RPackage> allPackages = RPackageService.getInstance().getPackages();
+            Set<RPackage> allPackages = RIndexCache.getInstance().getPackages();
 
             // TODO add completion for not-yet-installed packages
 

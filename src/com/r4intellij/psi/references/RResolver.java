@@ -15,7 +15,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScopeImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RPsiUtils;
-import com.r4intellij.packages.RPackageService;
+import com.r4intellij.packages.RIndexCache;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
 import com.r4intellij.settings.LibraryUtil;
@@ -36,6 +36,9 @@ public class RResolver {
     static void addFromSkeletonsAndRLibrary(@NotNull final PsiElement element,
                                             @NotNull final List<ResolveResult> result,
                                             @NotNull final String... names) {
+
+        if (!RIndexCache.getInstance().isReady()) return;
+
         for (String name : names) {
             if (RSettings.getInstance().isResolveInModule()) {
                 addFromProject(name, element.getProject(), result);
@@ -58,7 +61,7 @@ public class RResolver {
     private static ResolveResult addFromImports(@NotNull final PsiElement element, @NotNull final String name) {
 
         // get all imports for the current File
-        List<String> imports = RPackageService.getInstance().findImportsFor(element);
+        List<String> imports = RIndexCache.getInstance().findImportsFor(element);
 
         // detect all libary elements with the same name
         List<ResolveResult> indexResults = findSkeletonMatches(name, element.getProject());

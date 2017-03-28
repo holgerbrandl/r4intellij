@@ -20,8 +20,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.DocumentUtil;
 import com.r4intellij.packages.RHelperUtil;
+import com.r4intellij.packages.RIndexCache;
 import com.r4intellij.packages.RPackage;
-import com.r4intellij.packages.RPackageService;
 import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,7 +90,7 @@ public class RSkeletonGenerator {
                 List<String> updatedPackages = RSkeletonGenerator.updateSkeletons(indicator);
 
                 // trigger index cache refresh
-                RPackageService.getInstance().refreshIndexCache(project, updatedPackages.toArray(new String[0]));
+                RIndexCache.getInstance().refreshIndexCache(project, updatedPackages.toArray(new String[0]));
 
                 // TBD seems to cause thread exeception. Needed?
 //                        PsiDocumentManager.getInstance(project).commitAllDocuments();
@@ -147,7 +147,7 @@ public class RSkeletonGenerator {
 
         int processed = 0;
 
-        Collection<RPackage> packageCache = RPackageService.getInstance().getPackages();
+        Collection<RPackage> packageCache = RIndexCache.getInstance().getPackages();
 
         Map<String, String> packageVersions = getInstalledPackageVersions();
 
@@ -158,15 +158,17 @@ public class RSkeletonGenerator {
                 .collect(Collectors.toList());
 
 
-        ApplicationManager.getApplication().runWriteAction(() -> {
+        ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
             noLongerInstalled.forEach(rmPckg -> {
                         String skeletonFile = RSkeletonGenerator.getSkeletonsPath() + File.separator + rmPckg.getName() + ".R";
                         new File(skeletonFile).delete();
                     }
             );
-        });
+        }));
 
-        packageCache.removeAll(noLongerInstalled);
+        List<String> updated = new ArrayList<>();
+//        updated.addAll(noLongerInstalled.stream().map(RPackage::getName).collect(Collectors.toList()));
+        RIndexCache.getInstance().removeUninstalled(noLongerInstalled);
 
         // resort them so that the most popular ones are indexed first
         packageCache = Ordering.natural().reverse().onResultOf(RSkeletonGenerator::getIndexPriority)
@@ -176,7 +178,6 @@ public class RSkeletonGenerator {
         // additional threading here kills the computer
         ExecutorService es = Executors.newFixedThreadPool(4);
 
-        List<String> updated = new ArrayList<>();
 
         for (RPackage rPackage : packageCache) {
 

@@ -2,13 +2,15 @@ package com.r4intellij.packages.remote.ui;
 
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.ui.*;
+import com.intellij.ui.AnActionButton;
+import com.intellij.ui.AnActionButtonRunnable;
+import com.intellij.ui.CheckBoxList;
+import com.intellij.ui.ToolbarDecorator;
 import com.r4intellij.packages.RPackageService;
 import com.r4intellij.packages.remote.RDefaultRepository;
 import com.r4intellij.packages.remote.RPackageManagementService;
@@ -108,12 +110,9 @@ public class RManageRepoDialog extends DialogWrapper {
                         reloadList();
                     }
                 })
-                .setRemoveActionUpdater(new AnActionButtonUpdater() {
-                    @Override
-                    public boolean isEnabled(AnActionEvent event) {
-                        final int index = myList.getSelectedIndex();
-                        return !(myList.getItemAt(index) instanceof RDefaultRepository);
-                    }
+                .setRemoveActionUpdater(event -> {
+                    final int index = myList.getSelectedIndex();
+                    return !(myList.getItemAt(index) instanceof RDefaultRepository);
                 })
                 .createPanel();
     }

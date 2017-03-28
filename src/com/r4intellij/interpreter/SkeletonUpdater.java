@@ -10,7 +10,7 @@ package com.r4intellij.interpreter;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
-import com.r4intellij.packages.RPackageService;
+import com.r4intellij.packages.RIndexCache;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -23,12 +23,7 @@ public class SkeletonUpdater implements StartupActivity {
     public void runActivity(@NotNull Project project) {
         // This code is executed after the project was opened.
 
-        // this will go away once we use the skeletons for all lookups
-        ServiceManager.getService(RPackageService.class).loadSkeletonCache();
-
-        // refresh the skeeltons
-        System.out.println("Refreshing R skeletons...");
-
+        ServiceManager.getService(RIndexCache.class).loadSkeletonCache();
         RSkeletonGenerator.updateSkeletons(project);
     }
 }

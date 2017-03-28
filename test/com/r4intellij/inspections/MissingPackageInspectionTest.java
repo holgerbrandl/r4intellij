@@ -1,6 +1,6 @@
 package com.r4intellij.inspections;
 
-import com.r4intellij.packages.RPackageService;
+import com.r4intellij.packages.RIndexCache;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,8 +14,8 @@ public class MissingPackageInspectionTest extends RInspectionTest {
         super.setUp();
 
         // inject stub index here for more reproducible testing
-        RPackageService.getTestInstance();
-//        RPackageService.getInstance().refreshIndex();
+        RIndexCache.getTestInstance();
+//        RIndexCache.getInstance().refreshIndex();
     }
 
 

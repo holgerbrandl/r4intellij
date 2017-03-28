@@ -6,8 +6,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import com.intellij.webcore.packaging.InstalledPackage;
 import com.r4intellij.inspections.MissingPackageInspection;
+import com.r4intellij.interpreter.RSkeletonGenerator;
 import com.r4intellij.packages.RHelperUtil;
-import com.r4intellij.packages.RPackageService;
 import com.r4intellij.packages.remote.RepoUtils;
 
 import java.util.List;
@@ -37,7 +37,8 @@ public class InstallLibraryFixTest extends LightPlatformCodeInsightFixtureTestCa
         }
 
 
-        RPackageService.getInstance().refreshIndexCache(myFixture.getProject(), "pals");
+        RSkeletonGenerator.updateSkeletons(myFixture.getProject());
+//        RIndexCache.getInstance().refreshIndexCache(myFixture.getProject(), "pals");
 //        PsiFile psiFile = myFixture.configureByFile("...");
 
         myFixture.enableInspections(MissingPackageInspection.class);

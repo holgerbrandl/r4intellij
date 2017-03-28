@@ -6,8 +6,8 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiFile;
 import com.r4intellij.RPsiUtils;
 import com.r4intellij.intentions.InstallLibraryFix;
+import com.r4intellij.packages.RIndexCache;
 import com.r4intellij.packages.RPackage;
-import com.r4intellij.packages.RPackageService;
 import com.r4intellij.psi.RRecursiveElementVisitor;
 import com.r4intellij.psi.api.*;
 import org.jetbrains.annotations.Nls;
@@ -98,7 +98,7 @@ public class MissingPackageInspection extends RInspection {
             // could be a function RCallExpression or something weired, so ignore it
             return;
         }
-        RPackage byName = RPackageService.getInstance().getByName(packageName);
+        RPackage byName = RIndexCache.getInstance().getByName(packageName);
 
         if (byName == null) {
             String descriptionTemplate = "'" + packageName + "' is not yet installed";

@@ -155,7 +155,7 @@ public class RepoUtils {
 
     public static Map<String, String> getPackageRepositoryDetails() {
         if (namesToDetails != null) return namesToDetails;
-        namesToDetails = new TreeMap<String, String>();
+        namesToDetails = new TreeMap<>();
         final HTMLEditorKit.ParserCallback callback = new HTMLEditorKit.ParserCallback() {
             public boolean inTable;
             HTML.Tag myTag;

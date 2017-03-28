@@ -3,7 +3,7 @@ package com.r4intellij.intentions;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
-import com.r4intellij.packages.RPackageService;
+import com.r4intellij.packages.RIndexCache;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -39,8 +39,8 @@ public abstract class AbstractRIntentionTest extends CodeInsightFixtureTestCase 
         myFixture.setTestDataPath(intentionDataPath);
 
         // inject stub index here for more reproducible testing
-        RPackageService.getTestInstance();
-//        RPackageService.getInstance().refreshIndex();
+        RIndexCache.getTestInstance();
+//        RIndexCache.getInstance().refreshIndex();
 
         // add base packages for testing
         createSkeletonLibrary(myFixture, ArrayUtil.toStringArray(DEFAULT_PACKAGES));

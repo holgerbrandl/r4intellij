@@ -16,7 +16,7 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
 import com.intellij.util.ArrayUtil;
-import com.r4intellij.packages.RPackageService;
+import com.r4intellij.packages.RIndexCache;
 import com.r4intellij.settings.LibraryUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -59,8 +59,8 @@ public abstract class RTestCase extends UsefulTestCase {
 
 
         // inject stub index here for more reproducible testing
-        RPackageService.getTestInstance();
-//        RPackageService.getInstance().refreshIndex();
+        RIndexCache.getTestInstance();
+//        RIndexCache.getInstance().refreshIndex();
 
         // add base packages for testing
         createSkeletonLibrary(ArrayUtil.toStringArray(DEFAULT_PACKAGES));
