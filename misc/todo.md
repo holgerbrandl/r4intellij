@@ -3,13 +3,6 @@ R4Intellij Development Notes
 
 ## 0-day bugs
 
-* missing argument code is not flagged/incorrect argument is not flagged in
-```r
-write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
-```
-
-
-* help for namespace is missing `biomar<caret>t::useMart()`
 
 ```plain text
 2017-03-29 00:03:14,553 [  64165]  ERROR - intellij.openapi.progress.Task - Please change caller according to com.intellij.openapi.project.IndexNotReadyException documentation 
@@ -45,7 +38,6 @@ com.intellij.openapi.project.IndexNotReadyException: Please change caller accord
 Next Steps
 ----------
 
-* add missing dplyr verbs to model (like select_* mutate_*)
 * symbol completion for loaded packages
 
 v1.0
@@ -60,6 +52,10 @@ v1.0
 v1.1
 ----
 
+* missing argument code is not flagged/incorrect argument is not flagged in
+```r
+write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
+```
 
 * Remove deprecated api usage
 

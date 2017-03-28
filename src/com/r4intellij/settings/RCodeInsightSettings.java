@@ -61,26 +61,34 @@ public class RCodeInsightSettings implements PersistentStateComponent<RCodeInsig
                 "base::transform.default[...]",
                 "base::transform.data.frame[...]", // not really applicable without type system (see com/r4intellij/psi/references/RResolver.java:209
 
+                // dplyr: summarize cases
                 "dplyr::count[... wt sort]",
+                "dplyr::summarize[...]",
+
+                "dplyr::group_by[...]",
+
+                // dplyr: manipulate cases
+                "dplyr::filter[...]",
+                "dplyr::distinct[...]",
+                "dplyr::top_n[wt]",
+                "dplyr::arrange[...]",
+
+                // dplyr: manipulate variables
+                "dplyr::select[...]",
                 "dplyr::mutate[...]",
                 "dplyr::transmute[...]",
-                "dplyr::filter[...]",
-                "dplyr::top_n[wt]",
-                "dplyr::select[...]",
                 "dplyr::rename[...]",
-                "dplyr::arrange[...]",
-                "dplyr::summarize[...]",
                 "dplyr::count[...]",
                 "dplyr::vars[...]",
-                "dplyr::group_by[...]",
-                "dplyr::distinct[...]",
 
+                // tidyr
                 "tidyr::gather[key value ...]",
                 "tidyr::spread[key value]", // specific names denote args as in method signature
                 "tidyr::unite[...]", // tilde denotes just triple dot args
                 "tidyr::separate[col]",
                 "tidyr::drop_na[...]",
 
+                //ggplot
                 "ggplot2::aes[*]", // star denotes all
 
                 "tidytext::unnest_tokens[output input]",
