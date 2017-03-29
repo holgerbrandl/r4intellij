@@ -11,13 +11,14 @@ pName = args[1]
 skeletonFile = args[2]
 
 ## test invcation:
-# pName = "base"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
+# pName = "base"; skeletonFile=paste0("~/Desktop/skeleton/", pName); args= c(pName, skeletonFile)
 # pName = "ggplot2"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 # pName = "xlsx"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 # pName = "dplyr"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 # pName = "graphics"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 # pName = "fields"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 # pName = "R.utils"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
+
 
 searchPath = search()
 
@@ -150,11 +151,14 @@ for (symbol in functions) {
     # symbol = "pairs.default"
     # symbol = "GenericSummary"
     # print(paste("processing symbol ", symbol))
+    # symbol="args"
 
     if (symbol %in% ignoreList)next
 
 
-    obj = base::get(symbol)
+    # from http://adv-r.had.co.nz/Environments.html#env-basics
+    # The parent of the global environment is the last package that you attached with library() or require().
+    obj = base::get(symbol, envir = parent.env(globalenv()))
     # if (class(obj) != "function") {
     #     next
     # }
