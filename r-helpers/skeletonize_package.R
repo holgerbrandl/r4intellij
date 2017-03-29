@@ -1,11 +1,14 @@
 #!/usr/bin/env Rscript
 
-args <- commandArgs(TRUE)
+args = commandArgs(TRUE)
 
 if (length(args) != 2) {
     warning("Usage: skeletonize_package.R <package_name> <output_file>")
     quit(save = "no", status = 1, runLast = FALSE)
 }
+
+pName = args[1]
+skeletonFile = args[2]
 
 ## test invcation:
 # pName = "base"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
@@ -16,13 +19,9 @@ if (length(args) != 2) {
 # pName = "fields"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 # pName = "R.utils"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 
+searchPath = search()
 
-pName = args[1]
-skeletonFile = args[2]
-
-searchPath <- search()
-
-is.identifier <- function(str) {
+is_identifier = function(str) {
  return(grepl("^([[:alpha:]]|_|\\.)([[:alpha:]]|[[:digit:]]|_|\\.)*$", str) == TRUE)
 }
 
@@ -90,8 +89,8 @@ get_text_of_object = function(tmpFile, obj, use_dput){
     sink()
 
     ## read the result back into a character vector
-    fileObj <- file(tmpFile)
-    lines <- readLines(fileObj)
+    fileObj = file(tmpFile)
+    lines = readLines(fileObj)
     close(fileObj)
 
     lines
@@ -106,7 +105,7 @@ get_text_of = function(obj){
     # require(dplyr); obj = get("data_frame")
     # require(lubridate); obj = get(".__C__Interval")
 
-    tmpFileName <- tempfile(pattern = "tmp", tmpdir = tempdir(), fileext = "")
+    tmpFileName = tempfile(pattern = "tmp", tmpdir = tempdir(), fileext = "")
 
     lines = get_text_of_object(tmpFileName, obj, use_dput = FALSE)
 
@@ -122,11 +121,11 @@ get_text_of = function(obj){
 }
 
 # http://stackoverflow.com/questions/2261079/how-to-trim-leading-and-trailing-whitespace-in-r
-trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+trim = function (x) gsub("^\\s+|\\s+$", "", x)
 
 
 quote_non_identifier = function(symbol){
-    if (is.identifier(symbol)) {
+    if (is_identifier(symbol)) {
         symbol
     } else {
         paste0("`", symbol, "`")
@@ -155,7 +154,7 @@ for (symbol in functions) {
     if (symbol %in% ignoreList)next
 
 
-    obj <- base::get(symbol)
+    obj = base::get(symbol)
     # if (class(obj) != "function") {
     #     next
     # }
@@ -188,7 +187,7 @@ for (symbol in functions) {
     }
 
 
-    # errors <- try(sink(skeletonFile, append=T))
+    # errors = try(sink(skeletonFile, append=T))
     # if (!inherits(errors, "try-error")) {
     for (line in lines) {
         line = gsub("<pointer: ([A-z0-9]*)>", "pointer(\"\\1\")", line)
@@ -196,13 +195,13 @@ for (symbol in functions) {
         line = gsub("<S4 object of class .*>", "S4_object()", line)
 
 
-        # sub <- substring(line, 0, 10)
+        # sub = substring(line, 0, 10)
         # if (sub == "<bytecode:"  || sub == "<environme") break
 
         # fix ellipsis  (...) for which quotes are skipped when printing method body.
         # Potentially this should be rather fixed in the parser
         # Example purr::partial vs https://github.com/hadley/purrr/blob/master/R/partial.R
-        # DEBUG line='    args <- list(... = quote(expr = ))'
+        # DEBUG line='    args = list(... = quote(expr = ))'
         line = gsub("... = ...", "...", line, fixed = T)
         line = gsub("(... =", "(\"...\" =", line, fixed = T)
         line = gsub(" ... =", " \"...\" =", line, fixed = T)
@@ -229,10 +228,11 @@ for (symbol in functions) {
 
 # http://stackoverflow.com/questions/27709936/how-to-get-the-list-of-data-sets-in-a-particular-package
 
-# dsets <- as.data.frame(data(package = "ggplot2")$result)
-# dsets <- as.data.frame(data(package = "VennDiagram")$result)
+# dsets = as.data.frame(data(package = "ggplot2")$result)
+# dsets = as.data.frame(data(package = "VennDiagram")$result)
 if(!(pName %in% c("base", "stats", "backports"))){
-dsets <- as.data.frame(data(package = pName)$result)
+
+    dsets = as.data.frame(data(package = pName)$result)
 
     ## this fails for packages like 'fields' that export data as symbol and data
     # stopifnot(length(intersect(dsets$Item, functions)) == 0)
