@@ -7,7 +7,6 @@
 
 package com.r4intellij.interpreter;
 
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.r4intellij.packages.RIndexCache;
@@ -23,7 +22,8 @@ public class SkeletonUpdater implements StartupActivity {
     public void runActivity(@NotNull Project project) {
         // This code is executed after the project was opened.
 
-        ServiceManager.getService(RIndexCache.class).loadSkeletonCache();
+        RIndexCache.getInstance();
+        ; //.loadSkeletonCache();
         RSkeletonGenerator.updateSkeletons(project);
     }
 }

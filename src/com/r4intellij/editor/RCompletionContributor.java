@@ -12,11 +12,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.patterns.PsiJavaPatterns;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.cache.impl.id.IdTableBuilding;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.packages.RIndexCache;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.psi.api.RCallExpression;
+import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,6 +43,7 @@ public class RCompletionContributor extends CompletionContributor {
 
     //    public static final String test = new File("");
 
+
     @Override
     public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
 //        if (parameters.getCompletionType() == CompletionType.BASIC && shouldPerformWordCompletion(parameters)) {
@@ -49,7 +52,6 @@ public class RCompletionContributor extends CompletionContributor {
 
 //        }
     }
-
 
 
     // see http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
@@ -78,7 +80,24 @@ public class RCompletionContributor extends CompletionContributor {
         } else {
             addWordFromDocument(result, parameters, excludes);
 
-            // TODO also add function names of loaded packages
+            // Also add function names of loaded packages
+            final CompletionResultSet plainResultSet = result.
+                    withPrefixMatcher(CompletionUtil.findAlphanumericPrefix(parameters));
+
+
+            PsiFile containingFile = insertedElement.getContainingFile();
+            if (containingFile instanceof RFile) {
+                List<String> importedPackages = ((RFile) containingFile).getImportedPackages(insertedElement);
+
+                for (String pckg : importedPackages) {
+                    RPackage byName = RIndexCache.getInstance().getByName(pckg);
+                    if (byName != null) {
+//                        plainResultSet.addElement(LookupElementBuilder.create(p.getName()).withTypeText(p.getTitle()));
+                        byName.getFunctionNames().forEach(funName -> plainResultSet.addElement(LookupElementBuilder.create(funName)));
+                    }
+                }
+
+            }
 //            if(parameters.isExtendedCompletion()){
 
 //            }

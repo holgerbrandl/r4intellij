@@ -53,7 +53,7 @@ public class RIndexCache {
     }
 
 
-    public void loadSkeletonCache() {
+    private void loadSkeletonCache() {
         if (allPackages != null) {
             return;
         }
@@ -63,12 +63,14 @@ public class RIndexCache {
 
         //        http://stackoverflow.com/questions/6992608/why-there-is-no-concurrenthashset-against-concurrenthashmap
         if (allPackages == null) {
-            allPackages = Sets.newConcurrentHashSet();
+//            allPackages = Sets.newConcurrentHashSet();
+            allPackages = Collections.emptySet();
         }
 
         // this would presevere the content also for a non-static
-        allPackages = Collections.unmodifiableSet(allPackages);
+//        allPackages = Collections.unmodifiableSet(allPackages);
 //        allPackages = Sets.newConcurrentHashSet(allPackages);
+        allPackages = new HashSet<>(allPackages);
 
         // update index (no fancy sync anymore because it's superfast anyway)
         // disabled because trigger after skeleton-refresh now
@@ -110,7 +112,7 @@ public class RIndexCache {
 
 
     public void removeUninstalled(List<RPackage> noLongerInstalled) {
-        allPackages.retainAll(noLongerInstalled);
+        allPackages.removeAll(noLongerInstalled);
     }
 
 
@@ -141,23 +143,22 @@ public class RIndexCache {
     }
 
 
-    public static RIndexCache getTestInstance() {
-        RIndexCache service = getInstance();
-        File indexFile = service.getLibIndexFile();
+    @Deprecated
+    public static void getTestInstance() {
+        RIndexCache indexCache = getInstance();
+        File indexFile = indexCache.getLibIndexFile();
 
         if (indexFile.exists()) {
-            service.allPackages = (Set<RPackage>) loadObject(indexFile);
+            indexCache.allPackages = (Set<RPackage>) loadObject(indexFile);
         }
 
-        if (service.allPackages == null) {
+        if (indexCache.allPackages == null) {
             System.err.print("building package index for testing... ");
-            service.allPackages = Sets.newConcurrentHashSet();
-//            service.refreshIndexCache();
-            saveObject(service.allPackages, indexFile);
+            indexCache.allPackages = Sets.newConcurrentHashSet();
+//            indexCache.refreshIndexCache();
+            saveObject(indexCache.allPackages, indexFile);
             System.err.println("Done");
         }
-
-        return service;
     }
 
 

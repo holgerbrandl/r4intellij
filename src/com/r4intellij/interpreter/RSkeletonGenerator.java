@@ -179,57 +179,57 @@ public class RSkeletonGenerator {
         ExecutorService es = Executors.newFixedThreadPool(4);
 
 
-        for (RPackage rPackage : packageCache) {
+        for (String packageName : packageVersions.keySet()) {
 
-            indicator.setFraction((double) processed++ / (2 * packageCache.size()));
-            indicator.setText("Refreshing skeletons");
+            indicator.setFraction((double) processed++ / (packageCache.size()));
+            indicator.setText("Refreshing skeleton of '" + packageName + "'");
 
-            String skelVersion = packageVersions.get(rPackage.getName());
-            if (Objects.equals(rPackage.getVersion(), skelVersion)) {
+            RPackage rPackage = packageCache.stream()
+                    .filter(it -> it.getName().equals(packageName))
+                    .findFirst().orElse(null);
+
+            String installedVersion = packageVersions.get(packageName);
+            if (rPackage != null && Objects.equals(rPackage.getVersion(), installedVersion)) {
                 continue;
             }
-
-            indicator.setText("Refreshing skeleton of '" + rPackage.getName() + "'");
 
             final String skeletonsPath = getSkeletonsPath();
             final File skeletonsDir = new File(skeletonsPath);
 
-            if (!skeletonsDir.exists() && !skeletonsDir.mkdirs()) {
-                LOG.error("Can't create skeleton dir " + String.valueOf(skeletonsPath));
-            }
-
             // skip if skeleton exists already and it is not outdated
-            String pckgName = rPackage.getName();
-            File skeletonFile = new File(skeletonsDir, pckgName + ".R");
+            File skeletonFile = new File(skeletonsDir, packageName + ".R");
 
             if (isValidSkeleton(skeletonFile)) {
                 continue;
             }
 
+            if (!skeletonsDir.exists() && !skeletonsDir.mkdirs()) {
+                LOG.error("Can't create skeleton directory " + String.valueOf(skeletonsPath));
+            }
 
             es.submit(() -> {
                 try {
-                    LOG.info("building skeleton for " + pckgName);
+                    LOG.info("building skeleton for " + packageName);
 
 
                     // build the skeletons in tmp and move them once done so avoid incomplete file index failures
-                    File tempSkeleton = Files.createTempFile("r4j_skel_" + pckgName + "_", ".R").toFile();
+                    File tempSkeleton = Files.createTempFile("r4j_skel_" + packageName + "_", ".R").toFile();
 
-                    RRunResult output = RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, pckgName, tempSkeleton.getAbsolutePath());
+                    RRunResult output = RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, packageName, tempSkeleton.getAbsolutePath());
 
                     if (output != null && output.getExitCode() != 0) {
-                        LOG.error("Failed to generate skeleton for '" + pckgName + "'. Exit code: " + output.getExitCode());
+                        LOG.error("Failed to generate skeleton for '" + packageName + "'. Exit code: " + output.getExitCode());
                         LOG.error(output.getStdErr());
                     } else if (isValidSkeleton(tempSkeleton)) {
                         Files.move(tempSkeleton.toPath(), skeletonFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-                        updated.add(pckgName);
+                        updated.add(packageName);
                     } else {
-                        LOG.error("Failed to generate skeleton for '" + pckgName + "'");
+                        LOG.error("Failed to generate skeleton for '" + packageName + "'");
                     }
 
                 } catch (IOException e) {
-                    LOG.error("Failed to generate skeleton for '" + pckgName + "' due to io issue", e);
+                    LOG.error("Failed to generate skeleton for '" + packageName + "' due to io issue", e);
 
                 }
             });

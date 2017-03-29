@@ -66,11 +66,14 @@ fun rebuildIndex(project: Project, vararg packageNames: String = emptyArray()) {
     val titleStatements = runReadAction { RAssignmentNameIndex.find(SKELETON_TITLE, project, LibraryScope(project, library)) }
 
 
-    val updateTitles = titleStatements.filter { packageNames.isEmpty() || packageNames.contains(getTrimmedFileName(it)) }
+    //    val updateTitles = titleStatements.filter { packageNames.isEmpty() || packageNames.contains(getTrimmedFileName(it)) }
+    val updateTitles = titleStatements.filter { packageNames.contains(getTrimmedFileName(it)) }
+
+    if (updateTitles.isEmpty()) return
 
     var indexCounter = 0
 
-    ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Fancy title") {
+    ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Rebuilding R Index Cache...") {
         override fun run(progressIndicator: ProgressIndicator) {
 
             val reindexed = updateTitles.map { titleStatement ->

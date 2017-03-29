@@ -38,8 +38,8 @@ public abstract class AbstractRIntentionTest extends CodeInsightFixtureTestCase 
         String intentionDataPath = TEST_DATA_PATH + "/intentions/" + getClass().getSimpleName().replace("Test", "");
         myFixture.setTestDataPath(intentionDataPath);
 
-        // inject stub index here for more reproducible testing
-        RIndexCache.getTestInstance();
+        // inject stub index cache here for more reproducible testing
+        RIndexCache.getTestInstance();  // todo still needed?
 //        RIndexCache.getInstance().refreshIndex();
 
         // add base packages for testing
