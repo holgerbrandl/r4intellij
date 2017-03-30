@@ -7,6 +7,7 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RLanguage;
 import com.r4intellij.psi.api.RCallExpression;
+import com.r4intellij.psi.api.RReferenceExpression;
 
 
 /**
@@ -29,11 +30,17 @@ public class RElementFactory {
     }
 
 
-    //
     public static RCallExpression createFuncallFromText(Project project, String text) {
         PsiFile fromText = buildRFileFromText(project, text);
 //        return (RCallExpression) fromText.getFirstChild().getChildren()[0];
         return (RCallExpression) fromText.getFirstChild();
+    }
+
+
+    public static RReferenceExpression createRefExpression(Project project, String text) {
+        PsiFile fromText = buildRFileFromText(project, text);
+//        return (RCallExpression) fromText.getFirstChild().getChildren()[0];
+        return (RReferenceExpression) fromText.getFirstChild();
     }
 
 }

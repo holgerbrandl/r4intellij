@@ -3,29 +3,28 @@ package com.r4intellij.psi.references;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.module.impl.scopes.LibraryScope;
-import com.intellij.openapi.roots.ModifiableModelsProvider;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.psi.impl.light.LightElement;
 import com.intellij.util.IncorrectOperationException;
 import com.r4intellij.RElementGenerator;
+import com.r4intellij.RLanguage;
 import com.r4intellij.RPsiUtils;
-import com.r4intellij.interpreter.RSkeletonGenerator;
+import com.r4intellij.packages.RIndexCache;
+import com.r4intellij.packages.RPackage;
 import com.r4intellij.parsing.RElementTypes;
-import com.r4intellij.psi.api.*;
-import com.r4intellij.psi.stubs.RAssignmentNameIndex;
-import com.r4intellij.settings.LibraryUtil;
+import com.r4intellij.psi.RElementFactory;
+import com.r4intellij.psi.api.RFile;
+import com.r4intellij.psi.api.RReferenceExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
+import static com.r4intellij.editor.RCompletionContributor.isPackageContext;
 import static com.r4intellij.psi.references.RResolver.*;
 
 public class RReferenceImpl implements PsiPolyVariantReference {
@@ -155,76 +154,77 @@ public class RReferenceImpl implements PsiPolyVariantReference {
 
 
     // somehow needed to provide reference completion
+    // http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/code_completion.html
     @NotNull
     @Override
     public Object[] getVariants() {
-        List<LookupElement> result = new ArrayList<LookupElement>();
-        final String name = myElement.getName();
-        if (myElement.getParent() instanceof RReferenceExpression) return ResolveResult.EMPTY_ARRAY;
-        if (name == null) return ResolveResult.EMPTY_ARRAY;
+        List<LookupElement> completionResults = new ArrayList<LookupElement>();
 
-        RBlockExpression rBlock = PsiTreeUtil.getParentOfType(myElement, RBlockExpression.class);
-        while (rBlock != null) {
-            final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(rBlock, RAssignmentStatement.class);
-            if (statements != null) {
-                for (RAssignmentStatement statement : statements) {
-                    final PsiElement assignee = statement.getAssignee();
-                    if (assignee != null) {
-                        result.add(LookupElementBuilder.create(assignee.getText()));
+        if (isPackageContext(myElement)) {         // .. auto-completion for require and libary
+
+//            List<RepoPackage> allPackages = LocalRUtil.getPckgNameVersionMap();
+            Set<RPackage> allPackages = RIndexCache.getInstance().getPackages();
+
+            // TODO add completion for not-yet-installed packages
+
+            for (RPackage p : allPackages) {
+                completionResults.add(LookupElementBuilder.create(p.getName()).
+                        withTypeText(p.getTitle()));
+            }
+        } else {
+
+            PsiFile containingFile = myElement.getContainingFile();
+            if (containingFile instanceof RFile) {
+                List<String> importedPackages = ((RFile) containingFile).getImportedPackages(myElement);
+
+                for (String pckg : importedPackages) {
+                    RPackage byName = RIndexCache.getInstance().getByName(pckg);
+                    if (byName != null) {
+                        byName.getFunctionNames()
+                                .stream().filter(it -> !it.contains(".__"))
+                                .forEach(funName -> {
+                                    if (funName == null) System.err.println("funName is null");
+                                    completionResults.add(LookupElementBuilder
+                                                    .create(new RefLookupElement(myElement.getManager(), RLanguage.getInstance(), pckg + "::" + funName), funName)
+                                                    .withTypeText(pckg)
+//                                        .withLookupString("base::attach"))
+                                    );
+                                });
                     }
                 }
+
             }
-            rBlock = PsiTreeUtil.getParentOfType(rBlock, RBlockExpression.class);
+//            if(parameters.isExtendedCompletion()){
+
+//            }
+
+//            RFile rFile = PsiTreeUtil.getContextOfType(insertedElement, RFile.class);
         }
-        final RFunctionExpression rFunction = PsiTreeUtil.getParentOfType(myElement, RFunctionExpression.class);
-        if (rFunction != null) {
-            final RParameterList list = rFunction.getParameterList();
-            for (RParameter parameter : list.getParameterList()) {
-                result.add(LookupElementBuilder.create(parameter));
-            }
-        }
-        final PsiFile file = myElement.getContainingFile();
-        final RAssignmentStatement[] statements = PsiTreeUtil.getChildrenOfType(file, RAssignmentStatement.class);
-        if (statements != null) {
-            for (RAssignmentStatement statement : statements) {
-                final PsiElement assignee = statement.getAssignee();
-                if (assignee != null) {
-                    result.add(LookupElementBuilder.create(assignee.getText()));
-                }
-            }
-        }
-        addVariantsFromSkeletons(result);
-        return result.toArray();
+
+        return completionResults.toArray();
     }
 
 
-    private void addVariantsFromSkeletons(@NotNull final List<LookupElement> result) {
-        final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
-        final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(myElement.getProject());
+    // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/206124949/comments/206152455
+    public static class RefLookupElement extends LightElement {
 
-        if (model != null) {
-            final Library library = model.getLibraryByName(LibraryUtil.R_SKELETONS);
+        private final String refExpression;
 
-            final String skeletonsDir = RSkeletonGenerator.getSkeletonsPath();
-            if (library != null) {
-                final Collection<String> assignmentStatements = RAssignmentNameIndex.allKeys(myElement.getProject());
 
-                for (String statement : assignmentStatements) {
-                    final Collection<RAssignmentStatement> statements =
-                            RAssignmentNameIndex.find(statement, myElement.getProject(), new LibraryScope(myElement.getProject(), library));
+        protected RefLookupElement(@NotNull PsiManager manager, @NotNull Language language, String refExpression) {
+            super(manager, language);
+            this.refExpression = refExpression;
+        }
 
-                    for (RAssignmentStatement assignmentStatement : statements) {
-                        final PsiDirectory directory = assignmentStatement.getContainingFile().getParent();
-                        assert directory != null;
 
-                        if (directory.getName().equals("base") || FileUtil.pathsEqual(directory.getVirtualFile().getCanonicalPath(), skeletonsDir)) {
-                            result.add(LookupElementBuilder.create(assignmentStatement));
-                        } else {
-                            result.add(LookupElementBuilder.create(assignmentStatement, directory.getName() + "::" + assignmentStatement.getName()));
-                        }
-                    }
-                }
-            }
+        public PsiElement getRefExpression() {
+            return RElementFactory.createRefExpression(getProject(), refExpression).getReference().resolve().getParent();
+        }
+
+
+        @Override
+        public String toString() {
+            return null;
         }
     }
 

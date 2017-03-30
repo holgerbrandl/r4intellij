@@ -15,8 +15,10 @@ import com.r4intellij.RFileType;
 import com.r4intellij.psi.RElementFactory;
 import com.r4intellij.psi.RReferenceExpressionImpl;
 import com.r4intellij.psi.api.*;
+import com.r4intellij.psi.references.RReferenceImpl;
 import com.r4intellij.psi.references.RResolver;
 import com.r4intellij.settings.RSettings;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,15 +56,28 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
 
     @Override
+    public PsiElement getDocumentationElementForLookupItem(PsiManager psiManager, Object object, PsiElement element) {
+        if (object instanceof RReferenceImpl.RefLookupElement) {
+            return ((RReferenceImpl.RefLookupElement) object).getRefExpression();
+        }
+
+        return null;
+    }
+
+
+    @Override
     public List<String> getUrlFor(PsiElement element, PsiElement originalElement) {
         URL restoredURL = restoreInterceptedLink(element);
         if (restoredURL != null) {
             return Arrays.asList(restoredURL.toString());
         }
 
-        String elPckgage = detectPackage(element);
+        // handle help requests for completion entries
+        element = unwrapCompletionLookup(element);
 
-        if (elPckgage == null) {
+        String elPackage = detectPackage(element);
+
+        if (elPackage == null) {
             return new ArrayList<>();
         }
 
@@ -73,10 +88,18 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
             symbol = element.getText();
         }
 
-        return Arrays.asList("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + elPckgage + "/html/" + symbol + ".html");
+        return Arrays.asList("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + elPackage + "/html/" + symbol + ".html");
 
         // build link to local help
 //        return Arrays.asList("http://www.heise.de");
+    }
+
+
+    private PsiElement unwrapCompletionLookup(PsiElement element) {
+        if (element instanceof RReferenceImpl.RefLookupElement) {
+            element = ((RReferenceImpl.RefLookupElement) element).getRefExpression();
+        }
+        return element;
     }
 
 
@@ -105,6 +128,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     @Override
     public String generateDoc(PsiElement reference, @Nullable PsiElement identifier) {
 
+        reference = unwrapCompletionLookup(reference);
         if (!(RFileType.INSTANCE.equals(reference.getContainingFile().getFileType()))) return null;
 //        if (!(psiFile instanceof RFile)) {
 
@@ -121,13 +145,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
         if (reference instanceof RStringLiteralExpression) return null;
         // check if it's a library function and return help if it is
 
-
-//        if (identifier == null) return null;
-        // not identifier is null when
-        if (identifier == null) identifier = reference;
-
         String elementText = identifier.getText();
-        if (elementText.trim().isEmpty()) return null;
 
 
         // first guess : process locally defined function definitions
@@ -141,6 +159,12 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
                 }
             }
         }
+
+        if (reference instanceof RAssignmentStatement && StringsKt.isBlank(elementText)) {
+            elementText = ((RAssignmentStatement) reference).getName();
+        }
+
+        if (StringsKt.isBlank(elementText)) return null;
 
         String packageName = detectPackage(reference);
 
@@ -308,7 +332,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
 
     public static boolean isLibraryElement(PsiElement element) {
-        return element != null &&
+        return element != null && element.getContainingFile().getVirtualFile() != null &&
                 Strings.nullToEmpty(
                         element.getContainingFile().getVirtualFile().getCanonicalPath()
                 ).contains(SKELETON_DIR_NAME);

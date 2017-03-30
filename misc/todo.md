@@ -365,6 +365,7 @@ iris$foo = 34
 iris$f<caret>
 ```
 
+* refac FileContextResolver to become applicable to incomplete completiion queries
 * method names after <package>:: 
     * use dot-autocompletion https://intellij-support.jetbrains.com/hc/en-us/community/posts/206139359-Autopopup-code-completion-in-custom-language
     

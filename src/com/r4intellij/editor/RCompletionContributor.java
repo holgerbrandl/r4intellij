@@ -9,16 +9,10 @@ import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionUtil;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.patterns.PlatformPatterns;
-import com.intellij.patterns.PsiJavaPatterns;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.cache.impl.id.IdTableBuilding;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.r4intellij.packages.RIndexCache;
-import com.r4intellij.packages.RPackage;
 import com.r4intellij.psi.api.RCallExpression;
-import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,63 +41,17 @@ public class RCompletionContributor extends CompletionContributor {
     @Override
     public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
 //        if (parameters.getCompletionType() == CompletionType.BASIC && shouldPerformWordCompletion(parameters)) {
-        addWordCompletionVariants(result, parameters, Collections.<String>emptySet());
-        PlatformPatterns.psiElement().inside(PsiJavaPatterns.literalExpression());
 
-//        }
+        if (!isPackageContext(parameters.getPosition())) {
+            addWordFromDocument(result, parameters, Collections.<String>emptySet());
+        }
     }
 
 
-    // see http://www.jetbrains.org/intellij/sdk/docs/tutorials/custom_language_support/completion_contributor.html
-    private static void addWordCompletionVariants(CompletionResultSet result, CompletionParameters parameters, Set<String> excludes) {
+    public static boolean isPackageContext(PsiElement psiElement) {
+        RCallExpression pp = PsiTreeUtil.getContextOfType(psiElement, RCallExpression.class);
 
-        PsiElement insertedElement = parameters.getPosition();
-        RCallExpression pp = PsiTreeUtil.getContextOfType(insertedElement, RCallExpression.class);
-
-
-        boolean isPackageContext = pp != null && PACKAGE_IMPORT_METHODS.contains(pp.getExpression().getText());
-
-        if (isPackageContext) {         // .. auto-completion for require and libary
-
-//            List<RepoPackage> allPackages = LocalRUtil.getPckgNameVersionMap();
-            Set<RPackage> allPackages = RIndexCache.getInstance().getPackages();
-
-            // TODO add completion for not-yet-installed packages
-
-            final CompletionResultSet plainResultSet = result.
-                    withPrefixMatcher(CompletionUtil.findAlphanumericPrefix(parameters));
-
-            for (RPackage p : allPackages) {
-                plainResultSet.addElement(LookupElementBuilder.create(p.getName()).
-                        withTypeText(p.getTitle()));
-            }
-        } else {
-            addWordFromDocument(result, parameters, excludes);
-
-            // Also add function names of loaded packages
-            final CompletionResultSet plainResultSet = result.
-                    withPrefixMatcher(CompletionUtil.findAlphanumericPrefix(parameters));
-
-
-            PsiFile containingFile = insertedElement.getContainingFile();
-            if (containingFile instanceof RFile) {
-                List<String> importedPackages = ((RFile) containingFile).getImportedPackages(insertedElement);
-
-                for (String pckg : importedPackages) {
-                    RPackage byName = RIndexCache.getInstance().getByName(pckg);
-                    if (byName != null) {
-//                        plainResultSet.addElement(LookupElementBuilder.create(p.getName()).withTypeText(p.getTitle()));
-                        byName.getFunctionNames().forEach(funName -> plainResultSet.addElement(LookupElementBuilder.create(funName)));
-                    }
-                }
-
-            }
-//            if(parameters.isExtendedCompletion()){
-
-//            }
-
-//            RFile rFile = PsiTreeUtil.getContextOfType(insertedElement, RFile.class);
-        }
+        return pp != null && PACKAGE_IMPORT_METHODS.contains(pp.getExpression().getText());
     }
 
 
@@ -124,7 +72,7 @@ public class RCompletionContributor extends CompletionContributor {
         final CompletionResultSet plainResultSet = result.
                 withPrefixMatcher(CompletionUtil.findAlphanumericPrefix(parameters));
 
-        for (final String word : new HashSet<String>(getAllWords(insertedElement, startOffset))) {
+        for (final String word : new HashSet<>(getAllWords(insertedElement, startOffset))) {
             if (!realExcludes.contains(word)) {
                 plainResultSet.addElement(LookupElementBuilder.create(word));
             }

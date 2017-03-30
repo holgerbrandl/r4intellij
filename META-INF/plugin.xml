@@ -137,6 +137,7 @@
         <lang.findUsagesProvider implementationClass="com.r4intellij.psi.references.RFindUsagesProvider" language="R"/>
 
         <completion.contributor language="R" implementationClass="com.r4intellij.editor.RCompletionContributor"/>
+        <!--<targetElementEvaluator language="R" implementationClass="com.r4intellij.editor.RTargetElementEvaluator"/>-->
 
 
         <!-- Settings -->
