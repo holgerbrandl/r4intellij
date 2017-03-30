@@ -13,7 +13,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.r4intellij.console.RConsoleRunner;
-import com.r4intellij.interpreter.RSkeletonGenerator;
+import com.r4intellij.packages.RSkeletonGenerator;
 import org.jetbrains.annotations.NotNull;
 
 

@@ -1,4 +1,11 @@
-package com.r4intellij.interpreter;
+/*
+ * Copyright 2011 Holger Brandl
+ *
+ * This code is licensed under BSD. For details see
+ * http://www.opensource.org/licenses/bsd-license.php
+ */
+
+package com.r4intellij.packages;
 
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
@@ -19,9 +26,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.DocumentUtil;
-import com.r4intellij.packages.RHelperUtil;
-import com.r4intellij.packages.RIndexCache;
-import com.r4intellij.packages.RPackage;
+import com.r4intellij.interpreter.SimpleFunctionVisitor;
 import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 
@@ -205,7 +210,7 @@ public class RSkeletonGenerator {
             int finalProcessed = processed;
             es.submit(() -> {
                 try {
-                    LOG.info("building skeleton for " + packageName);
+                    LOG.info("building skeleton for package '" + packageName + "'");
 
                     indicator.setFraction((double) finalProcessed / (packageVersions.size()));
                     indicator.setText("Indexing '" + packageName + "'");

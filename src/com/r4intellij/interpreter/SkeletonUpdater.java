@@ -10,6 +10,7 @@ package com.r4intellij.interpreter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.r4intellij.packages.RIndexCache;
+import com.r4intellij.packages.RSkeletonGenerator;
 import org.jetbrains.annotations.NotNull;
 
 /**

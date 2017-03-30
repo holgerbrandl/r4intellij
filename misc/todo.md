@@ -4,41 +4,10 @@ R4Intellij Development Notes
 ## 0-day bugs
 
 
-```plain text
-2017-03-29 00:03:14,553 [  64165]  ERROR - intellij.openapi.progress.Task - Please change caller according to com.intellij.openapi.project.IndexNotReadyException documentation 
-com.intellij.openapi.project.IndexNotReadyException: Please change caller according to com.intellij.openapi.project.IndexNotReadyException documentation
-	at com.intellij.util.indexing.FileBasedIndexImpl.a(FileBasedIndexImpl.java:714)
-	at com.intellij.util.indexing.FileBasedIndexImpl.ensureUpToDate(FileBasedIndexImpl.java:663)
-	at com.intellij.util.indexing.FileBasedIndexImpl.ensureUpToDate(FileBasedIndexImpl.java:646)
-	at com.intellij.psi.stubs.StubIndexImpl.a(StubIndexImpl.java:335)
-	at com.intellij.psi.stubs.StubIndexImpl.processElements(StubIndexImpl.java:316)
-	at com.intellij.psi.stubs.StubIndex.getElements(StubIndex.java:145)
-	at com.intellij.psi.stubs.StubIndex.getElements(StubIndex.java:134)
-	at com.r4intellij.psi.stubs.RAssignmentNameIndex.find(RAssignmentNameIndex.java:25)
-	at com.r4intellij.packages.PackageServiceUtilKt$rebuildIndex$$inlined$runReadAction$1.compute(PackageServiceUtil.kt:143)
-	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:946)
-	at com.r4intellij.packages.PackageServiceUtilKt.rebuildIndex(PackageServiceUtil.kt:143)
-	at com.r4intellij.packages.RPackageService.refreshIndexCache(RPackageService.java:165)
-	at com.r4intellij.interpreter.RSkeletonGenerator$1.run(RSkeletonGenerator.java:93)
-	at com.intellij.openapi.progress.impl.CoreProgressManager$TaskRunnable.run(CoreProgressManager.java:726)
-	at com.intellij.openapi.progress.impl.CoreProgressManager.a(CoreProgressManager.java:176)
-	at com.intellij.openapi.progress.impl.CoreProgressManager.a(CoreProgressManager.java:556)
-	at com.intellij.openapi.progress.impl.CoreProgressManager.executeProcessUnderProgress(CoreProgressManager.java:501)
-	at com.intellij.openapi.progress.impl.ProgressManagerImpl.executeProcessUnderProgress(ProgressManagerImpl.java:66)
-	at com.intellij.openapi.progress.impl.CoreProgressManager.runProcess(CoreProgressManager.java:163)
-	at com.intellij.openapi.progress.impl.ProgressManagerImpl$1.run(ProgressManagerImpl.java:137)
-	at com.intellij.openapi.application.impl.ApplicationImpl$2.run(ApplicationImpl.java:334)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
-```
 
 Next Steps
 ----------
 
-* symbol completion for loaded packages
 
 v1.0
 ----
@@ -109,7 +78,7 @@ Intentions & inspections
 * intention to add unresolved arg in function expression as named parameter
  ![](.todo_images/unres_to_named_paramameter_intention.png)
 
-* show correct warning if too many args are provided 
+* bug: no warning if too many args are provided
 ```r
 log(1,2,3,4)
 ```
@@ -474,6 +443,8 @@ http://ijlyttle.github.io/bsplus/
 
 * what is the meaning of "run all cells"?
 ![](.todo_images/run_all_chunks.png)
+
+* new template action with ui to generate templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
 
 
 ## Environment view 

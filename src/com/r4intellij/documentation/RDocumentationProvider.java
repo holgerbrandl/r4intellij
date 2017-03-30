@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import static com.intellij.patterns.PlatformPatterns.psiElement;
-import static com.r4intellij.interpreter.RSkeletonGenerator.SKELETON_DIR_NAME;
 import static com.r4intellij.packages.RHelperUtil.LOG;
+import static com.r4intellij.packages.RSkeletonGenerator.SKELETON_DIR_NAME;
 
 /**
  * For local function definitions provide doc string documentation (using docstring)

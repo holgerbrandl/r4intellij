@@ -5,7 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.r4intellij.interpreter.RSkeletonGenerator;
+import com.r4intellij.packages.RSkeletonGenerator;
 
 
 public class RSkeletonsGeneratorAction extends AnAction {

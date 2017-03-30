@@ -1,9 +1,9 @@
 package com.r4intellij.skeletons
 
 import com.r4intellij.RTestCase
-import com.r4intellij.interpreter.RSkeletonGenerator.SKELETONIZE_PACKAGE
-import com.r4intellij.interpreter.RSkeletonGenerator.isValidSkeleton
 import com.r4intellij.packages.RHelperUtil
+import com.r4intellij.packages.RSkeletonGenerator.SKELETONIZE_PACKAGE
+import com.r4intellij.packages.RSkeletonGenerator.isValidSkeleton
 import org.intellij.lang.annotations.Language
 import java.io.File
 

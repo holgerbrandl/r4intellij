@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
-import com.r4intellij.interpreter.RSkeletonGenerator;
 import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -117,6 +116,7 @@ public class RIndexCache {
 
 
     public void updateCache(@NotNull List<RPackage> reindexed, Project project) {
+        allPackages.removeAll(reindexed);
         allPackages.addAll(reindexed);
 
         saveObject(allPackages, getLibIndexFile());

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.r4intellij.interpreter.RSkeletonGenerator.DEFAULT_PACKAGES;
+import static com.r4intellij.packages.RSkeletonGenerator.DEFAULT_PACKAGES;
 
 public abstract class RTestCase extends UsefulTestCase {
 

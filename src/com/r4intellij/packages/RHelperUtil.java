@@ -92,7 +92,7 @@ public class RHelperUtil {
 
         try {
             GeneralCommandLine gcl = new GeneralCommandLine(command);
-            LOG.info("running helper with: " + gcl.getCommandLineString());
+//            LOG.info("running helper with: " + gcl.getCommandLineString());
             final Process process = gcl.createProcess();
             final CapturingProcessHandler processHandler = new CapturingProcessHandler(process, null, StringUtil.join(command, " "));
 

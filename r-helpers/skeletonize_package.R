@@ -282,7 +282,9 @@ cat(paste0(".skeleton_package_title = \"", packageTitle, "\"\n\n"))
 
 
 ## report the version
-cat(paste0(".skeleton_package_version = \"", packageVersion(pName), "\"\n\n"))
+## we do NOT use packageVersion here beause it slightly reformats the version string.
+## E.g BH 1.62.0-1 becomes 1.62.0.1
+cat(paste0(".skeleton_package_version = \"", packageDescription(pName)$Version, "\"\n\n"))
 
 
 ## report depends and import
@@ -307,7 +309,7 @@ cat(paste0(".skeleton_package_imports = \"", pckgImports, "\"\n\n"))
 
 cat("\n## Internal\n\n")
 
-## import: just change in sync with com.r4intellij.interpreter.RSkeletonGenerator.SKELETONIZE_VERSION
+## import: just change in sync with com.r4intellij.packages.RSkeletonGenerator.SKELETONIZE_VERSION
 SKELETONIZE_VERSION = 5
 cat(paste0(".skeleton_version = ", SKELETONIZE_VERSION, "\n\n"))
 

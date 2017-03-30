@@ -193,7 +193,6 @@ class TypedFunctionVisitor extends RVisitor {
             }
             appendToDocument(myPackageDocument, o.getText() + "\n\n");
             saveDocument(myPackageDocument);
-            RSkeletonGenerator.LOG.info("end processing " + myFile.getPath());
         }
     }
 

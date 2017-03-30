@@ -60,7 +60,6 @@ public class SimpleFunctionVisitor extends RVisitor {
             }
             TypedFunctionVisitor.appendToDocument(myPackageDocument, o.getText() + "\n\n");
             TypedFunctionVisitor.saveDocument(myPackageDocument);
-            RSkeletonGenerator.LOG.info("end processing " + myFile.getPath());
         }
     }
 }

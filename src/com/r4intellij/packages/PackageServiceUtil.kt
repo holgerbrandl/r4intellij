@@ -7,6 +7,7 @@
 
 package com.r4intellij.packages
 
+import com.google.common.base.CharMatcher
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.impl.scopes.LibraryScope
 import com.intellij.openapi.progress.ProgressIndicator
@@ -30,7 +31,6 @@ private val SKELETON_SKEL_VERSION = ".skeleton_version"
 private val SKELETON_PROPERTIES = listOf(SKELETON_TITLE, SKELETON_PCKG_VERSION, SKELETON_DEPENDS, SKELETON_IMPORTS, SKELETON_SKEL_VERSION)
 
 val RHELPER_PACKAGE_VERSIONS = RHelperUtil.PluginResourceFile("package_versions.r")
-
 
 
 /**
@@ -90,6 +90,8 @@ fun rebuildIndex(project: Project, vararg packageNames: String = emptyArray()) {
 }
 
 
+private val dquoteMatcher = CharMatcher.anyOf("\"")
+
 private fun buildPackage(titleStatement: RAssignmentStatement): RPackage {
     val packageName = getTrimmedFileName(titleStatement)
 
@@ -102,15 +104,15 @@ private fun buildPackage(titleStatement: RAssignmentStatement): RPackage {
     // narrow down to properties
     val skelProps = runReadAction {
         splitBySkelProp.get(true)!!.map { propAssign ->
-            propAssign.assignee.text to propAssign.assignedValue.text
+            propAssign.assignee.text to dquoteMatcher.trimFrom(propAssign.assignedValue.text)
         }
     }.toMap()
 
     // not we can assume the presence of all properties here, otherwise the skeleton would have not been copy into the library
     val title = skelProps.get(SKELETON_TITLE)!!
     val version = skelProps.get(SKELETON_PCKG_VERSION)!!
-    val imports = skelProps.get(SKELETON_PCKG_VERSION)!!.split(",")
-    val depends = skelProps.get(SKELETON_PCKG_VERSION)!!.split(",")
+    val imports = skelProps.get(SKELETON_IMPORTS)!!.split(",")
+    val depends = skelProps.get(SKELETON_DEPENDS)!!.split(",")
 
     val rPackage = RPackage(packageName, version, title, depends.toSet(), imports.toSet())
 
