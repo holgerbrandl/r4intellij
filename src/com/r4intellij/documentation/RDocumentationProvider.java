@@ -23,8 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,9 +48,20 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     @Nullable
     @Override
     public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
+        String elementText = contextElement.getText();
+        if (StringsKt.isBlank(elementText)) {
+            return null;
+        }
+
         List<String> keywords = Arrays.asList("for", "while", "next", "break", "function");
-        if (contextElement != null && keywords.contains(contextElement.getText())) {
+        if (keywords.contains(elementText)) {
             return contextElement;
+        }
+
+        if (elementText.startsWith("%")) {
+            // resolve to infix operator reference
+            return contextElement.getParent().getReference().resolve();
+
         }
 
         return null;
@@ -174,13 +187,23 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
         assert HELP_SERVER_PORT != null;
 
         if (packageName != null) {
-            localHelpURL = makeURL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + packageName + "/help/" + elementText);
+            localHelpURL = makeURL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + packageName + "/help/" + encodeURL(elementText));
         } else {
-            localHelpURL = makeURL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/NULL/help/" + elementText);
+            localHelpURL = makeURL("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/NULL/help/" + encodeURL(elementText));
         }
 
 //        return getHelpForFunction(elementText, packageName);
         return getHelpFromLocalHelpServer(localHelpURL);
+    }
+
+
+    @NotNull
+    public static String encodeURL(String elementText) {
+        try {
+            return URLEncoder.encode(elementText, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
