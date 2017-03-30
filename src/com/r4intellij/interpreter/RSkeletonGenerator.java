@@ -87,7 +87,7 @@ public class RSkeletonGenerator {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
 //                ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                List<String> updatedPackages = RSkeletonGenerator.updateSkeletons(indicator);
+                List<String> updatedPackages = updateSkeletons(indicator);
 
                 // trigger index cache refresh
                 RIndexCache.getInstance().refreshIndexCache(project, updatedPackages.toArray(new String[0]));
@@ -128,14 +128,11 @@ public class RSkeletonGenerator {
             "httr", "devtools", "testthat", "roxygen2");
 
 
-    private static Integer getIndexPriority(RPackage r) {
-        if (DEFAULT_PACKAGES.contains(r.getName())) return 2;
-        if (COMMON_PACKAGES.contains(r.getName())) return 1;
+    public static Integer getIndexPriority(String pckgName) {
+        if (DEFAULT_PACKAGES.contains(pckgName)) return 2;
+        if (COMMON_PACKAGES.contains(pckgName)) return 1;
         return 0;
     }
-
-
-//        ApplicationManager.getApplication().invokeLater(() -> refreshIndexCache());
 
 
     @NotNull
@@ -145,14 +142,12 @@ public class RSkeletonGenerator {
         if (StringUtil.isEmptyOrSpaces(interpreter)) return new ArrayList<>();
 
 
-        int processed = 0;
-
-        Collection<RPackage> packageCache = RIndexCache.getInstance().getPackages();
+        RIndexCache indexCache = RIndexCache.getInstance();
 
         Map<String, String> packageVersions = getInstalledPackageVersions();
 
-        // remove skeletons of no longer installed packageCache
-        List<RPackage> noLongerInstalled = packageCache
+        // remove skeletons of no longer installed from index cache
+        List<RPackage> noLongerInstalled = indexCache.getPackages()
                 .stream()
                 .filter(rpckg -> !packageVersions.containsKey(rpckg.getName()))
                 .collect(Collectors.toList());
@@ -166,32 +161,31 @@ public class RSkeletonGenerator {
             );
         }));
 
+        indexCache.removeUninstalled(noLongerInstalled);
+
         List<String> updated = new ArrayList<>();
-//        updated.addAll(noLongerInstalled.stream().map(RPackage::getName).collect(Collectors.toList()));
-        RIndexCache.getInstance().removeUninstalled(noLongerInstalled);
 
         // resort them so that the most popular ones are indexed first
-        packageCache = Ordering.natural().reverse().onResultOf(RSkeletonGenerator::getIndexPriority)
-                .sortedCopy(packageCache);
+        List<String> packageNames = new ArrayList<>(packageVersions.keySet());
+        packageNames = Ordering.natural().reverse()
+                .onResultOf(RSkeletonGenerator::getIndexPriority)
+                .sortedCopy(packageNames);
 
 
         // additional threading here kills the computer
         ExecutorService es = Executors.newFixedThreadPool(4);
+        int processed = 0;
 
+        for (String packageName : packageNames) {
+            processed++;
 
-        for (String packageName : packageVersions.keySet()) {
-
-            indicator.setFraction((double) processed++ / (packageCache.size()));
-            indicator.setText("Refreshing skeleton of '" + packageName + "'");
-
-            RPackage rPackage = packageCache.stream()
+            RPackage rPackage = indexCache.getPackages().stream()
                     .filter(it -> it.getName().equals(packageName))
                     .findFirst().orElse(null);
 
+            // skip reindexing if package version is same as cached index version
             String installedVersion = packageVersions.get(packageName);
-            if (rPackage != null && Objects.equals(rPackage.getVersion(), installedVersion)) {
-                continue;
-            }
+            boolean isCorrectCacheVersion = rPackage != null && Objects.equals(rPackage.getVersion(), installedVersion);
 
             final String skeletonsPath = getSkeletonsPath();
             final File skeletonsDir = new File(skeletonsPath);
@@ -199,18 +193,22 @@ public class RSkeletonGenerator {
             // skip if skeleton exists already and it is not outdated
             File skeletonFile = new File(skeletonsDir, packageName + ".R");
 
-            if (isValidSkeleton(skeletonFile)) {
+            if (isValidSkeleton(skeletonFile) && isCorrectCacheVersion) {
                 continue;
             }
+
 
             if (!skeletonsDir.exists() && !skeletonsDir.mkdirs()) {
                 LOG.error("Can't create skeleton directory " + String.valueOf(skeletonsPath));
             }
 
+            int finalProcessed = processed;
             es.submit(() -> {
                 try {
                     LOG.info("building skeleton for " + packageName);
 
+                    indicator.setFraction((double) finalProcessed / (packageVersions.size()));
+                    indicator.setText("Indexing '" + packageName + "'");
 
                     // build the skeletons in tmp and move them once done so avoid incomplete file index failures
                     File tempSkeleton = Files.createTempFile("r4j_skel_" + packageName + "_", ".R").toFile();
