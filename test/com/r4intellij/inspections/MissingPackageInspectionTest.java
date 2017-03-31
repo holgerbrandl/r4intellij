@@ -3,6 +3,8 @@ package com.r4intellij.inspections;
 import com.r4intellij.packages.RIndexCache;
 import org.jetbrains.annotations.NotNull;
 
+import static com.r4intellij.RFileType.DOT_R_EXTENSION;
+
 /**
  * @author Holger Brandl
  */
@@ -20,12 +22,12 @@ public class MissingPackageInspectionTest extends RInspectionTest {
 
 
     public void testMissingFoobarPackage() {
-        doTest(getTestName(true) + ".R");
+        doTest(getTestName(true) + DOT_R_EXTENSION);
     }
 
 
     public void testQuotedPackageName() {
-        doTest(getTestName(true) + ".R");
+        doTest(getTestName(true) + DOT_R_EXTENSION);
     }
 
 

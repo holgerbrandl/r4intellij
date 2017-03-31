@@ -11,6 +11,8 @@ public class RFileType extends LanguageFileType {
 
     public static final RFileType INSTANCE = new RFileType();
 
+    public static final String DOT_R_EXTENSION = "." + RFileType.INSTANCE.getDefaultExtension();
+
 
     private RFileType() {
         this(new RLanguage());

@@ -33,6 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.Properties;
 
+import static com.r4intellij.RFileType.DOT_R_EXTENSION;
+
 
 /**
  * Action to create a new R script from a template.
@@ -57,7 +59,7 @@ public class NewRScriptAction extends CreateElementActionBase {
         String usedExtension = FileUtilRt.getExtension(inputFilename);
         boolean withExtension = !usedExtension.isEmpty();
 
-        return withExtension ? inputFilename : (inputFilename + "." + RFileType.INSTANCE.getDefaultExtension());
+        return withExtension ? inputFilename : (inputFilename + DOT_R_EXTENSION);
     }
 
 

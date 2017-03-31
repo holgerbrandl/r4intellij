@@ -41,6 +41,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.r4intellij.RFileType.DOT_R_EXTENSION;
 import static com.r4intellij.packages.PackageServiceUtilKt.getInstalledPackageVersions;
 import static com.r4intellij.packages.RHelperUtil.PluginResourceFile;
 import static com.r4intellij.packages.RHelperUtil.RRunResult;
@@ -181,7 +182,7 @@ public class RSkeletonGenerator {
             final File skeletonsDir = new File(skeletonsPath);
 
             // skip if skeleton exists already and it is not outdated
-            File skeletonFile = new File(skeletonsDir, packageName + ".R");
+            File skeletonFile = new File(skeletonsDir, packageName + DOT_R_EXTENSION);
 
 
 //            RPackage rPackage = indexCache.getPackages().stream()
@@ -211,7 +212,7 @@ public class RSkeletonGenerator {
                     indicator.setText("Indexing '" + packageName + "'");
 
                     // build the skeletons in tmp and move them once done so avoid incomplete file index failures
-                    File tempSkeleton = Files.createTempFile("r4j_skel_" + packageName + "_", ".R").toFile();
+                    File tempSkeleton = Files.createTempFile("r4j_skel_" + packageName + "_", DOT_R_EXTENSION).toFile();
 
                     RRunResult output = RHelperUtil.runHelperWithArgs(RHELPER_SKELETONIZE_PACKAGE, packageName, tempSkeleton.getAbsolutePath());
 
@@ -260,7 +261,7 @@ public class RSkeletonGenerator {
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
             noLongerInstalled.forEach(rmPckg -> {
-                        String skeletonFile = RSkeletonGenerator.getSkeletonsPath() + File.separator + rmPckg.getName() + ".R";
+                String skeletonFile = RSkeletonGenerator.getSkeletonsPath() + File.separator + rmPckg.getName() + DOT_R_EXTENSION;
                         new File(skeletonFile).delete();
                     }
             );
@@ -344,7 +345,7 @@ public class RSkeletonGenerator {
 
         VirtualFile skeletonsDir = packageDir.getParent();
         try {
-            VirtualFile packageFile = skeletonsDir.findOrCreateChildData(project, packageName + ".r");
+            VirtualFile packageFile = skeletonsDir.findOrCreateChildData(project, packageName + DOT_R_EXTENSION);
             final Document packageDocument = FileDocumentManager.getInstance().getDocument(packageFile);
 
             assert packageDocument != null;

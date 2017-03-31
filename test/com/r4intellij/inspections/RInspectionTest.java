@@ -13,6 +13,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static com.r4intellij.RFileType.DOT_R_EXTENSION;
+
 public abstract class RInspectionTest extends RTestCase {
 
     @Override
@@ -22,7 +24,7 @@ public abstract class RInspectionTest extends RTestCase {
 
 
     protected CodeInsightTestFixture doTest() {
-        return doTest(getTestName(true) + ".R");
+        return doTest(getTestName(true) + DOT_R_EXTENSION);
     }
 
 
@@ -43,7 +45,7 @@ public abstract class RInspectionTest extends RTestCase {
 
 
     protected String readTestDataFile() {
-        Path testDataPath = Paths.get(getTestDataPath(), getTestName(true) + ".R");
+        Path testDataPath = Paths.get(getTestDataPath(), getTestName(true) + DOT_R_EXTENSION);
         return readFileAsString(testDataPath);
     }
 

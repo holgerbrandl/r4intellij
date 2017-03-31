@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.r4intellij.RFileType.DOT_R_EXTENSION;
 import static com.r4intellij.packages.RSkeletonGenerator.DEFAULT_PACKAGES;
 
 public abstract class RTestCase extends UsefulTestCase {
@@ -121,8 +122,6 @@ public abstract class RTestCase extends UsefulTestCase {
 
         createSkeletonLibrary(myFixture, packageNames);
 
-        // works but makes testing painfully slow
-        RIndexCache.getInstance().refreshIndexCache(myFixture.getProject(), packageNames);
     }
 
 
@@ -141,14 +140,17 @@ public abstract class RTestCase extends UsefulTestCase {
                 LibraryUtil.R_SKELETONS,
                 ArrayUtil.toObjectArray(skeletons, VirtualFile.class));
 
+        // works but makes testing painfully slow
+        RIndexCache.getInstance().refreshIndexCache(myFixture.getProject(), packageNames);
     }
 
 
     @NotNull
     // todo make generic or add test-skeletons to test-data for better portability
     private static File getSkeletonPath(final String pckgName) {
-        return new File("/Users/brandl/Library/Caches/IntelliJIdea2017.1/r_skeletons/1842261700/", pckgName + ".R");
-//        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/system/r_skeletons/1842261700", pckgName + ".R");
+        String localUserSkeletons = "/Users/brandl/Library/Caches/IntelliJIdea2017.1/r_skeletons/1842261700/";
+        return new File(localUserSkeletons, pckgName + DOT_R_EXTENSION);
+//        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/system/r_skeletons/1842261700", pckgName + DOT_R_EXTENSION);
 //        return new File("/Users/brandl/Library/Caches/IntelliJIdea2016.3/plugins-sandbox/test/system/r_skeletons/1842261700/", pckgName + ".R");
     }
 

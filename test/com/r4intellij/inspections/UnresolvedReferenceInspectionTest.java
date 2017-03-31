@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
+import static com.r4intellij.RFileType.DOT_R_EXTENSION;
 import static com.r4intellij.inspections.InspectionTestUtilKt.errorForwardRef;
 import static com.r4intellij.inspections.InspectionTestUtilKt.unresolvedError;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -26,7 +27,7 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testNoWarningForOverriddenMethod() {
-        doTest(getTestName(true) + ".R");
+        doTest(getTestName(true) + DOT_R_EXTENSION);
     }
 
 
@@ -46,17 +47,17 @@ public class UnresolvedReferenceInspectionTest extends RInspectionTest {
 
 
     public void testUnresovableSymbolInScope() {
-        doTest(getTestName(true) + ".R");
+        doTest(getTestName(true) + DOT_R_EXTENSION);
     }
 
 
     public void testUnresolvableFunction() {
-        doTest(getTestName(true) + ".R");
+        doTest(getTestName(true) + DOT_R_EXTENSION);
     }
 
 
     public void testPackageNameInLibraryCall() {
-        doTest(getTestName(true) + ".R");
+        doTest(getTestName(true) + DOT_R_EXTENSION);
     }
 
 

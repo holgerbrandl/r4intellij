@@ -28,6 +28,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.r4intellij.RFileType.DOT_R_EXTENSION;
+
 public class RResolver {
 
     protected static final Logger LOG = Logger.getInstance("#" + RResolver.class.getName());
@@ -194,23 +196,23 @@ public class RResolver {
         }
 //            final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);
         // works for unit-tests but library layout is not the same as if IJ is running
-//            Optional<VirtualFile> first = Arrays.stream(files).filter(f -> f.getName().equals(packageName + ".r")).findFirst();
+//            Optional<VirtualFile> first = Arrays.stream(files).filter(f -> f.getName().equals(packageName + DOT_R_EXTENSION)).findFirst();
 
 //            if (!first.isPresent())
 //                return;
 
 //            for (VirtualFile child : files) {
 //            final VirtualFile file = first.get();
-//                final VirtualFile file = child.findChild(packageName + ".r");
+//                final VirtualFile file = child.findChild(packageName + DOT_R_EXTENSION);
 
         VirtualFile file = Arrays.stream(library.getFiles(OrderRootType.CLASSES)).
-                map(d -> d.findFileByRelativePath(namespace + ".r")).
+                map(d -> d.findFileByRelativePath(namespace + DOT_R_EXTENSION)).
                 filter(Objects::nonNull).findFirst().orElse(null);
 
         // FIXME support unit-test library layout out here (bad design!)
         if (file == null) {
             file = Arrays.stream(library.getFiles(OrderRootType.CLASSES))
-                    .filter(f -> f.getName().equals(namespace + ".r"))
+                    .filter(f -> f.getName().equals(namespace + DOT_R_EXTENSION))
                     .findFirst().orElse(null);
         }
 

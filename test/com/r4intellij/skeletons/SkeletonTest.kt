@@ -1,5 +1,6 @@
 package com.r4intellij.skeletons
 
+import com.r4intellij.RFileType.DOT_R_EXTENSION
 import com.r4intellij.RTestCase
 import com.r4intellij.packages.RHelperUtil
 import com.r4intellij.packages.RSkeletonGenerator.RHELPER_SKELETONIZE_PACKAGE
@@ -37,13 +38,13 @@ class SkeletonTest : RTestCase() {
         TEST_DIRECTORY.mkdir()
 
         val buildSkeleton = { pckg: String ->
-            RHelperUtil.runHelperWithArgs(RHELPER_SKELETONIZE_PACKAGE, pckg, File(TEST_DIRECTORY, pckg + ".R").absolutePath)
+            RHelperUtil.runHelperWithArgs(RHELPER_SKELETONIZE_PACKAGE, pckg, File(TEST_DIRECTORY, pckg + DOT_R_EXTENSION).absolutePath)
         }
 
         assertFalse(testPackages.map(buildSkeleton).any { runResult -> runResult!!.exitCode != 0 })
 
         testPackages.forEach { pckg ->
-            val skeletonFile = File(TEST_DIRECTORY, pckg + ".R")
+            val skeletonFile = File(TEST_DIRECTORY, pckg + DOT_R_EXTENSION)
 
             assertTrue(isValidSkeleton(skeletonFile))
 

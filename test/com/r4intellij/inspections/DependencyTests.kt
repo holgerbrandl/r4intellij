@@ -67,7 +67,7 @@ class DependencyTests : RTestCase() {
 
     // see https://github.com/tidyverse/tidyverse/issues/40
     fun testTransitiveTidyverseDependencies() {
-        createSkeletonLibrary("dplyr", "datasets")
+        createSkeletonLibrary("dplyr", "datasets", "tidyverse")
         doExprTest("require(tidyverse); group_by(iris)")
     }
 
