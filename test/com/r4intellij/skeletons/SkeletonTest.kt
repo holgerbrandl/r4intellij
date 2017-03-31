@@ -41,7 +41,8 @@ class SkeletonTest : RTestCase() {
             RHelperUtil.runHelperWithArgs(RHELPER_SKELETONIZE_PACKAGE, pckg, File(TEST_DIRECTORY, pckg + DOT_R_EXTENSION).absolutePath)
         }
 
-        assertFalse(testPackages.map(buildSkeleton).any { runResult -> runResult!!.exitCode != 0 })
+        val parseRunStatii = testPackages.map(buildSkeleton)
+        assertFalse(parseRunStatii.any { runResult -> runResult!!.exitCode != 0 })
 
         testPackages.forEach { pckg ->
             val skeletonFile = File(TEST_DIRECTORY, pckg + DOT_R_EXTENSION)
