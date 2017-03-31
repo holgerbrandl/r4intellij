@@ -81,8 +81,9 @@
             description="create plugin bundle for upload to jetbrains repository">
         <jar destfile="${out.jar}">
             <zipfileset dir="${out.classes.dir}"/>
-            <zipfileset dir="${in.resources.dir}/icons" prefix="icons"/>
-            <zipfileset dir="${in.resources.dir}/inspectionDescriptions" prefix="inspectionDescriptions"/>
+            <!--<zipfileset dir="${in.resources.dir}/icons" prefix="icons"/>-->
+            <!--<zipfileset dir="${in.resources.dir}/inspectionDescriptions" prefix="inspectionDescriptions"/>-->
+            <zipfileset dir="${in.resources.dir}"/>
             <zipfileset dir="${in.meta-inf.dir}" prefix="${in.meta-inf.dir}"/>
         </jar>
 

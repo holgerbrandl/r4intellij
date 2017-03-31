@@ -23,4 +23,4 @@ rm "./plugins/R4Intellij/classes/fileTemplates/internal/R Script.ft"
 
 find ~/Library/Preferences/IntelliJIdea2017.1 | grep "R Script"
 find ~/Library/Caches/IntelliJIdea2017.1 | grep "R Script"
-find "~/Library/Application Support/IntelliJIdea2017.1" | grep "R Script"
+find ~/Library/"Application Support"/IntelliJIdea2017.1 | grep "R Script"

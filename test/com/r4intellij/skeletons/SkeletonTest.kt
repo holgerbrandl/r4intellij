@@ -13,7 +13,7 @@ import java.io.File
 
 class SkeletonTest : RTestCase() {
 
-    val TEST_DIRECTORY = "unit_test_skeletons"
+    val TEST_DIRECTORY = File("testData", "unit_test_skeletons")
 
     //    companion object {
     //
@@ -34,7 +34,7 @@ class SkeletonTest : RTestCase() {
                 "graphics"
         )
 
-        File(TEST_DIRECTORY).mkdir()
+        TEST_DIRECTORY.mkdir()
 
         val buildSkeleton = { pckg: String ->
             RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, pckg, File(TEST_DIRECTORY, pckg + ".R").absolutePath)

@@ -20,7 +20,7 @@ import java.util.Collections;
 
 public class RHelperUtil {
 
-    public static final PluginResourceFile INSTALL_TIDYVERSE = new PluginResourceFile("install_tidyverse.r");
+//    public static final PluginResourceFile INSTALL_TIDYVERSE = new PluginResourceFile("misc/install_tidyverse.r");
 
     public static final Logger LOG = Logger.getInstance(RHelperUtil.class.getName());
 
