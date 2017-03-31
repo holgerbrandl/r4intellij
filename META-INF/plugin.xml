@@ -92,10 +92,16 @@
         </action>
 
         <!--TODO disable for release-->
-        <action id="RSkeletonsGenerator" class="com.r4intellij.actions.RSkeletonsGeneratorAction"
-                text="Generate Skeletons">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        <!--<action id="RSkeletonsGenerator" class="com.r4intellij.actions.RSkeletonsGeneratorAction"-->
+        <!--text="Generate Skeletons">-->
+        <!--<add-to-group group-id="ToolsMenu" anchor="last"/>-->
+        <!--</action>-->
+
+        <action id="Bash.NewBashScript" class="com.r4intellij.actions.NewRScriptAction"
+                text="R Script" description="Create a new R-script">
+            <add-to-group group-id="NewGroup" relative-to-action="NewFile" anchor="after"/>
         </action>
+
     </actions>
 
 
@@ -192,6 +198,7 @@
         <liveTemplateContext implementation="com.r4intellij.editor.RContextType"/>
         <defaultLiveTemplatesProvider implementation="com.r4intellij.editor.LiveTemplateProvider"/>
 
+        <internalFileTemplate name="R Script.R"/>
 
         <!-- Inspections -->
 
