@@ -8,6 +8,7 @@
 package com.r4intellij.packages
 
 import com.google.common.base.CharMatcher
+import com.google.common.collect.Lists
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.impl.scopes.LibraryScope
 import com.intellij.openapi.progress.ProgressIndicator
@@ -32,6 +33,7 @@ val RHELPER_PACKAGE_VERSIONS = RHelperUtil.PluginResourceFile("package_versions.
  * @author Holger Brandl
  */
 
+// see /Users/brandl/projects/jb/intellij-community/platform/projectModel-api/src/com/intellij/openapi/application/actions.kt
 inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     //    return ReadAction.compute { it -> runnable} ??
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
@@ -53,6 +55,7 @@ fun rebuildIndex(project: Project, vararg packageNames: String = emptyArray()) {
         return
     }
 
+
     // too wide scope in scratches?
     // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000093684-Reference-search-scope-different-between-project-files-and-scratches-
     //    System.err.println("num keys is ${RAssignmentNameIndex.allKeys(project).size}")
@@ -64,7 +67,11 @@ fun rebuildIndex(project: Project, vararg packageNames: String = emptyArray()) {
     //    val updateTitles = titleStatements.filter { packageNames.isEmpty() || packageNames.contains(getTrimmedFileName(it)) }
     val updateTitles = titleStatements.filter { packageNames.contains(getTrimmedFileName(it)) }
 
-    if (updateTitles.isEmpty()) return
+    if (updateTitles.isEmpty()) {
+        // referesh cache as well here to also clear deleted packages
+        RIndexCache.getInstance().updateCache(Lists.newArrayList(), project)
+        return
+    }
 
     var indexCounter = 0
 

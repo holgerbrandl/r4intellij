@@ -23,9 +23,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.util.DocumentUtil;
+import com.r4intellij.RFileType;
 import com.r4intellij.interpreter.SimpleFunctionVisitor;
 import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
@@ -105,10 +107,21 @@ public class RSkeletonGenerator {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
 //                ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                List<String> updatedPackages = updateSkeletons(indicator);
+                List<String> updatedPackages = updateSkeletons(indicator, project);
 
                 // trigger index cache refresh
-                RIndexCache.getInstance().refreshIndexCache(project, updatedPackages.toArray(new String[0]));
+
+//                ApplicationManager.getApplication().invokeLater(() -> {
+//                    VirtualFileManager.getInstance().syncRefresh();
+//
+//                    });
+
+//                RefreshQueue.getInstance().
+//                VirtualFileManager.getInstance().syncRefresh();
+                VirtualFileManager.getInstance().asyncRefresh(() -> {
+                    RIndexCache.getInstance().refreshIndexCache(project, updatedPackages.toArray(new String[0]));
+                });
+
 
                 // TBD seems to cause thread exeception. Needed?
 //                        PsiDocumentManager.getInstance(project).commitAllDocuments();
@@ -154,13 +167,14 @@ public class RSkeletonGenerator {
 
 
     @NotNull
-    private static List<String> updateSkeletons(@NotNull ProgressIndicator indicator) {
+    private static List<String> updateSkeletons(@NotNull ProgressIndicator indicator, Project project) {
         final String interpreter = RSettings.getInstance().getInterpreterPath();
 
         if (StringUtil.isEmptyOrSpaces(interpreter)) return new ArrayList<>();
 
+        Map<String, String> packageVersions = getInstalledPackageVersions();
 
-        Map<String, String> packageVersions = cleanUpUninstalledPckgs();
+        cleanUpUninstalledPackages(packageVersions);
 
         List<String> updated = new ArrayList<>();
 
@@ -242,33 +256,39 @@ public class RSkeletonGenerator {
             e.printStackTrace();
         }
 
+//        http://www.jetbrains.org/intellij/sdk/docs/basics/architectural_overview/virtual_file.html
+//        VirtualFile.refresh()
         return updated;
     }
 
 
-    @NotNull
-    private static Map<String, String> cleanUpUninstalledPckgs() {
-        RIndexCache indexCache = RIndexCache.getInstance();
+    private static void cleanUpUninstalledPackages(Map<String, String> packageVersions) {
 
-        Map<String, String> packageVersions = getInstalledPackageVersions();
+        File[] skeletonFiles = new File(RSkeletonGenerator.getSkeletonsPath())
+                .listFiles(pathname -> pathname.getName().endsWith(RFileType.DOT_R_EXTENSION));
+
+        List<File> noLongerInstalled = Arrays
+                .stream(skeletonFiles != null ? skeletonFiles : new File[0])
+                .filter(skelFile -> {
+                    String skelPckgeName = skelFile.getName().replace(RFileType.DOT_R_EXTENSION, "");
+
+                    return !packageVersions.keySet().contains(skelPckgeName);
+                }).collect(Collectors.toList());
+
 
         // remove skeletons of no longer installed from index cache
-        List<RPackage> noLongerInstalled = indexCache.getPackages()
-                .stream()
-                .filter(rpckg -> !packageVersions.containsKey(rpckg.getName()))
-                .collect(Collectors.toList());
-
 
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-            noLongerInstalled.forEach(rmPckg -> {
-                String skeletonFile = RSkeletonGenerator.getSkeletonsPath() + File.separator + rmPckg.getName() + DOT_R_EXTENSION;
-                        new File(skeletonFile).delete();
-                    }
-            );
+            noLongerInstalled.forEach(File::delete);
         }));
 
-        indexCache.removeUninstalled(noLongerInstalled);
-        return packageVersions;
+
+//        // also remove from package index
+//        List<String> noLongerInstalledNames = noLongerInstalled.stream()
+//                .map(skelFile -> skelFile.getName().replace(RFileType.DOT_R_EXTENSION, ""))
+//                .collect(Collectors.toList());
+//
+//        RIndexCache.getInstance().updateCache(noLongerInstalledNames);
     }
 
 

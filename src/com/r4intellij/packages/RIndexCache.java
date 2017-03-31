@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
+import com.r4intellij.RFileType;
 import com.r4intellij.psi.api.RFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -110,14 +111,29 @@ public class RIndexCache {
     }
 
 
-    public void removeUninstalled(List<RPackage> noLongerInstalled) {
-        allPackages.removeAll(noLongerInstalled);
+    @Deprecated
+    public void removeUninstalled(List<String> noLongerInstalled) {
+        List<RPackage> removed = noLongerInstalled.stream()
+                .map(this::getByName)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        allPackages.removeAll(removed);
     }
 
 
     public void updateCache(@NotNull List<RPackage> reindexed, Project project) {
         allPackages.removeAll(reindexed);
         allPackages.addAll(reindexed);
+
+        // remove no longer present packages from index
+        List<RPackage> removed = allPackages.stream().filter(rPackage -> {
+            File skelFile = new File(RSkeletonGenerator.getSkeletonsPath(), rPackage.getName() + RFileType.DOT_R_EXTENSION);
+            return !skelFile.exists();
+        }).collect(Collectors.toList());
+
+        allPackages.removeAll(removed);
+
 
         saveObject(allPackages, getLibIndexFile());
 

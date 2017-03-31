@@ -32,3 +32,7 @@ cd /Users/brandl/Library/Caches/IntelliJIdea2017.1/plugins-sandbox
 
 ## sync lib index
 cp /Users/brandl/Library/Caches/IntelliJIdea2017.1/plugins-sandbox/test/system/r_skeletons/1842261700/.libindex.dat
+
+ll /Users/brandl/Library/Caches/IntelliJIdea2017.1/plugins-sandbox/system/r_skeletons/1842261700/ggExtra.R
+R CMD REMOVE ggExtra
+

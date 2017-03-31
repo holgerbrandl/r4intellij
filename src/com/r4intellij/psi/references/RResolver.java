@@ -194,16 +194,6 @@ public class RResolver {
         if (library == null) {
             return;
         }
-//            final VirtualFile[] files = library.getFiles(OrderRootType.CLASSES);
-        // works for unit-tests but library layout is not the same as if IJ is running
-//            Optional<VirtualFile> first = Arrays.stream(files).filter(f -> f.getName().equals(packageName + DOT_R_EXTENSION)).findFirst();
-
-//            if (!first.isPresent())
-//                return;
-
-//            for (VirtualFile child : files) {
-//            final VirtualFile file = first.get();
-//                final VirtualFile file = child.findChild(packageName + DOT_R_EXTENSION);
 
         VirtualFile file = Arrays.stream(library.getFiles(OrderRootType.CLASSES)).
                 map(d -> d.findFileByRelativePath(namespace + DOT_R_EXTENSION)).

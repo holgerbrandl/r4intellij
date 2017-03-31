@@ -21,6 +21,7 @@
       <excludeFolder url="file://$MODULE_DIR$/r-helpers/r-skeletons" />
       <excludeFolder url="file://$MODULE_DIR$/r-helpers/r-user-skeletons" />
     </content>
+    <content url="file://$MODULE_DIR$/../use_r_2017" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" scope="TEST">
@@ -53,6 +54,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="project" />
     <orderEntry type="library" name="R Skeletons" level="project" />
     <orderEntry type="library" name="R Skeletons" level="project" />
     <orderEntry type="library" name="R Skeletons" level="project" />
