@@ -44,6 +44,10 @@ import java.util.Properties;
  */
 public class NewRScriptAction extends CreateElementActionBase {
 
+
+    static final String DEFAULT_TEMPLATE_FILENAME = "R Script.R";
+
+
     public NewRScriptAction() {
         super("foo", "bar", RFileType.INSTANCE.getIcon());
     }
@@ -84,9 +88,6 @@ public class NewRScriptAction extends CreateElementActionBase {
 
         return validator.getCreatedElements();
     }
-
-
-    static final String DEFAULT_TEMPLATE_FILENAME = "template_script.R";
 
 
     @NotNull

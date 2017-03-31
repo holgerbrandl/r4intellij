@@ -78,7 +78,7 @@ fun rebuildIndex(project: Project, vararg packageNames: String = emptyArray()) {
 
             val reindexed = updateTitles.map { titleStatement ->
                 progressIndicator.fraction = indexCounter++.toDouble() / updateTitles.size
-                progressIndicator.text = "Indexing '${getTrimmedFileName(titleStatement)}'"
+                progressIndicator.text = "Caching index of '${getTrimmedFileName(titleStatement)}'"
 
                 runReadAction { buildPackage(titleStatement) }
             }

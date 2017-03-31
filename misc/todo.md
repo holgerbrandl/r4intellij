@@ -1,20 +1,31 @@
 R4Intellij Development Notes
 =============================
 
-## 0-day bugs
+0-day bugs
+----------
 
-
+null
+java.lang.NullPointerException
+	at com.r4intellij.documentation.RDocumentationProvider.generateDoc(Unknown Source)
+	at com.intellij.lang.documentation.CompositeDocumentationProvider.generateDoc(CompositeDocumentationProvider.java:144)
+	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:659)
+	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:931)
+	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:656)
+	at com.intellij.util.concurrency.QueueProcessor.runSafely(QueueProcessor.java:223)
+	at com.intellij.util.Alarm$Request.runSafely(Alarm.java:418)
+	at com.intellij.util.Alarm$Request.access$700(Alarm.java:343)
+	at com.intellij.util.Alarm$Request$1.run(Alarm.java:385)
+	at com.intellij.util.Alarm$Request.run(Alarm.java:396)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at com.intellij.util.concurrency.SchedulingWrapper$MyScheduledFutureTask.run(SchedulingWrapper.java:237)
+	at com.intellij.util.concurrency.BoundedTaskExecutor$2.run(BoundedTaskExecutor.java:212)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at java.lang.Thread.run(Thread.java:745)
 
 Next Steps
 ----------
-
-
-v1.0
-----
-
-* add "new r script" and "add new R-notebook" context menu entries (see /Users/brandl/projects/rplugin/BashSupport/src/com/ansorgit/plugins/bash/actions/NewBashFileAction.java)
-    * also see org.jetbrains.plugins.groovy.actions.NewScriptAction
-    * templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
 
 
 
