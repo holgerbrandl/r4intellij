@@ -7,6 +7,7 @@
 
 package com.r4intellij.packages;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.Application;
@@ -21,7 +22,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -49,11 +49,23 @@ import static com.r4intellij.settings.LibraryUtil.createLibrary;
 
 
 public class RSkeletonGenerator {
+
+    public static final String SKELETON_TITLE = ".skeleton_package_title";
+    public static final String SKELETON_PCKG_VERSION = ".skeleton_package_version";
+    public static final String SKELETON_DEPENDS = ".skeleton_package_depends";
+    public static final String SKELETON_IMPORTS = ".skeleton_package_imports";
+    public static final String SKELETON_SKEL_VERSION = ".skeleton_version";
+
+
+    // note: just change in sync with ./r-helpers/skeletonize_package.R
+    public static final int CUR_SKELETONIZE_VERSION = 5;
+
+
     public static final Set<String> DEFAULT_PACKAGES = Sets.newHashSet("stats", "graphics", "grDevices", "utils", "datasets", "grid", "methods", "base");
 
     protected static final Logger LOG = Logger.getInstance("#" + RSkeletonGenerator.class.getName());
 
-    public static final PluginResourceFile SKELETONIZE_PACKAGE = new PluginResourceFile("skeletonize_package.R");
+    public static final PluginResourceFile RHELPER_SKELETONIZE_PACKAGE = new PluginResourceFile("skeletonize_package.R");
 
     public static final String SKELETON_DIR_NAME = "r_skeletons";
 
@@ -100,14 +112,14 @@ public class RSkeletonGenerator {
                 // TBD seems to cause thread exeception. Needed?
 //                        PsiDocumentManager.getInstance(project).commitAllDocuments();
 
-                String path = RSkeletonGenerator.getSkeletonsPath();
-
-                VirtualFile skeletonDir = VfsUtil.findFileByIoFile(new File(path), true);
-
-                if (skeletonDir == null) {
-                    LOG.info("Failed to locate skeletons directory");
-                    return;
-                }
+//                String path = RSkeletonGenerator.getSkeletonsPath();
+//
+//                VirtualFile skeletonDir = VfsUtil.findFileByIoFile(new File(path), true);
+//
+//                if (skeletonDir == null) {
+//                    LOG.info("Failed to locate skeletons directory");
+//                    return;
+//                }
 //                });
             }
         });
@@ -147,26 +159,7 @@ public class RSkeletonGenerator {
         if (StringUtil.isEmptyOrSpaces(interpreter)) return new ArrayList<>();
 
 
-        RIndexCache indexCache = RIndexCache.getInstance();
-
-        Map<String, String> packageVersions = getInstalledPackageVersions();
-
-        // remove skeletons of no longer installed from index cache
-        List<RPackage> noLongerInstalled = indexCache.getPackages()
-                .stream()
-                .filter(rpckg -> !packageVersions.containsKey(rpckg.getName()))
-                .collect(Collectors.toList());
-
-
-        ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
-            noLongerInstalled.forEach(rmPckg -> {
-                        String skeletonFile = RSkeletonGenerator.getSkeletonsPath() + File.separator + rmPckg.getName() + ".R";
-                        new File(skeletonFile).delete();
-                    }
-            );
-        }));
-
-        indexCache.removeUninstalled(noLongerInstalled);
+        Map<String, String> packageVersions = cleanUpUninstalledPckgs();
 
         List<String> updated = new ArrayList<>();
 
@@ -184,21 +177,23 @@ public class RSkeletonGenerator {
         for (String packageName : packageNames) {
             processed++;
 
-            RPackage rPackage = indexCache.getPackages().stream()
-                    .filter(it -> it.getName().equals(packageName))
-                    .findFirst().orElse(null);
-
-            // skip reindexing if package version is same as cached index version
-            String installedVersion = packageVersions.get(packageName);
-            boolean isCorrectCacheVersion = rPackage != null && Objects.equals(rPackage.getVersion(), installedVersion);
-
             final String skeletonsPath = getSkeletonsPath();
             final File skeletonsDir = new File(skeletonsPath);
 
             // skip if skeleton exists already and it is not outdated
             File skeletonFile = new File(skeletonsDir, packageName + ".R");
 
-            if (isValidSkeleton(skeletonFile) && isCorrectCacheVersion) {
+
+//            RPackage rPackage = indexCache.getPackages().stream()
+//                    .filter(it -> it.getName().equals(packageName))
+//                    .findFirst().orElse(null);
+
+            // skip reindexing if package version is same as cached index version
+            String installedVersion = packageVersions.get(packageName);
+//            boolean isCorrectCacheVersion = rPackage != null && Objects.equals(rPackage.getVersion(), installedVersion);
+
+
+            if (isValidSkeleton(skeletonFile) && isSamePckgVersion(skeletonFile, installedVersion)) {
                 continue;
             }
 
@@ -218,7 +213,7 @@ public class RSkeletonGenerator {
                     // build the skeletons in tmp and move them once done so avoid incomplete file index failures
                     File tempSkeleton = Files.createTempFile("r4j_skel_" + packageName + "_", ".R").toFile();
 
-                    RRunResult output = RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, packageName, tempSkeleton.getAbsolutePath());
+                    RRunResult output = RHelperUtil.runHelperWithArgs(RHELPER_SKELETONIZE_PACKAGE, packageName, tempSkeleton.getAbsolutePath());
 
                     if (output != null && output.getExitCode() != 0) {
                         LOG.error("Failed to generate skeleton for '" + packageName + "'. Exit code: " + output.getExitCode());
@@ -250,8 +245,34 @@ public class RSkeletonGenerator {
     }
 
 
+    @NotNull
+    private static Map<String, String> cleanUpUninstalledPckgs() {
+        RIndexCache indexCache = RIndexCache.getInstance();
+
+        Map<String, String> packageVersions = getInstalledPackageVersions();
+
+        // remove skeletons of no longer installed from index cache
+        List<RPackage> noLongerInstalled = indexCache.getPackages()
+                .stream()
+                .filter(rpckg -> !packageVersions.containsKey(rpckg.getName()))
+                .collect(Collectors.toList());
+
+
+        ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+            noLongerInstalled.forEach(rmPckg -> {
+                        String skeletonFile = RSkeletonGenerator.getSkeletonsPath() + File.separator + rmPckg.getName() + ".R";
+                        new File(skeletonFile).delete();
+                    }
+            );
+        }));
+
+        indexCache.removeUninstalled(noLongerInstalled);
+        return packageVersions;
+    }
+
+
     public static boolean isValidSkeleton(File skeletonFile) {
-        return skeletonFile.exists() && isComplete(skeletonFile) && isCurrentVersion(skeletonFile);
+        return skeletonFile.exists() && isComplete(skeletonFile) && isCurrentSkelVersion(skeletonFile);
     }
 
 
@@ -275,23 +296,25 @@ public class RSkeletonGenerator {
     }
 
 
-    // note: just change in sync with ./r-helpers/skeletonize_package.R
-    public static final int SKELETONIZE_VERSION = 5;
+    private static boolean isSamePckgVersion(File skeletonFile, String installedVersion) {
+        Map<String, String> skelProps = getSkeletonProperties(skeletonFile);
+        String skelPckgVersion = CharMatcher.anyOf("\"").trimFrom(skelProps.getOrDefault(SKELETON_PCKG_VERSION, ""));
+
+        return Objects.equals(skelPckgVersion, installedVersion);
+    }
 
 
-    private static boolean isCurrentVersion(File skeletonFile) {
+    private static boolean isCurrentSkelVersion(File skeletonFile) {
+        Map<String, String> skelProps = getSkeletonProperties(skeletonFile);
+        Integer skelVersion = Integer.valueOf(skelProps.getOrDefault(SKELETON_SKEL_VERSION, "-1"));
 
-        // TODO why don't we use the stub here (should be faster)
+        return skelVersion == CUR_SKELETONIZE_VERSION;
+    }
 
 
-//        VirtualFile virtualFile = VfsTestUtil.findFileByCaseSensitivePath(skeletonFile.getAbsolutePath());
-//        final PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-//
-//        Integer fileVersion = PsiTreeUtil.findChildrenOfType(psiFile, RAssignmentStatement.class).stream()
-//                .filter(rassign -> Objects.equals(rassign.getName(), ".skeleton_version"))
-//                .map(rassign -> Integer.valueOf(rassign.getAssignedValue().getText()))
-//                .findFirst().orElse(-1);
+    private static Map<String, String> getSkeletonProperties(File skeletonFile) {
 
+        Map<String, String> skelProps = new HashMap<>();
 
         // use basic file search because psi-read access is not allowed from here (and it's also faster)
         Integer fileVersion = -1;
@@ -299,15 +322,15 @@ public class RSkeletonGenerator {
             Scanner scanner = new Scanner(skeletonFile);
             while (scanner.hasNextLine()) {
                 String curLine = scanner.nextLine();
-                if (curLine.startsWith(".skeleton_version")) {
-                    fileVersion = Integer.valueOf(curLine.split(" = ")[1]);
-                    break;
+                if (curLine.startsWith(".skeleton_")) {
+                    String[] splitLine = curLine.split(" = ");
+                    skelProps.put(splitLine[0], splitLine[1]);
                 }
             }
         } catch (FileNotFoundException | ArrayIndexOutOfBoundsException ignored) {
         }
 
-        return SKELETONIZE_VERSION == fileVersion;
+        return skelProps;
     }
 
 

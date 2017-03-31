@@ -55,19 +55,19 @@ methods for more details:
 </p>
 
 <ul>
-<li><p> data.frame: <a href="http://127.0.0.1:5678/library/dplyr/help/grouped_df">grouped_df</a>
+<li><p> data.frame: <a href="psi_element://library/dplyr/help/grouped_df">grouped_df</a>
 </p>
 </li>
-<li><p> data.table: <a href="http://127.0.0.1:5678/library/dtplyr/html/grouped_dt.html">grouped_dt</a>
+<li><p> data.table: <a href="psi_element://library/dtplyr/html/grouped_dt.html">grouped_dt</a>
 </p>
 </li>
-<li><p> SQLite: <code><a href="http://127.0.0.1:5678/library/dplyr/help/src_sqlite">src_sqlite</a></code>
+<li><p> SQLite: <code><a href="psi_element://library/dplyr/help/src_sqlite">src_sqlite</a></code>
 </p>
 </li>
-<li><p> PostgreSQL: <code><a href="http://127.0.0.1:5678/library/dplyr/help/src_postgres">src_postgres</a></code>
+<li><p> PostgreSQL: <code><a href="psi_element://library/dplyr/help/src_postgres">src_postgres</a></code>
 </p>
 </li>
-<li><p> MySQL: <code><a href="http://127.0.0.1:5678/library/dplyr/help/src_mysql">src_mysql</a></code>
+<li><p> MySQL: <code><a href="psi_element://library/dplyr/help/src_mysql">src_mysql</a></code>
 </p>
 </li></ul>
 
@@ -75,8 +75,8 @@ methods for more details:
 
 <h3>See Also</h3>
 
-<p><code><a href="http://127.0.0.1:5678/library/dplyr/help/ungroup">ungroup</a></code> for the inverse operation,
-<code><a href="http://127.0.0.1:5678/library/dplyr/help/groups">groups</a></code> for accessors that don't do special evaluation.
+<p><code><a href="psi_element://library/dplyr/help/ungroup">ungroup</a></code> for the inverse operation,
+<code><a href="psi_element://library/dplyr/help/groups">groups</a></code> for accessors that don't do special evaluation.
 </p>
 
 
@@ -111,5 +111,5 @@ groups(group_by(by_cyl, vs, am, add = TRUE))
 groups(group_by(by_cyl, cyl, cyl))
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>dplyr</em> version 0.5.0 <a href="http://127.0.0.1:5678/library/dplyr/html/00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>dplyr</em> version 0.5.0 <a href="psi_element://library/dplyr/html/00Index.html">Index</a>]</div>
 </body></html>

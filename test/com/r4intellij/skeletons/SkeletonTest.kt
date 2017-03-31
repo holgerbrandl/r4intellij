@@ -2,7 +2,7 @@ package com.r4intellij.skeletons
 
 import com.r4intellij.RTestCase
 import com.r4intellij.packages.RHelperUtil
-import com.r4intellij.packages.RSkeletonGenerator.SKELETONIZE_PACKAGE
+import com.r4intellij.packages.RSkeletonGenerator.RHELPER_SKELETONIZE_PACKAGE
 import com.r4intellij.packages.RSkeletonGenerator.isValidSkeleton
 import org.intellij.lang.annotations.Language
 import java.io.File
@@ -37,7 +37,7 @@ class SkeletonTest : RTestCase() {
         TEST_DIRECTORY.mkdir()
 
         val buildSkeleton = { pckg: String ->
-            RHelperUtil.runHelperWithArgs(SKELETONIZE_PACKAGE, pckg, File(TEST_DIRECTORY, pckg + ".R").absolutePath)
+            RHelperUtil.runHelperWithArgs(RHELPER_SKELETONIZE_PACKAGE, pckg, File(TEST_DIRECTORY, pckg + ".R").absolutePath)
         }
 
         assertFalse(testPackages.map(buildSkeleton).any { runResult -> runResult!!.exitCode != 0 })

@@ -86,7 +86,7 @@ public class RIndexCache {
 
             return o;
         } catch (Throwable e) {
-            System.err.println("could not load R package index, error was:\n" + e);
+            System.err.println("could not load R package index cache, error was:\n" + e);
         }
 
         return null;

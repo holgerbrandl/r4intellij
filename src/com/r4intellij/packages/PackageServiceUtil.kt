@@ -17,18 +17,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
 import com.intellij.openapi.util.Computable
 import com.r4intellij.packages.RHelperUtil.getHelperOutput
+import com.r4intellij.packages.RSkeletonGenerator.*
 import com.r4intellij.psi.api.RAssignmentStatement
 import com.r4intellij.psi.references.RResolver.getTrimmedFileName
 import com.r4intellij.psi.stubs.RAssignmentNameIndex
 import com.r4intellij.settings.LibraryUtil
 
-private val SKELETON_TITLE = ".skeleton_package_title"
-private val SKELETON_PCKG_VERSION = ".skeleton_package_version"
-private val SKELETON_DEPENDS = ".skeleton_package_depends"
-private val SKELETON_IMPORTS = ".skeleton_package_imports"
-private val SKELETON_SKEL_VERSION = ".skeleton_version"
-
-private val SKELETON_PROPERTIES = listOf(SKELETON_TITLE, SKELETON_PCKG_VERSION, SKELETON_DEPENDS, SKELETON_IMPORTS, SKELETON_SKEL_VERSION)
+val SKELETON_PROPERTIES: List<String> = listOf(SKELETON_TITLE, SKELETON_PCKG_VERSION, SKELETON_DEPENDS, SKELETON_IMPORTS, SKELETON_SKEL_VERSION)
 
 val RHELPER_PACKAGE_VERSIONS = RHelperUtil.PluginResourceFile("package_versions.r")
 

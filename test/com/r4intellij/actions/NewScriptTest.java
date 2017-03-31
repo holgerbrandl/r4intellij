@@ -14,16 +14,16 @@ import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.r4intellij.RTestCase;
 import org.junit.Assert;
-import org.junit.Test;
 
 public class NewScriptTest extends RTestCase {
-    @Test
+
+    //    @Test
+//    @DisplayName
     public void testSimpleCreate() throws Exception {
         PsiFile newScript = createNewRScript(findSrcDir(), "new_file.R", NewRScriptAction.DEFAULT_TEMPLATE_FILENAME);
         Assert.assertNotNull(newScript);
         Assert.assertEquals("new_file.R", newScript.getName());
-        Assert.assertEquals("#!/usr/bin/env bash", newScript.getText());
-        Assert.assertTrue(newScript.getText().contains("Created by "));
+        Assert.assertTrue(newScript.getText().contains("Created by"));
     }
 
 //    @Test

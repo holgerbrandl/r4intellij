@@ -24,3 +24,11 @@ rm "./plugins/R4Intellij/classes/fileTemplates/internal/R Script.ft"
 find ~/Library/Preferences/IntelliJIdea2017.1 | grep "R Script"
 find ~/Library/Caches/IntelliJIdea2017.1 | grep "R Script"
 find ~/Library/"Application Support"/IntelliJIdea2017.1 | grep "R Script"
+
+
+## unit tests run in
+cd /Users/brandl/Library/Caches/IntelliJIdea2017.1/plugins-sandbox
+/Users/brandl/Library/Caches/IntelliJIdea2017.1/plugins-sandbox/test/
+
+## sync lib index
+cp /Users/brandl/Library/Caches/IntelliJIdea2017.1/plugins-sandbox/test/system/r_skeletons/1842261700/.libindex.dat

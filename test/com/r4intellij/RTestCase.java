@@ -59,7 +59,7 @@ public abstract class RTestCase extends UsefulTestCase {
 
 
         // inject stub index here for more reproducible testing
-        RIndexCache.getTestInstance();
+//        RIndexCache.getTestInstance();
 //        RIndexCache.getInstance().refreshIndex();
 
         // add base packages for testing
@@ -120,6 +120,9 @@ public abstract class RTestCase extends UsefulTestCase {
         }
 
         createSkeletonLibrary(myFixture, packageNames);
+
+        // works but makes testing painfully slow
+        RIndexCache.getInstance().refreshIndexCache(myFixture.getProject(), packageNames);
     }
 
 
