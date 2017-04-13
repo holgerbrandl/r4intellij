@@ -2,12 +2,13 @@
 
 ## clone R
 cd /Library/Frameworks/R.framework/Versions/3.3/Resources
-mv library library_all
+mv library library_all_new
 mkdir library
 
 ## re-establish base packages
 cd library_all
-cp -r stats graphics grDevices utils datasets grid methods base tcltk tools ../library
+cp -r stats  stats4 graphics grDevices utils datasets grid methods base tcltk tools ../library
+cp -r parallel ../library
 
 Rscript - <<"EOF"
 install.packages("devtools")
@@ -20,6 +21,8 @@ EOF
 #cd /Library/Frameworks/R.framework/Versions/3.3_devel
 #./R
 
+## backup this library for later
+cp -rf library r4intellij_
 
 ## zip them up for later
 cd /Library/Frameworks/R.framework/Versions/3.3/Resources

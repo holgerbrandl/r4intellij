@@ -16,7 +16,7 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import com.intellij.testFramework.fixtures.impl.LightTempDirTestFixtureImpl;
 import com.intellij.util.ArrayUtil;
-import com.r4intellij.packages.RIndexCache;
+import com.r4intellij.packages.PackageServiceUtilKt;
 import com.r4intellij.settings.LibraryUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
@@ -141,7 +141,7 @@ public abstract class RTestCase extends UsefulTestCase {
                 ArrayUtil.toObjectArray(skeletons, VirtualFile.class));
 
         // works but makes testing painfully slow
-        RIndexCache.getInstance().refreshIndexCache(myFixture.getProject(), packageNames);
+        PackageServiceUtilKt.rebuildIndex(myFixture.getProject());
     }
 
 

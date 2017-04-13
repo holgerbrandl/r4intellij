@@ -119,7 +119,15 @@ public class RSkeletonGenerator {
 //                RefreshQueue.getInstance().
 //                VirtualFileManager.getInstance().syncRefresh();
                 VirtualFileManager.getInstance().asyncRefresh(() -> {
-                    RIndexCache.getInstance().refreshIndexCache(project, updatedPackages.toArray(new String[0]));
+
+//                    File createdFileOutsideVFS = new File(RSkeletonGenerator.getSkeletonsPath(), "ggExtra.R");
+//                    System.err.println("ggextra file exists:" + createdFileOutsideVFS.exists());
+//                    System.err.println("ggextra vfs instance:" + VfsUtil.findFileByIoFile(createdFileOutsideVFS, false));
+
+//                    VfsUtil.findFileByIoFile(new File(RSkeletonGenerator.getSkeletonsPath(), "ggExtra.R"), true); // the actual file
+
+                    // also add those to the updated set which are not yet part of the index
+                    PackageServiceUtilKt.rebuildIndex(project);
                 });
 
 
@@ -137,6 +145,27 @@ public class RSkeletonGenerator {
 //                });
             }
         });
+//        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Skeletons", false) {
+//            @Override
+//            public void run(@NotNull ProgressIndicator indicator) {
+//                File createdFileOutsideVFS = new File(RSkeletonGenerator.getSkeletonsPath(), "ggExtra.R");
+//
+//                // ... some logic to create this file ...
+//
+//                // once done wait for VFS and stub-index to pick up the changes and do some follow up task using the stub-index
+//                VirtualFileManager.getInstance().asyncRefresh(() -> {
+//
+//                    System.err.println("ggextra file exists:" + createdFileOutsideVFS.exists());
+//                    System.err.println("ggextra vfs instance:" + VfsUtil.findFileByIoFile(createdFileOutsideVFS, false));
+//
+////                    VfsUtil.findFileByIoFile(new File(RSkeletonGenerator.getSkeletonsPath(), "ggExtra.R"), true); // the actual file
+//
+//                    // also add those to the updated set which are not yet part of the index
+//                    PackageServiceUtilKt.rebuildIndex(project);
+//                });
+//            }
+//        });
+
     }
 
 
@@ -317,7 +346,7 @@ public class RSkeletonGenerator {
     }
 
 
-    private static boolean isSamePckgVersion(File skeletonFile, String installedVersion) {
+    public static boolean isSamePckgVersion(File skeletonFile, String installedVersion) {
         Map<String, String> skelProps = getSkeletonProperties(skeletonFile);
         String skelPckgVersion = CharMatcher.anyOf("\"").trimFrom(skelProps.getOrDefault(SKELETON_PCKG_VERSION, ""));
 

@@ -48,6 +48,8 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     @Nullable
     @Override
     public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
+        if (contextElement == null) return null;
+
         String elementText = contextElement.getText();
         if (StringsKt.isBlank(elementText)) {
             return null;

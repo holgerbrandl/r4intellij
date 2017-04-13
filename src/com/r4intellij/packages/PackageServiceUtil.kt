@@ -23,6 +23,7 @@ import com.r4intellij.psi.api.RAssignmentStatement
 import com.r4intellij.psi.references.RResolver.getTrimmedFileName
 import com.r4intellij.psi.stubs.RAssignmentNameIndex
 import com.r4intellij.settings.LibraryUtil
+import java.io.File
 
 val SKELETON_PROPERTIES: List<String> = listOf(SKELETON_TITLE, SKELETON_PCKG_VERSION, SKELETON_DEPENDS, SKELETON_IMPORTS, SKELETON_SKEL_VERSION)
 
@@ -44,17 +45,19 @@ inline fun <T> runWriteAction(crossinline runnable: () -> T): T {
 }
 
 
-fun rebuildIndex(project: Project, vararg packageNames: String = emptyArray()) {
+fun rebuildIndex(project: Project) {
 
     val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
     val library = libraryTable.getLibraryByName(LibraryUtil.R_SKELETONS)
-
 
     if (library == null) {
         RPackageService.LOG.error("Could not find skeleton library")
         return
     }
 
+
+    // identify packages missing or outdated in cache
+    val indexCache = RIndexCache.getInstance()
 
     // too wide scope in scratches?
     // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000093684-Reference-search-scope-different-between-project-files-and-scratches-
@@ -63,19 +66,22 @@ fun rebuildIndex(project: Project, vararg packageNames: String = emptyArray()) {
 
     val titleStatements = runReadAction { RAssignmentNameIndex.find(SKELETON_TITLE, project, LibraryScope(project, library)) }
 
+    val updateTitles = titleStatements.filter({
+        val pckgName = getTrimmedFileName(it)
+        val cachePckg = indexCache.getByName(pckgName)
+        cachePckg == null || !isSamePckgVersion(File(it.containingFile.virtualFile.canonicalPath), cachePckg.version)
+    })
 
-    //    val updateTitles = titleStatements.filter { packageNames.isEmpty() || packageNames.contains(getTrimmedFileName(it)) }
-    val updateTitles = titleStatements.filter { packageNames.contains(getTrimmedFileName(it)) }
 
     if (updateTitles.isEmpty()) {
         // referesh cache as well here to also clear deleted packages
-        RIndexCache.getInstance().updateCache(Lists.newArrayList(), project)
+        indexCache.replaceAndCleanup(Lists.newArrayList(), project)
         return
     }
 
     var indexCounter = 0
 
-    ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Rebuilding R Index Cache...") {
+    ProgressManager.getInstance().run(object : Task.Backgroundable(project, "Refreshing R Index Cache...") {
         override fun run(progressIndicator: ProgressIndicator) {
 
             val reindexed = updateTitles.map { titleStatement ->
@@ -86,7 +92,7 @@ fun rebuildIndex(project: Project, vararg packageNames: String = emptyArray()) {
             }
 
             // add the recached ones
-            RIndexCache.getInstance().updateCache(reindexed, project)
+            indexCache.replaceAndCleanup(reindexed, project)
         }
     })
 }

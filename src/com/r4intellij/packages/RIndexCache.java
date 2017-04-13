@@ -24,8 +24,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.r4intellij.packages.PackageServiceUtilKt.rebuildIndex;
-
 /**
  * @author Holger Brandl
  */
@@ -69,8 +67,8 @@ public class RIndexCache {
 
         // this would presevere the content also for a non-static
 //        allPackages = Collections.unmodifiableSet(allPackages);
-//        allPackages = Sets.newConcurrentHashSet(allPackages);
-        allPackages = new HashSet<>(allPackages);
+        //        allPackages = new HashSet<>(allPackages);
+        allPackages = Sets.newConcurrentHashSet(allPackages);
 
         // update index (no fancy sync anymore because it's superfast anyway)
         // disabled because trigger after skeleton-refresh now
@@ -122,22 +120,19 @@ public class RIndexCache {
     }
 
 
-    public void updateCache(@NotNull List<RPackage> reindexed, Project project) {
+    public void replaceAndCleanup(@NotNull List<RPackage> reindexed, Project project) {
         allPackages.removeAll(reindexed);
         allPackages.addAll(reindexed);
 
-        // remove no longer present packages from index
-        List<RPackage> removed = allPackages.stream().filter(rPackage -> {
-            File skelFile = new File(RSkeletonGenerator.getSkeletonsPath(), rPackage.getName() + RFileType.DOT_R_EXTENSION);
-            return !skelFile.exists();
-        }).collect(Collectors.toList());
+        boolean changed = !reindexed.isEmpty() || cleanup();
 
-        allPackages.removeAll(removed);
+        if (changed) saveCache(project);
+    }
 
 
-        saveObject(allPackages, getLibIndexFile());
-
-//        ApplicationManager.getApplication().invokeLater(new Runnable() {
+    private void saveCache(Project project) {
+        saveObject(new HashSet<>(allPackages), getLibIndexFile());
+        //        ApplicationManager.getApplication().invokeLater(new Runnable() {
 
 //        if (ApplicationManager.getApplication() != null) {
 //            Project[] projects = ProjectManager.getInstance().getOpenProjects();
@@ -155,7 +150,40 @@ public class RIndexCache {
             DaemonCodeAnalyzer.getInstance(project).restart();
         }
 //            });
-//        }
+
+    }
+
+
+    boolean cleanup() {
+//         val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
+//         val library = libraryTable.getLibraryByName(LibraryUtil.R_SKELETONS)
+//
+//         if (library == null) {
+//             RPackageService.LOG.error("Could not find skeleton library")
+//             return
+//         }
+//
+//         val indexCache = RIndexCache.getInstance()
+//
+//         // cache cleanup
+//         val skeletonPckgs = library.getFiles(OrderRootType.CLASSES).map { f -> f.name.replaceFirst("[.][rR]$".toRegex(), "") }
+//         val toBeRemoved = listOf<RPackage>().toMutableList()
+//         for (cachePckg in indexCache.packages) {
+//             if(!skeletonPckgs.contains(cachePckg.name)){
+//                 toBeRemoved.add(cachePckg)
+//             }
+//         }
+//
+//
+        // remove no longer present packages from index
+        List<RPackage> removed = allPackages.stream().filter(rPackage -> {
+            File skelFile = new File(RSkeletonGenerator.getSkeletonsPath(), rPackage.getName() + RFileType.DOT_R_EXTENSION);
+            return !skelFile.exists();
+        }).collect(Collectors.toList());
+
+        allPackages.removeAll(removed);
+
+        return !removed.isEmpty();
     }
 
 
@@ -172,7 +200,7 @@ public class RIndexCache {
             System.err.print("building package index for testing... ");
             indexCache.allPackages = Sets.newConcurrentHashSet();
 //            indexCache.refreshIndexCache();
-            saveObject(indexCache.allPackages, indexFile);
+            saveObject(new HashSet<>(indexCache.allPackages), indexFile);
             System.err.println("Done");
         }
     }
@@ -187,13 +215,6 @@ public class RIndexCache {
         return new File(skeletonsPath, ".libindex.dat");
     }
 
-
-    /**
-     * @param packageNames Packages to be re-indexed if version has changed or package has been installed since last indexing run.If non are provided all packages will be refreshed.
-     */
-    public void refreshIndexCache(Project project, String... packageNames) {
-        rebuildIndex(project, packageNames);
-    }
 
 
     public boolean isReady() {

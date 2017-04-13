@@ -4,25 +4,22 @@ R4Intellij Development Notes
 0-day bugs
 ----------
 
-null
-java.lang.NullPointerException
-	at com.r4intellij.documentation.RDocumentationProvider.generateDoc(Unknown Source)
-	at com.intellij.lang.documentation.CompositeDocumentationProvider.generateDoc(CompositeDocumentationProvider.java:144)
-	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:659)
-	at com.intellij.openapi.application.impl.ApplicationImpl.runReadAction(ApplicationImpl.java:931)
-	at com.intellij.codeInsight.navigation.CtrlMouseHandler.a(CtrlMouseHandler.java:656)
-	at com.intellij.util.concurrency.QueueProcessor.runSafely(QueueProcessor.java:223)
-	at com.intellij.util.Alarm$Request.runSafely(Alarm.java:418)
-	at com.intellij.util.Alarm$Request.access$700(Alarm.java:343)
-	at com.intellij.util.Alarm$Request$1.run(Alarm.java:385)
-	at com.intellij.util.Alarm$Request.run(Alarm.java:396)
-	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-	at com.intellij.util.concurrency.SchedulingWrapper$MyScheduledFutureTask.run(SchedulingWrapper.java:237)
-	at com.intellij.util.concurrency.BoundedTaskExecutor$2.run(BoundedTaskExecutor.java:212)
-	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
-	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
-	at java.lang.Thread.run(Thread.java:745)
+* `load_pack` is not taken into acount by import inspection
+```
+load_pack(fyzzyjoin)
+genome_join(iris, iris)
+```
+
+* good code id flagged `names(iris) %>% make.unique(sep= "_")`
+* disabled inspections are reenabled after startup
+
+* no help for function call with namespace but for functinon symbol
+```
+purrr::set_names
+iris %>% purrr::set_names(paste(names(iris), "__")) %>% glimpse
+```
+
+
 
 Next Steps
 ----------
@@ -33,7 +30,7 @@ v1.1
 ----
 
 * missing argument code is not flagged/incorrect argument is not flagged in
-```r
+```
 write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
 ```
 
@@ -49,7 +46,7 @@ write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
 * better error recovery in parser (see https://github.com/JetBrains/Grammar-Kit#attributes-for-error-recovery-and-reporting)
 * more rigorous unit test for [operator presedence](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html)
 
-* make help window to show help even if caret is moven (auto-update from source disabling might be broken?)
+* make help window to show help even if caret is moved (auto-update from source disabling might be broken?)
 * good code is gray: in ```c("foo"=3)``` see `com.r4intellij.parser.UnquotedVariablesTest._testQuotedNameInVector`
 
 
@@ -90,7 +87,7 @@ Intentions & inspections
  ![](.todo_images/unres_to_named_paramameter_intention.png)
 
 * bug: no warning if too many args are provided
-```r
+```
 log(1,2,3,4)
 ```
 
@@ -115,7 +112,7 @@ foo== NULL
 ```
 
 * warn about assignment usage when boolean result is expected:
-```r
+```
 if(a=3){}
 filter(iris, Species="setosa")
 subset(iris, Species="setosa")
@@ -209,7 +206,7 @@ baser to tidyverse intentions
 
 
 * highlight use of `return` in assignment as error:
-```r
+```
 function(){
   asdf = return(1)
 }
@@ -224,7 +221,7 @@ function(){
 * inspection category for best practices. see https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/ 
 
 * warn/error if using attribute-setter invokation style on non-attribute-setter method:
-```r
+```
 nrow(iris) = 0
 ```
 
@@ -494,7 +491,7 @@ Brainstorming
 * What about packrat? http://rstudio.github.io/packrat/walkthrough.html
 * provide `com.intellij.codeInsight.daemon.impl.quickfix.FetchExtResourceAction.FetchExtResourceAction(boolean)` for `devtools::source_url)` statments 
 
-
+* `remoter` support to allow for remote R instances, see http://librestats.com/2015/10/28/controlling-a-remote-r-session-from-a-local-one/
 * unit test integration for testhat package (see http://r-pkgs.had.co.nz/tests.html)
     * run tests in directory
     * rerun failed tests
