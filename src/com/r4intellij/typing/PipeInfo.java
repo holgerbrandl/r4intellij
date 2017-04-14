@@ -21,7 +21,7 @@ public class PipeInfo {
     public final boolean isPipeTarget;
 
 
-    public PipeInfo(boolean firstArgInjected, boolean isPipeTarget) {
+    public PipeInfo(boolean isPipeTarget, boolean firstArgInjected) {
         this.firstArgInjected = firstArgInjected;
         this.isPipeTarget = isPipeTarget;
     }
@@ -29,10 +29,9 @@ public class PipeInfo {
 
     public static PipeInfo fromCallExpression(RCallExpression callExpression) {
         boolean isPipeTarget = isPipeTarget(callExpression);
-        boolean firstArgInjected = isPipeTarget && hasDotArgs(callExpression);
+        boolean firstArgInjected = isPipeTarget && !hasDotArgs(callExpression);
 
         return new PipeInfo(isPipeTarget, firstArgInjected);
-
     }
 
 
@@ -50,7 +49,11 @@ public class PipeInfo {
 
         PsiElement callExParent = callExpression.getParent();
         if (callExParent != null && callExParent instanceof ROperatorExpression) {
-            ROperator operator = ((ROperatorExpression) callExParent).getOperator();
+            ROperatorExpression opExpression = (ROperatorExpression) callExParent;
+
+            if (opExpression.getLeftExpr() == callExpression) return false;
+
+            ROperator operator = opExpression.getOperator();
             if (operator == null) return false;
 
             String opText = operator.getText();

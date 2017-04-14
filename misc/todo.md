@@ -4,13 +4,7 @@ R4Intellij Development Notes
 0-day bugs
 ----------
 
-* `load_pack` is not taken into acount by import inspection
-```
-load_pack(fyzzyjoin)
-genome_join(iris, iris)
-```
-
-* good code id flagged `names(iris) %>% make.unique(sep= "_")`
+* find a solution for https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160370-How-to-list-module-dependencies-
 * disabled inspections are reenabled after startup
 
 * no help for function call with namespace but for functinon symbol

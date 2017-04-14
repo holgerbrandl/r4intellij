@@ -163,7 +163,7 @@ public class ArgumentMatcher {
         int suppliedSize = suppliedArguments.size();
         boolean wasTripleDot = false;
 
-        if (isPipeInjected && formalArguments.size() > 1) { // second test is needed since they may be just one argument
+        if (isPipeInjected && !formalArguments.isEmpty()) { // second test is needed since they may be just one argument
             formalArguments = formalArguments.subList(1, formalArguments.size());
         }
 

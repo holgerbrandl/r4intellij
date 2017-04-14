@@ -47,14 +47,11 @@ public class RGenerateTypingReport extends AnAction {
 
     @Override
     public void update(AnActionEvent e) {
+        boolean isInternal = ApplicationManager.getApplication().isInternal();
+
         Presentation presentation = e.getPresentation();
-        if (!ApplicationManager.getApplication().isInternal()) {
-            presentation.setEnabled(false);
-            presentation.setVisible(false);
-            return;
-        }
-        presentation.setVisible(true);
-        presentation.setEnabled(true);
+        presentation.setEnabled(!isInternal);
+        presentation.setVisible(!isInternal);
     }
 
 
