@@ -4,12 +4,8 @@ R4Intellij Development Notes
 0-day bugs
 ----------
 
-* find a solution for https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160370-How-to-list-module-dependencies-
 * disabled inspections are reenabled after startup
-
-
-
-
+* find solution to [vcf refresh issue](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160310-VFS-does-not-pick-up-changes-made-outside-of-VFS-when-doing-asynchRefresh)
 
 Next Steps
 ----------

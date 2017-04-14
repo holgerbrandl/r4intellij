@@ -144,8 +144,12 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
     public String generateDoc(PsiElement reference, @Nullable PsiElement identifier) {
 
         reference = unwrapCompletionLookup(reference);
-        if (!(RFileType.INSTANCE.equals(reference.getContainingFile().getFileType()))) return null;
-//        if (!(psiFile instanceof RFile)) {
+
+        // containing file is null for non-R documents (e.g. plugin.xml)  which also trigger this generateDoc
+        PsiFile containingFile = reference.getContainingFile();
+        if (containingFile == null || !(RFileType.INSTANCE.equals(containingFile.getFileType()))) {
+            return null;
+        }
 
 
         // wait until help server is ready (do it here since we need the port to build the URL)

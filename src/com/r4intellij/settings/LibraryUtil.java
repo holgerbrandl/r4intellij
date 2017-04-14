@@ -4,18 +4,18 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModifiableModelsProvider;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.OrderEntryUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.util.CommonProcessors;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Holger Brandl
@@ -47,13 +47,18 @@ public class LibraryUtil {
                 Library.ModifiableModel libModel = library.getModifiableModel();
                 libModel.commit();
 
+
                 // attach to modules if not yet present
                 for (Module module : ModuleManager.getInstance(project).getModules()) {
-                    final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
-                    Library libraryByName = modifiableModel.getModuleLibraryTable().getLibraryByName(libraryName);
+                    // https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160370-How-to-list-module-dependencies-
+                    List<Library> moduleLibraries = new ArrayList<>();
+                    OrderEnumerator.orderEntries(module).forEachLibrary(new CommonProcessors.CollectProcessor<>(moduleLibraries));
 
-                    if (libraryByName != null)
+                    if (moduleLibraries.stream().anyMatch(it -> Objects.equals(libraryName, it.getName()))) {
                         continue;
+                    }
+
+                    final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
 
                     modifiableModel.addLibraryEntry(library);
                     modelsProvider.commitModuleModifiableModel(modifiableModel);
