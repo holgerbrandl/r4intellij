@@ -94,6 +94,17 @@ class ResolverTest : AbstractResolverTest() {
             .withParent(psiElement(RArgumentList::class.java))
 
 
+    fun testDontFlagLhsCallInPipe() {
+        // we had a regression that the LHS was incorrectly considered as pipe-target.
+        // This test should avoid it from happening again
+
+        createSkeletonLibrary("magrittr")
+        checkExpression("""
+        library(dplyr)
+        names(iris) %>% make.unique(sep= "_")
+        """)
+    }
+
     // todo v1.2 reenable
     fun _testResolveDotToBlockExpr() {
         createSkeletonLibrary("magrittr")
@@ -114,7 +125,7 @@ class ResolverTest : AbstractResolverTest() {
 
         checkExpression("""
         require(magrittr)
-        foo" %>% paste0(., ".gephi.txt")
+        iris %>% paste0(., ".gephi.txt")
         """)
     }
 

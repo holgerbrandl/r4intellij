@@ -7,11 +7,7 @@ R4Intellij Development Notes
 * find a solution for https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160370-How-to-list-module-dependencies-
 * disabled inspections are reenabled after startup
 
-* no help for function call with namespace but for functinon symbol
-```
-purrr::set_names
-iris %>% purrr::set_names(paste(names(iris), "__")) %>% glimpse
-```
+
 
 
 
