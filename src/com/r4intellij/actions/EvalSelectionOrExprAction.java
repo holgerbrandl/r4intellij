@@ -159,6 +159,7 @@ public class EvalSelectionOrExprAction extends AnAction {
     private static PsiElement getCaretElement(Editor editor, PsiFile psiFile) {
 
         // why not PsiUtilBase.getElementAtCaret(editor) ??
+        // todo rather fix and use https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000126084-Incorrect-help-when-caret-at-word-end
 
         // is caret at line start
         CaretModel caretModel = editor.getCaretModel();
@@ -166,10 +167,15 @@ public class EvalSelectionOrExprAction extends AnAction {
 
         // return nothing if caret is in empty line
         // FIXME lines that just contain whitespace are not ignored
-        if (curCaret.getVisualLineEnd() - curCaret.getVisualLineStart() == 1) return null;
+        if (curCaret.getVisualLineEnd() - curCaret.getVisualLineStart() == 0) return null;
 
         // TODO isn't there a an existing utility method for this? IJ does for most editor actions
+//        TargetElementUtil.findTargetElement(editor, curCaret.getOffset())
         PsiElement element = psiFile.findElementAt(caretModel.getOffset());
+
+        if (element == null && caretModel.getOffset() > 0) {
+            element = psiFile.findElementAt(caretModel.getOffset() - 1);
+        }
 
         if (element == null) return null;
 
