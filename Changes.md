@@ -3,17 +3,17 @@ Version History
 
 ## Changes in v1.0
 
-Restarted devlopment by forking [TheR](https://github.com/ktisha/TheRPlugin). This adds the following additional features
+Restarted development by forking [TheR](https://github.com/ktisha/TheRPlugin). This adds the following additional features
 * Interactive console
 * Builtin help
 * Package manager
 * Debugger
 * Run configurations
-* incomplete parameter list inspection
-* unused method parameter inspection
+* Incomplete parameter list inspection
+* Unused method parameter inspection
  
 
-The following features were merged in from previous version of r4intellij
+The following features were merged in from the previous version of r4intellij
 * More recent R logo
 * Live-templates
 * Structure view to jump to sections and functions
@@ -22,21 +22,20 @@ The following features were merged in from previous version of r4intellij
     * all identifiers in current document
     * package names in `require` and `library`
     * context aware method name completion for loaded packages 
-* language injection into string literals
-* code formatter
-* missing import inspection & quickfix
-* different color-schemes
+* Language injection into string literals
+* Basic code formatter
+* Missing import inspection & quickfix
+* Different color-schemes
 
 Other improvements
-* more robust skeletonization
-* various parser enhancements
-* unused variable highlighting
-* improve reference resolver
-* 
+* More robust and extended skeletonization
+* Various parser enhancements
+* Unused variable highlighting/inspection
+* Improved reference resolver
 
 New Quickfixes (aka intention) and Inspections
-* install missing library intention
-* replace T/F with TRUE/FALSE
+* Install missing library intention
+* Replace T/F with TRUE/FALSE
 
 Code Snippet Evaluation
 * refactored into separate [Send to Terminal](https://plugins.jetbrains.com/idea/plugin/9409-send-to-terminal) plugin. Code is available under https://github.com/holgerbrandl/send2terminal
@@ -74,13 +73,7 @@ Code Snippet Evaluation
 ## Changes in v0.8.3
 
 *   Added support for pipe operator from magrittr package
-
-## Changes in v0.8.2
-
 *   Changed plugin definition to support also other Jetbrains products like PhpStorm, PyCharm, etc.
-
-## Changes in v0.8.1
-
 *   Improved compatibility to Intellij IDEA 13
 
 ## Changes in v0.8.2

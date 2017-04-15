@@ -13,51 +13,38 @@
 
     <description><![CDATA[
         <html>
-        <h3>R support for IntelliJ</h3>
+        This plugin provides an integration of R, which is a language for statistical computing and graphics,
+        into Intellij IDEA.
+        <p/>
+        <br>
 
-        "R language Support" is an integration of R, which is a language for statistical computing and graphics, into
-        Intellij IDEA. It aims to bring the best language for data mining and modeling in touch with the best IDE ever.
+        The plugin provides syntax and error highlighting, import-aware code completion, various inspections and
+        quick-fixes, intelligent code folding, refactorings, code reformatting, run configurations, an integrated
+        console, and an interactive debugger.
         <p/>
-        Read more about the features at <a href="http://holgerbrandl.github.io/r4intellij">project page</a>
-        <p/>
-        By implementing a fault-tolerant parser for R, the plugin allows for syntax highlighting, intelligent code
-        folding and completion, refactorings, and more.
-        <p/>
+        <br>
 
-        <p>
-            This plugin is still in an early state of development. Feel welcome to comment on it or to suggest features
-            or
-            report bugs in our <a href="https://github.com/holgerbrandl/r4intellij/issues">issue tracker</a>.
+        You can read more about the features and find more documentation on the <a
+                href="http://holgerbrandl.github.io/r4intellij">project page</a>
         <p/>
+        Feel welcome to report issues or to suggest features by submitting a ticket to our <a
+                href="https://github.com/holgerbrandl/r4intellij/issues">issue tracker</a>.
+        <p/>
+        <br>
 
-        <b>Features:</b><br>
-        <ul>
-            <li> Syntax highlighting</li>
-            <li> Line un-/commenting, brace matching</li>
-            <li> Basic code completion</li>
-            <li> Function definition and code section folding</li>
-            <li> Evaluate the current selection or line in R (MacOS, Windows)</li>
-            <li> Usages highlighting of functions and variables</li>
-            <li> Auto-import of packages</li>
-            <li> Some (simple) live templates</li>
-        </ul>
+        This plugin is developed under BSD-<a
+                href="https://raw.githubusercontent.com/holgerbrandl/r4intellij/master/LICENSE">license</a>.
         <p/>
 
-
-        The project was intially deveoped from scratch, but in 2017 we rebuilt it based on the more modern MIT-licensed
-        codebase of https://github.com/ktisha/RPlugin to
-        provide a more elegant parser backednd and missing features like a debugger.
-
-        Copyright (c) 2013-2017 Ekaterina Tuzova (ktisha)
-        Copyright (c) 2013-2017 Ekaterina Tuzova (ktisha)
-
+        Copyright (c) 2013-2017 Ekaterina Tuzova, Holger Brandl
+        <p/>
         </html>
         ]]></description>
 
     <change-notes>
     <![CDATA[
         <html>
-        Changes are documented in our [change log ](https://github.com/holgerbrandl/r4intellij/blob/master/Changes.md)
+        Changes are documented in our [change log](https://github.com/holgerbrandl/r4intellij/blob/master/Changes.md)
         on the project page.
         </html>
         ]]>

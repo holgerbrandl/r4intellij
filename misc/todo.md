@@ -4,7 +4,6 @@ R4Intellij Development Notes
 0-day bugs
 ----------
 
-* disabled inspections are reenabled after startup
 * find solution to [vcf refresh issue](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160310-VFS-does-not-pick-up-changes-made-outside-of-VFS-when-doing-asynchRefresh)
 
 Next Steps
