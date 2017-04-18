@@ -60,7 +60,7 @@
     <actions>
         <action id="com.r4intellij.console.RConsoleAction"
                 class="com.r4intellij.console.RConsoleAction"
-                text="Run R Console..." description="Starts R interactive console">
+                text="R Console..." description="Starts R interactive console">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
         </action>
 

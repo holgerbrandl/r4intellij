@@ -7,11 +7,22 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.r4intellij.RFileType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 public class RConsoleAction extends AnAction implements DumbAware {
+
+    public RConsoleAction() {
+        getTemplatePresentation().setIcon(RFileType.INSTANCE.getIcon());
+    }
+
+
+//    public RConsoleAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
+//        super("", "", RFileType.INSTANCE.getIcon());
+//    }
+
 
     @Override
     public void actionPerformed(@NotNull final AnActionEvent event) {
