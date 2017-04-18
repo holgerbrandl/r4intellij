@@ -16,7 +16,6 @@ The plugin provides syntax highlighting, import-aware code completion, a powerfu
     - [File extensions](#file-extensions)
     - [Source code navigation](#source-code-navigation)
 - [Interactive Console](#interactive-console)
-- [Integration with R session](#integration-with-r-session)
 - [Code completion](#code-completion)
 - [Refactoring](#refactoring)
 - [Intentions](#intentions)
@@ -82,23 +81,14 @@ Interactive Console
 
 Start a new console under _Tools_
 
-![](readme_images/new_repl.png)
+![](readme_images/create_console.png)
 
 
 To push code from the editor use `Meta
 For a more general overview see https://www.jetbrains.com/help/idea/2016.3/working-with-embedded-local-terminal.html
 
-Integration with R session
---------------------------
+Note: You can also evaluate R code in an external console by means of the [Send To Terminal](https://plugins.jetbrains.com/plugin/9409-send-to-terminal) plugin for Intellij.
 
-R4Intellij supports the evaluation of the current selection or line on Windows (RGui) and MacOS (R GUI, Terminal, [iTerm2](http://www.iterm2.com/)). Furthermore, the user can define up to 4 custom code action which allow to wrap the current selection into some function before sending it to R. For instance, a custom **head of a data.frame** action would be defined as _head(%snippet%);_. These custom code actions can be defined in the preferences and can get keyboard shortcuts assigned to them. 
-
-![](readme_images/code_snippet_evaluation.png) 
-
-![](readme_images/code_snippet_evaluation_result.png) 
-
-
-On Mac, by default Ctrl+Option+Enter sends the current line or selection to the R Gui app. If RGui is not already started it will be started on the Mac dock and you may have to click it to make it visible. (If you did not know this you may think that nothing happened.) To send to the Terminal instead of RGui, go to IntelliJ->Preferences->Other settings->R4Intellij and change the "Snippet Evaluation Target" to Terminal. This is the Mac Terminal not the Terminal embedded in Intellij but that may well be what you wanted or hoped for anyway. The Evaluate menu option is accessible via the right-click floating context menu, not from the main IntelliJ application menu. To change the shortcut key for Evaluate, go to Preferences->Keymap->Plug-ins->R4Intellij->Evaluate then right click and "Add keyboard shortcut"; e.g. F5. You can have many Terminal sessions running and pressing F5 in Intellij will now send that line or selection to the last active Terminal (similar to NppToR on Windows). That snippet may well be R code or it could be bash commands or Python (or anything with a prompt, perhaps via ssh) that you have running in that Terminal. There is no limit to the number of Terminal sessions (unlike the limit of 4 in r-gedit). Very useful!
 
 Code completion
 ---------------
@@ -109,7 +99,10 @@ To build the index of all packages installed in your R instance, R4Intellij need
 
 The following completion modes are available: 
 
-*   Basic word completion for variables and local functions*   Coming soon: Package name completion in library statements*   Coming soon: setwd() aware path completion*   Coming soon: completion of package names in library statements
+*   Basic word completion for variables and local functions*
+*   Completion of names for loaded packages
+*   Package name completion in library statements
+*   Coming soon: setwd() aware path completion
 
 Refactoring
 -----------
