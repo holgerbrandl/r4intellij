@@ -32,7 +32,7 @@ Installation
 
 1.  Get Intellij IDEA, which is available as pro and as free open-source community edition from [JetBrains](http://jetbrains.com).
 2.  To install the plugin, just open the plugin manager in Intellij Idea, search for "R Language Support" , and finally click install.
-![](.README_images/plugins_browser.png)
+![](readme_images/plugins_browser.png)
 
 
 Support
@@ -50,7 +50,7 @@ Basic Usage
 Just drag an R script into idea and start hacking.
 
 Create a R script from the projects tools window:
-![](.README_images/new_script.png)
+![](readme_images/new_script.png)
 
 
 You can also create a new project (the type does not matter) and organize your work into modules with differen content roots. Read the Intellij [documentation](http://www.jetbrains.com/idea/webhelp/intellij-idea.html) for more details about to do so.
@@ -72,9 +72,9 @@ The following features are supported
 *   Search --&gt; Highlight Usage: This will make Intellij to highlight all locations where a function or a symbol is being used*   Brace matching: If you position the caret before or after a bracket then IntelliJ will highlight the other element of the pair of brackets.*   File Structure View: In the structure view IntelliJ shows the functions and code sections of the R script.
 
 * Integration with R-Help: Simply invoke `F1` on any symbol (data-sets, package names, functions).
-![](.README_images/r_help_integration.png)
+![](readme_images/r_help_integration.png)
 * Documentation lookup for user-defined functions
-![](.README_images/user_def_fun_doc_lookup.png)
+![](readme_images/user_def_fun_doc_lookup.png)
 
 
 Interactive Console
@@ -82,7 +82,7 @@ Interactive Console
 
 Start a new console under _Tools_
 
-![](.README_images/new_repl.png)
+![](readme_images/new_repl.png)
 
 
 To push code from the editor use `Meta
