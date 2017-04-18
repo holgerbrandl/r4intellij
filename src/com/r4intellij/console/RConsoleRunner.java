@@ -7,8 +7,10 @@ import com.intellij.execution.console.LanguageConsoleView;
 import com.intellij.execution.console.ProcessBackedConsoleExecuteActionHandler;
 import com.intellij.execution.process.ColoredProcessHandler;
 import com.intellij.execution.process.OSProcessHandler;
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.runners.AbstractConsoleRunnerWithHistory;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.r4intellij.RFileType;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Objects;
 
 public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageConsoleView> {
 
@@ -38,7 +41,7 @@ public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageCon
     @Override
     protected LanguageConsoleView createConsoleView() {
         final LanguageConsoleImpl console = new LanguageConsoleImpl(getProject(), getConsoleTitle(), RLanguage.getInstance());
-        console.setPrompt(null);
+//        console.setPrompt(null);
         return console;
     }
 
@@ -50,11 +53,31 @@ public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageCon
     }
 
 
+    boolean hasPendingPrompt = false;
+
+
     @NotNull
     @Override
     protected OSProcessHandler createProcessHandler(@NotNull final Process process) {
         final String commandLine = getCommandLine(RSettings.getInstance().getInterpreterPath()).getCommandLineString();
-        return new ColoredProcessHandler(process, commandLine);
+        return new ColoredProcessHandler(process, commandLine) {
+
+            @Override
+            public void coloredTextAvailable(@NotNull String s, @NotNull Key key) {
+                if (Objects.equals(ProcessOutputTypes.STDOUT, key)) {
+                    if (s.trim().equals(">")) {
+                        hasPendingPrompt = true;
+                        return;
+                    }
+                    if (hasPendingPrompt) {
+                        s = "> " + s;
+                        hasPendingPrompt = false;
+                    }
+                }
+
+                super.coloredTextAvailable(s, key);
+            }
+        };
     }
 
 
