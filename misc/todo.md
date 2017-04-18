@@ -4,29 +4,8 @@ R4Intellij Development Notes
 0-day bugs
 ----------
 
-```
-null
-java.lang.NullPointerException
-	at com.r4intellij.actions.EvalSelectionOrExprAction.actionPerformed(EvalSelectionOrExprAction.java:84)
-	at com.intellij.openapi.actionSystem.ex.ActionUtil$1.run(ActionUtil.java:215)
-	at com.intellij.openapi.actionSystem.ex.ActionUtil.performActionDumbAware(ActionUtil.java:232)
-	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher$1.performAction(IdeKeyEventDispatcher.java:570)
-	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher.a(IdeKeyEventDispatcher.java:619)
-	at com.intellij.openapi.application.TransactionGuardImpl.performUserActivity(TransactionGuardImpl.java:193)
-	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher.processAction(IdeKeyEventDispatcher.java:618)
-	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher.f(IdeKeyEventDispatcher.java:477)
-	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher.dispatchKeyEvent(IdeKeyEventDispatcher.java:211)
-	at com.intellij.ide.IdeEventQueue._dispatchEvent(IdeEventQueue.java:633)
-	at com.intellij.ide.IdeEventQueue.dispatchEvent(IdeEventQueue.java:365)
-	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:201)
-	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:116)
-	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:105)
-	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
-	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:93)
-	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
-```
-
-* find solution to [vcf refresh issue](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160310-VFS-does-not-pick-up-changes-made-outside-of-VFS-when-doing-asynchRefresh)
+whitelist:
+https://github.com/tidyverse/dplyr/issues/2218#issuecomment-294879298
 
 Next Steps
 ----------
@@ -36,6 +15,10 @@ Next Steps
 v1.1
 ----
 
+
+* find solution to [vcf refresh issue](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160310-VFS-does-not-pick-up-changes-made-outside-of-VFS-when-doing-asynchRefresh)
+
+* make sure r-libraries are attached to new modules right away and not just after IJ restart
 * missing argument code is not flagged/incorrect argument is not flagged in
 ```
 write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
@@ -75,12 +58,20 @@ flyGeneInfoSlim = transmute(
 )
 ```
 
+* fix: dplyr utils without arguments
+```
+iris %>% mutate(foo=row_number()) %>% head
+```
+
+
 ## v1.2
 
 * provide help for `tidy<caret>r::separate`
 
 * http://www.jetbrains.org/intellij/sdk/docs/reference_guide/custom_language_support/additional_minor_features.html
 
+
+* use sdk instead of global library. See FlexSdkType2 or com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType
 
 Intentions & inspections
 ------------------------
@@ -101,6 +92,8 @@ log(1,2,3,4)
 * intention to add name to named argument `myfun(34)` ->  `myfun(num_reps = 34)`  
 
 ### best practices & coding style
+
+* replace `iris %>% head` with `iris %>% head()`
 
 * inspection to replace `<-` with `=`
    
@@ -138,6 +131,7 @@ if(a=(function(){T})()){ print("foo")}
 ### dependency management
 
 * remember import choices and show them first in import popup
+* run import in attached console (if any) after auto-import
 * also allow to auto import certain whitelisted packages
 * somehow offer detach as option to resolve namespace conflicts
 ```r

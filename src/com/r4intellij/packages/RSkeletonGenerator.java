@@ -90,7 +90,7 @@ public class RSkeletonGenerator {
                 }
             }
 
-            createLibrary(R_SKELETONS, Collections.singletonList(skeletonLibraryPath), project);
+            createLibrary(R_SKELETONS, Collections.singletonList(skeletonLibraryPath), project, true);
         });
 
         // now do the actual work

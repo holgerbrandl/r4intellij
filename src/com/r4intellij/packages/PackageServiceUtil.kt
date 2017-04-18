@@ -15,14 +15,13 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
 import com.intellij.openapi.util.Computable
 import com.r4intellij.packages.RHelperUtil.getHelperOutput
 import com.r4intellij.packages.RSkeletonGenerator.*
 import com.r4intellij.psi.api.RAssignmentStatement
+import com.r4intellij.psi.references.RResolver.getSkeletonLibrary
 import com.r4intellij.psi.references.RResolver.getTrimmedFileName
 import com.r4intellij.psi.stubs.RAssignmentNameIndex
-import com.r4intellij.settings.LibraryUtil
 import java.io.File
 
 val SKELETON_PROPERTIES: List<String> = listOf(SKELETON_TITLE, SKELETON_PCKG_VERSION, SKELETON_DEPENDS, SKELETON_IMPORTS, SKELETON_SKEL_VERSION)
@@ -47,8 +46,7 @@ inline fun <T> runWriteAction(crossinline runnable: () -> T): T {
 
 fun rebuildIndex(project: Project) {
 
-    val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
-    val library = libraryTable.getLibraryByName(LibraryUtil.R_SKELETONS)
+    val library = getSkeletonLibrary(project)
 
     if (library == null) {
         RPackageService.LOG.error("Could not find skeleton library")

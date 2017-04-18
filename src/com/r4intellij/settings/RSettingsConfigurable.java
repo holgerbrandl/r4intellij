@@ -94,8 +94,6 @@ public class RSettingsConfigurable implements SearchableConfigurable.Parent, Con
 //            }
 //        }
 
-        // also create additional library
-        LibraryUtil.createLibrary(LibraryUtil.R_LIBRARY, Lists.newArrayList(), myProject);
 
 
         RSkeletonGenerator.updateSkeletons(myProject);

@@ -125,7 +125,7 @@ Intentions are on-the-fly checks of your R scripts, that highlight problems and 
 Platform features
 -----------------
 
-The main strength of our plugin is the underlying Intellij IDE. So if you have not worked with it before, read more about all its amazing [features](http://www.jetbrains.com/idea/index.html). It ships with everything from SCM integration (Git, Subversion, etc.), neat SQL integration, bash scripting support, and so many more interesting features. However, its main "feature" is its usability. Give it a try!
+The main strength of our plugin is the underlying Intellij IDE. So if you have not worked with it before, read more about all its amazing [features](http://www.jetbrains.com/idea). It ships with everything from SCM integration (Git, Subversion, etc.), neat SQL integration, bash scripting support, and so many more interesting features. However, its main "feature" is its usability. Give it a try!
 
 
 Site navigation
@@ -134,7 +134,7 @@ Site navigation
 * [Development notes](https://github.com/holgerbrandl/r4intellij/blob/master/misc/devel_notes.md)
 * [Release History](https://github.com/holgerbrandl/r4intellij/blob/master/Changes.md)
 
-* [FAQ](faq.html)
+* [FAQ](faq.md)
 
 
 Acknowledgements
@@ -149,4 +149,6 @@ Links
 -----
 
 Other R-IDEs
-* [StatET](http://www.walware.de/goto/statet), [textmate](http://macromates.com/) (with the [rbundle](http://worldofrcraft.blogspot.com/2008/11/setting-up-textmate-to-use-r.html)), or [RStudio](http://rstudio.org/`).
+* [StatET](http://www.walware.de/goto/statet)
+* [RStudio](http://rstudio.org/`)
+* [R Tools for Visual Studio](https://blogs.technet.microsoft.com/machinelearning/2016/03/09/announcing-r-tools-for-visual-studio-2/)

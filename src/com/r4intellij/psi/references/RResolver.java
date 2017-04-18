@@ -107,20 +107,19 @@ public class RResolver {
 
     @NotNull
     private static List<ResolveResult> findSkeletonMatches(@NotNull String name, Project project) {
-        LibraryTable libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project);
-        final Library library = libraryTable.getLibraryByName(LibraryUtil.R_SKELETONS);
-
+        final Library library = getSkeletonLibrary(project);
 
         List<ResolveResult> indexResults = new ArrayList<>();
 
         if (library == null) {
-            LOG.error("library is null when resolving " + name);
+            LOG.warn("library is null when resolving " + name);
             return indexResults;
         }
 
         // too wide scope in scratches?
         // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000093684-Reference-search-scope-different-between-project-files-and-scratches-
         final Collection<RAssignmentStatement> assignmentStatements =
+
                 RAssignmentNameIndex.find(name, project, new LibraryScope(project, library));
 
         //RAssignmentNameIndex.allKeys(project).stream().filter(f->f.equals("head")).collect(Collectors.toList())
@@ -137,6 +136,17 @@ public class RResolver {
         }
 
         return indexResults;
+    }
+
+
+    public static Library getSkeletonLibrary(Project project) {
+        boolean isGlobal = true; // decide later if this module attached libraries should also be supported
+
+        LibraryTable.ModifiableModel model = isGlobal ?
+                LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel() :
+                ModifiableModelsProvider.SERVICE.getInstance().getLibraryTableModifiableModel(project);
+
+        return model.getLibraryByName(LibraryUtil.R_SKELETONS);
     }
 
 
@@ -187,9 +197,7 @@ public class RResolver {
                                             String name,
                                             String namespace,
                                             @NotNull final List<ResolveResult> result) {
-        final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
-        final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
-        final Library library = model.getLibraryByName(LibraryUtil.R_SKELETONS);
+        Library library = getSkeletonLibrary(project);
 
         if (library == null) {
             return;

@@ -8,6 +8,7 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.OrderEntryUtil;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
+import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.CommonProcessors;
@@ -22,20 +23,24 @@ import java.util.Objects;
  */
 public class LibraryUtil {
 
-    public static final String R_LIBRARY = "R Library";
+    public static final String R_LIBRARY = "R User Library";
     public static final String R_SKELETONS = "R Skeletons";
 //    public static final String USER_SKELETONS = "R User Skeletons";
 
 
-    public static void createLibrary(final String libraryName, @NotNull final java.util.List<String> paths, @NotNull final Project project) {
+    public static void createLibrary(final String libraryName, @NotNull final List<String> paths, @NotNull final Project project, final boolean isGlobal) {
         ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
                 // add all paths to library
-                LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
+                LibraryTable.ModifiableModel model = isGlobal ?
+                        LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel() :
+                        modelsProvider.getLibraryTableModifiableModel(project);
+
                 Library library = model.getLibraryByName(libraryName);
+//
 
                 if (library == null) {
                     library = model.createLibrary(libraryName);
@@ -47,8 +52,11 @@ public class LibraryUtil {
                 Library.ModifiableModel libModel = library.getModifiableModel();
                 libModel.commit();
 
+                // tbd: attachment to modules is disabled for now since we don't have a clear idea
+                // about what this would add over non-attached libraries
 
                 // attach to modules if not yet present
+//                if (attachToModules) {
                 for (Module module : ModuleManager.getInstance(project).getModules()) {
                     // https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160370-How-to-list-module-dependencies-
                     List<Library> moduleLibraries = new ArrayList<>();
@@ -64,6 +72,7 @@ public class LibraryUtil {
                     modelsProvider.commitModuleModifiableModel(modifiableModel);
                 }
 
+//                }
             }
         });
     }
@@ -92,8 +101,11 @@ public class LibraryUtil {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                // add all paths to library
-                final LibraryTable.ModifiableModel model = modelsProvider.getLibraryTableModifiableModel(project);
+                boolean isGlobal = false;
+                LibraryTable.ModifiableModel model = isGlobal ?
+                        LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel() :
+                        modelsProvider.getLibraryTableModifiableModel(project);
+
 
                 final Library library = model.getLibraryByName(libraryName);
                 if (library != null) {
