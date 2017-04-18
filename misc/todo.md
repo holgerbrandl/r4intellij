@@ -4,6 +4,28 @@ R4Intellij Development Notes
 0-day bugs
 ----------
 
+```
+null
+java.lang.NullPointerException
+	at com.r4intellij.actions.EvalSelectionOrExprAction.actionPerformed(EvalSelectionOrExprAction.java:84)
+	at com.intellij.openapi.actionSystem.ex.ActionUtil$1.run(ActionUtil.java:215)
+	at com.intellij.openapi.actionSystem.ex.ActionUtil.performActionDumbAware(ActionUtil.java:232)
+	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher$1.performAction(IdeKeyEventDispatcher.java:570)
+	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher.a(IdeKeyEventDispatcher.java:619)
+	at com.intellij.openapi.application.TransactionGuardImpl.performUserActivity(TransactionGuardImpl.java:193)
+	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher.processAction(IdeKeyEventDispatcher.java:618)
+	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher.f(IdeKeyEventDispatcher.java:477)
+	at com.intellij.openapi.keymap.impl.IdeKeyEventDispatcher.dispatchKeyEvent(IdeKeyEventDispatcher.java:211)
+	at com.intellij.ide.IdeEventQueue._dispatchEvent(IdeEventQueue.java:633)
+	at com.intellij.ide.IdeEventQueue.dispatchEvent(IdeEventQueue.java:365)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:201)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:116)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:105)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:93)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:82)
+```
+
 * find solution to [vcf refresh issue](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160310-VFS-does-not-pick-up-changes-made-outside-of-VFS-when-doing-asynchRefresh)
 
 Next Steps
@@ -501,6 +523,7 @@ Brainstorming
 * learn from `/Users/brandl/projects/jb/intellij-community/platform/platform-resources/src/META-INF/JsonPlugin.xml`
     
 * always inject bash (if installed) in `base:system` calls (see  Prefs->Editor->LangInject)
-    
+
+* (Re)Use more icons form `AllIcons.Actions.Restart`
 
 Also see [OpenApi notes](devel_notes.md)
