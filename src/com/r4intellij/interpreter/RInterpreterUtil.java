@@ -15,8 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -24,9 +26,9 @@ import java.util.stream.Stream;
  */
 public class RInterpreterUtil {
 
-    private static String[] WINDOWS_PATHS = {"C:\\", "C:\\Program Files\\"};
-    private static String[] UNIX_PATHS = {"/usr", "/usr/local"};
-    private static String[] MAC_PATHS = {"/Library/Frameworks/R.framework/Resources", "/System/Library/Frameworks/R.framework/Resources"};
+//    private static String[] WINDOWS_PATHS = {"C:\\Program Files\\"};
+//    private static String[] UNIX_PATHS = {"/usr/local/bin", "/usr/bin"};
+//    private static String[] MAC_PATHS = {"/Library/Frameworks/R.framework/Resources", "/System/Library/Frameworks/R.framework/Resources"};
 
 
     public static String suggestHomePath() {
@@ -38,19 +40,35 @@ public class RInterpreterUtil {
         final ArrayList<String> pathOptions = new ArrayList<String>();
 
         if (SystemInfo.isWindows) {
-            pathOptions.addAll(getInstallationFromPaths("R.exe", WINDOWS_PATHS));
+//            pathOptions.addAll(getInstallationFromPaths("R.exe", WINDOWS_PATHS));
             // todo PATH support should also be provided for the other platforms
             pathOptions.addAll(getFromPathVariable());
+
         } else if (SystemInfo.isMac) {
-            pathOptions.addAll(getInstallationFromPaths("R", MAC_PATHS));
+//            pathOptions.addAll(getInstallationFromPaths("R", MAC_PATHS));
+            List<String> maxosPathOptions = Arrays.asList("/Library/Frameworks/R.framework/Resources/bin/R", "/usr/local/bin/R");
+            pathOptions.addAll(filterPathOptions(maxosPathOptions));
+
         } else if (SystemInfo.isUnix) {
-            pathOptions.addAll(getInstallationFromPaths("R", UNIX_PATHS));
+//            pathOptions.addAll(getInstallationFromPaths("R", UNIX_PATHS));
+            List<String> linuxPathOptions = Arrays.asList("/usr/bin/R");
+            pathOptions.addAll(filterPathOptions(linuxPathOptions));
+
         }
 
         return pathOptions;
     }
 
 
+    private static <T> List<? extends String> filterPathOptions(List<String> pathOptions) {
+        return pathOptions.stream()
+                .filter(path -> new File(path).isFile() && new File(path).canExecute())
+                .collect(Collectors.toList());
+
+    }
+
+
+    @Deprecated // caused issues https://github.com/holgerbrandl/r4intellij/issues/79
     private static ArrayList<String> getInstallationFromPaths(@NotNull final String scriptName, @NotNull final String[] paths) {
         final ArrayList<String> result = new ArrayList<String>();
 

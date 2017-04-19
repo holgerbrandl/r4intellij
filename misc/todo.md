@@ -19,6 +19,8 @@ https://github.com/holgerbrandl/r4intellij/milestone/5
 
 ### new
 
+* Improve function completion by adding round brackets: `base<caret>` -> `basename(<caret>)`
+
 * Resolve `source_url` dependencies
 
 *  Add a knit button to render the current document using rmarkdown (#59)
@@ -38,6 +40,10 @@ https://github.com/holgerbrandl/r4intellij/milestone/5
 ![](.todo_images/8a347216.png)
 
 ### bugs
+
+* long lines are not displayed correctly in console
+
+* typing report action should not be part of public release
 
 * good code is gray: in ```c("foo"=3)``` see `com.r4intellij.parser.UnquotedVariablesTest._testQuotedNameInVector`
 
@@ -75,7 +81,7 @@ iris %>% mutate(foo=row_number()) %>% head
 ```
 
 * fixme: renaming for loop variables is broken
-```
+```r
 for (name in packageNames) {
     if (paste(name, "r", sep=".") %in% list.files(path=args[1])) {
         next
@@ -435,9 +441,17 @@ Rnotebook support
 
 * See https://github.com/holgerbrandl/r4intellij/issues/74
 
+* resolve dependencies across chunks
+```r
+packageNames =c(1,2,3)
+```
+
+```r
+head(packageNames)
+```
+
 * common pis accross chunks -> MultipleFilesPerDocumentFileViewProvider
  https://intellij-support.jetbrains.com/hc/en-us/community/posts/206770455-PSI-for-all-injected-language-parts-in-a-file-
-
 
 * implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
 
