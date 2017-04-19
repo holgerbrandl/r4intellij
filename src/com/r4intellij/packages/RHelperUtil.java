@@ -91,11 +91,7 @@ public class RHelperUtil {
 
 
         try {
-            GeneralCommandLine gcl = new GeneralCommandLine(command);
-//            LOG.info("running helper with: " + gcl.getCommandLineString());
-            final Process process = gcl.createProcess();
-            final CapturingProcessHandler processHandler = new CapturingProcessHandler(process, null, StringUtil.join(command, " "));
-
+            CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(command));
             final ProcessOutput output = processHandler.runProcess(5 * RPsiUtils.MINUTE);
 
             if (output.getExitCode() != 0) {
