@@ -15,7 +15,7 @@
  */
 package com.r4intellij.intentions;
 
-import com.intellij.codeInsight.CodeInsightUtil;
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
@@ -71,7 +71,7 @@ public abstract class AbstractRIntention implements IntentionAction {
 
             if (0 <= start && start <= end) {
                 TextRange selectionRange = new TextRange(start, end);
-                PsiElement element = CodeInsightUtil.findElementInRange(file, start, end, PsiElement.class);
+                PsiElement element = CodeInsightUtilCore.findElementInRange(file, start, end, PsiElement.class, RLanguage.getInstance());
                 while (element != null && element.getTextRange() != null && selectionRange.contains(element.getTextRange())) {
                     if (predicate.satisfiedBy(element)) return element;
                     element = element.getParent();

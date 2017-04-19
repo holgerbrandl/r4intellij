@@ -1,7 +1,7 @@
 <idea-plugin>
     <name>R Language Support</name>
     <id>R4Intellij</id>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <vendor url="http://holgerbrandl.github.io/r4intellij/">Holger Brandl, Ekaterina Tuzova</vendor>
 
     <idea-version since-build="145.258.11"/>
