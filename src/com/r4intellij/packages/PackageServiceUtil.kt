@@ -62,6 +62,8 @@ fun rebuildIndex(project: Project) {
     //    System.err.println("num keys is ${RAssignmentNameIndex.allKeys(project).size}")
 
 
+    if (project.isDisposed) return
+
     val titleStatements = runReadAction { RAssignmentNameIndex.find(SKELETON_TITLE, project, LibraryScope(project, library)) }
 
     val updateTitles = titleStatements.filter({
