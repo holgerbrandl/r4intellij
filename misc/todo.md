@@ -4,8 +4,6 @@ R4Intellij Development Notes
 0-day bugs
 ----------
 
-whitelist:
-https://github.com/tidyverse/dplyr/issues/2218#issuecomment-294879298
 
 Next Steps
 ----------
@@ -15,32 +13,45 @@ Next Steps
 v1.1
 ----
 
+For corresponding milestone tickets see
+https://github.com/holgerbrandl/r4intellij/milestone/5
 
-* find solution to [vcf refresh issue](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160310-VFS-does-not-pick-up-changes-made-outside-of-VFS-when-doing-asynchRefresh)
+
+### new
+
+* Resolve `source_url` dependencies
+
+*  Add a knit button to render the current document using rmarkdown (#59)
+    * [dynmaic toolbar buttons](https://intellij-support.jetbrains.com/hc/en-us/community/posts/206151289-How-to-add-icons-to-the-toolbar-)
+
+* Refactoring to inline piped expressions (spec see [#66](https://github.com/holgerbrandl/r4intellij/issues/66))
+
+* [parameter info](https://intellij-support.jetbrains.com/hc/en-us/community/posts/206791995-Parameter-Info) for function calls
 
 * make sure r-libraries are attached to new modules right away and not just after IJ restart
-* missing argument code is not flagged/incorrect argument is not flagged in
-```
-write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
-```
 
-* Remove deprecated api usage
+* whitelist dplyr helper https://github.com/tidyverse/dplyr/issues/2218#issuecomment-294879298
 
-* embed custom error reporting service ![](.todo_images/error_report.png)
+* Remove deprecated API usage
 
-* fix gradle build to include resource files in zip (see https://github.com/JetBrains/gradle-intellij-plugin/issues/180#issuecomment-280377767) 
-    * also use gradle for EAP releases (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000113284-EAP-channel-for-plugins)
-    
-* [parameter info](https://intellij-support.jetbrains.com/hc/en-us/community/posts/206791995-Parameter-Info)
+* _Extract Variable\_ refactoring: introduce variable for selection: infer name from pipe sink if it's a named argument [#56](https://github.com/holgerbrandl/r4intellij/issues/56)
+![](.todo_images/8a347216.png)
 
-* better error recovery in parser (see https://github.com/JetBrains/Grammar-Kit#attributes-for-error-recovery-and-reporting)
-* more rigorous unit test for [operator presedence](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html)
+### bugs
 
-* make help window to show help even if caret is moved (auto-update from source disabling might be broken?)
 * good code is gray: in ```c("foo"=3)``` see `com.r4intellij.parser.UnquotedVariablesTest._testQuotedNameInVector`
 
+* missing argument code is not flagged/incorrect argument is not flagged in
+  ```
+  write_tsv(gplot$data, file=paste0(fileBaseName, ".txt"))
+  ```
+* fixme: find solution to [vcf refresh issue](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160310-VFS-does-not-pick-up-changes-made-outside-of-VFS-when-doing-asynchRefresh)
 
-* function expression inlining is broken
+* fixme: parser should be changed to grow selection for string at first excluding the quotes [see #32 for spec](https://github.com/holgerbrandl/r4intellij/issues/32)
+
+* fixme: autocompletion does not work well for identifies with dots (see #4)
+
+* fixme: function expression inlining is broken
 ```
 train_glm = function(trainData){   train(is_group_leader ~ ., data = trainData, trControl = trainCtrl, method = "glm")}
 
@@ -49,7 +60,7 @@ pdModel = train_glm
 )
 ```
 
-* bug: just first unquoted arg is tagged as such
+* fixme: just first unquoted arg is tagged as such
 ```
 flyGeneInfoSlim = transmute(
     TargetID=ensembl_gene_id,
@@ -58,13 +69,29 @@ flyGeneInfoSlim = transmute(
 )
 ```
 
-* fix: dplyr utils without arguments
+* fixme: dplyr utils without arguments
 ```
 iris %>% mutate(foo=row_number()) %>% head
 ```
 
+* fixme: renaming for loop variables is broken
+```
+for (name in packageNames) {
+    if (paste(name, "r", sep=".") %in% list.files(path=args[1])) {
+        next
+    }
+}
+```
+
+
+
 
 ## v1.2
+
+* embed custom error reporting service ![](.todo_images/error_report.png)
+
+* fix gradle build to include resource files in zip (see https://github.com/JetBrains/gradle-intellij-plugin/issues/180#issuecomment-280377767)
+    * also use gradle for EAP releases (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000113284-EAP-channel-for-plugins)
 
 * provide help for `tidy<caret>r::separate`
 
@@ -72,6 +99,9 @@ iris %>% mutate(foo=row_number()) %>% head
 
 
 * use sdk instead of global library. See FlexSdkType2 or com.intellij.lang.javascript.flex.sdk.FlexmojosSdkType
+
+* more rigorous unit test for [operator presedence](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Syntax.html)
+
 
 Intentions & inspections
 ------------------------
@@ -127,6 +157,10 @@ if(a=(function(){T})()){ print("foo")}
 "%foo%" <- function(a,b) 3;
 # suggest quickfix to use backticks instead
 ```
+
+* Warn if by.x,by.y, or by don't use quoted variable names [#13](https://github.com/holgerbrandl/r4intellij/issues/13)
+
+
 
 ### dependency management
 
@@ -185,7 +219,7 @@ iris %>% mutate %>% transmute(iris, avg_length=mean(Length))
     geneInfo <- biomaRt::getBM(attributes=c("ensembl_gene_id", "external_gene_name", "description", "gene_biotype"), mart=mart) %>% cache_it()
 ```
 
- * also allow to reverse pipes with intention (like non-sense 2 element pipes)
+ * also allow to reverse pipes with intention (like non-sense 2 element pipes) [#66](https://github.com/holgerbrandl/r4intellij/issues/66)
     * `see com.siyeh.ipp.concatenation.MakeCallChainIntoCallSequenceIntention`
  ```
 distinct(x) %>% nrow
@@ -371,18 +405,6 @@ com<complete> # show all methods which start with com including their packacke p
 Refactorings
 ------------
 
-* **FIXME**: renaming for loop variables is broken
-```
-for (name in packageNames) {
-    if (paste(name, "r", sep=".") %in% list.files(path=args[1])) {
-        next
-    }
-}
-```
-
-* introduce variable for selection: infer name from pipe sink if it's a named argument
-![](.todo_images/8a347216.png)
-
 * make sure all rstudio refactorings work as well
 
 ![](.todo_images/refactorings.png)
@@ -411,11 +433,11 @@ require(dplyr) ## rename this to foo --> should not touch first import statment
 Rnotebook support
 -----------------
 
+* See https://github.com/holgerbrandl/r4intellij/issues/74
+
 * common pis accross chunks -> MultipleFilesPerDocumentFileViewProvider
  https://intellij-support.jetbrains.com/hc/en-us/community/posts/206770455-PSI-for-all-injected-language-parts-in-a-file-
 
-* dynmaic toolbar buttons
-`https://intellij-support.jetbrains.com/hc/en-us/community/posts/206151289-How-to-add-icons-to-the-toolbar-`
 
 * implement new fenceprovider for enhanced RMd snippet injection https://github.com/JetBrains/intellij-plugins/pull/464#event-918221586
 
@@ -476,6 +498,9 @@ Package Manger
 Brainstorming
 =============
 
+* better error recovery in parser (see https://github.com/JetBrains/Grammar-Kit#attributes-for-error-recovery-and-reporting)
+
+
 * provide [quick action](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000118510-QuickActionPopup) popups for tooling integration
 * skeletonization
     * How to deal with re-exported symbols e.e.g `%>%`
@@ -521,3 +546,6 @@ Brainstorming
 * (Re)Use more icons form `AllIcons.Actions.Restart`
 
 Also see [OpenApi notes](devel_notes.md)
+
+* learn from bio7 r editor (http://bio7.org/?p=2718)
+
