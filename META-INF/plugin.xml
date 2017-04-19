@@ -73,10 +73,10 @@
         </action>
 
         <!--todo disable for release?-->
-        <action id="RGenerateTypingReport" class="com.r4intellij.actions.RGenerateTypingReport"
-                text="Generate Typing Report">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
-        </action>
+        <!--<action id="RGenerateTypingReport" class="com.r4intellij.actions.RGenerateTypingReport"-->
+        <!--text="Generate Typing Report">-->
+        <!--<add-to-group group-id="ToolsMenu" anchor="last"/>-->
+        <!--</action>-->
 
         <!--TODO disable for release-->
         <!--<action id="RSkeletonsGenerator" class="com.r4intellij.actions.RSkeletonsGeneratorAction"-->
