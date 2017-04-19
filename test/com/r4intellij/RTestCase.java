@@ -2,7 +2,9 @@ package com.r4intellij;
 
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestCase;
@@ -30,7 +32,6 @@ import java.util.stream.Stream;
 
 import static com.r4intellij.RFileType.DOT_R_EXTENSION;
 import static com.r4intellij.packages.RSkeletonGenerator.DEFAULT_PACKAGES;
-import static com.r4intellij.psi.references.RResolver.getSkeletonLibrary;
 
 public abstract class RTestCase extends UsefulTestCase {
 
@@ -110,9 +111,9 @@ public abstract class RTestCase extends UsefulTestCase {
 //        fail("not yet ready because we can not fetch the existing library");
 
 
-        Library libraryByName = getSkeletonLibrary(myFixture.getModule().getProject());
-//        LibraryTable libraryTable = ProjectLibraryTable.getInstance(myFixture.getModule().getProject());
-//        Library libraryByName = libraryTable.getLibraryByName(LibraryUtil.R_SKELETONS);
+//        Library libraryByName = getSkeletonLibrary(myFixture.getModule().getProject());
+        LibraryTable libraryTable = ProjectLibraryTable.getInstance(myFixture.getModule().getProject());
+        Library libraryByName = libraryTable.getLibraryByName(LibraryUtil.R_SKELETONS);
 
         if (libraryByName != null) {
             Stream<String> existingLibFiles = Arrays.stream(libraryByName.getFiles(OrderRootType.CLASSES)).
@@ -133,9 +134,12 @@ public abstract class RTestCase extends UsefulTestCase {
 
         List<VirtualFile> skeletons = Arrays.stream(packageNames).map(pckgName -> {
             Path skeletonPath = getSkeletonPath(pckgName).toPath();
-            return fileSystem.findFileByPath(skeletonPath.toAbsolutePath().toString());
+            VirtualFile fileByPath = fileSystem.findFileByPath(skeletonPath.toAbsolutePath().toString());
+            assert fileByPath != null && fileByPath.exists() : "missing package skeleton: " + pckgName;
+            return fileByPath;
         }).collect(Collectors.toList());
 
+//        skeletons.stream().filter(it->!it.exists()).collect(Collectors.toList())
 
         PsiTestUtil.addProjectLibrary(myModule,
                 LibraryUtil.R_SKELETONS,

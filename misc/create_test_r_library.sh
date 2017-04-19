@@ -9,12 +9,15 @@ mkdir library
 cd library_all
 cp -r stats  stats4 graphics grDevices utils datasets grid methods base tcltk tools ../library
 cp -r parallel ../library
+cp -r splines ../library
 
 Rscript - <<"EOF"
 install.packages("devtools")
 devtools::source_url("https://raw.githubusercontent.com/holgerbrandl/datautils/v1.38/R/core_commons.R")
-load_pack(R.Utils)
+load_pack(R.utils)
 load_pack(lubridate)
+load_pack(caret)
+load_pack(tidyverse)
 EOF
 
 #cd /Library/Frameworks/R.framework/Versions/3.3_devel/Resources/library

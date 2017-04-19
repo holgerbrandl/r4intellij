@@ -34,7 +34,8 @@ class DependencyTests : RTestCase() {
 
 
     fun testPackageDataWithoutImport() {
-        doExprTest(unresolvedError("nasa")) // todo why unresolved --> should be be captured by import inspection
+        // should be be captured by import inspection
+        doExprTest(noImportWarning("nasa", listOf("dplyr", "GGally")))
     }
 
 
@@ -79,7 +80,7 @@ class DependencyTests : RTestCase() {
 
     fun testMissingImportInPipe() {
         createSkeletonLibrary("tibble", "magrittr", "datasets")
-        doExprTest("require(magrittr); iris %>% ${noImportWarning("glimpse", "tibble")}")
+        doExprTest("require(magrittr); iris %>% ${noImportWarning("glimpse", listOf("tibble", "dplyr"))}")
     }
 
 
