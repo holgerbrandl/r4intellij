@@ -1,11 +1,15 @@
 package com.r4intellij.interpreter;
 
 import com.google.common.collect.Iterables;
+import com.intellij.execution.ExecutionException;
+import com.intellij.execution.configurations.GeneralCommandLine;
+import com.intellij.execution.process.CapturingProcessHandler;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.r4intellij.RPsiUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -37,30 +41,40 @@ public class RInterpreterUtil {
 
 
     private static List<String> suggestHomePaths() {
-        final ArrayList<String> pathOptions = new ArrayList<String>();
-
         if (SystemInfo.isWindows) {
+            // TODO Is R always on PATH in a default installation?
 //            pathOptions.addAll(getInstallationFromPaths("R.exe", WINDOWS_PATHS));
-            // todo PATH support should also be provided for the other platforms
-            pathOptions.addAll(getFromPathVariable());
-
-        } else if (SystemInfo.isMac) {
-//            pathOptions.addAll(getInstallationFromPaths("R", MAC_PATHS));
-            List<String> maxosPathOptions = Arrays.asList("/Library/Frameworks/R.framework/Resources/bin/R", "/usr/local/bin/R");
-            pathOptions.addAll(filterPathOptions(maxosPathOptions));
-
-        } else if (SystemInfo.isUnix) {
-//            pathOptions.addAll(getInstallationFromPaths("R", UNIX_PATHS));
-            List<String> linuxPathOptions = Arrays.asList("/usr/bin/R");
-            pathOptions.addAll(filterPathOptions(linuxPathOptions));
-
+            return getFromPathVariable();
         }
 
-        return pathOptions;
+        // try to detect from environment (i.e. PATH) on non-windows systems
+        try {
+            String rFromPath = new CapturingProcessHandler(new GeneralCommandLine("which", "R"))
+                    .runProcess(5 * RPsiUtils.MINUTE).getStdout().trim();
+
+            if (!rFromPath.isEmpty()) {
+                return Arrays.asList(rFromPath);
+            }
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
+        // if not on PATH check common locations
+        if (SystemInfo.isMac) {
+            List<String> macosPathOptions = Arrays.asList("/Library/Frameworks/R.framework/Resources/bin/R", "/usr/local/bin/R");
+            return filterPathOptions(macosPathOptions);
+
+        } else if (SystemInfo.isUnix) {
+            List<String> linuxPathOptions = Arrays.asList("/usr/bin/R");
+            return filterPathOptions(linuxPathOptions);
+        }
+
+        return new ArrayList<>();
     }
 
 
-    private static <T> List<? extends String> filterPathOptions(List<String> pathOptions) {
+    private static <T> List<String> filterPathOptions(List<String> pathOptions) {
         return pathOptions.stream()
                 .filter(path -> new File(path).isFile() && new File(path).canExecute())
                 .collect(Collectors.toList());
