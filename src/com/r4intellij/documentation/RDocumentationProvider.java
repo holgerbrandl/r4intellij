@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.r4intellij.RFileType;
+import com.r4intellij.psi.RAssignmentStatementImpl;
 import com.r4intellij.psi.RElementFactory;
 import com.r4intellij.psi.RReferenceExpressionImpl;
 import com.r4intellij.psi.api.*;
@@ -19,6 +20,7 @@ import com.r4intellij.psi.references.RReferenceImpl;
 import com.r4intellij.psi.references.RResolver;
 import com.r4intellij.settings.RSettings;
 import kotlin.text.StringsKt;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,8 +101,11 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
         String symbol;
         if (originalElement != null) {
             symbol = originalElement.getText();
-        } else { // this applies just when help links are clicked
-            symbol = element.getText();
+        } else if (element instanceof RAssignmentStatement) { // this applies just when help links are clicked
+//            symbol = element.getText();
+            symbol = ((RAssignmentStatementImpl) element).getName();
+        } else {
+            return new ArrayList<>();
         }
 
         return Arrays.asList("http://127.0.0.1:" + HELP_SERVER_PORT + "/library/" + elPackage + "/html/" + symbol + ".html");
@@ -164,7 +169,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
         if (reference instanceof RStringLiteralExpression) return null;
         // check if it's a library function and return help if it is
 
-        String elementText = identifier.getText();
+        String elementText = identifier != null ? identifier.getText() : null;
 
 
         // first guess : process locally defined function definitions
@@ -179,11 +184,12 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
             }
         }
 
-        if (reference instanceof RAssignmentStatement && StringsKt.isBlank(elementText)) {
+        if (StringUtils.isBlank(elementText) && reference instanceof RAssignmentStatement) {
             elementText = ((RAssignmentStatement) reference).getName();
         }
 
-        if (StringsKt.isBlank(elementText)) return null;
+        // if we still don't know what to search for we stop here
+        if (StringUtils.isBlank(elementText)) return null;
 
         String packageName = detectPackage(reference);
 
