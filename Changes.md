@@ -37,8 +37,7 @@ New Quickfixes (aka intention) and Inspections
 * Install missing library intention
 * Replace T/F with TRUE/FALSE
 
-Code Snippet Evaluation
-* refactored into separate [Send to Terminal](https://plugins.jetbrains.com/idea/plugin/9409-send-to-terminal) plugin. Code is available under https://github.com/holgerbrandl/send2terminal
+External Code Snippet Evaluation was refactored out into separate [Send to Terminal](https://plugins.jetbrains.com/idea/plugin/9409-send-to-terminal) plugin. Code is available under https://github.com/holgerbrandl/send2terminal
 
 
 ## Changes in v0.12
