@@ -80,6 +80,8 @@ public class RSkeletonGenerator {
 
         // first (if not yet present create a library within the project that will contain the package skeletons
         application.runWriteAction(() -> {
+            if (!RSettings.hasInterpreter()) return;
+
             // add all paths to library
             final String skeletonLibraryPath = RSkeletonGenerator.getSkeletonsPath();
 
@@ -172,8 +174,13 @@ public class RSkeletonGenerator {
     public static String getSkeletonsPath() {
         final String basePath = PathManager.getSystemPath();
 
-        // todo this should include the interpreter version as well
         String interpreterPath = RSettings.getInstance().getInterpreterPath();
+        if (interpreterPath == null) {
+            throw new RuntimeException("could not define skeleton path because r interpreter is not set");
+        }
+
+
+        // todo this should becaome more readible and include the interpreter version as well
         int interpreterHash = FileUtil.toSystemIndependentName(interpreterPath).hashCode();
 
         return (basePath + File.separator + SKELETON_DIR_NAME) + File.separator + Math.abs(interpreterHash) + File.separator;

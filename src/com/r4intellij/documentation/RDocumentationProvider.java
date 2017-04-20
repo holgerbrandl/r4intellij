@@ -20,7 +20,6 @@ import com.r4intellij.psi.references.RReferenceImpl;
 import com.r4intellij.psi.references.RResolver;
 import com.r4intellij.settings.RSettings;
 import kotlin.text.StringsKt;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -157,8 +156,13 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
         }
 
 
+        if (!RSettings.hasInterpreter()) {
+            return "Could not lookup documentaiton because R interpreter is not set";
+        }
+
         // wait until help server is ready (do it here since we need the port to build the URL)
         ensureHelpServerAlive();
+
 
         // check if doc of internally rerouted doc-popup click
         URL restoredURL = restoreInterceptedLink(reference);
@@ -184,12 +188,12 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
             }
         }
 
-        if (StringUtils.isBlank(elementText) && reference instanceof RAssignmentStatement) {
+        if (isBlank(elementText) && reference instanceof RAssignmentStatement) {
             elementText = ((RAssignmentStatement) reference).getName();
         }
 
         // if we still don't know what to search for we stop here
-        if (StringUtils.isBlank(elementText)) return null;
+        if (isBlank(elementText)) return null;
 
         String packageName = detectPackage(reference);
 
@@ -206,6 +210,11 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
 //        return getHelpForFunction(elementText, packageName);
         return getHelpFromLocalHelpServer(localHelpURL);
+    }
+
+
+    public static boolean isBlank(String str) {
+        return str != null && str.trim().isEmpty();
     }
 
 

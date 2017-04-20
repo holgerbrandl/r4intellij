@@ -59,7 +59,9 @@ public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageCon
     @NotNull
     @Override
     protected OSProcessHandler createProcessHandler(@NotNull final Process process) {
-        final String commandLine = getCommandLine(RSettings.getInstance().getInterpreterPath()).getCommandLineString();
+        String interpreterPath = RSettings.getInstance().getInterpreterPath();
+
+        String commandLine = getCommandLine(interpreterPath).getCommandLineString();
         return new ColoredProcessHandler(process, commandLine) {
 
             @Override

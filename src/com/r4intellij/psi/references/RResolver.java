@@ -23,6 +23,7 @@ import com.r4intellij.settings.RSettings;
 import com.r4intellij.typing.RTypeProvider;
 import com.r4intellij.typing.types.RType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -335,7 +336,10 @@ public class RResolver {
     }
 
 
+    @Nullable
     public static String getTrimmedFileName(PsiElement element) {
+        if (element.getContainingFile() == null) return null;
+
         return element.getContainingFile().getVirtualFile().getName().replaceAll(".[rR]$", "");
     }
 }

@@ -29,8 +29,7 @@ public class RHelperUtil {
     public static ProcessOutput getProcessOutput(@NotNull final String scriptText) {
         String interpreter = RSettings.getInstance().getInterpreterPath();
 
-        final String path = interpreter;
-        if (path == null) {
+        if (interpreter == null) {
             return null;
         }
 
@@ -42,7 +41,7 @@ public class RHelperUtil {
             return processHandler.runProcess(5 * RPsiUtils.MINUTE);
         } catch (Throwable e) {
             LOG.info("Failed to run R executable: \n" +
-                    "Interpreter path " + path + "0\n" +
+                    "Interpreter path " + interpreter + "0\n" +
                     "Exception occurred: " + e.getMessage());
         }
 

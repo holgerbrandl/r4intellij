@@ -1,5 +1,6 @@
 package com.r4intellij.settings;
 
+import com.google.common.base.Strings;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
@@ -35,7 +36,16 @@ public class RSettings implements PersistentStateComponent<RSettings> {
 
 
     public String getInterpreterPath() {
-        return interpreterPath;
+//        return interpreterPath;
+        // good for testing
+//        return null;
+
+        return Strings.emptyToNull(interpreterPath);
+    }
+
+
+    public static boolean hasInterpreter() {
+        return RSettings.getInstance().getInterpreterPath() != null;
     }
 
 

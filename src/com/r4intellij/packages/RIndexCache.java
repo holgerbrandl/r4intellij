@@ -16,6 +16,7 @@ import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
 import com.r4intellij.RFileType;
 import com.r4intellij.psi.api.RFile;
+import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,8 +57,11 @@ public class RIndexCache {
             return;
         }
 
+
         //noinspection unchecked
-        allPackages = (Set<RPackage>) loadObject(getLibIndexFile());
+        if (RSettings.hasInterpreter()) {
+            allPackages = (Set<RPackage>) loadObject(getLibIndexFile());
+        }
 
         //        http://stackoverflow.com/questions/6992608/why-there-is-no-concurrenthashset-against-concurrenthashmap
         if (allPackages == null) {
@@ -214,7 +218,6 @@ public class RIndexCache {
 
         return new File(skeletonsPath, ".libindex.dat");
     }
-
 
 
     public boolean isReady() {
