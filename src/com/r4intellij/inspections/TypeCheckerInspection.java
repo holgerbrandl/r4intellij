@@ -46,6 +46,10 @@ public class TypeCheckerInspection extends RInspection {
             try {
                 ArgumentMatcher argumentMatcher = new ArgumentMatcher(callExpression);
 
+                // white-list dplyr utilities that are handled on c++ level
+                // see comments on https://github.com/tidyverse/dplyr/issues/2218#issuecomment-294879298
+
+
                 argumentMatcher.matchArgs(callExpression.getArgumentList());
             } catch (MatchingException e) {
                 myProblemHolder.registerProblem(callExpression, e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING);

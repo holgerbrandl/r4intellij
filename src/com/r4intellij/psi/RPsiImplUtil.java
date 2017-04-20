@@ -12,6 +12,7 @@ import com.r4intellij.RElementGenerator;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.references.ROperatorReference;
 import com.r4intellij.psi.references.RReferenceImpl;
+import com.r4intellij.psi.references.RResolver;
 import com.r4intellij.typing.types.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.r4intellij.documentation.RDocumentationProvider.isLibraryElement;
 import static com.r4intellij.parsing.RElementTypes.*;
 
 /**
@@ -409,5 +411,13 @@ public class RPsiImplUtil {
         }
 
         return null;
+    }
+
+
+    @Nullable
+    public static String getNamespace(RFunctionExpression functionExpression) {
+        if (!isLibraryElement(functionExpression)) return null;
+
+        return RResolver.getTrimmedFileName(functionExpression);
     }
 }

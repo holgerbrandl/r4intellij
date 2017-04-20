@@ -55,12 +55,7 @@ public class UnquotedArgsRule implements Serializable {
         RFunctionExpression functionExpression = PsiTreeUtil.getParentOfType(rParameter, RFunctionExpression.class);
 
         if (functionExpression == null) return false;
-
-        String methodName = RPsiImplUtil.getName(functionExpression);
-        if (methodName == null) return false;
-
-
-        if (!Objects.equals(this.methodName, methodName)) return false;
+        if (!isMatchingMethod(functionExpression)) return false;
 
         return unquotedArgs.contains("*") || unquotedArgs.contains(rParameter.getName());
     }
@@ -68,12 +63,25 @@ public class UnquotedArgsRule implements Serializable {
 
     public boolean matchesTripleDot(RFunctionExpression functionExpression) {
         if (functionExpression == null) return false;
-
-        String methodName = RPsiImplUtil.getName(functionExpression);
-        if (methodName == null) return false;
-
-        if (!Objects.equals(this.methodName, methodName)) return false;
+        if (!isMatchingMethod(functionExpression)) return false;
 
         return unquotedArgs.contains("*") || unquotedArgs.contains("...");
     }
+
+
+    private boolean isMatchingMethod(RFunctionExpression functionExpression) {
+        // is correct method name
+        String methodName = RPsiImplUtil.getName(functionExpression);
+        if (methodName == null) return false;
+        if (!Objects.equals(this.methodName, methodName)) return false;
+
+
+        // is it the correct package
+        String namespace = RPsiImplUtil.getNamespace(functionExpression);
+//        if (namespace == null) return false; // disabled to allow for user method whitelisting (ie. methods without namespace)
+        if (!Objects.equals(this.packageName, namespace)) return false;
+
+        return true;
+    }
+
 }

@@ -34,8 +34,6 @@ https://github.com/holgerbrandl/r4intellij/milestone/5
 
 * make sure r-libraries are attached to new modules right away and not just after IJ restart
 
-* whitelist hybrid dplyr handlers https://github.com/tidyverse/dplyr/issues/2218#issuecomment-294879298 **{done}**
-
 * Remove deprecated API usage
 
 * _Extract Variable\_ refactoring: introduce variable for selection: infer name from pipe sink if it's a named argument [#56](https://github.com/holgerbrandl/r4intellij/issues/56)

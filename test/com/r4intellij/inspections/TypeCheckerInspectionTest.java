@@ -103,6 +103,13 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
     }
 
 
+    public void testIgnoreHybridHandler() {
+        createSkeletonLibrary("dplyr", "datasets");
+
+        doExprTest("library(dplyr); mutate(iris, foo=row_number()); filter(iris, percent_rank()>.3); " + errorMissingArg("x", "dense_rank()"));
+    }
+
+
     public void _testTooManyArgs() { //todo v1.2 enable and fix
         createSkeletonLibrary("readr", "datasets");
 

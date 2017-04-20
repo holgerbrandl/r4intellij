@@ -4,13 +4,16 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RPsiUtils;
+import com.r4intellij.psi.RPsiImplUtil;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.typing.types.RFunctionType;
 import com.r4intellij.typing.types.RType;
 import com.r4intellij.typing.types.RUnknownType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,6 +23,10 @@ public class ArgumentMatcher {
 
     private final RFunctionType functionType;
     private final PipeInfo pipeInfo;
+
+    @Nullable
+    // just required to evaluate call context in special situations (like dplyr hybrid handlers in mutate)
+    private RCallExpression callExpression;
 
 
     public RFunctionType getFunctionType() {
@@ -86,6 +93,7 @@ public class ArgumentMatcher {
         }
 
         pipeInfo = PipeInfo.fromCallExpression(callExpression);
+        this.callExpression = callExpression;
     }
 
 
@@ -219,8 +227,7 @@ public class ArgumentMatcher {
                 return !funBody.contains("missing(" + unmArg.getName() + ")");
             }).collect(Collectors.toList());
 
-            if (!unmatched.isEmpty()) {
-
+            if (!unmatched.isEmpty() && !isHybridHandlerCall(matchResult)) {
                 throw new MatchingException(generateMissingArgErrorMessage(unmatched, 0));
             }
         }
@@ -228,6 +235,28 @@ public class ArgumentMatcher {
         if (!suppliedArguments.isEmpty()) {
             checkUnmatchedArgs(suppliedArguments);
         }
+    }
+
+
+    private static boolean isHybridHandlerCall(ArgumentsMatchResult matchResult) {
+        // white list hybrid dplyr handlers (https://github.com/tidyverse/dplyr/issues/2218#issuecomment-294879298)
+        List<String> hybridDplyrHandlers = Arrays.asList("row_number", "ntile", "min_rank", "percent_rank", "dense_rank", "cume_dist");
+        String methodName = RPsiImplUtil.getName(matchResult.getFunctionType().getFunctionExpression());
+
+        if (!hybridDplyrHandlers.contains(methodName)) return false;
+
+        // make sure that we are in some kind of dplyr::mutate context
+        RCallExpression callExpression = matchResult.getMatcher().callExpression;
+        if (callExpression == null) return false;
+
+        RCallExpression parentCall = (RCallExpression) PsiTreeUtil.findFirstParent(callExpression.getParent(), psiElement -> psiElement instanceof RCallExpression);
+        if (parentCall == null) return false;
+
+        String callContextName = parentCall.getExpression().getName();
+
+        // see https://www.rstudio.com/resources/cheatsheets/
+        List<String> hybridHandlerTargets = Arrays.asList("mutate", "transmute", "mutate_all", "mutate_at", "mutate_if", "add_column", "filter");
+        return callContextName != null && (callContextName.startsWith("mutate") || hybridHandlerTargets.contains(callContextName));
     }
 
 
