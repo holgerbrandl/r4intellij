@@ -4,6 +4,8 @@ R4Intellij Development Notes
 0-day bugs
 ----------
 
+don't use installled ij cache for testing (will cause index rebuilt on each startup)
+
 
 Next Steps
 ----------
@@ -32,7 +34,7 @@ https://github.com/holgerbrandl/r4intellij/milestone/5
 
 * make sure r-libraries are attached to new modules right away and not just after IJ restart
 
-* whitelist dplyr helper https://github.com/tidyverse/dplyr/issues/2218#issuecomment-294879298
+* whitelist hybrid dplyr handlers https://github.com/tidyverse/dplyr/issues/2218#issuecomment-294879298 **{done}**
 
 * Remove deprecated API usage
 
@@ -41,9 +43,8 @@ https://github.com/holgerbrandl/r4intellij/milestone/5
 
 ### bugs
 
-* long lines are not displayed correctly in console
 
-* typing report action should not be part of public release
+* long lines are not displayed correctly in console
 
 * good code is gray: in ```c("foo"=3)``` see `com.r4intellij.parser.UnquotedVariablesTest._testQuotedNameInVector`
 
@@ -54,8 +55,6 @@ https://github.com/holgerbrandl/r4intellij/milestone/5
 * fixme: find solution to [vcf refresh issue](https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160310-VFS-does-not-pick-up-changes-made-outside-of-VFS-when-doing-asynchRefresh)
 
 * fixme: parser should be changed to grow selection for string at first excluding the quotes [see #32 for spec](https://github.com/holgerbrandl/r4intellij/issues/32)
-
-* fixme: autocompletion does not work well for identifies with dots (see #4)
 
 * fixme: function expression inlining is broken
 ```
@@ -75,11 +74,6 @@ flyGeneInfoSlim = transmute(
 )
 ```
 
-* fixme: dplyr utils without arguments
-```
-iris %>% mutate(foo=row_number()) %>% head
-```
-
 * fixme: renaming for loop variables is broken
 ```r
 for (name in packageNames) {
@@ -89,6 +83,11 @@ for (name in packageNames) {
 }
 ```
 
+* good code is brown: pipe into triple-dot only
+```
+filter = function(...) 1
+iris %>% filter(1) ## interestingly not flagged without 1 arg
+```
 
 
 
@@ -97,7 +96,10 @@ for (name in packageNames) {
 * embed custom error reporting service ![](.todo_images/error_report.png)
 
 * fix gradle build to include resource files in zip (see https://github.com/JetBrains/gradle-intellij-plugin/issues/180#issuecomment-280377767)
-    * also use gradle for EAP releases (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000113284-EAP-channel-for-plugins)
+    * Also use gradle for EAP releases (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000113284-EAP-channel-for-plugins)
+    * Also test other products by means of alternativeIdePath (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000166710-java-lang-NoClassDefFoundError-com-intellij-codeInsight-CodeInsightUtil-when-using-plugin-in-PyCharm)
+    * Setup up CI integration to run tests automatically
+
 
 * provide help for `tidy<caret>r::separate`
 

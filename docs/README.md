@@ -18,10 +18,10 @@ The plugin provides syntax highlighting, import-aware code completion, a powerfu
 - [Interactive Console](#interactive-console)
 - [Code completion](#code-completion)
 - [Refactoring](#refactoring)
+- [Inspections](#inspections)
 - [Intentions](#intentions)
 - [Platform features](#platform-features)
 - [Site navigation](#site-navigation)
-- [Acknowledgements](#acknowledgements)
 - [Links](#links)
 
 
@@ -84,8 +84,7 @@ Start a new console under _Tools_
 ![](readme_images/create_console.png)
 
 
-To push code from the editor use `Meta
-For a more general overview see https://www.jetbrains.com/help/idea/2016.3/working-with-embedded-local-terminal.html
+To push code from the editor use `Meta+Enter`. For a more general overview on how to use run consoles in IDEA see https://www.jetbrains.com/help/idea/2016.3/working-with-embedded-local-terminal.html
 
 Note: You can also evaluate R code in an external console by means of the [Send To Terminal](https://plugins.jetbrains.com/plugin/9409-send-to-terminal) plugin for Intellij.
 
@@ -93,13 +92,13 @@ Note: You can also evaluate R code in an external console by means of the [Send 
 Code completion
 ---------------
 
-R4Intellij builds an index of your local R installation which allows for much better completion, local error highlighting, integrated documentation lookup and more. 
+R4Intellij builds an index of your local R installation which allows for much better completion, local error highlighting, integrated documentation lookup and more. Depending on the number of packages installed on your machine the initial indexing procedure will up to a few minutes. The plugin will refresh the index on startup to include newly installed packages.
 
-To build the index of all packages installed in your R instance, R4Intellij needs . On most platforms it will guess it correctly, but you can adjust it if necessary in the preferences. 
+The plugin will try to infer the location of R automatically from your environment (i.e. PATH). On most platforms it will guess it correctly, but you can adjust it if necessary in the preferences.
 
 The following completion modes are available: 
 
-*   Basic word completion for variables and local functions*
+*   Basic word completion for variables and local functions
 *   Completion of names for loaded packages
 *   Package name completion in library statements
 *   Coming soon: setwd() aware path completion
@@ -111,10 +110,23 @@ All refactorings can be accessed via the "Refactor" menu
 
 *   Renaming of symbols and functions
 
+Inspections
+-----------
+
+Intentions are on-the-fly checks of your R scripts, that highlight problems and (optionally) suggest automatic quick fixes
+
+* Detect not yet installed packages in import statements
+* Detect missing arguments in method calls
+* Detect missing package imports
+* Detect unresolved references (variables that are not defined)
+* Detect forward references (i.e. variables that are used before declaration)
+* Detect unused variables and function arguments
+
+
 Intentions
 ----------
 
-Intentions are on-the-fly checks of your R scripts, that highlight problems and (optionally) suggest automatic quick fixes 
+Intentions are quick-fixes provided and executed by the the plugin.
 
 * Auto-import of packages given a function name
 ![](readme_images/after_autoimport.png)
@@ -133,16 +145,7 @@ Site navigation
 
 * [Development notes](https://github.com/holgerbrandl/r4intellij/blob/master/misc/devel_notes.md)
 * [Release History](https://github.com/holgerbrandl/r4intellij/blob/master/Changes.md)
-
 * [FAQ](faq.md)
-
-
-Acknowledgements
----------------
-
-This project was rebuilt by merging it's codebase with a fork of [The R plugin](https://github.com/ktisha/TheRPlugin). So half the credits go to go [ktisha](https://github.com/ktisha).
-  
-This project would not have been possible without great [bash plugin](https://plugins.jetbrains.com/plugin/4230?pr=phpStorm) which inspired us a lot when getting started with r4intellij, and from which we borrowed also some code.
 
 
 Links

@@ -315,6 +315,22 @@ https://intellij-support.jetbrains.com/hc/en-us/community/posts/206114249-How-to
 Skeletons
 ===========
 
+to test with old R:
+```bash
+### test with R 3.2.5
+cd ~/bin
+#https://cran.r-project.org/src/base/R-3/
+wget https://cran.r-project.org/src/base/R-3/R-3.2.5.tar.gz
+tar xvf R-3.2.5.tar.gz
+cd R-3.2.5
+./configure
+make
+
+wget https://raw.githubusercontent.com/holgerbrandl/r4intellij/master/r-helpers/skeletonize_package.R
+
+./bin/R -f skeletonize_package.R --args  tools tools.skeleton.R
+```
+
 skeletons are saved under  (see module deps --> libaries)
 `/Users/brandl/Library/Caches/IntelliJIdea2016.1/plugins-sandbox/system/r_skeletons/-1481726564`
 
