@@ -263,6 +263,7 @@ public class RSkeletonGenerator {
 
                     // build the skeletons in tmp and move them once done so avoid incomplete file index failures
                     File tempSkeleton = Files.createTempFile("r4j_skel_" + packageName + "_", DOT_R_EXTENSION).toFile();
+                    tempSkeleton.deleteOnExit();
 
                     RRunResult output = RHelperUtil.runHelperWithArgs(RHELPER_SKELETONIZE_PACKAGE, packageName, tempSkeleton.getAbsolutePath());
 
@@ -270,7 +271,10 @@ public class RSkeletonGenerator {
                         LOG.error("Failed to generate skeleton for '" + packageName + "'. Exit code: " + output.getExitCode());
                         LOG.error(output.getStdErr());
                     } else if (isValidSkeleton(tempSkeleton)) {
-                        Files.move(tempSkeleton.toPath(), skeletonFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        // we used the more correct Files.move() here initially, but it caused issues on Windows
+                        // (see https://github.com/holgerbrandl/r4intellij/issues/86). Most likely the R process did not
+                        // correctly release the file handle
+                        Files.copy(tempSkeleton.toPath(), skeletonFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
                         updated.add(packageName);
                     } else {
