@@ -298,8 +298,8 @@ library(tools);
 chooseCRANmirror(ind = 1)
 
 # db=NULL is required for compatibility with R 3.2.X
-pckgDepends = unlist(lapply(package_dependencies(pName, db = NULL, which = "Depends"), function(x)paste(x, collapse = ",")))
-pckgImports = unlist(lapply(package_dependencies(pName, db = NULL, which = "Imports"), function(x)paste(x, collapse = ",")))
+pckgDepends = unlist(lapply(package_dependencies(pName, db = available.packages(), which = "Depends"), function(x)paste(x, collapse = ",")))
+pckgImports = unlist(lapply(package_dependencies(pName, db = available.packages(), which = "Imports"), function(x)paste(x, collapse = ",")))
 
 cat(paste0(".skeleton_package_depends = \"", pckgDepends, "\"\n\n"))
 cat(paste0(".skeleton_package_imports = \"", pckgImports, "\"\n\n"))
