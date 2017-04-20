@@ -12,6 +12,7 @@ skeletonFile = args[2]
 
 ## test invcation:
 # pName = "base"; skeletonFile=paste0("~/Desktop/skeleton/", pName); args= c(pName, skeletonFile)
+# pName = "tools"; skeletonFile="tools.skeleton.R"
 # pName = "ggplot2"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 # pName = "xlsx"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
 # pName = "dplyr"; skeletonFile=paste0("~/Desktop/skeleton/", pName)
@@ -296,8 +297,9 @@ cat(paste0(".skeleton_package_version = \"", packageDescription(pName)$Version, 
 library(tools);
 chooseCRANmirror(ind = 1)
 
-pckgDepends = unlist(lapply(package_dependencies(pName, which="Depends"), function(x)paste(x, collapse=",")))
-pckgImports = unlist(lapply(package_dependencies(pName, which="Imports"), function(x)paste(x, collapse=",")))
+# db=NULL is required for compatibility with R 3.2.X
+pckgDepends = unlist(lapply(package_dependencies(pName, db = NULL, which = "Depends"), function(x)paste(x, collapse = ",")))
+pckgImports = unlist(lapply(package_dependencies(pName, db = NULL, which = "Imports"), function(x)paste(x, collapse = ",")))
 
 cat(paste0(".skeleton_package_depends = \"", pckgDepends, "\"\n\n"))
 cat(paste0(".skeleton_package_imports = \"", pckgImports, "\"\n\n"))
