@@ -1,7 +1,6 @@
 package com.r4intellij.packages.remote.ui;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.webcore.packaging.*;
 import com.r4intellij.packages.RSkeletonGenerator;
 import com.r4intellij.settings.RSettings;
@@ -17,11 +16,6 @@ public class RInstalledPackagesPanel extends InstalledPackagesPanel {
     }
 
 
-    public static boolean hasInterpreterPath() {
-        return StringUtil.isNotEmpty(RSettings.getInstance().getInterpreterPath());
-    }
-
-
     public static boolean isPackageBase(@NotNull final InstalledPackage pkg) {
         return RSkeletonGenerator.DEFAULT_PACKAGES.contains(pkg.getName());
     }
@@ -29,7 +23,7 @@ public class RInstalledPackagesPanel extends InstalledPackagesPanel {
 
     @Override
     protected boolean canUninstallPackage(InstalledPackage aPackage) {
-        return hasInterpreterPath() && !isPackageBase(aPackage);
+        return RSettings.hasInterpreter() && !isPackageBase(aPackage);
     }
 
 
@@ -55,12 +49,12 @@ public class RInstalledPackagesPanel extends InstalledPackagesPanel {
 
     @Override
     protected boolean canInstallPackage(@NotNull final InstalledPackage aPackage) {
-        return hasInterpreterPath();
+        return RSettings.hasInterpreter();
     }
 
 
     @Override
     protected boolean canUpgradePackage(InstalledPackage aPackage) {
-        return hasInterpreterPath() && !isPackageBase(aPackage);
+        return RSettings.hasInterpreter() && !isPackageBase(aPackage);
     }
 }

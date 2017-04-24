@@ -33,8 +33,7 @@ public class RConsoleAction extends AnAction implements DumbAware {
         if (project == null) return;
 
         // make sure that interpreter is set
-        String interpreterPath = RSettings.getInstance().getInterpreterPath();
-        if (interpreterPath == null) {
+        if (!RSettings.hasInterpreter()) {
             DialogBuilder db = new DialogBuilder();
 
             db.setTitle("Could not start R Console");

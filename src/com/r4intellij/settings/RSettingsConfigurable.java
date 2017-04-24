@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class RSettingsConfigurable implements SearchableConfigurable.Parent, Configurable.NoScroll {
     private final Project myProject;
@@ -70,7 +71,7 @@ public class RSettingsConfigurable implements SearchableConfigurable.Parent, Con
     @Override
     public boolean isModified() {
         final RSettings rSettings = RSettings.getInstance();
-        return !rSettings.getInterpreterPath().equals(interpreterPathField.getText()) ||
+        return !Objects.equals(rSettings.getInterpreterPath(), interpreterPathField.getText()) ||
                 rSettings.isResolveInModule() != (resolveVariablesInModuleCheckBox.isSelected());
     }
 

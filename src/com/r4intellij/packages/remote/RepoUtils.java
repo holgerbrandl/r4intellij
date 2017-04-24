@@ -236,9 +236,9 @@ public class RepoUtils {
 
 
     public static void uninstallPackage(InstalledPackage repoPackage) throws ExecutionException {
-        final String path = RSettings.getInstance().getInterpreterPath();
-        if (StringUtil.isEmptyOrSpaces(path)) {
-            throw new ExecutionException("Please, specify path to the R executable.");
+        final String interpreterPath = RSettings.getInstance().getInterpreterPath();
+        if (interpreterPath == null) {
+            throw new ExecutionException("Please, specify interpreterPath to the R executable.");
         }
 
         // test if the package is actually installed
@@ -249,7 +249,7 @@ public class RepoUtils {
             return;
         }
 
-        final ArrayList<String> arguments = Lists.newArrayList(path, "CMD", "REMOVE");
+        final ArrayList<String> arguments = Lists.newArrayList(interpreterPath, "CMD", "REMOVE");
         arguments.add(repoPackage.getName());
 
         final CapturingProcessHandler processHandler = new CapturingProcessHandler(new GeneralCommandLine(arguments));

@@ -59,9 +59,7 @@ public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageCon
     @NotNull
     @Override
     protected OSProcessHandler createProcessHandler(@NotNull final Process process) {
-        String interpreterPath = RSettings.getInstance().getInterpreterPath();
-
-        String commandLine = getCommandLine(interpreterPath).getCommandLineString();
+        String commandLine = getCommandLine(getInterpreterPath()).getCommandLineString();
         return new ColoredProcessHandler(process, commandLine) {
 
             @Override
@@ -103,11 +101,11 @@ public class RConsoleRunner extends AbstractConsoleRunnerWithHistory<LanguageCon
 
 
     @NotNull
-    private String getInterpreterPath() throws ExecutionException {
+    private String getInterpreterPath() {
         final String interpreterPath = RSettings.getInstance().getInterpreterPath();
 
         if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
-            throw new ExecutionException("R interpreter is not specified");
+            throw new RuntimeException("R interpreter is not specified");
         }
 
         return interpreterPath;

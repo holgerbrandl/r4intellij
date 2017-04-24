@@ -27,13 +27,11 @@ public class RHelperUtil {
 
     @Nullable
     public static ProcessOutput getProcessOutput(@NotNull final String scriptText) {
-        String interpreter = RSettings.getInstance().getInterpreterPath();
-
-        if (interpreter == null) {
+        if (!RSettings.hasInterpreter()) {
             return null;
         }
 
-
+        String interpreter = RSettings.getInstance().getInterpreterPath();
         String[] getPckgsCmd = new String[]{interpreter, "--vanilla", "--quiet", "--slave", "-e", scriptText};
 
         try {
@@ -73,12 +71,13 @@ public class RHelperUtil {
 
     @Nullable
     public static RRunResult runHelperWithArgs(@NotNull final PluginResourceFile helper, @NotNull final String... args) {
-        final String interpreterPath = RSettings.getInstance().getInterpreterPath();
 
-        if (StringUtil.isEmptyOrSpaces(interpreterPath)) {
+        if (!RSettings.hasInterpreter()) {
             LOG.info("Path to interpreter didn't set");
             return null;
         }
+
+        final String interpreterPath = RSettings.getInstance().getInterpreterPath();
 
         final ArrayList<String> command = Lists.newArrayList(
                 interpreterPath,

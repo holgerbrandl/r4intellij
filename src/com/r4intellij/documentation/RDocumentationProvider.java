@@ -343,9 +343,8 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
 
     public static void startHelpServer(@Nullable Integer userDefinedPort) {
-        String interpreter = RSettings.getInstance().getInterpreterPath();
 
-        if (interpreter == null) {
+        if (!RSettings.hasInterpreter()) {
             return;
         }
 
@@ -358,6 +357,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
         }
 
 
+        String interpreter = RSettings.getInstance().getInterpreterPath();
         String[] getPckgsCmd = new String[]{interpreter, "--vanilla", "--quiet", "--slave", "-e", scriptText};
 
         try {

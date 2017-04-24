@@ -1,13 +1,16 @@
 package com.r4intellij.settings;
 
-import com.google.common.base.Strings;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.r4intellij.interpreter.RInterpreterUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
 
 @State(name = "RSettings", storages = @Storage("rSettings.xml"))
 public class RSettings implements PersistentStateComponent<RSettings> {
@@ -35,17 +38,19 @@ public class RSettings implements PersistentStateComponent<RSettings> {
     }
 
 
+    @Nullable
     public String getInterpreterPath() {
-//        return interpreterPath;
-        // good for testing
-//        return null;
+        // disabled because cyclic loop
+//        if(!hasInterpreter()) return null;
 
-        return Strings.emptyToNull(interpreterPath);
+
+        return interpreterPath;
     }
 
 
     public static boolean hasInterpreter() {
-        return RSettings.getInstance().getInterpreterPath() != null;
+        String interpreterPath = RSettings.getInstance().getInterpreterPath();
+        return !StringUtil.isEmptyOrSpaces(interpreterPath) && new File(interpreterPath).canExecute();
     }
 
 

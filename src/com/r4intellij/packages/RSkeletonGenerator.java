@@ -21,7 +21,6 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiFile;
@@ -204,9 +203,7 @@ public class RSkeletonGenerator {
 
     @NotNull
     private static List<String> updateSkeletons(@NotNull ProgressIndicator indicator, Project project) {
-        final String interpreter = RSettings.getInstance().getInterpreterPath();
-
-        if (StringUtil.isEmptyOrSpaces(interpreter)) return new ArrayList<>();
+        if (!RSettings.hasInterpreter()) return new ArrayList<>();
 
         Map<String, String> packageVersions = getInstalledPackageVersions();
 
