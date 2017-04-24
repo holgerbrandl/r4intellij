@@ -15,6 +15,8 @@ public final class RProcessUtils {
 
     public static void executeInitGraphicsCommands(@NotNull final Project project, @NotNull final RExecutor executor)
             throws RDebuggerException {
+//        if(true) return;
+
         final boolean is64Bit = is64Bit(loadArchitecture(executor));
 
         for (final String command : RGraphicsUtils.calculateInitCommands(project, is64Bit)) {

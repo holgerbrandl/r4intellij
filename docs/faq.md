@@ -20,7 +20,7 @@ The index will be updated when Intellij is restarted.
 Submit a ticket to our tracker. The indexing is known to fail occassionally, which is mainly because we have not yet discovered a fail-safe way to extract all package functions including their documentation.
 
 ## Why doesn't R4Intellij provide R-Session aware completion?
-Because all it does is static code analysis. We don't plan any kind of R console for now. But feel welcome to join our project and get started with it.
+Because all it does is static code analysis at the moment.
 
 
 ## Why do I get an error when the plugin is indexing the 'xlsx' package?

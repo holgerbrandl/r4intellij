@@ -129,6 +129,10 @@ log(1,2,3,4)
 
 ### best practices & coding style
 
+* expand incompletely named arguments (which is supported by R but bad practice) `mfuzz(yeast.s,c=16,m=1.25)` ->  `mfuzz(yeast.s,centers=16,m=1.25)`
+* 
+* intention to replace `exprData = exprData %>% gather(replicate, fpkm, -ensembl_gene_id)` with less verbose `exprData %<>% gather(replicate, fpkm, -ensembl_gene_id)`
+
 * replace `iris %>% head` with `iris %>% head()`
 
 * inspection to replace `<-` with `=`
@@ -491,6 +495,7 @@ http://ijlyttle.github.io/bsplus/
 
 * new template action with ui to generate templates for notebook, shiny, blank, r presentation io-slides (with regular notebook preview)
 
+Maybe we could also just use chrome to display the html rendered notebook and refresh via a solution from http://stackoverflow.com/questions/5588658/auto-reload-browser-when-i-save-changes-to-html-file-in-chrome
 
 ## Environment view 
 

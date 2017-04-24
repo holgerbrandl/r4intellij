@@ -22,7 +22,7 @@
       <excludeFolder url="file://$MODULE_DIR$/r-helpers/r-user-skeletons" />
     </content>
     <content url="file://$MODULE_DIR$/../use_r_2017" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="IntelliJ IDEA IU-171.4073.35" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library" scope="TEST">
       <library>
@@ -35,7 +35,6 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="library" name="R Skeletons" level="project" />
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
@@ -54,60 +53,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
-    <orderEntry type="library" name="R Skeletons" level="project" />
+    <orderEntry type="library" name="R User Library" level="project" />
+    <orderEntry type="library" name="R Skeletons" level="application" />
   </component>
 </module>
