@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.r4intellij.editor.RCompletionContributor.isPackageContext;
@@ -182,10 +183,13 @@ public class RReferenceImpl implements PsiPolyVariantReference {
                     if (byName != null) {
                         byName.getFunctionNames()
                                 .stream().filter(it -> !it.contains(".__"))
+                                .filter(Objects::nonNull)
                                 .forEach(funName -> {
-                                    if (funName == null) System.err.println("funName is null");
+                                    RefLookupElement lookupObject = new RefLookupElement(myElement.getManager(),
+                                            RLanguage.getInstance(), pckg + "::" + funName);
+
                                     completionResults.add(LookupElementBuilder
-                                                    .create(new RefLookupElement(myElement.getManager(), RLanguage.getInstance(), pckg + "::" + funName), funName)
+                                                    .create(lookupObject, funName)
                                                     .withTypeText(pckg)
 //                                        .withLookupString("base::attach"))
                                     );
