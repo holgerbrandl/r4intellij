@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.0.6'
+    ext.kotlin_version = '1.1.1'
 
     repositories {
         mavenCentral()
@@ -10,37 +10,24 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.intellij.plugins:gradle-intellij-plugin:0.2.0-SNAPSHOT"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
     }
-}
-
-repositories {
-    mavenCentral()
-//    maven { url 'http://dl.bintray.com/jetbrains/markdown' }
-//    flatDir { dirs 'lib' }
 }
 
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 apply plugin: "kotlin"
 
-//sourceCompatibility = javaVersion
 
-
-dependencies {
-    compileOnly "com.google.guava:guava:19.0"
-    testCompile "org.mockito:mockito-all:1.10.19"
-}
+targetCompatibility = "1.8"
+sourceCompatibility = "1.8"
 
 sourceSets {
     main {
         java {
-            srcDirs 'src'
-            srcDirs 'gen'
+            srcDirs 'src', 'gen'
         }
         resources {
             srcDirs 'resources'
-            srcDirs 'r-helpers'
         }
     }
 
@@ -54,87 +41,45 @@ sourceSets {
     }
 }
 
-//task archiveZip(type: Zip, dependsOn: 'jar') {
-//    baseName = 'project'
-//
-//    from fileTree('resources') // do not specify directory
-//
-//    // if you would like to put file into some directory, specify it.
-//    from (tasks.jar.archivePath) {
-//        into 'lib'
-//    }
-//}
-
-// https://github.com/JetBrains/gradle-intellij-plugin/blob/master/README.md#configuration
-
 intellij {
-//    version 'IC-LATEST-TRUNK-SNAPSHOT'
-//    version 'IC-2016.3'
-    version 'IU-163.12024.16'
+    version 'IC-LATEST-TRUNK-SNAPSHOT'
     pluginName 'R4Intellij'
     downloadSources false
     updateSinceUntilBuild false
     plugins = ['IntelliLang']
-
-//    sandboxDirectory = project.rootDir.canonicalPath + "/.sandbox"
-//
-//    publish {
-//        username "$JETBRAINS_USERNAME"
-//        password "$JETBRAINS_PASSWORD"
-//    }
 }
 
+task copyHelpers(type: Copy) {
+    from 'r-helpers'
+    into buildDir.toString() + "/buildZip"
+}
 
+task copyPluginJar(type: Copy) {
+    dependsOn jar
+    from buildDir.toString() + "/libs"
+    into buildDir.toString() + "/buildZip/lib/"
+    include '**/*.jar'
+}
 
-apply plugin: 'idea'
-idea {
-    project {
-        jdkName = javaVersion
-        languageLevel = javaVersion
-        vcs = 'Git'
+task buildPlugin(type: Zip, overwrite: true) {
+    dependsOn copyPluginJar, copyHelpers
+
+    from buildDir.toString() + "/buildZip/"
+    into { prepareSandbox.getPluginName() }
+}
+
+runIde.doFirst {
+    delete(prepareSandbox.getDestinationDir().toString() + "/" + prepareSandbox.getPluginName() + "/r4intellij.jar")
+}
+
+prepareSandbox.doLast {
+    copy {
+        from buildDir.toString() + "/libs"
+        into prepareSandbox.getDestinationDir().toString() + "/" + prepareSandbox.getPluginName()
+        include '**/*.jar'
     }
-    module {
-        generatedSourceDirs += file('gen')
+    copy {
+        from 'r-helpers'
+        into prepareSandbox.getDestinationDir().toString() + "/" + prepareSandbox.getPluginName()
     }
 }
-
-
-// from https://github.com/Camelcade/Perl5-IDEA/blob/master/build.gradle
-task lexerTask(type: JavaExec) {
-    classpath = files('misc/JFlex.jar')
-    main = 'JFlex.Main'
-
-    def lexerDir = "$project.projectDir/src/com/r4intellij/lexer/"
-    def skel = "$lexerDir/idea-flex.skeleton"
-    def src = "$lexerDir/R.flex"
-
-
-    args = ['--charat', '--skel', skel, '-d', lexerDir, src]
-
-    inputs.file file(src)
-    outputs.dir file("$lexerDir/_RLexer.java")
-}
-
-
-// from https://github.com/GoogleCloudPlatform/google-cloud-intellij/blob/master/build.gradle
-//release {
-//    buildTasks = ['doRelease']
-//    // Do not change the tagTemplate value to double quotes or the version will be evaluated before
-//    // the SNAPSHOT version is updated to the release version.
-//    tagTemplate = 'v$version'
-//    git {
-//        requireBranch = /^release_v\d+.*$/
-//    }
-//}
-//
-//// We aren't building or doing anything interesting for release.
-//// We just update the version and generate the tag as CI will handle deployment.
-//task doRelease {
-//    doLast {
-//        println '===============================!!PLEASE READ!!=================================\n\n' +
-//                'IMPORTANT:  The release command will trigger the creation of a new release ' +
-//                'in Github, the uploading of binaries to github, and the publishing of our plugin' +
-//                'to the IntelliJ plugin repository.\n' +
-//                'Hit CTRL+C to cancel.\n'
-//    }
-//}
