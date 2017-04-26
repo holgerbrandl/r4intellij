@@ -23,16 +23,18 @@ brew install boost-python
 And finally build it
 ```bash
 
-cmake CMakeLists.txt
+cmake .
 make
 
-find /Library/Frameworks/R.framework/ | grep Rinternals.h
+# to redo cmake clear files first
+rm -rf CMakeCache.txt cmake_install.cmake Makefile
 
+#find /Library/Frameworks/R.framework/ | grep Rinternals.h
 ```
 
 
 
-Useful links
+## Useful links
 
 [How to check the operating system is MacOSX?](http://public.kitware.com/pipermail/cmake/2012-September/052049.html)
 

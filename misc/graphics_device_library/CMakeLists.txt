@@ -35,5 +35,5 @@ function(build_for_architecture BIT BIT_LIBRARIES)
     endif ()
 endfunction()
 
-build_for_architecture(32 ${R_32_LIBRARIES})
+#build_for_architecture(32 ${R_32_LIBRARIES})
 build_for_architecture(64 ${R_64_LIBRARIES})
