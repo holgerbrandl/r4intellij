@@ -265,7 +265,7 @@ public class RSkeletonGenerator {
                     RRunResult output = RHelperUtil.runHelperWithArgs(RHELPER_SKELETONIZE_PACKAGE, packageName, tempSkeleton.getAbsolutePath());
 
                     if (output != null && output.getExitCode() != 0) {
-                        LOG.error("Failed to generate skeleton for '" + packageName + "'. Exit code: " + output.getExitCode());
+                        LOG.error("Failed to generate skeleton for '" + packageName + "'. The error was: " + output.getStdErr());
                         LOG.error(output.getStdErr());
                     } else if (isValidSkeleton(tempSkeleton)) {
                         // we used the more correct Files.move() here initially, but it caused issues on Windows
@@ -275,11 +275,13 @@ public class RSkeletonGenerator {
 
                         updated.add(packageName);
                     } else {
-                        LOG.error("Failed to generate skeleton for '" + packageName + "'");
+                        LOG.error("Failed to generate a valid skeleton for '" + packageName + "'. Please file a ticket under https://github.com/holgerbrandl/r4intellij/issues");
+
+
                     }
 
                 } catch (IOException e) {
-                    LOG.error("Failed to generate skeleton for '" + packageName + "' due to io issue", e);
+                    LOG.error("Failed to generate skeleton for '" + packageName + "'. The reason was:", e);
 
                 }
             });
