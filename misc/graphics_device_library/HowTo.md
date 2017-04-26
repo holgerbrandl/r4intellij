@@ -22,7 +22,7 @@ brew install boost-python
 
 And finally build it
 ```bash
-
+cd /Users/brandl/projects/rplugin/r4intellij/misc/graphics_device_library
 cmake .
 make
 
@@ -41,7 +41,7 @@ when starting a new instance the following code will set our output device
 dyn.load("/Users/brandl/projects/rplugin/r4intellij/misc/graphics_device_library/libtherplugin_device64.dylib")
 
 jetbrains_ther_device_init <- function() { 
-    .Call("jetbrains_ther_device_init", "/Users/brandl/projects/r4i__tests/r4i _test_project/.idea/snapshots") 
+    .Call("jetbrains_ther_device_init", "/Users/brandl/projects/r4i__tests/r4i_test_project/.idea/snapshots") 
 }
     
 options(device=jetbrains_ther_device_init)
@@ -54,10 +54,14 @@ plot(1:3)
 2. run (with adjusted paths)
 ```r
 dyn.load("~/Library/Caches/IntelliJIdea2017.1/plugins-sandbox/plugins/R4Intellij/classes/libtherplugin_device64.dylib")
-jetbrains_ther_device_init <- function() { .Call("jetbrains_ther_device_init", "/Users/brandl/projects/r4i__tests/r4i_test_project/.idea/snapshots") }
+jetbrains_ther_device_init <- function() { .Call("jetbrains_ther_device_init", "/Users/brandl/IdeaProjects/untitled/.idea/snapshots") }
 options(device=jetbrains_ther_device_init)
 ```
 
+```
+require(ggplot2); ggplot(iris,aes(Species)) + geom_bar() 
+
+```
 
 
 ## Useful links
@@ -68,10 +72,20 @@ options(device=jetbrains_ther_device_init)
 
 [rstudio plot device](https://github.com/rstudio/rstudio/tree/master/src/cpp/r/session/graphics)
 
+[knime r plot canvas](https://github.com/knime-mpicbg/knime-scripting/blob/develop/de.mpicbg.knime.scripting.r/src/de/mpicbg/knime/scripting/r/node/plot/RPlotCanvas.java#L113)
+
+http://stackoverflow.com/questions/7171523/in-r-how-to-plot-into-a-memory-buffer-instead-of-a-file
+
+[RCaller](https://github.com/jbytecode/rcaller/blob/master/RCaller/src/main/java/examples/SimplePlot.java)
+
 
 ## ToDo / ToTest
 
 * Resize should replot and just not just rescale pic (reinitialiation of device may be needed)
+
+## Concept
+
+MasterDevice corresponds to https://github.com/rstudio/rstudio/blob/cfce730f051fbab56a13ff218132f4802dcefdab/src/cpp/r/session/graphics/RGraphicsDevice.cpp
 
 
 ## Acknowledgements

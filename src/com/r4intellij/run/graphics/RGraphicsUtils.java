@@ -145,7 +145,7 @@ public final class RGraphicsUtils {
         return String.format(
                 DEVICE_LIB_FORMAT,
                 is64Bit ? "64" : "32",
-                SystemInfo.isWindows ? "dll" : "so"
+                SystemInfo.isWindows ? "dll" : (SystemInfo.isMac ? "dylib" : "so")
         );
     }
 
