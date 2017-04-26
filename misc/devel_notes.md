@@ -326,9 +326,50 @@ cd R-3.2.5
 ./configure
 make
 
+## or use docker container (https://hub.docker.com/_/r-base/)
+docker pull r-base
+docker run -i -t  rocker/r-base /bin/bash --login
+
+
+## add curl (see https://github.com/rocker-org/rocker/issues/232)
+apt-get update
+apt-get install -t unstable curl
+apt-get install -yt unstable libcurl4-gnutls-dev
+
+R -e "install.packages('RCurl')"
+
+
 wget https://raw.githubusercontent.com/holgerbrandl/r4intellij/master/r-helpers/skeletonize_package.R
 
-./bin/R -f skeletonize_package.R --args  tools tools.skeleton.R
+## install the package if needed
+# https://cran.r-project.org/web/packages/translate/index.html
+
+R -e "install.packages('translate')"
+
+
+pckgName=translate
+pckgName=tcltk
+
+pckgName=tckl
+pckgName=rJava
+
+R -e "chooseCRANmirror(ind=1); install.packages('${pckgName}')"
+R -e "chooseCRANmirror(ind=1); install.packages('${pckgName}', method='source')"
+
+
+./bin/R -f skeletonize_package.R --args  ${pckgName} ${pckgName}.skeleton.R
+
+R -f /Users/brandl/projects/rplugin/r4intellij/r-helpers/skeletonize_package.R --args ${pckgName} ${pckgName}.skeleton.R 
+```
+
+end-user debug code
+```bash
+wget https://raw.githubusercontent.com/holgerbrandl/r4intellij/master/r-helpers/skeletonize_package.R
+
+pckgName=tcltk
+
+R -f skeletonize_package.R --args  ${pckgName} ${pckgName}.skeleton.R
+cat ${pckgName}.skeleton.R
 ```
 
 skeletons are saved under  (see module deps --> libaries)

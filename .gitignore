@@ -19,3 +19,9 @@ R4Intellij.jar
 R4Intellij.zip
 
 .gradle
+
+CMakeFiles
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+

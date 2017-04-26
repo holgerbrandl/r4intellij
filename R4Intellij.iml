@@ -16,6 +16,10 @@
       <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/docs/.sass-cache" />
       <excludeFolder url="file://$MODULE_DIR$/docs/_site" />
+      <excludeFolder url="file://$MODULE_DIR$/misc/.devel_notes_images" />
+      <excludeFolder url="file://$MODULE_DIR$/misc/.todo_images" />
+      <excludeFolder url="file://$MODULE_DIR$/misc/graphics_device_library/CMakeFiles" />
+      <excludeFolder url="file://$MODULE_DIR$/misc/graphics_device_library/cmake" />
       <excludeFolder url="file://$MODULE_DIR$/out" />
       <excludeFolder url="file://$MODULE_DIR$/out/test" />
       <excludeFolder url="file://$MODULE_DIR$/r-helpers/r-skeletons" />
@@ -55,5 +59,6 @@
     </orderEntry>
     <orderEntry type="library" name="R User Library" level="project" />
     <orderEntry type="library" name="R Skeletons" level="application" />
+    <orderEntry type="library" name="KotlinJavaRuntime" level="project" />
   </component>
 </module>
