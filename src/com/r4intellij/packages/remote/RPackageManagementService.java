@@ -1,6 +1,5 @@
 package com.r4intellij.packages.remote;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -27,195 +26,191 @@ import java.util.Map;
  */
 public class RPackageManagementService extends PackageManagementService {
 
-    public static final String ARGUMENT_DELIMETER = " ";
+  public static final String ARGUMENT_DELIMETER = " ";
 
-    @NotNull
-    private final Project myProject;
+  @NotNull
+  private final Project myProject;
 
 
-    public RPackageManagementService(@NotNull final Project project) {
-        myProject = project;
+  public RPackageManagementService(@NotNull final Project project) {
+    myProject = project;
+  }
+
+
+  @Nullable
+  public static ErrorDescription toErrorDescription(@NotNull List<ExecutionException> exceptions) {
+    //noinspection LoopStatementThatDoesntLoop
+    for (ExecutionException e : exceptions) {
+      if (e instanceof RExecutionException) {
+        RExecutionException exception = (RExecutionException) e;
+        return new ErrorDescription(exception.getMessage(), exception.getCommand(), exception.getStderr(), null);
+      } else {
+        return new ErrorDescription(e.getMessage(), null, null, null);
+      }
+    }
+    return null;
+  }
+
+
+  public static void setRepositories(@NotNull final List<String> defaultRepositories,
+                                     @NotNull final List<String> userRepositories) {
+    RPackageService service = RPackageService.getInstance();
+
+    service.enabledRepositories.clear();
+    service.enabledRepositories.addAll(defaultRepositories);
+    service.userRepositories.clear();
+    service.userRepositories.addAll(userRepositories);
+  }
+
+
+  @Override
+  @NotNull
+  public List<String> getAllRepositories() {
+    final RPackageService service = RPackageService.getInstance();
+    final List<RDefaultRepository> defaultRepositories = getDefaultRepositories();
+    final List<String> result = Lists.newArrayList();
+    for (RDefaultRepository repository : defaultRepositories) {
+      result.add(repository.getUrl());
+    }
+    result.addAll(service.userRepositories);
+    return result;
+  }
+
+
+  @NotNull
+  public List<RDefaultRepository> getDefaultRepositories() {
+    return Lists.newArrayList(RepoUtils.getDefaultRepositories()); //TODO Caching of this value
+  }
+
+
+  public List<String> getMirrors() {
+    return Lists.newArrayList(RepoUtils.getCRANMirrors());
+  }
+
+
+  public int getCRANMirror() {
+    return RPackageService.getInstance().CRANMirror;
+  }
+
+
+  public void setCRANMirror(int index) {
+    RPackageService.getInstance().CRANMirror = index;
+  }
+
+
+  public void setRepositories(List<RRepository> repositories) {
+    final List<String> userRepositories = Lists.newArrayList();
+    final List<String> defaultRepositories = Lists.newArrayList();
+    for (RRepository repository : repositories) {
+      if (repository instanceof RDefaultRepository) {
+        defaultRepositories.add(repository.getUrl());
+      } else {
+        userRepositories.add(repository.getUrl());
+      }
+    }
+    setRepositories(defaultRepositories, userRepositories);
+  }
+
+
+  public static List<RepoPackage> getPckgNameVersionMap() {
+    Map<String, String> nameVersionMap = Maps.newHashMap();
+
+    for (RPackage rPackage : RIndexCache.getInstance().getPackages()) {
+      nameVersionMap.put(rPackage.getName(), rPackage.getVersion());
     }
 
+    return versionMapToPackageList(nameVersionMap);
+  }
 
-    @Nullable
-    public static ErrorDescription toErrorDescription(@NotNull List<ExecutionException> exceptions) {
-        //noinspection LoopStatementThatDoesntLoop
-        for (ExecutionException e : exceptions) {
-            if (e instanceof RExecutionException) {
-                RExecutionException exception = (RExecutionException) e;
-                return new ErrorDescription(exception.getMessage(), exception.getCommand(), exception.getStderr(), null);
-            } else {
-                return new ErrorDescription(e.getMessage(), null, null, null);
-            }
-        }
-        return null;
+
+  private static List<RepoPackage> versionMapToPackageList(@NotNull final Map<String, String> packageToVersionMap) {
+    final List<RepoPackage> packages = new ArrayList<RepoPackage>();
+    for (Map.Entry<String, String> entry : packageToVersionMap.entrySet()) {
+      final String[] splitted = entry.getValue().split(ARGUMENT_DELIMETER);
+      // todo why this array fix
+      packages.add(new RepoPackage(entry.getKey(), splitted.length > 2 ? splitted[1] : "", splitted[0]));
     }
+    return packages;
+  }
 
 
-    public static void setRepositories(@NotNull final List<String> defaultRepositories,
-                                       @NotNull final List<String> userRepositories) {
-        RPackageService service = RPackageService.getInstance();
+  @Deprecated
+  @Override
+  public List<RepoPackage> getAllPackages() {
+    return getPckgNameVersionMap();
+  }
 
-        service.enabledRepositories.clear();
-        service.enabledRepositories.addAll(defaultRepositories);
-        service.userRepositories.clear();
-        service.userRepositories.addAll(userRepositories);
+
+  @Override
+  public List<RepoPackage> reloadAllPackages() {
+    return RepoUtils.loadAvailablePackages();
+  }
+
+
+  @Override
+  public Collection<InstalledPackage> getInstalledPackages() {
+    return Lists.newArrayList(Iterables.transform(RIndexCache.getInstance().getPackages(),
+        rPackage -> new InstalledPackage(rPackage.getName(), rPackage.getVersion())));
+  }
+
+
+  @Override
+  public void installPackage(final RepoPackage repoPackage, String version, boolean forceUpgrade, String extraOptions,
+                             final Listener listener, boolean installToUser) {
+    final RPackageTaskManager manager = new RPackageTaskManager(myProject, new RPackageTaskManager.TaskListener() {
+      @Override
+      public void started() {
+        listener.operationStarted(repoPackage.getName());
+      }
+
+
+      @Override
+      public void finished(@NotNull final List<ExecutionException> exceptions) {
+        listener.operationFinished(repoPackage.getName(), toErrorDescription(exceptions));
+      }
+    });
+
+    if (forceUpgrade) {
+      manager.update(repoPackage);
+    } else {
+      manager.install(repoPackage);
     }
+  }
 
 
-    @Override
-    @NotNull
-    public List<String> getAllRepositories() {
-        final RPackageService service = RPackageService.getInstance();
-        final List<RDefaultRepository> defaultRepositories = getDefaultRepositories();
-        final List<String> result = Lists.newArrayList();
-        for (RDefaultRepository repository : defaultRepositories) {
-            result.add(repository.getUrl());
-        }
-        result.addAll(service.userRepositories);
-        return result;
-    }
+  @Override
+  public boolean canInstallToUser() {
+    return false;
+  }
 
 
-    @NotNull
-    public List<RDefaultRepository> getDefaultRepositories() {
-        return Lists.newArrayList(RepoUtils.getDefaultRepositories()); //TODO Caching of this value
-    }
+  @Override
+  public void uninstallPackages(List<InstalledPackage> installedPackages, final Listener listener) {
+    final String packageName = installedPackages.size() == 1 ? installedPackages.get(0).getName() : null;
+    final RPackageTaskManager manager = new RPackageTaskManager(myProject, new RPackageTaskManager.TaskListener() {
+      @Override
+      public void started() {
+        listener.operationStarted(packageName);
+      }
 
 
-    public List<String> getMirrors() {
-        return Lists.newArrayList(RepoUtils.getCRANMirrors());
-    }
+      @Override
+      public void finished(@NotNull final List<ExecutionException> exceptions) {
+        listener.operationFinished(packageName, toErrorDescription(exceptions));
+      }
+    });
+    manager.uninstall(installedPackages);
+  }
 
 
-    public int getCRANMirror() {
-        return RPackageService.getInstance().CRANMirror;
-    }
+  @Override
+  public void fetchPackageVersions(String s, CatchingConsumer<List<String>, Exception> consumer) {
+    consumer.consume(ContainerUtil.<String>emptyList());
+  }
 
 
-    public void setCRANMirror(int index) {
-        RPackageService.getInstance().CRANMirror = index;
-    }
-
-
-    public void setRepositories(List<RRepository> repositories) {
-        final List<String> userRepositories = Lists.newArrayList();
-        final List<String> defaultRepositories = Lists.newArrayList();
-        for (RRepository repository : repositories) {
-            if (repository instanceof RDefaultRepository) {
-                defaultRepositories.add(repository.getUrl());
-            } else {
-                userRepositories.add(repository.getUrl());
-            }
-        }
-        setRepositories(defaultRepositories, userRepositories);
-    }
-
-
-    public static List<RepoPackage> getPckgNameVersionMap() {
-        Map<String, String> nameVersionMap = Maps.newHashMap();
-
-        for (RPackage rPackage : RIndexCache.getInstance().getPackages()) {
-            nameVersionMap.put(rPackage.getName(), rPackage.getVersion());
-        }
-
-        return versionMapToPackageList(nameVersionMap);
-    }
-
-
-    private static List<RepoPackage> versionMapToPackageList(@NotNull final Map<String, String> packageToVersionMap) {
-        final List<RepoPackage> packages = new ArrayList<RepoPackage>();
-        for (Map.Entry<String, String> entry : packageToVersionMap.entrySet()) {
-            final String[] splitted = entry.getValue().split(ARGUMENT_DELIMETER);
-            // todo why this array fix
-            packages.add(new RepoPackage(entry.getKey(), splitted.length > 2 ? splitted[1] : "", splitted[0]));
-        }
-        return packages;
-    }
-
-
-    @Deprecated
-    @Override
-    public List<RepoPackage> getAllPackages() {
-        return getPckgNameVersionMap();
-    }
-
-
-    @Override
-    public List<RepoPackage> reloadAllPackages() {
-        return RepoUtils.loadAvailablePackages();
-    }
-
-
-    @Override
-    public Collection<InstalledPackage> getInstalledPackages() {
-        return Lists.newArrayList(Iterables.transform(RIndexCache.getInstance().getPackages(), new Function<RPackage, InstalledPackage>() {
-            @Override
-            public InstalledPackage apply(RPackage rPackage) {
-                return new InstalledPackage(rPackage.getName(), rPackage.getVersion());
-            }
-        }));
-    }
-
-
-    @Override
-    public void installPackage(final RepoPackage repoPackage, String version, boolean forceUpgrade, String extraOptions,
-                               final Listener listener, boolean installToUser) {
-        final RPackageTaskManager manager = new RPackageTaskManager(myProject, new RPackageTaskManager.TaskListener() {
-            @Override
-            public void started() {
-                listener.operationStarted(repoPackage.getName());
-            }
-
-
-            @Override
-            public void finished(@NotNull final List<ExecutionException> exceptions) {
-                listener.operationFinished(repoPackage.getName(), toErrorDescription(exceptions));
-            }
-        });
-
-        if (forceUpgrade) {
-            manager.update(repoPackage);
-        } else {
-            manager.install(repoPackage);
-        }
-    }
-
-
-    @Override
-    public boolean canInstallToUser() {
-        return false;
-    }
-
-
-    @Override
-    public void uninstallPackages(List<InstalledPackage> installedPackages, final Listener listener) {
-        final String packageName = installedPackages.size() == 1 ? installedPackages.get(0).getName() : null;
-        final RPackageTaskManager manager = new RPackageTaskManager(myProject, new RPackageTaskManager.TaskListener() {
-            @Override
-            public void started() {
-                listener.operationStarted(packageName);
-            }
-
-
-            @Override
-            public void finished(@NotNull final List<ExecutionException> exceptions) {
-                listener.operationFinished(packageName, toErrorDescription(exceptions));
-            }
-        });
-        manager.uninstall(installedPackages);
-    }
-
-
-    @Override
-    public void fetchPackageVersions(String s, CatchingConsumer<List<String>, Exception> consumer) {
-        consumer.consume(ContainerUtil.<String>emptyList());
-    }
-
-
-    @Override
-    public void fetchPackageDetails(String packageName, CatchingConsumer<String, Exception> consumer) {
-        RepoUtils.fetchPackageDetails(packageName, consumer);
-    }
+  @Override
+  public void fetchPackageDetails(String packageName, CatchingConsumer<String, Exception> consumer) {
+    RepoUtils.fetchPackageDetails(packageName, consumer);
+  }
 }

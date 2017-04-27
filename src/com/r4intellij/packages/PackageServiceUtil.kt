@@ -137,11 +137,7 @@ private fun buildPackage(titleStatement: RAssignmentStatement): RPackage {
  * Fetch R package info including description and version.
  */
 fun getInstalledPackageVersions(): Map<String, String> {
-    val helperOutput = getHelperOutput(RHELPER_PACKAGE_VERSIONS)
-
-    if (helperOutput == null) {
-        return emptyMap()
-    }
+    val helperOutput = getHelperOutput(RHELPER_PACKAGE_VERSIONS) ?: return emptyMap()
 
     return helperOutput.split("\n").filter { it.isNotBlank() }.map {
         val splitLine = it.split("\t")
