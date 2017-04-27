@@ -67,11 +67,13 @@ task copyPluginJar(type: Copy) {
     include '**/*.jar'
 }
 
+def pluginZipName = "r4intellij.zip"
+
 task buildPlugin(type: Zip, overwrite: true) {
     dependsOn copyPluginJar, copyHelpers
 
     from buildDir.toString() + "/buildZip/"
-    into { prepareSandbox.getPluginName() }
+    into { pluginZipName }
 }
 
 runIde.doFirst {
