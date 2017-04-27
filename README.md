@@ -16,6 +16,7 @@ Developer Info
 * [Roadmap](misc/todo.md) 
 * [Development notes](misc/devel_notes.md) 
 * [Plugin Repository Page](https://plugins.jetbrains.com/plugin/6632-r-language-support)
+* [Gradle configurations](misc/run.md)
 
 Acknowledgements
 ----------------
