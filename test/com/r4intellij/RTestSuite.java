@@ -36,18 +36,20 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 //http://stackoverflow.com/questions/457276/junit4-test-suites
 // suite just kept to allow for non-intellij programmatic testing
 @RunWith(Suite.class)
+@Ignore
 public class RTestSuite {
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite("junit3-tests");
+  public static Test suite() {
+    TestSuite suite = new TestSuite("junit3-tests");
 
-        // not needed by intellij to collect all the test
+    // not needed by intellij to collect all the test
 //        suite.addTestSuite(TypeCheckerInspectionTest.class);
 //        suite.addTestSuite(UnresolvedReferenceInspectionTest.class);
 //        suite.addTestSuite(UnusedParameterInspectionTest.class);
@@ -55,73 +57,70 @@ public class RTestSuite {
 //        suite.addTestSuite(RParsingTest.class);
 //        suite.addTestSuite(RRenameTest.class);
 
-        return suite;
-    }
+    return suite;
+  }
 
+  private static void addDebuggerTests(@NotNull final TestSuite suite) {
+    // evaluator package
+    addJUnit4Test(suite, RDebuggerEvaluatorImplTest.class);
+    addJUnit4Test(suite, RExpressionHandlerImplTest.class);
 
-    private static void addDebuggerTests(@NotNull final TestSuite suite) {
-        // evaluator package
-        addJUnit4Test(suite, RDebuggerEvaluatorImplTest.class);
-        addJUnit4Test(suite, RExpressionHandlerImplTest.class);
+    // frame package
+    addJUnit4Test(suite, RValueModifierHandlerImplTest.class);
+    addJUnit4Test(suite, RValueModifierImplTest.class);
+    addJUnit4Test(suite, RVarsLoaderImplTest.class);
 
-        // frame package
-        addJUnit4Test(suite, RValueModifierHandlerImplTest.class);
-        addJUnit4Test(suite, RValueModifierImplTest.class);
-        addJUnit4Test(suite, RVarsLoaderImplTest.class);
+    // function package
+    addJUnit4Test(suite, RFunctionDebuggerFactoryImplTest.class);
+    addJUnit4Test(suite, RBraceFunctionDebuggerTest.class);
+    addJUnit4Test(suite, RUnbraceFunctionDebuggerTest.class);
+    addJUnit4Test(suite, RTraceAndDebugUtilsTest.class);
 
-        // function package
-        addJUnit4Test(suite, RFunctionDebuggerFactoryImplTest.class);
-        addJUnit4Test(suite, RBraceFunctionDebuggerTest.class);
-        addJUnit4Test(suite, RUnbraceFunctionDebuggerTest.class);
-        addJUnit4Test(suite, RTraceAndDebugUtilsTest.class);
+    // interpreter package
+    addJUnit4Test(suite, RExecutionResultCalculatorImplTest.class);
+    addJUnit4Test(suite, RExecutorUtilsTest.class);
 
-        // interpreter package
-        addJUnit4Test(suite, RExecutionResultCalculatorImplTest.class);
-        addJUnit4Test(suite, RExecutorUtilsTest.class);
+    // `main` package
+    addJUnit4Test(suite, RDebuggerTest.class);
+    addJUnit4Test(suite, RDebuggerStringUtilsTest.class);
+    addJUnit4Test(suite, RDebuggerUtilsTest.class);
+    addJUnit4Test(suite, RForcedFunctionDebuggerHandlerTest.class);
+  }
 
-        // `main` package
-        addJUnit4Test(suite, RDebuggerTest.class);
-        addJUnit4Test(suite, RDebuggerStringUtilsTest.class);
-        addJUnit4Test(suite, RDebuggerUtilsTest.class);
-        addJUnit4Test(suite, RForcedFunctionDebuggerHandlerTest.class);
-    }
+  private static void addRunTests(@NotNull final TestSuite suite) {
+    // configuration package
+    suite.addTestSuite(RRunConfigurationTest.class);
+    addJUnit4Test(suite, RRunConfigurationEditorTest.class);
+    addJUnit4Test(suite, RRunConfigurationTypeTest.class);
+    addJUnit4Test(suite, RRunConfigurationUtilsTest.class);
 
+    // debug package
+    suite.addTestSuite(RLineBreakpointUtilsTest.class);
 
-    private static void addRunTests(@NotNull final TestSuite suite) {
-        // configuration package
-        suite.addTestSuite(RRunConfigurationTest.class);
-        addJUnit4Test(suite, RRunConfigurationEditorTest.class);
-        addJUnit4Test(suite, RRunConfigurationTypeTest.class);
-        addJUnit4Test(suite, RRunConfigurationUtilsTest.class);
+    // debug.resolveDependencies package
+    addJUnit4Test(suite, RFunctionDefinitionProcessorTest.class);
+    addJUnit4Test(suite, RResolvingSessionImplTest.class);
 
-        // debug package
-        suite.addTestSuite(RLineBreakpointUtilsTest.class);
+    // debug.stack package
+    addJUnit4Test(suite, RXPresentationUtilsTest.class);
+    addJUnit4Test(suite, RXStackFrameTest.class);
+    addJUnit4Test(suite, RXStackTest.class);
+    addJUnit4Test(suite, RXSuspendContextTest.class);
 
-        // debug.resolveDependencies package
-        addJUnit4Test(suite, RFunctionDefinitionProcessorTest.class);
-        addJUnit4Test(suite, RResolvingSessionImplTest.class);
+    // graphics package
+    addJUnit4Test(suite, REmptyGraphicsStateTest.class);
+    addJUnit4Test(suite, RGraphicsPanelTest.class);
+    suite.addTestSuite(RGraphicsStateImplTest.class);
 
-        // debug.stack package
-        addJUnit4Test(suite, RXPresentationUtilsTest.class);
-        addJUnit4Test(suite, RXStackFrameTest.class);
-        addJUnit4Test(suite, RXStackTest.class);
-        addJUnit4Test(suite, RXSuspendContextTest.class);
+    // run package
+    addJUnit4Test(suite, RRunExecutionResultCalculatorTest.class);
 
-        // graphics package
-        addJUnit4Test(suite, REmptyGraphicsStateTest.class);
-        addJUnit4Test(suite, RGraphicsPanelTest.class);
-        suite.addTestSuite(RGraphicsStateImplTest.class);
+    // `main` package
+    addJUnit4Test(suite, RCommandLineCalculatorTest.class);
+    addJUnit4Test(suite, ROutputReceiverImplTest.class);
+  }
 
-        // run package
-        addJUnit4Test(suite, RRunExecutionResultCalculatorTest.class);
-
-        // `main` package
-        addJUnit4Test(suite, RCommandLineCalculatorTest.class);
-        addJUnit4Test(suite, ROutputReceiverImplTest.class);
-    }
-
-
-    private static void addJUnit4Test(@NotNull final TestSuite suite, @NotNull final Class<?> cls) {
-        suite.addTest(new JUnit4TestAdapter(cls));
-    }
+  private static void addJUnit4Test(@NotNull final TestSuite suite, @NotNull final Class<?> cls) {
+    suite.addTest(new JUnit4TestAdapter(cls));
+  }
 }
