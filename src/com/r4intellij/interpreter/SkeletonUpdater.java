@@ -42,6 +42,6 @@ public class SkeletonUpdater implements StartupActivity {
 
         // This code is executed after the project was opened.
         RIndexCache.getInstance();
-        RSkeletonGenerator.updateSkeletons(project);
+        RSkeletonGenerator.updateSkeletons(project, false);
     }
 }

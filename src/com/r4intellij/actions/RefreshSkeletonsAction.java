@@ -8,16 +8,16 @@ import com.intellij.openapi.project.Project;
 import com.r4intellij.packages.RSkeletonGenerator;
 
 
-public class RSkeletonsGeneratorAction extends AnAction {
+public class RefreshSkeletonsAction extends AnAction {
 
-    private static final Logger LOG = Logger.getInstance(RSkeletonsGeneratorAction.class);
+    private static final Logger LOG = Logger.getInstance(RefreshSkeletonsAction.class);
 
 
     public void actionPerformed(AnActionEvent event) {
         final Project project = event.getProject();
         assert project != null;
 
-        RSkeletonGenerator.updateSkeletons(project);
+        RSkeletonGenerator.updateSkeletons(project, true);
     }
 
 

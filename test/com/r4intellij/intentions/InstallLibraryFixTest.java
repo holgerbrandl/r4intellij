@@ -37,7 +37,7 @@ public class InstallLibraryFixTest extends LightPlatformCodeInsightFixtureTestCa
         }
 
 
-        RSkeletonGenerator.updateSkeletons(myFixture.getProject());
+        RSkeletonGenerator.updateSkeletons(myFixture.getProject(), false);
 //        RIndexCache.getInstance().refreshIndexCache(myFixture.getProject(), "pals");
 //        PsiFile psiFile = myFixture.configureByFile("...");
 

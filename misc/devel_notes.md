@@ -40,7 +40,7 @@ API Doc Comments
 * visitor pattern pretty powerful allows for type specific visiting. see com.r4intellij.psi.api.RVisitor
 * necessity of
 
-```java
+```
 application.invokeLater(new Runnable() {
     @Override
     public void run() {

@@ -11,7 +11,7 @@ don't use installled ij cache for testing (will cause index rebuilt on each star
 Next Steps
 ----------
 
-
+use `devtools::session_info` or underlying `find_deps` to remove network requirement from `skeletonize_package.R`
 
 v1.1
 ----
@@ -21,6 +21,10 @@ https://github.com/holgerbrandl/r4intellij/milestone/5
 
 
 ### new
+
+* add refresh option to
+
+![](.todo_images/15eb80f2.png)
 
 * Improve function completion by adding round brackets: `base<caret>` -> `basename(<caret>)` (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000185304-caret-position-and-round-brackets-for-function-call-completion-)
 
@@ -88,6 +92,12 @@ filter = function(...) 1
 iris %>% filter(1) ## interestingly not flagged without 1 arg
 ```
 
+* good code is gray
+```
+.Tcl.objv <- function (objv) 
+structure(.External(.C_dotTclObjv, objv), class = "tclObj")
+
+```
 
 
 ## v1.2
@@ -340,6 +350,23 @@ Documentation provider
 
 Formatter
 ---------
+
+indent is missing after pipe when comment is included
+```
+pathwayPlots <- keggPathways %>%
+    ## head(3) %>% 
+    llply(function(pathwayID){
+        echo("processing pathway", pathwayID)
+        plot_pathway(pathwayID, sliceData)
+    })
+```
+
+
+done add spacing for unary operators
+```
+a = 1
+b = -a
+```
 
 * also indent comments in wrapped pipes
 ```

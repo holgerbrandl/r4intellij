@@ -14,8 +14,8 @@ public class RInterpreterConfigurator implements DirectoryProjectConfigurator {
 
     @Override
     public void configureProject(final Project project, @NotNull final VirtualFile baseDir, Ref<Module> moduleRef) {
-        RSkeletonGenerator.updateSkeletons(project);
-        // not needed becaues done internally
+        RSkeletonGenerator.updateSkeletons(project, false);
+        // not needed because done internally
         // VirtualFileManager.getInstance().refreshWithoutFileWatcher(true);
     }
 }

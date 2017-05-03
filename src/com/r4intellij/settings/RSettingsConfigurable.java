@@ -96,8 +96,7 @@ public class RSettingsConfigurable implements SearchableConfigurable.Parent, Con
 //        }
 
 
-
-        RSkeletonGenerator.updateSkeletons(myProject);
+        RSkeletonGenerator.updateSkeletons(myProject, true);
 //        rSettings.setSourcesPath(sourcesPath);
         rSettings.setInterpreterPath(interpreterPath);
 

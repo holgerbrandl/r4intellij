@@ -79,10 +79,11 @@
         <!--</action>-->
 
         <!--TODO disable for release-->
-        <!--<action id="RSkeletonsGenerator" class="com.r4intellij.actions.RSkeletonsGeneratorAction"-->
-        <!--text="Generate Skeletons">-->
-        <!--<add-to-group group-id="ToolsMenu" anchor="last"/>-->
-        <!--</action>-->
+        <action id="com.r4intellij.actions.RefreshSkeletonsAction"
+                class="com.r4intellij.actions.RefreshSkeletonsAction"
+                text="Refresh R Package Index">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
 
         <action id="NewRScriptAction" class="com.r4intellij.actions.NewRScriptAction"
                 text="R Script" description="Create a new R-script">

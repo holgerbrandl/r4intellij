@@ -78,6 +78,26 @@ http://stackoverflow.com/questions/7171523/in-r-how-to-plot-into-a-memory-buffer
 
 [RCaller](https://github.com/jbytecode/rcaller/blob/master/RCaller/src/main/java/examples/SimplePlot.java)
 
+[jvm only devices](https://github.com/bedatadriven/renjin)
+
+
+[javagd as device](http://stackoverflow.com/questions/43656227/how-to-use-javagd-as-r-graphics-device)
+
+### JRI
+http://stackoverflow.com/questions/19100875/java-r-interface-jri-setup
+
+https://comsysto.com/blog-post/java-r-integration-with-jri-for-on-demand-predictions
+
+
+http://algorithm-forge.com/techblog/2010/07/using-javagd-in-java-applications/
+
+http://stackoverflow.com/questions/26643852/ggplot-plots-in-scripts-do-not-display-in-rstudio
+
+describes print is needed for ggplot
+
+[use capture.out to force print in rEngine](http://stackoverflow.com/questions/28315947/get-same-output-as-r-console-in-java-using-jri)
+
+[nice javagd scale example](https://pastebin.com/b2FAV6X4)
 
 ## ToDo / ToTest
 
@@ -87,6 +107,8 @@ http://stackoverflow.com/questions/7171523/in-r-how-to-plot-into-a-memory-buffer
 
 MasterDevice corresponds to https://github.com/rstudio/rstudio/blob/cfce730f051fbab56a13ff218132f4802dcefdab/src/cpp/r/session/graphics/RGraphicsDevice.cpp
 
+
+knime r integration how is it done? https://tech.knime.org/forum/r-statistics-nodes-and-integration/strange-error-from-r-interactive-nodes
 
 ## Acknowledgements
 

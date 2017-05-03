@@ -73,7 +73,7 @@ public class RSkeletonGenerator {
 
 
     // entry point for configurable interface and action
-    public static void updateSkeletons(@NotNull final Project project) {
+    public static void updateSkeletons(@NotNull final Project project, boolean forceFailed) {
 
         final Application application = ApplicationManager.getApplication();
 
@@ -95,11 +95,6 @@ public class RSkeletonGenerator {
         });
 
         // now do the actual work
-        generateSmartSkeletons(project);
-    }
-
-
-    private static void generateSmartSkeletons(@NotNull final Project project) {
         // http://stackoverflow.com/questions/18725340/create-a-background-task-in-intellij-plugin
 
         // http://www.jetbrains.org/intellij/sdk/docs/basics/architectural_overview/general_threading_rules.html
@@ -108,7 +103,7 @@ public class RSkeletonGenerator {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
 //                ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                List<String> updatedPackages = updateSkeletons(indicator, project);
+                List<String> updatedPackages = updateSkeletons(indicator, forceFailed);
 
                 // trigger index cache refresh
 
@@ -130,43 +125,8 @@ public class RSkeletonGenerator {
                     // also add those to the updated set which are not yet part of the index
                     PackageServiceUtilKt.rebuildIndex(project);
                 });
-
-
-                // TBD seems to cause thread exeception. Needed?
-//                        PsiDocumentManager.getInstance(project).commitAllDocuments();
-
-//                String path = RSkeletonGenerator.getSkeletonsPath();
-//
-//                VirtualFile skeletonDir = VfsUtil.findFileByIoFile(new File(path), true);
-//
-//                if (skeletonDir == null) {
-//                    LOG.info("Failed to locate skeletons directory");
-//                    return;
-//                }
-//                });
             }
         });
-//        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Skeletons", false) {
-//            @Override
-//            public void run(@NotNull ProgressIndicator indicator) {
-//                File createdFileOutsideVFS = new File(RSkeletonGenerator.getSkeletonsPath(), "ggExtra.R");
-//
-//                // ... some logic to create this file ...
-//
-//                // once done wait for VFS and stub-index to pick up the changes and do some follow up task using the stub-index
-//                VirtualFileManager.getInstance().asyncRefresh(() -> {
-//
-//                    System.err.println("ggextra file exists:" + createdFileOutsideVFS.exists());
-//                    System.err.println("ggextra vfs instance:" + VfsUtil.findFileByIoFile(createdFileOutsideVFS, false));
-//
-////                    VfsUtil.findFileByIoFile(new File(RSkeletonGenerator.getSkeletonsPath(), "ggExtra.R"), true); // the actual file
-//
-//                    // also add those to the updated set which are not yet part of the index
-//                    PackageServiceUtilKt.rebuildIndex(project);
-//                });
-//            }
-//        });
-
     }
 
 
@@ -202,7 +162,7 @@ public class RSkeletonGenerator {
 
 
     @NotNull
-    private static List<String> updateSkeletons(@NotNull ProgressIndicator indicator, Project project) {
+    private static List<String> updateSkeletons(@NotNull ProgressIndicator indicator, boolean forceFailed) {
         if (!RSettings.hasInterpreter()) return new ArrayList<>();
 
         Map<String, String> packageVersions = getInstalledPackageVersions();
@@ -225,6 +185,10 @@ public class RSkeletonGenerator {
         for (String packageName : packageNames) {
             processed++;
 
+//            if(Arrays.asList("translations").contains(packageName)) continue;
+
+
+
             final String skeletonsPath = getSkeletonsPath();
             final File skeletonsDir = new File(skeletonsPath);
 
@@ -240,9 +204,20 @@ public class RSkeletonGenerator {
             String installedVersion = packageVersions.get(packageName);
 //            boolean isCorrectCacheVersion = rPackage != null && Objects.equals(rPackage.getVersion(), installedVersion);
 
+            // blacklist certain packages from being indexed
 
             if (isValidSkeleton(skeletonFile) && isSamePckgVersion(skeletonFile, installedVersion)) {
                 continue;
+            }
+
+            // skip failed index oprations unless we run force refresh mode
+            File failedSkelTag = new File(skeletonsDir, "." + packageName + ".failed");
+            if (failedSkelTag.isFile()) {
+                if (forceFailed) {
+                    failedSkelTag.delete();
+                } else {
+                    continue;
+                }
             }
 
 
@@ -265,6 +240,8 @@ public class RSkeletonGenerator {
                     RRunResult output = RHelperUtil.runHelperWithArgs(RHELPER_SKELETONIZE_PACKAGE, packageName, tempSkeleton.getAbsolutePath());
 
                     if (output != null && output.getExitCode() != 0) {
+                        //noinspection ResultOfMethodCallIgnored
+                        failedSkelTag.createNewFile();
                         LOG.error("Failed to generate skeleton for '" + packageName + "'. The error was: " + output.getStdErr());
                         LOG.error(output.getStdErr());
                     } else if (isValidSkeleton(tempSkeleton)) {
@@ -275,6 +252,8 @@ public class RSkeletonGenerator {
 
                         updated.add(packageName);
                     } else {
+                        //noinspection ResultOfMethodCallIgnored
+                        failedSkelTag.createNewFile();
                         LOG.error("Failed to generate a valid skeleton for '" + packageName + "'. Please file a ticket under https://github.com/holgerbrandl/r4intellij/issues");
 
 
@@ -282,7 +261,6 @@ public class RSkeletonGenerator {
 
                 } catch (IOException e) {
                     LOG.error("Failed to generate skeleton for '" + packageName + "'. The reason was:", e);
-
                 }
             });
         }

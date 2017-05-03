@@ -80,7 +80,7 @@ public class InstallLibraryFix implements LocalQuickFix {
                         runner.getConsoleExecuteActionHandler().processLine("quit(\"no\")");
 
                         // update package index
-                        ApplicationManager.getApplication().invokeLater(() -> RSkeletonGenerator.updateSkeletons(project));
+                        ApplicationManager.getApplication().invokeLater(() -> RSkeletonGenerator.updateSkeletons(project, false));
 //                        SwingUtilities.invokeLater(() -> RSkeletonGenerator.updateSkeletons(project));
                     }
                 }
