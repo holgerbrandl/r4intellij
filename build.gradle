@@ -71,12 +71,14 @@ task buildPlugin(type: Zip, overwrite: true) {
     dependsOn copyPluginJar, copyHelpers
 
     from buildDir.toString() + "/buildZip/"
-    into { prepareSandbox.getPluginName()  }
-    baseName = 'r4intellij'
+    def name = prepareSandbox.getPluginName()
+    into { name }
+    baseName = name.toLowerCase()
 }
 
 runIde.doFirst {
-    delete(prepareSandbox.getDestinationDir().toString() + "/" + prepareSandbox.getPluginName() + "/r4intellij.jar")
+    def name = prepareSandbox.getPluginName()
+    delete(prepareSandbox.getDestinationDir().toString() + "/" + name + "/" + name.toLowerCase() + ".jar")
 }
 
 prepareSandbox.doLast {
@@ -92,7 +94,8 @@ prepareSandbox.doLast {
 }
 
 test.doFirst {
-    delete(prepareTestingSandbox.getDestinationDir().toString() + "/" + prepareSandbox.getPluginName() + "/r4intellij.jar")
+    def name = prepareSandbox.getPluginName()
+    delete(prepareTestingSandbox.getDestinationDir().toString() + "/" + name + "/" + name.toLowerCase() + ".jar")
 }
 
 prepareTestingSandbox.doLast {
