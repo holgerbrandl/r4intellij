@@ -351,6 +351,13 @@ Documentation provider
 Formatter
 ---------
 
+
+short wrapped pipe should have indent
+```
+intronRet = read_tsv("../diff_intron_retention_analysis/de_results.txt") %>% 
+ mutate(chromosome_name = paste0("chr", chromosome_name))
+```
+
 indent is missing after pipe when comment is included
 ```
 pathwayPlots <- keggPathways %>%
