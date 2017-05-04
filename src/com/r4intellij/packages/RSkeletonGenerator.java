@@ -19,6 +19,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -123,7 +124,9 @@ public class RSkeletonGenerator {
 //                    VfsUtil.findFileByIoFile(new File(RSkeletonGenerator.getSkeletonsPath(), "ggExtra.R"), true); // the actual file
 
                     // also add those to the updated set which are not yet part of the index
-                    PackageServiceUtilKt.rebuildIndex(project);
+                    // see /Users/brandl/projects/jb/intellij-community/platform/core-api/src/com/intellij/openapi/project/IndexNotReadyException.java
+                    DumbService.getInstance(project).smartInvokeLater(() -> PackageServiceUtilKt.rebuildIndex(project));
+
                 });
             }
         });
@@ -186,7 +189,6 @@ public class RSkeletonGenerator {
             processed++;
 
 //            if(Arrays.asList("translations").contains(packageName)) continue;
-
 
 
             final String skeletonsPath = getSkeletonsPath();
