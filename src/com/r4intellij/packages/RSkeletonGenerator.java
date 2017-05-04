@@ -97,36 +97,23 @@ public class RSkeletonGenerator {
 
         // now do the actual work
         // http://stackoverflow.com/questions/18725340/create-a-background-task-in-intellij-plugin
-
         // http://www.jetbrains.org/intellij/sdk/docs/basics/architectural_overview/general_threading_rules.html
 
         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Updating Skeletons", false) {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
-//                ApplicationManager.getApplication().executeOnPooledThread(() -> {
-                List<String> updatedPackages = updateSkeletons(indicator, forceFailed);
+                updateSkeletons(indicator, forceFailed);
 
                 // trigger index cache refresh
-
 //                ApplicationManager.getApplication().invokeLater(() -> {
 //                    VirtualFileManager.getInstance().syncRefresh();
-//
 //                    });
 
 //                RefreshQueue.getInstance().
 //                VirtualFileManager.getInstance().syncRefresh();
                 VirtualFileManager.getInstance().asyncRefresh(() -> {
-
-//                    File createdFileOutsideVFS = new File(RSkeletonGenerator.getSkeletonsPath(), "ggExtra.R");
-//                    System.err.println("ggextra file exists:" + createdFileOutsideVFS.exists());
-//                    System.err.println("ggextra vfs instance:" + VfsUtil.findFileByIoFile(createdFileOutsideVFS, false));
-
-//                    VfsUtil.findFileByIoFile(new File(RSkeletonGenerator.getSkeletonsPath(), "ggExtra.R"), true); // the actual file
-
-                    // also add those to the updated set which are not yet part of the index
                     // see /Users/brandl/projects/jb/intellij-community/platform/core-api/src/com/intellij/openapi/project/IndexNotReadyException.java
                     DumbService.getInstance(project).smartInvokeLater(() -> PackageServiceUtilKt.rebuildIndex(project));
-
                 });
             }
         });
@@ -244,8 +231,9 @@ public class RSkeletonGenerator {
                     if (output != null && output.getExitCode() != 0) {
                         //noinspection ResultOfMethodCallIgnored
                         failedSkelTag.createNewFile();
-                        LOG.error("Failed to generate skeleton for '" + packageName + "'. The error was: " + output.getStdErr());
-                        LOG.error(output.getStdErr());
+                        LOG.error("Failed to generate skeleton for '" + packageName + "'. The error was:\n\n" +
+                                output.getStdErr() +
+                                "\n\nIf you think this issue with plugin and not your R installation, please file a ticket under https://github.com/holgerbrandl/r4intellij/issues\n\n");
                     } else if (isValidSkeleton(tempSkeleton)) {
                         // we used the more correct Files.move() here initially, but it caused issues on Windows
                         // (see https://github.com/holgerbrandl/r4intellij/issues/86). Most likely the R process did not
