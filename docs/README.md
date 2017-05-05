@@ -68,8 +68,10 @@ By default the plugin supports these file extensions: `.R`.  IntelliJ offers the
 
 The following features are supported 
 
-*   Jump to declarations with _Meta+Click_ of symbols and locally defined functions. Example `read_excel`:
+*   Jump to declarations with _Meta+Click_ of symbols and locally defined functions. Example `read_excel` for which the IDE will navigate to the corresponding function declaration in the automatically generated package index which is built and kept up-to-date by the IDE:
+
 ![](readme_images/jump_to_read_excel.png)
+
 ![](readme_images/read_excel_def_lokup.png)
 
 *   View --&gt; Quick Definition Lookup (of functions): This will show the signature and a short title
