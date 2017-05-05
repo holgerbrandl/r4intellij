@@ -15,14 +15,16 @@ The plugin provides syntax highlighting, import-aware code completion, a powerfu
 - [Basic Usage](#basic-usage)
     - [File extensions](#file-extensions)
     - [Source code navigation](#source-code-navigation)
+- [Structure View](#structure-view)
 - [Interactive Console](#interactive-console)
 - [Code completion](#code-completion)
-- [Refactoring](#refactoring)
+- [Refactorings](#refactorings)
 - [Inspections](#inspections)
 - [Intentions](#intentions)
 - [Run Configurations](#run-configurations)
 - [Integrated Debugger](#integrated-debugger)
 - [Package Manager](#package-manager)
+- [RMarkdown Support](#rmarkdown-support)
 - [Platform features](#platform-features)
 - [Site navigation](#site-navigation)
 - [Links](#links)
@@ -85,6 +87,15 @@ The following features are supported
 ![](readme_images/user_def_fun_doc_lookup.png)
 
 
+Structure View
+--------------
+
+The plugin provides a [Structure View](https://www.jetbrains.com/help/idea/2017.1/structure-tool-window-file-structure-popup.html) which is accessible as a separated tool window or as a popup with _Alt+F12_. It allows to quickly jump between sections and functions definitions in the current script via narrow-down as you type
+
+![](readme_images/structure_view.png)
+
+The sections are extracted based on the same model as used by [knitr::spin](https://www.rdocumentation.org/packages/knitr/versions/1.15.1/topics/spin). Headers are introduced by `#' # Title` , section with `#' ## section` and so on.
+
 Interactive Console
 -------------------
 
@@ -116,8 +127,8 @@ The following completion modes are available:
 *   Package name completion in library statements
 *   Coming soon: setwd() aware path completion
 
-Refactoring
------------
+Refactorings
+------------
 
 All refactorings can be accessed via the "Refactor" menu
 
@@ -181,6 +192,20 @@ Packages can be installed from the "R Packages" tool window.
 ![](readme_images/package_tool_window.png)
 
 There you can also update existing packages if needed. Both CRAN and bioconductor are supported.
+
+
+RMarkdown Support
+-----------------
+
+Markdown support is avaialbe for Intellj IDEA as a [separate plugin](https://plugins.jetbrains.com/plugin/7793-markdown-support). Because of the ability to do [language injection](https://www.jetbrains.com/help/idea/2017.1/using-language-injections.html), R support is provided in [Rmarkdown](http://rmarkdown.rstudio.com/) code chunks
+
+![](readme_images/rmarkdown_chunk.png)
+
+Reports can be rendered using a dedicated tool, which can be configured as needed.
+
+![](readme_images/rendr_tool.png)
+
+Alternatively you can also use [run configurations](#run-configurations) to render Rmarkdown.
 
 Platform features
 -----------------
