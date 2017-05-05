@@ -85,7 +85,7 @@
             <!--<zipfileset dir="${in.resources.dir}/icons" prefix="icons"/>-->
             <!--<zipfileset dir="${in.resources.dir}/inspectionDescriptions" prefix="inspectionDescriptions"/>-->
             <zipfileset dir="${in.resources.dir}"/>
-            <zipfileset dir="${in.meta-inf.dir}" prefix="${in.meta-inf.dir}"/>
+            <!--<zipfileset dir="resources/META-INF" prefix="${in.meta-inf.dir}"/>-->
         </jar>
 
         <zip destfile="${out.zip}">
