@@ -20,6 +20,9 @@ The plugin provides syntax highlighting, import-aware code completion, a powerfu
 - [Refactoring](#refactoring)
 - [Inspections](#inspections)
 - [Intentions](#intentions)
+- [Run configurations](#run-configurations)
+- [Integrated Debugger](#integrated-debugger)
+- [Package Manager](#package-manager)
 - [Platform features](#platform-features)
 - [Site navigation](#site-navigation)
 - [Links](#links)
@@ -65,7 +68,11 @@ By default the plugin supports these file extensions: `.R`.  IntelliJ offers the
 
 The following features are supported 
 
-*   Go To --&gt; Declaration (of symbols and locally defined functions)*   View --&gt; Quick Definition Lookup (of functions): This will show the signature and a short title
+*   Jump to declaration (of symbols and locally defined functions)
+![](readme_images/jump_to_read_excel.png)
+![](readme_images/read_excel_def_lokup.png)
+
+*   View --&gt; Quick Definition Lookup (of functions): This will show the signature and a short title
 
 
 *   Search --&gt; Highlight Usage: This will make Intellij to highlight all locations where a function or a symbol is being used*   Brace matching: If you position the caret before or after a bracket then IntelliJ will highlight the other element of the pair of brackets.*   File Structure View: In the structure view IntelliJ shows the functions and code sections of the R script.
@@ -84,9 +91,12 @@ Start a new console under _Tools_
 ![](readme_images/create_console.png)
 
 
-To push code from the editor use `Meta+Enter`. For a more general overview on how to use run consoles in IDEA see https://www.jetbrains.com/help/idea/2016.3/working-with-embedded-local-terminal.html
+To push code from the editor use `Ctrl-Meta+Enter`. For a more general overview on how to use run consoles in IDEA see https://www.jetbrains.com/help/idea/2016.3/working-with-embedded-local-terminal.html
+
+![](readme_images/send_to_console.png)
 
 Note: You can also evaluate R code in an external console by means of the [Send To Terminal](https://plugins.jetbrains.com/plugin/9409-send-to-terminal) plugin for Intellij.
+
 
 
 Code completion
@@ -133,6 +143,39 @@ Intentions are quick-fixes provided and executed by the the plugin.
 
 * Convert `T` to `TRUE` and `F` to `FALSE`
 
+
+Run configurations
+------------------
+
+To run or a debug a script with in the IDE, simply right-click and choose "Run", "Debug", or "Create..."
+
+![](readme_images/create_run_config.png)
+
+Once create, you can adjust the working direction, environment properties and other arugments passed on to R
+![](readme_images/run_configuration.png)
+
+Existing run configuraitons can be invoked from the toolbar
+![](readme_images/run_run_config.png)
+
+
+Integrated Debugger
+-------------------
+
+To create a breakpoint simply click left from the editor:
+![](readme_images/breakpoint.png)
+
+See the previous section about how to create run configuraiton and to run those in debug mode. When stopping at a breakpoint the IDE will show a listing of current environment variables including their types, as well as a console with current output.
+![](readme_images/debug_view.png)
+
+
+Package Manager
+---------------
+
+Packages can be installed from the "R Packages" tool window.
+
+![](readme_images/package_tool_window.png)
+
+There you can also update existing packages if needed.
 
 Platform features
 -----------------
