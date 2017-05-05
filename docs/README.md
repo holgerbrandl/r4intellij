@@ -163,7 +163,7 @@ Existing run configurations can be invoked from the toolbar
 Integrated Debugger
 -------------------
 
-To create a breakpoint simply click left from the editor:
+To set or remove breakpoints simply click left from the editor:
 ![](readme_images/breakpoint.png)
 
 See the previous section about how to create run configurations to run your scripts those in debug mode. When stopping at a breakpoint the IDE will show a listing of current environment variables including their types, as well as a console with current output.
@@ -178,7 +178,7 @@ Packages can be installed from the "R Packages" tool window.
 
 ![](readme_images/package_tool_window.png)
 
-There you can also update existing packages if needed.
+There you can also update existing packages if needed. Both CRAN and bioconductor are supported.
 
 Platform features
 -----------------
