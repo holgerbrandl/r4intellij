@@ -20,7 +20,7 @@ The plugin provides syntax highlighting, import-aware code completion, a powerfu
 - [Refactoring](#refactoring)
 - [Inspections](#inspections)
 - [Intentions](#intentions)
-- [Run configurations](#run-configurations)
+- [Run Configurations](#run-configurations)
 - [Integrated Debugger](#integrated-debugger)
 - [Package Manager](#package-manager)
 - [Platform features](#platform-features)
@@ -68,7 +68,7 @@ By default the plugin supports these file extensions: `.R`.  IntelliJ offers the
 
 The following features are supported 
 
-*   Jump to declaration (of symbols and locally defined functions)
+*   Jump to declarations with _Meta+Click_ of symbols and locally defined functions. Example `read_excel`:
 ![](readme_images/jump_to_read_excel.png)
 ![](readme_images/read_excel_def_lokup.png)
 
@@ -97,6 +97,7 @@ To push code from the editor use `Ctrl-Meta+Enter`. For a more general overview 
 
 Note: You can also evaluate R code in an external console by means of the [Send To Terminal](https://plugins.jetbrains.com/plugin/9409-send-to-terminal) plugin for Intellij.
 
+Could can also open multiple consoles in parallel which will use separated R instances internally. This is handy to quickly switch between projects or when using [scratch files](https://www.jetbrains.com/help/idea/2017.1/scratches.html)
 
 
 Code completion
@@ -144,17 +145,18 @@ Intentions are quick-fixes provided and executed by the the plugin.
 * Convert `T` to `TRUE` and `F` to `FALSE`
 
 
-Run configurations
+Run Configurations
 ------------------
 
-To run or a debug a script with in the IDE, simply right-click and choose "Run", "Debug", or "Create..."
+To run or a debug a script with the IDE, simply right-click and choose "Run", "Debug" to run immediately, or select "Create..." a run-configuration .
 
 ![](readme_images/create_run_config.png)
 
-Once create, you can adjust the working direction, environment properties and other arugments passed on to R
+Once created, you can adjust the working directory, environment properties and other arguments passed on to R in the "Run Configuration" window.
+
 ![](readme_images/run_configuration.png)
 
-Existing run configuraitons can be invoked from the toolbar
+Existing run configurations can be invoked from the toolbar
 ![](readme_images/run_run_config.png)
 
 
@@ -164,9 +166,10 @@ Integrated Debugger
 To create a breakpoint simply click left from the editor:
 ![](readme_images/breakpoint.png)
 
-See the previous section about how to create run configuraiton and to run those in debug mode. When stopping at a breakpoint the IDE will show a listing of current environment variables including their types, as well as a console with current output.
+See the previous section about how to create run configurations to run your scripts those in debug mode. When stopping at a breakpoint the IDE will show a listing of current environment variables including their types, as well as a console with current output.
 ![](readme_images/debug_view.png)
 
+You can then step through your code line by line, jump into or over function calls.
 
 Package Manager
 ---------------
