@@ -15,7 +15,8 @@ public final class RProcessUtils {
 
     public static void executeInitGraphicsCommands(@NotNull final Project project, @NotNull final RExecutor executor)
             throws RDebuggerException {
-//        if(true) return;
+        // disabled until a more permanent solution to https://github.com/holgerbrandl/r4intellij/issues/83 has been found
+        if (true) return;
 
         final boolean is64Bit = is64Bit(loadArchitecture(executor));
 

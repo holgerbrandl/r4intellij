@@ -9,8 +9,30 @@ https://books.google.de/books?id=n5rNBQAAQBAJ&pg=PA57&lpg=PA57&dq=%22options(dev
 r-only custom device
 
 ```r
-optoins
+options(device=function(width=7, height=7, ...){
+    print("new device created")
+    cairo_pdf("/Users/brandl/Desktop/foo.pdf", width, height, ...)
+})
+    cairo_pdf("/Users/brandl/Desktop/foo.pdf", 7, 7)
+
 ```
+
+
+---
+[null device](https://yihui.name/en/2010/12/a-special-graphics-device-in-r-the-null-device/)
+```
+options(device = function(...) { .Call("R_GD_nullDevice", PACKAGE = "grDevices") })
+
+```
+
+---
+[Setting default device in R in Mac OS X](http://www.janosgyerik.com/setting-default-device-in-r-in-mac-os-x/)
+
+```r
+setHook(packageEvent("grDevices", "onLoad"), function(...) grDevices::X11.options(type='cairo'))
+options(device='x11')
+```
+
 
 ---
 [Making my own graphics device](http://r.789695.n4.nabble.com/Making-my-own-graphics-device-td4695629.html#a4695636)
