@@ -3,26 +3,58 @@
 
 R allows provide custom bindings for graphics output. See https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/Devices.html for a general description.
 
+
 ---
+[official documetation](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/Devices.html)
+
+what about https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/dev2bitmap.html
+
+
+----------
 https://books.google.de/books?id=n5rNBQAAQBAJ&pg=PA57&lpg=PA57&dq=%22options(device%22+R&source=bl&ots=yl_hfJMc7Y&sig=wn63wrTjDx87wAhvdGynL5tOlxA&hl=de&sa=X&ved=0ahUKEwiN8__Y0NTTAhUlDJoKHZmjBZw4ChDoAQgtMAI#v=onepage&q=%22options(device%22%20R&f=false
 
 r-only custom device
 
 ```r
-options(device=function(width=7, height=7, ...){
-    print("new device created")
-    cairo_pdf("/Users/brandl/Desktop/foo.pdf", width, height, ...)
+options(device = function(width=7, height=7, ...){
+ print("new device created")
+ # cairo_pdf("/Users/brandl/Desktop/foo.pdf", width, height, ...)
+ png("/Users/brandl/Desktop/foo.png", width, height, ...)
 })
-    cairo_pdf("/Users/brandl/Desktop/foo.pdf", 7, 7)
+# cairo_pdf("/Users/brandl/Desktop/foo.pdf", 7, 7)
 
+
+dev.off()
+require(ggplot2)
+gg = ggplot(iris, aes(Sepal.Length, Sepal.Width)) +
+ geom_point() +
+ ggtitle("iris plot") +
+ facet_grid(~ Species) +
+ scale_x_log10()
+
+plot(1 : 10)
+
+gg
+# print(gg)
+does not write file immediately
+# dev.copy2pdf(out.type = "pdf") ## just works for screen devices 
+# dev.copy(out.type = "pdf") ## pretty cool to dump an x11 into a pdf 
+
+dev.new()
+
+what about graphics.off()
 ```
+
+---
+[R.devices vignette](https://cran.r-project.org/web/packages/R.devices/vignettes/R.devices-overview.pdf) pretty recent overview
+
+
 
 
 ---
 [null device](https://yihui.name/en/2010/12/a-special-graphics-device-in-r-the-null-device/)
 ```
 options(device = function(...) { .Call("R_GD_nullDevice", PACKAGE = "grDevices") })
-
 ```
 
 ---
@@ -31,6 +63,20 @@ options(device = function(...) { .Call("R_GD_nullDevice", PACKAGE = "grDevices")
 ```r
 setHook(packageEvent("grDevices", "onLoad"), function(...) grDevices::X11.options(type='cairo'))
 options(device='x11')
+
+
+quartz(file = "~/Desktop/my_plot.png")
+plot(1:10)
+
+require(ggplot2)
+gg = ggplot(iris, aes(Sepal.Length, Sepal.Width)) +
+ geom_point() +
+ ggtitle("iris plot") +
+ facet_grid(~ Species) +
+ scale_x_log10()
+gg 
+
+dev.off()
 ```
 
 
@@ -48,6 +94,20 @@ example of a device implemented in a package.
 best ref
 https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Graphics-devices
 
+
+## hooks
+
+[adjust quartz on macos](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/quartz.html)
+
+> The `file` argument is used for off-screen drawing. The actual file is only created when the device is closed (e.g., using `dev.off()`). For the bitmap devices, the page number is substituted if a C integer format is included in the character string, e.g. `Rplot%03d.png`. (The result must be less than `PATH_MAX` characters long, and may be truncated if not. See [postscript](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/postscript.html) for further details.) If a `file` argument is not supplied, the default is `Rplots.pdf` or `Rplot%03d.`<var>type</var>. Tilde expansion (see [path.expand](https://stat.ethz.ch/R-manual/R-devel/library/base/html/path.expand.html)) is done.
+
+
+```
+## put something like this is your .Rprofile to customize the defaults
+setHook(packageEvent("grDevices", "onLoad"),
+        function(...) grDevices::quartz.options(width = 8, height = 6,
+                                                pointsize = 10))
+```
 
 
 ## rJava
