@@ -37,9 +37,9 @@ Installation
 2.  To install the plugin, just open the plugin manager in Intellij Idea, search for "R Language Support", and finally click install.
 ![](readme_images/plugins_browser.png)
 
-After you have restarted IDEA, the plugin will build an index of local R package library, which allows for enhanced [code completion](#code-completion),  [error highlighting](#inspections), integrated [documentation lookup](#source-code-navigation) and more. Depending on the number of packages in your R library the initial indexing procedure will require up to a few minutes. The plugin will refresh the index on each IDE startup.
+After you have restarted IDEA, the plugin will build an index of your local R package library, which allows for enhanced [code completion](#code-completion),  [error highlighting](#inspections), integrated [documentation lookup](#source-code-navigation) and more. Depending on the number of packages in your R library the initial indexing procedure will require up to a few minutes to complete. The plugin will refresh this index on each IDE startup.
 
-The plugin will try to infer the installation path of R automatically from your environment (i.e. PATH). On most platforms it will guess it correctly, but you can also set the path of the used R interpreter in the plugin preferences (_Settings_->_Custom Languages_->_R_).
+The plugin will try to infer the installation path of R automatically from your environment (e.g. PATH). On most platforms it will guess it correctly, but you can also set the path of the used R interpreter in the plugin preferences (_Settings_->_Custom Languages_->_R_).
 
 
 Support
@@ -80,7 +80,7 @@ The following features are supported
 *   _View_ -> _Quick Definition Lookup_ (of functions): This will show the signature and a short title
 
 
-*   _Search_-> _Highlight Usage_: This will make Intellij to highlight all locations where a function or a symbol is being used
+*   _Search_ -> _Highlight Usage_: This will make Intellij to highlight all locations where a function or a symbol is being used
 *   Brace matching: If you position the caret before or after a bracket then IntelliJ will highlight the other element of the pair of brackets.
 * Integration with R-Help: Simply invoke `F1` on any symbol (data-sets, package names, functions).
 ![](readme_images/r_help_integration.png)
@@ -91,7 +91,7 @@ The following features are supported
 Structure View
 --------------
 
-The plugin provides a [Structure View](https://www.jetbrains.com/help/idea/2017.1/structure-tool-window-file-structure-popup.html) which is accessible as a separated tool window or as a popup with _Alt+F12_. It allows to quickly jump between sections and functions definitions in the current script via narrow-down as you type
+The plugin provides a [Structure View](https://www.jetbrains.com/help/idea/2017.1/structure-tool-window-file-structure-popup.html) which is accessible as a separate [tool window](https://www.jetbrains.com/help/idea/2017.1/tool-windows.html) or as a popup with `Alt+F12`. It allows to quickly jump to sections and functions definitions in the current script via narrow-down as you type search:
 
 ![](readme_images/structure_view.png)
 
@@ -109,10 +109,9 @@ To push code from the editor to the console use `Ctrl+Meta+Enter`. The IDE will 
 
 ![](readme_images/send_to_console.png)
 
-Note: You can also evaluate R code in an external console by means of the [Send To Terminal](https://plugins.jetbrains.com/plugin/9409-send-to-terminal) plugin for Intellij.
+You can also evaluate R code in an external console by means of the [Send To Terminal](https://plugins.jetbrains.com/plugin/9409-send-to-terminal) plugin for Intellij. This allows to interactively use R on remote machines via ssh.
 
-Could can also open multiple consoles in parallel which will use separated R instances internally. This is handy to quickly switch between projects or when using [scratch files](https://www.jetbrains.com/help/idea/2017.1/scratches.html)
-
+It is possible to run multiple consoles in parallel which will use separated R instances internally. This is handy to quickly switch between projects or when using [scratch files](https://www.jetbrains.com/help/idea/2017.1/scratches.html)
 
 For a more general overview on how to use run consoles in IDEA see https://www.jetbrains.com/help/idea/2016.3/working-with-embedded-local-terminal.html
 
