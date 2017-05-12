@@ -175,7 +175,8 @@ public class RSkeletonGenerator {
         for (String packageName : packageNames) {
             processed++;
 
-//            if(Arrays.asList("translations").contains(packageName)) continue;
+            //noinspection ArraysAsListWithZeroOrOneArgument
+            if (Arrays.asList("translations").contains(packageName)) continue;
 
 
             final String skeletonsPath = getSkeletonsPath();

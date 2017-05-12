@@ -13,7 +13,7 @@ The plugin provides syntax highlighting, import-aware code completion, a powerfu
 - [Installation](#installation)
 - [Support](#support)
 - [Basic Usage](#basic-usage)
-    - [Source code navigation](#source-code-navigation)
+- [Source code navigation](#source-code-navigation)
 - [Structure View](#structure-view)
 - [Interactive Console](#interactive-console)
 - [Code completion](#code-completion)
@@ -67,7 +67,7 @@ You can also create a new project (the type does not matter) and organize your w
 
 By default the plugin is set to just work with files using the suffix `.R`.  However, IntelliJ allows to associate file extensions to plugins (see _Preferences_->_Editor_->_File Types_).
 
-### Source code navigation
+## Source code navigation
 
 The following features are supported 
 

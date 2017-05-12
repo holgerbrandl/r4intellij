@@ -200,3 +200,9 @@ external_graphs = function(ext = TRUE){
 http://stackoverflow.com/questions/7171523/in-r-how-to-plot-into-a-memory-buffer-instead-of-a-file
 
 [jvm only devices](https://github.com/bedatadriven/renjin) not applicable because we want to use native R
+
+
+Todo
+https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/dev.html
+https://cran.r-project.org/web/packages/R.devices/vignettes/R.devices-overview.pdf
+http://www.astrostatistics.psu.edu/su07/R/html/grDevices/html/Devices.html
