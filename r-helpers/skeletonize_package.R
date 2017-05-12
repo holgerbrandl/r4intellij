@@ -298,6 +298,7 @@ library(tools);
 chooseCRANmirror(ind = 1)
 
 ## note: it may be more elegant to use something along `devtools::session_info` or the underlying `find_deps`. However this seems to fall back as well to the network based `available.packages`
+## See https://github.com/hadley/devtools/blob/1ce84b04568ff7846c3da754f28e7e22a23c8737/R/deps.R#L326
 
 # db=NULL is required for compatibility with R 3.2.X
 pckgDepends = unlist(lapply(package_dependencies(pName, db = available.packages(), which = "Depends"), function(x)paste(x, collapse = ",")))
