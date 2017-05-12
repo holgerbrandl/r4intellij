@@ -6,12 +6,9 @@ R4Intellij Development Notes
 
 don't use installled ij cache for testing (will cause index rebuilt on each startup)
 
-@programata Can you load rJava in R (`require(rJava)` without any issues? I could imagine that you're affected by http://stackoverflow.com/questions/34971966/how-does-one-configure-rjava-on-osx-to-select-the-right-jvm-jinit-failing. If yes, what would be an appropriate behavior of the plugin? Should it silently ignore a flawed package installation?
 
 Next Steps
 ----------
-
-use `devtools::session_info` or underlying `find_deps` to remove network requirement from `skeletonize_package.R`
 
 v1.1
 ----

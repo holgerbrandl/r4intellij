@@ -297,6 +297,8 @@ cat(paste0(".skeleton_package_version = \"", packageDescription(pName)$Version, 
 library(tools);
 chooseCRANmirror(ind = 1)
 
+## note: it may be more elegant to use something along `devtools::session_info` or the underlying `find_deps`. However this seems to fall back as well to the network based `available.packages`
+
 # db=NULL is required for compatibility with R 3.2.X
 pckgDepends = unlist(lapply(package_dependencies(pName, db = available.packages(), which = "Depends"), function(x)paste(x, collapse = ",")))
 pckgImports = unlist(lapply(package_dependencies(pName, db = available.packages(), which = "Imports"), function(x)paste(x, collapse = ",")))
