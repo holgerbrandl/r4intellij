@@ -1,9 +1,16 @@
 Version History
 ===============
 
+## Changes in v1.1
+
+* Added refresh trigger to missing package inspection
+
+
+
 ## Changes in v1.0
 
 Restarted development by forking [TheR](https://github.com/ktisha/TheRPlugin). This adds the following additional features
+
 * Interactive console
 * Builtin help
 * Package manager

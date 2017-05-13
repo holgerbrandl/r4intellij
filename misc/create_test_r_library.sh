@@ -2,7 +2,7 @@
 
 ## clone R
 cd /Library/Frameworks/R.framework/Versions/3.4/Resources
-#rm -rf library
+#rm -rf library_work
 mv library library_work
 mv library library_r4intellij
 mkdir library
@@ -39,4 +39,4 @@ tar -zcvf minimal_r_library.tar.gz library_r4intellij
 cd /Library/Frameworks/R.framework/Versions/3.4/Resources
 rm -rf library
 cp -rf library_work library
-cp -rf library_r4intellij library
+sudo cp -rf library_r4intellij library

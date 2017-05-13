@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ProblemsHolder;
 import com.intellij.psi.PsiFile;
 import com.r4intellij.RPsiUtils;
 import com.r4intellij.intentions.InstallLibraryFix;
+import com.r4intellij.intentions.RefreshPackageIndexQuickFix;
 import com.r4intellij.packages.RIndexCache;
 import com.r4intellij.packages.RPackage;
 import com.r4intellij.psi.RRecursiveElementVisitor;
@@ -103,6 +104,7 @@ public class MissingPackageInspection extends RInspection {
         if (byName == null) {
             String descriptionTemplate = "'" + packageName + "' is not yet installed";
             problemsHolder.registerProblem(packageExpression, descriptionTemplate, new InstallLibraryFix(packageName));
+            problemsHolder.registerProblem(packageExpression, descriptionTemplate, new RefreshPackageIndexQuickFix());
         }
     }
 

@@ -4,9 +4,6 @@ R4Intellij Development Notes
 0-day bugs
 ----------
 
-don't use installled ij cache for testing (will cause index rebuilt on each startup)
-
-
 Next Steps
 ----------
 
