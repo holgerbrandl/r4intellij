@@ -37,6 +37,6 @@ tar -zcvf minimal_r_library.tar.gz library_r4intellij
 
 ## switch to a library
 cd /Library/Frameworks/R.framework/Versions/3.4/Resources
-rm -rf library
-cp -rf library_work library
+sudo rm -rf library
+sudo cp -rf library_work library
 sudo cp -rf library_r4intellij library

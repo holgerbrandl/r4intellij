@@ -40,6 +40,7 @@ https://github.com/holgerbrandl/r4intellij/milestone/5
 
 ### bugs
 
+* false positive arg warning in `ac <- function(...) as.character(...)`
 
 * long lines are not displayed correctly in console
 
