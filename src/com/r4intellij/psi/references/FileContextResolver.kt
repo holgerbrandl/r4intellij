@@ -83,7 +83,7 @@ class FileContextResolver() {
             results.addAll(resolveFromInner(element, resolveScope, elementName))
         }
 
-        return results;
+        return results
     }
 
     private fun resolveInContextByBlockRecursion(context: PsiElement, element: PsiElement, elementName: String): List<ResolveResult> {
@@ -110,7 +110,7 @@ class FileContextResolver() {
         })
 
         // local first thus reverse
-        return result.reversed();
+        return result.reversed()
     }
 }
 
