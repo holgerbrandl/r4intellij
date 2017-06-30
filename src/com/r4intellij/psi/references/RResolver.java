@@ -2,11 +2,11 @@ package com.r4intellij.psi.references;
 
 import com.google.common.collect.Iterables;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.impl.scopes.LibraryScope;
+import com.intellij.openapi.module.impl.scopes.ModuleScopeProviderImpl;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.FileIndexFacade;
-import com.intellij.openapi.roots.ModifiableModelsProvider;
-import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
@@ -44,7 +44,15 @@ public class RResolver {
 
         for (String name : names) {
             if (RSettings.getInstance().isResolveInModule()) {
-                addFromProject(name, element.getProject(), result);
+                // https://intellij-support.jetbrains.com/hc/en-us/community/posts/206148389-Getting-the-module-for-a-PsiElement
+                ProjectFileIndex fileIndex = ProjectRootManager.getInstance(element.getProject()).getFileIndex();
+                Module moduleForFile = fileIndex.getModuleForFile(element.getContainingFile().getVirtualFile());
+
+                if (moduleForFile != null) {
+                    addFromModule(name, moduleForFile, result);
+                }
+
+//              addFromProject(name, element.getProject(), result);
             }
 
 //            addFromLibrary(element, result, name, LibraryUtil.USER_SKELETONS);
@@ -184,6 +192,20 @@ public class RResolver {
                 RAssignmentNameIndex.find(name, project,
                         new ProjectScopeImpl(project, FileIndexFacade
                                 .getInstance(project)));
+        for (RAssignmentStatement statement : statements) {
+            final PsiElement assignee = statement.getAssignee();
+            if (assignee == null) continue;
+            results.add(new PsiElementResolveResult(statement));
+        }
+    }
+
+
+    private static void addFromModule(String name,
+                                      @NotNull final Module module,
+                                      @NotNull final List<ResolveResult> results) {
+
+        //todo actually we should just resolve in module here and not in project
+        Collection<RAssignmentStatement> statements = RAssignmentNameIndex.find(name, module.getProject(), new ModuleScopeProviderImpl(module).getModuleContentScope());
         for (RAssignmentStatement statement : statements) {
             final PsiElement assignee = statement.getAssignee();
             if (assignee == null) continue;

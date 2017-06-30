@@ -1,5 +1,6 @@
 package com.r4intellij.psi.references;
 
+import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
 import com.intellij.lang.ASTNode;
@@ -188,11 +189,17 @@ public class RReferenceImpl implements PsiPolyVariantReference {
                                     RefLookupElement lookupObject = new RefLookupElement(myElement.getManager(),
                                             RLanguage.getInstance(), pckg + "::" + funName);
 
-                                    completionResults.add(LookupElementBuilder
-                                                    .create(lookupObject, funName)
-                                                    .withTypeText(pckg)
+                                    // see
+                                    LookupElementBuilder elementBuilder = LookupElementBuilder
+                                            .create(lookupObject, funName)
+                                            .withTypeText(pckg);
+
+                                    // is it a method --> jump into parenthesis (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000185304-caret-position-and-round-brackets-for-function-call-completion-
+                                    elementBuilder = elementBuilder.withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS);
+
+                                    completionResults.add(elementBuilder);
 //                                        .withLookupString("base::attach"))
-                                    );
+
                                 });
                     }
                 }
