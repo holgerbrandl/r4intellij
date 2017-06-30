@@ -49,7 +49,8 @@ sourceSets {
 
 intellij {
 //    version 'IC-LATEST-TRUNK-SNAPSHOT'
-    version 'IC-2017.1.2'
+//    version 'IC-2017.1.2'
+    version 'IC-2017.1'
     pluginName 'R4Intellij'
     downloadSources false
     updateSinceUntilBuild false
