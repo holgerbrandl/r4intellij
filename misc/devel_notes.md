@@ -110,10 +110,18 @@ https://confluence.jetbrains.com/display/IDEADEV/Developing+Custom+Language+Plug
 
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/207250965-PsiReferenceContributor-Find-Usages-and-Go-to-Declaration
 
-search scope
+#### search scope
+
+ Search scopes are a very simple feature; they simply filter the files according to the condition you specify.
+
+ consider `ProjectScope.getAllScope()`
+
+
 https://intellij-support.jetbrains.com/hc/en-us/community/posts/206793585-Help-with-different-behavior-between-writable-and-readonly-files
 
+
 my question: https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000093684-Reference-search-scope-different-between-project-files-and-scratches-
+
 
 ![](.devel_notes_images/search_scopes.png)
 
@@ -293,6 +301,7 @@ Completion Provider
 
 make sure to match https://rawgit.com/kevinushey/2017-rstudio-conf/master/slides.html#9
 
+Improve function completion by adding round brackets: `base<caret>` -> `basename(<caret>)` (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000185304-caret-position-and-round-brackets-for-function-call-completion-) **{done}**
 
 for path completion see https://www.jetbrains.com/help/idea/2016.3/completing-path.html
 

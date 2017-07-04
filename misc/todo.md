@@ -16,11 +16,6 @@ https://github.com/holgerbrandl/r4intellij/milestone/5
 
 ### new
 
-* add refresh option to
-
-![](.todo_images/15eb80f2.png)
-
-* Improve function completion by adding round brackets: `base<caret>` -> `basename(<caret>)` (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000185304-caret-position-and-round-brackets-for-function-call-completion-)
 
 * Resolve `source_url` dependencies
 

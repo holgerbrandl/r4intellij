@@ -125,8 +125,13 @@ private fun buildPackage(titleStatement: RAssignmentStatement): RPackage {
     val rPackage = RPackage(packageName, version, title, depends.toSet(), imports.toSet())
 
     // continue here treating data and functions differently
-    val pckgSymbols = splitBySkelProp.getOrElse(false, { emptyList() }).map { PckgFunction(it.assignee.text) }
-    rPackage.setFunctions(pckgSymbols)
+    val symbols = splitBySkelProp.getOrElse(false, { emptyList() })
+    val dataFunSplit = symbols.partition { it -> it.assignedValue.text.startsWith(packageName!! + "::") }
+    val packageFunctions = dataFunSplit.second.map { PckgFunction(it.assignee.text) }
+    val packageData = dataFunSplit.first.map { PckgDataSet(it.assignee.text) }
+
+    rPackage.setFunctions(packageFunctions)
+    rPackage.setDatSets(packageData)
 
     //    System.err.print(".")
     return rPackage

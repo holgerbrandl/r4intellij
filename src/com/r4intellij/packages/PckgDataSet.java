@@ -12,25 +12,17 @@ import java.io.Serializable;
  */
 public class PckgDataSet implements Serializable {
 
-    private static final long serialVersionUID = -6432397228209255322L;
+    private static final long serialVersionUID = -6432397228209255332L;
 
-    private final String name;
-
-    private final String description;
+    private String name;
 
 
-    public PckgDataSet(String name, String description) {
+    public PckgDataSet(String name) {
         this.name = name;
-        this.description = description;
     }
 
 
     public String getName() {
         return name;
-    }
-
-
-    public String getDescription() {
-        return description;
     }
 }

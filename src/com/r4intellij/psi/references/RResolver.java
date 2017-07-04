@@ -128,8 +128,9 @@ public class RResolver {
         // too wide scope in scratches?
         // see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000093684-Reference-search-scope-different-between-project-files-and-scratches-
         final Collection<RAssignmentStatement> assignmentStatements =
-
+//                RAssignmentNameIndex.find(name, project, new LibraryScope(project, library));
                 RAssignmentNameIndex.find(name, project, new LibraryScope(project, library));
+//                RAssignmentNameIndex.find(name, project, new EverythingGlobalScope(project));
 
         //RAssignmentNameIndex.allKeys(project).stream().filter(f->f.equals("head")).collect(Collectors.toList())
         //RAssignmentNameIndex.allKeys(project).stream().filter(f->f.equals("iris")).collect(Collectors.toList())

@@ -181,27 +181,43 @@ public class RReferenceImpl implements PsiPolyVariantReference {
 
                 for (String pckg : importedPackages) {
                     RPackage byName = RIndexCache.getInstance().getByName(pckg);
-                    if (byName != null) {
-                        byName.getFunctionNames()
-                                .stream().filter(it -> !it.contains(".__"))
-                                .filter(Objects::nonNull)
-                                .forEach(funName -> {
-                                    RefLookupElement lookupObject = new RefLookupElement(myElement.getManager(),
-                                            RLanguage.getInstance(), pckg + "::" + funName);
+                    if (byName == null) {
+                        continue;
+                    }
 
-                                    // see
-                                    LookupElementBuilder elementBuilder = LookupElementBuilder
-                                            .create(lookupObject, funName)
-                                            .withTypeText(pckg);
+                    byName.getFunctionNames()
+                            .stream().filter(it -> !it.contains(".__"))
+                            .filter(Objects::nonNull)
+                            .forEach(funName -> {
+                                RefLookupElement lookupObject = new RefLookupElement(myElement.getManager(),
+                                        RLanguage.getInstance(), pckg + "::" + funName);
 
-                                    // is it a method --> jump into parenthesis (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000185304-caret-position-and-round-brackets-for-function-call-completion-
-                                    elementBuilder = elementBuilder.withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS);
+                                // see
+                                LookupElementBuilder elementBuilder = LookupElementBuilder
+                                        .create(lookupObject, funName)
+                                        .withTypeText(pckg);
 
-                                    completionResults.add(elementBuilder);
+                                // is it a method --> jump into parenthesis (see https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000185304-caret-position-and-round-brackets-for-function-call-completion-
+                                elementBuilder = elementBuilder.withInsertHandler(ParenthesesInsertHandler.WITH_PARAMETERS);
+
+                                completionResults.add(elementBuilder);
 //                                        .withLookupString("base::attach"))
 
-                                });
-                    }
+                            });
+
+                    // Also provide dedicated completion for data
+                    byName.getDataSetNames()
+                            .stream().filter(it -> !it.contains(".__"))
+                            .filter(Objects::nonNull)
+                            .forEach(funName -> {
+                                RefLookupElement lookupObject = new RefLookupElement(myElement.getManager(),
+                                        RLanguage.getInstance(), pckg + "::" + funName);
+
+                                LookupElementBuilder elementBuilder = LookupElementBuilder
+                                        .create(lookupObject, funName)
+                                        .withTypeText(pckg);
+                                completionResults.add(elementBuilder);
+                            });
                 }
 
             }
