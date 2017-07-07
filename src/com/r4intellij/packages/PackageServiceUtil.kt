@@ -144,12 +144,18 @@ private fun buildPackage(titleStatement: RAssignmentStatement): RPackage {
 fun getInstalledPackageVersions(): Map<String, String> {
     val helperOutput = getHelperOutput(RHELPER_PACKAGE_VERSIONS) ?: return emptyMap()
 
-    return helperOutput.split("\n").filter { it.isNotBlank() }.map {
-        val splitLine = it.split("\t")
 
-        val packageName = splitLine[0].trim()
-        val version = splitLine[1].trim()
+    // remove try-catch once #111 has been resolved
+    try {
+        return helperOutput.split("\n").filter { it.isNotBlank() }.map {
+            val splitLine = it.split("\t")
 
-        packageName to version
-    }.toMap()
+            val packageName = splitLine[0].trim()
+            val version = splitLine[1].trim()
+
+            packageName to version
+        }.toMap()
+    } catch(e: ArrayIndexOutOfBoundsException) {
+        throw RuntimeException("helper output was:\n" + helperOutput, e)
+    }
 }
