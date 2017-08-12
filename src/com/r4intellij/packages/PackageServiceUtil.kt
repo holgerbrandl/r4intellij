@@ -146,16 +146,18 @@ fun getInstalledPackageVersions(): Map<String, String> {
 
 
     // remove try-catch once #111 has been resolved
-    try {
-        return helperOutput.split("\n").filter { it.isNotBlank() }.map {
-            val splitLine = it.split("\t")
+    return helperOutput.split("\n").filter { it.isNotBlank() }.map {
+        val splitLine = it.split("\t")
 
+        try {
             val packageName = splitLine[0].trim()
             val version = splitLine[1].trim()
 
             packageName to version
-        }.toMap()
-    } catch(e: ArrayIndexOutOfBoundsException) {
-        throw RuntimeException("helper output was:\n" + helperOutput, e)
-    }
+        } catch(e: Throwable) {
+            throw RuntimeException("failed to split package-version in line '$it'.\n Helper output was:\n" + helperOutput, e)
+        }
+
+    }.toMap()
+
 }
