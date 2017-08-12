@@ -80,7 +80,7 @@ class DependencyTests : RTestCase() {
 
     fun testMissingImportInPipe() {
         createSkeletonLibrary("tibble", "magrittr", "datasets")
-        doExprTest("require(magrittr); iris %>% ${noImportWarning("glimpse", listOf("tibble", "dplyr"))}")
+        doExprTest("require(magrittr); iris %>% ${noImportWarning("glimpse", listOf("dplyr", "tibble"))}")
     }
 
 
