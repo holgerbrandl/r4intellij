@@ -283,14 +283,17 @@ public class ArgumentMatcher {
 
     private static String generateMissingArgErrorMessage(List<RParameter> parameters, int i) {
         String noDefaultMessage = " missing, with no default";
+
         if (i == parameters.size() - 1) {
             return "argument \'" + parameters.get(i).getText() + "\' is" + noDefaultMessage;
         }
+
         StringBuilder stringBuilder = new StringBuilder("arguments ");
         while (i < parameters.size()) {
             stringBuilder.append("\"").append(parameters.get(i).getText()).append("\"").append(", ");
             i++;
         }
+
         int length = stringBuilder.length();
         return stringBuilder.delete(length - 2, length - 1).append("are").append(noDefaultMessage).toString();
     }

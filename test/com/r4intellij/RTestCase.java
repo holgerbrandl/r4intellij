@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 
 import static com.r4intellij.RFileType.DOT_R_EXTENSION;
 import static com.r4intellij.packages.RSkeletonGenerator.DEFAULT_PACKAGES;
+import static com.r4intellij.packages.RSkeletonGenerator.SKELETON_DIR_NAME;
 
 public abstract class RTestCase extends UsefulTestCase {
 
@@ -150,17 +151,20 @@ public abstract class RTestCase extends UsefulTestCase {
 
 
         // recreate global skeleton library with just elements of interest
+        // add sub-directory to mimic actuall production setup
+
         File skelTempDir;
         try {
-            skelTempDir = Files.createTempDirectory("r4j_test_lib").toFile();
+            skelTempDir = new File(Files.createTempDirectory("r4j_test_lib").toFile(), SKELETON_DIR_NAME);
+            skelTempDir.mkdir();
         } catch (IOException e) {
             throw new RuntimeException();
         }
 
+
         skeletons.forEach(file -> {
             try {
                 Path skelFile = new File(file.getPath()).toPath();
-//              Files.copy(skelFile, skelTempDir.toPath());
                 Files.copy(skelFile, skelTempDir.toPath().resolve(skelFile.getFileName()));
 
             } catch (IOException e) {

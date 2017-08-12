@@ -98,9 +98,9 @@ class ResolverTest : AbstractResolverTest() {
         // we had a regression that the LHS was incorrectly considered as pipe-target.
         // This test should avoid it from happening again
 
-        createSkeletonLibrary("magrittr")
+        createBaseLibraryWith("magrittr")
         checkExpression("""
-        library(dplyr)
+        library(magrittr)
         names(iris) %>% make.unique(sep= "_")
         """)
     }

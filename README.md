@@ -10,11 +10,11 @@ For documentation and installation instructions see our **[project website](http
 Developer Info
 --------------
 
-Status of the last build:
+TravisCI: [![Build Status](https://travis-ci.org/holgerbrandl/r4intellij.svg?branch=master)](https://travis-ci.org/holgerbrandl/r4intellij)
 
-[![Build Status](https://travis-ci.org/holgerbrandl/r4intellij.svg?branch=master)](https://travis-ci.org/holgerbrandl/r4intellij) [TC Build Status](https://teamcity.jetbrains.com/project.html?projectId=IntellijIdeaPlugins_RLanguage&tab=projectOverview)
+ We also test on [TeamCity](https://teamcity.jetbrains.com/project.html?projectId=IntellijIdeaPlugins_RLanguage&tab=projectOverview)
 
-
+Docs
 * [Release History](Changes.md)
 * [Roadmap](misc/todo.md) 
 * [Development notes](misc/devel_notes.md) 
