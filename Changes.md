@@ -9,6 +9,7 @@ Version History
 
 * Added refresh trigger to missing package inspection
 * Improve function completion by adding round brackets: `base<caret>` -> `basename(<caret>)`
+* More informative feedback in case of indexing issues
 
 
 ## Changes in v1.0

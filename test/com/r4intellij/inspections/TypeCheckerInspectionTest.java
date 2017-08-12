@@ -59,7 +59,12 @@ public class TypeCheckerInspectionTest extends RInspectionTest {
     }
 
 
-    public void testIgnoreNamedTripleDotArgs() {
+    public void testIgnoreTripleDotForwarding() {
+        //
+        doExprTest("function(...) as.character(...)"); // b should not be tagged
+    }
+
+  public void testIgnoreNamedTripleDotArgs() {
         doExprTest("myfun=function(a, ...) a; myfun(23, b=4)"); // b should not be tagged
     }
 

@@ -25,6 +25,12 @@ public class UnusedParameterInspectionTest extends RInspectionTest {
     assertAllUsed("trainData <- iris; function(trainData){   trainData }");
   }
 
+  public void testDontFlagTripleArg(){
+    // this test is especially important since the resolver order and the detection of locality matter here
+    assertAllUsed("function(...) as.character('foo', ...)");
+  }
+
+
   @NotNull
   @Override
   Class<? extends RInspection> getInspection() {
