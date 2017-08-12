@@ -28,7 +28,7 @@ public class UnquotedArgsRule implements Serializable {
 
     // dplyr::count[... wt sort
     public static UnquotedArgsRule fromString(String stringifiedRule) {
-        Pattern logEntry = Pattern.compile("([A-z]*)::([A-z.][A-z0-9._]*)\\[(.*?)\\]");
+        Pattern logEntry = Pattern.compile("([A-z0-9]*)::([A-z.][A-z0-9._]*)\\[(.*?)\\]");
         Matcher matchPattern = logEntry.matcher(stringifiedRule);
 
         UnquotedArgsRule rule = new UnquotedArgsRule();
