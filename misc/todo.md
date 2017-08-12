@@ -1,6 +1,33 @@
 R4Intellij Development Notes
 =============================
 
+[TOC]: # ""
+
+- [0-day bugs](#0-day-bugs)
+- [Next Steps](#next-steps)
+- [v1.1](#v11)
+    - [new](#new)
+    - [bugs](#bugs)
+- [v1.2](#v12)
+- [Intentions & inspections](#intentions--inspections)
+    - [call arguments](#call-arguments)
+    - [best practices & coding style](#best-practices--coding-style)
+- [Note: technially certain assignment can evaluate to boolean](#note-technially-certain-assignment-can-evaluate-to-boolean)
+- [but this seems very bad practice and should be flagged as well](#but-this-seems-very-bad-practice-and-should-be-flagged-as-well)
+    - [dependency management](#dependency-management)
+    - [piping support](#piping-support)
+    - [Misc](#misc)
+- [Parser](#parser)
+- [Documentation provider](#documentation-provider)
+- [Formatter](#formatter)
+- [Completion Provider](#completion-provider)
+- [Refactorings](#refactorings)
+- [Rnotebook support](#rnotebook-support)
+- [Environment view](#environment-view)
+
+
+
+
 0-day bugs
 ----------
 
@@ -69,7 +96,7 @@ flyGeneInfoSlim = transmute(
 
 * fixme: renaming for loop variables is broken
 ```r
-for (name in packageNames) {
+for (name in c()) {
     if (paste(name, "r", sep=".") %in% list.files(path=args[1])) {
         next
     }
@@ -475,8 +502,8 @@ Rnotebook support
 packageNames =c(1,2,3)
 ```
 
-```r
-head(packageNames)
+```{r}
+# head(packageNames)
 ```
 
 * common pis accross chunks -> MultipleFilesPerDocumentFileViewProvider
