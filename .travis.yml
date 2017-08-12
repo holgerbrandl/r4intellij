@@ -12,7 +12,7 @@ install:
 
   ## install packages needed for testing
   - R -e 'chooseCRANmirror(graphics=FALSE, ind=10); install.packages("devtools")'
-  - R -e 'devtools::source_url("https://raw.githubusercontent.com/holgerbrandl/datautils/v1.38/R/core_commons.R"); load_pack(R.utils); load_pack(lubridate); load_pack(caret); load_pack(tidyverse)'
+  - R -e 'devtools::source_url("https://raw.githubusercontent.com/holgerbrandl/datautils/v1.38/R/core_commons.R"); load_pack(R.utils); load_pack(lubridate); load_pack(caret); load_pack(tidyverse); load_pack(mvtnorm);'
 
 
 

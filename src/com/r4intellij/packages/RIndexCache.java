@@ -11,16 +11,20 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.psi.PsiElement;
 import com.intellij.spellchecker.SpellCheckerManager;
 import com.intellij.spellchecker.dictionary.EditableDictionary;
 import com.r4intellij.RFileType;
 import com.r4intellij.psi.api.RFile;
+import com.r4intellij.psi.references.RResolver;
 import com.r4intellij.settings.RSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -81,6 +85,7 @@ public class RIndexCache {
 
 
     static Object loadObject(File f) {
+        // /Users/brandl/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2017.1/e6f4c74ac091e55d0ac4e2ad26d91c12a4f23592/ideaIC-2017.1/system/r_skeletons/1481726564/.libindex.dat
         try {
             FileInputStream fin = new FileInputStream(f);
             ObjectInputStream ois = new ObjectInputStream(fin);
@@ -128,7 +133,7 @@ public class RIndexCache {
         allPackages.removeAll(reindexed);
         allPackages.addAll(reindexed);
 
-        boolean changed = !reindexed.isEmpty() || cleanup();
+        boolean changed = !reindexed.isEmpty() || cleanup(project);
 
         if (changed) saveCache(project);
     }
@@ -158,7 +163,7 @@ public class RIndexCache {
     }
 
 
-    boolean cleanup() {
+    boolean cleanup(Project project) {
 //         val libraryTable = LibraryTablesRegistrar.getInstance().getLibraryTable(project)
 //         val library = libraryTable.getLibraryByName(LibraryUtil.R_SKELETONS)
 //
@@ -180,14 +185,28 @@ public class RIndexCache {
 //
 //
         // remove no longer present packages from index
+        String skeletonsDirURL = RResolver.getSkeletonLibrary(project).getRootProvider().getUrls(OrderRootType.CLASSES)[0];
+        File skeletonsDir = new File(toURL(skeletonsDirURL).getFile());
+//        String skeletonsDir = RSkeletonGenerator.getSkeletonsPath();
+
         List<RPackage> removed = allPackages.stream().filter(rPackage -> {
-            File skelFile = new File(RSkeletonGenerator.getSkeletonsPath(), rPackage.getName() + RFileType.DOT_R_EXTENSION);
+            File skelFile = new File(skeletonsDir, rPackage.getName() + RFileType.DOT_R_EXTENSION);
             return !skelFile.exists();
         }).collect(Collectors.toList());
 
         allPackages.removeAll(removed);
 
         return !removed.isEmpty();
+    }
+
+
+    @NotNull
+    private static URL toURL(String skeletonsDirURL) {
+        try {
+            return new URL(skeletonsDirURL);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 

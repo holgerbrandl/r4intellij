@@ -74,7 +74,7 @@ fun rebuildIndex(project: Project) {
 
 
     if (updateTitles.isEmpty()) {
-        // referesh cache as well here to also clear deleted packages
+        // refresh cache as well here to also clear deleted packages
         indexCache.replaceAndCleanup(Lists.newArrayList(), project)
         return
     }

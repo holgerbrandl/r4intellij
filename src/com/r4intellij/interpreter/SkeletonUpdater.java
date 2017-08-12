@@ -31,8 +31,8 @@ public class SkeletonUpdater implements StartupActivity {
         // Create additional library for user user code
         // make sure that library and skeltons are attached to all modules
 //         TODO move into post-project-create section to prevent recreation of module on startup
-        LibraryUtil.createLibrary(LibraryUtil.R_LIBRARY, Lists.newArrayList(), project, false);
-        LibraryUtil.createLibrary(LibraryUtil.R_SKELETONS, Lists.newArrayList(), project, true);
+        LibraryUtil.createLibrary(project, LibraryUtil.R_LIBRARY, Lists.newArrayList(), false);
+        LibraryUtil.createLibrary(project, LibraryUtil.R_SKELETONS, Lists.newArrayList(), true);
 
         if (!RSettings.hasInterpreter()) {
             Notifications.Bus.notify(new Notification("R Language Support",

@@ -28,7 +28,7 @@ public class LibraryUtil {
 //    public static final String USER_SKELETONS = "R User Skeletons";
 
 
-    public static void createLibrary(final String libraryName, @NotNull final List<String> paths, @NotNull final Project project, final boolean isGlobal) {
+    public static void createLibrary(@NotNull final Project project, final String libraryName, @NotNull final List<String> paths, final boolean isGlobal) {
         ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -95,13 +95,12 @@ public class LibraryUtil {
     }
 
 
-    private static void detachLibrary(final Project project, final String libraryName) {
+    public static void detachLibrary(final Project project, final String libraryName, final boolean isGlobal) {
         final ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                boolean isGlobal = false;
                 LibraryTable.ModifiableModel model = isGlobal ?
                         LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel() :
                         modelsProvider.getLibraryTableModifiableModel(project);

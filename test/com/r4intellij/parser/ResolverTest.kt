@@ -15,7 +15,7 @@ import com.r4intellij.psi.api.RReferenceExpression
 class ResolverTest : AbstractResolverTest() {
 
     fun testResolveFunctionWithoutCall() {
-        addPckgsToSkeletonLibrary("dplyr")
+        createBaseLibraryWith("dplyr")
 
         checkExpression("require(dplyr); glimpse")
     }

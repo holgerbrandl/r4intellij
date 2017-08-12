@@ -34,8 +34,10 @@ class DependencyTests : RTestCase() {
 
 
     fun testPackageDataWithoutImport() {
+        createBaseLibraryWith("dplyr", "ggplot2");
+
         // should be be captured by import inspection
-        doExprTest(noImportWarning("nasa", listOf("dplyr", "GGally")))
+        doExprTest(noImportWarning("nasa", listOf("dplyr")))
     }
 
 
@@ -46,12 +48,12 @@ class DependencyTests : RTestCase() {
 
 
     fun testTransitiveDependencies() {
-        addPckgsToSkeletonLibrary("caret", "ggplot2");
+        createBaseLibraryWith("caret", "ggplot2");
         doExprTest("require(caret); ggplot(iris)")
     }
 
     fun testResolveCorrectFilter() {
-        addPckgsToSkeletonLibrary("dplyr");
+        createBaseLibraryWith("dplyr");
         doExprTest("require(dplyr); filter(iris)")
 
         // make sure that this is resolved to dplyr::filter and not stats::filter
@@ -79,18 +81,19 @@ class DependencyTests : RTestCase() {
     }
 
     fun testMissingImportInPipe() {
-        createSkeletonLibrary("tibble", "magrittr", "datasets")
+        createSkeletonLibrary("dplyr", "tibble", "magrittr", "datasets")
         doExprTest("require(magrittr); iris %>% ${noImportWarning("glimpse", listOf("dplyr", "tibble"))}")
     }
 
 
     fun testResolveNamespaceCall() {
-        addPckgsToSkeletonLibrary("dplyr")
+        createBaseLibraryWith("dplyr")
         doExprTest("dplyr::group_by(iris)")
     }
 
     fun testMissingOperatorImport() {
-        addPckgsToSkeletonLibrary("dplyr") // we use the rexported version here to see if its picked up correctly
+        createBaseLibraryWith("dplyr") // we use the rexported version here to see if its picked up correctly
+        //        createSkeletonLibrary("datasets", "base", "utils", "dplyr")
 
         // note: re-exporting packages are not listed intentionally, because origin should be preferred over reexport
         doExprTest("iris ${noImportWarning("%>%", listOf("dplyr"))} head")

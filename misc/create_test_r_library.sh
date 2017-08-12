@@ -22,6 +22,7 @@ load_pack(R.utils)
 load_pack(lubridate)
 load_pack(caret)
 load_pack(tidyverse)
+load_pack(mvtnorm)
 EOF
 
 

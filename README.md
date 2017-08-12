@@ -4,14 +4,16 @@ R Language support for Intellij IDEA
 
 This project provides an integration of R, which is a language for statistical computing and graphics, into [Intellij IDEA](http://jetbrains.com). It aims to bring the best language for data mining and modeling in touch with the best IDE. 
 
-
-Status of the last build: <img src="https://teamcity.jetbrains.com/app/rest/builds/buildType:(id:IntellijIdeaPlugins_RLanguage_Build)/statusIcon"/>
-
 For documentation and installation instructions see our **[project website](http://holgerbrandl.github.io/r4intellij)**
 
 
 Developer Info
 --------------
+
+Status of the last build:
+
+[![Build Status](https://travis-ci.org/holgerbrandl/r4intellij.svg?branch=master)](https://travis-ci.org/holgerbrandl/r4intellij) [TC Build Status](https://teamcity.jetbrains.com/project.html?projectId=IntellijIdeaPlugins_RLanguage&tab=projectOverview)
+
 
 * [Release History](Changes.md)
 * [Roadmap](misc/todo.md) 
