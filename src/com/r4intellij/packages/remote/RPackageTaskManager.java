@@ -212,7 +212,7 @@ public class RPackageTaskManager {
         protected List<ExecutionException> runTask(@NotNull ProgressIndicator indicator) {
             final List<ExecutionException> exceptions = new ArrayList<ExecutionException>();
             try {
-                RepoUtils.updatePackage(myPackage);
+                RepoUtils.updatePackage(myPackage, RepoUtils.R_UPDATE_PACKAGE);
             } catch (ExecutionException e) {
                 exceptions.add(e);
             }

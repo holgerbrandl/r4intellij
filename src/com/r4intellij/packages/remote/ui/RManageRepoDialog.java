@@ -23,7 +23,7 @@ import java.util.List;
 
 public class RManageRepoDialog extends DialogWrapper {
     private JPanel myMainPanel;
-    private CheckBoxList myList;
+    private CheckBoxList<RRepository> myList;
     private int currentCRANMirror;
     private RPackageManagementService myController;
 
@@ -52,8 +52,9 @@ public class RManageRepoDialog extends DialogWrapper {
         for (RDefaultRepository repository : repositories) {
             myList.addItem(repository, repository.getUrl(), service.enabledRepositories.contains(repository.getUrl()));
         }
+
         for (String repository : service.userRepositories) {
-            myList.addItem(repository, repository, true);
+            myList.addItem(new RRepository(repository), repository, true);
         }
     }
 
@@ -98,17 +99,14 @@ public class RManageRepoDialog extends DialogWrapper {
                         }
                     }
                 })
-                .setRemoveAction(new AnActionButtonRunnable() {
-                    @Override
-                    public void run(AnActionButton button) {
-                        RPackageService service = RPackageService.getInstance();
-                        final int index = myList.getSelectedIndex();
-                        final String selected = (String) myList.getItemAt(index);
-                        if (selected != null && service.userRepositories.contains(selected)) {
-                            service.userRepositories.remove(selected);
-                        }
-                        reloadList();
+                .setRemoveAction(button -> {
+                    RPackageService service = RPackageService.getInstance();
+                    final int index = myList.getSelectedIndex();
+                    final RRepository selected = myList.getItemAt(index);
+                    if (selected != null && service.userRepositories.contains(selected.getUrl())) {
+                        service.userRepositories.remove(selected.getUrl());
                     }
+                    reloadList();
                 })
                 .setRemoveActionUpdater(event -> {
                     final int index = myList.getSelectedIndex();

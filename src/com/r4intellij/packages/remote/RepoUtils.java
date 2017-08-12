@@ -46,7 +46,7 @@ public class RepoUtils {
     private static final PluginResourceFile R_ALL_PACKAGES = new PluginResourceFile("r-packages/r-packages-all.r");
 
     private static final PluginResourceFile R_INSTALL_PACKAGE = new PluginResourceFile("r-packages/r-packages-install.r");
-    private static final PluginResourceFile R_UPDATE_PACKAGE = new PluginResourceFile("r-packages/r-packages-update.r");
+    public static final PluginResourceFile R_UPDATE_PACKAGE = new PluginResourceFile("r-packages/r-packages-update.r");
     private static final PluginResourceFile R_PACKAGES_DETAILS = new PluginResourceFile("r-packages/r-packages-details.r");
 
     private static final Pattern urlPattern = Pattern.compile("\".+\"");
@@ -205,32 +205,26 @@ public class RepoUtils {
 
     static void installPackage(@NotNull RepoPackage repoPackage)
             throws ExecutionException {
-        List<String> args = getHelperRepositoryArguments();
-        args.add(0, repoPackage.getName());
-        final RHelperUtil.RRunResult result = RHelperUtil.runHelperWithArgs(R_INSTALL_PACKAGE, args.toArray(new String[args.size()]));
-        if (result == null) {
-            throw new ExecutionException("Please, specify path to the R executable.");
-        }
-        final String stderr = result.getStdErr();
-        if (!stderr.contains(String.format("DONE (%s)", repoPackage.getName()))) {
-            throw new RExecutionException("Some error during the installation", result.getCommand(), result.getStdOut(), result.getStdErr(),
-                    result.getExitCode());
-        }
+        updatePackage(repoPackage, R_INSTALL_PACKAGE);
     }
 
 
-    static void updatePackage(@NotNull RepoPackage repoPackage)
+    static void updatePackage(@NotNull RepoPackage repoPackage, PluginResourceFile updateHelper)
             throws ExecutionException {
         List<String> args = getHelperRepositoryArguments();
         args.add(0, repoPackage.getName());
-        final RHelperUtil.RRunResult result = RHelperUtil.runHelperWithArgs(R_UPDATE_PACKAGE, args.toArray(new String[args.size()]));
+
+        final RHelperUtil.RRunResult result = RHelperUtil.runHelperWithArgs(updateHelper, args.toArray(new String[args.size()]));
+
         if (result == null) {
             throw new ExecutionException("Please, specify path to the R executable.");
         }
-        final String stderr = result.getStdErr();
-        if (!stderr.contains(String.format("DONE (%s)", repoPackage.getName()))) {
-            throw new RExecutionException("Some error during the installation", result.getCommand(), result.getStdOut(), result.getStdErr(),
-                    result.getExitCode());
+
+//        final String stderr = result.getStdErr();
+//        if (!stderr.contains(String.format("DONE (%s)", repoPackage.getName()))) {
+        if (result.getExitCode() != 0) {
+            throw new RExecutionException("Some error during the installation",
+                    result.getCommand(), result.getStdOut(), result.getStdErr(), result.getExitCode());
         }
     }
 
