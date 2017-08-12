@@ -1,16 +1,17 @@
-## Create a R setup that contains all packages required for running the r4ij unit test suite
+## Create and maintain R setup that contains all packages required for running the r4ij unit test suite
 
-## clone R
+
+########################################################################################################################
+## re-establish base installation with test packages
+
 cd /Library/Frameworks/R.framework/Versions/3.4/Resources
-#rm -rf library_work
-mv library library_work
-mv library library_r4intellij
-mkdir library
 
-## re-establish base packages
 cd library_work
-cp -r stats  stats4 graphics grDevices utils datasets grid methods base tcltk tools parallel splines ../library
-cp -r compiler ../library
+rm -rf library
+mkdir library
+cd library_work
+cp -r stats  stats4 graphics grDevices utils datasets grid methods base tcltk tools parallel splines compiler ../library
+
 
 Rscript - <<"EOF"
 chooseCRANmirror(graphics=FALSE, ind=10)
@@ -23,9 +24,6 @@ load_pack(caret)
 load_pack(tidyverse)
 EOF
 
-#cd /Library/Frameworks/R.framework/Versions/3.4_devel/Resources/library
-#cd /Library/Frameworks/R.framework/Versions/3.4_devel
-#./R
 
 ## backup this library for later
 cp -rf library library_r4intellij
@@ -34,9 +32,14 @@ cp -rf library library_r4intellij
 cd /Library/Frameworks/R.framework/Versions/3.4/Resources
 tar -zcvf minimal_r_library.tar.gz library_r4intellij
 
+########################################################################################################################
+## switch between libraries
 
-## switch to a library
 cd /Library/Frameworks/R.framework/Versions/3.4/Resources
+
 sudo rm -rf library
 sudo cp -rf library_work library
 sudo cp -rf library_r4intellij library
+
+
+# TODO automate skeleton creation here and update test-resources accordingly
