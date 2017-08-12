@@ -275,7 +275,7 @@ who <- tidyr::who		## World Health Organization TB data
 
 .skeleton_package_title = "Easily Tidy Data with 'spread()' and 'gather()' Functions"
 
-.skeleton_package_version = "0.6.1"
+.skeleton_package_version = "0.6.3"
 
 .skeleton_package_depends = ""
 

@@ -430,7 +430,7 @@ UseMethod("na.contiguous")
 
 line <- function (x, y = NULL) 
 {
-    xy <- xy.coords(x, y)
+    xy <- xy.coords(x, y, setLab = FALSE)
     ok <- complete.cases(xy$x, xy$y)
     Call <- sys.call()
     structure(.Call(C_tukeyline, as.double(xy$x[ok]), as.double(xy$y[ok]), 
@@ -541,7 +541,11 @@ UseMethod("drop1")
 
 rbeta <- function (n, shape1, shape2, ncp = 0) 
 {
-    if (ncp == 0) 
+    if (is.na(ncp)) {
+        warning("NAs produced")
+        rep(NaN, n)
+    }
+    else if (ncp == 0) 
         .Call(C_rbeta, n, shape1, shape2)
     else {
         X <- rchisq(n, 2 * shape1, ncp = ncp)
@@ -1885,23 +1889,23 @@ integrate <- function (f, lower, upper, ..., subdivisions = 100L, rel.tol = .Mac
             as.double(rel.tol), limit = limit)
     }
     else {
-        if (is.na(lower) || is.na(upper)) 
-            stop("a limit is missing")
+        if (anyNA(lower) || anyNA(upper)) 
+            stop("a limit is NA or NaN")
         if (is.finite(lower)) {
-            inf <- 1
+            inf <- 1L
             bound <- lower
         }
         else if (is.finite(upper)) {
-            inf <- -1
+            inf <- -1L
             bound <- upper
         }
         else {
-            inf <- 2
+            inf <- 2L
             bound <- 0
         }
         wk <- .External(C_call_dqagi, ff, rho = environment(), 
-            as.double(bound), as.integer(inf), as.double(abs.tol), 
-            as.double(rel.tol), limit = limit)
+            as.double(bound), inf, as.double(abs.tol), as.double(rel.tol), 
+            limit = limit)
     }
     res <- wk[c("value", "abs.error", "subdivisions")]
     res$message <- switch(wk$ierr + 1L, "OK", "maximum number of subdivisions reached", 
@@ -1971,10 +1975,10 @@ runmed <- function (x, k, endrule = c("median", "keep", "constant"), algorithm =
 {
     n <- as.integer(length(x))
     if (is.na(n)) 
-        stop("invalid value of length(x)")
+        stop(gettextf("invalid value of %s", "length(x)"), domain = NA)
     k <- as.integer(k)
     if (is.na(k)) 
-        stop("invalid value of 'k'")
+        stop(gettextf("invalid value of %s", "'k'"), domain = NA)
     if (k < 0L) 
         stop("'k' must be positive")
     if (k%%2L == 0L) 
@@ -2637,7 +2641,7 @@ splinefun <- function (x, y = NULL, method = c("fmm", "periodic", "natural",
     x <- x$x
     nx <- as.integer(length(x))
     if (is.na(nx)) 
-        stop("invalid value of length(x)")
+        stop(gettextf("invalid value of %s", "length(x)"), domain = NA)
     if (nx == 0) 
         stop("zero non-NA points")
     method <- match.arg(method)
@@ -2728,7 +2732,7 @@ influence.measures <- function (model)
     dfbetas <- infl$coefficients/outer(infl$sigma, sqrt(diag(xxi)))
     vn <- variable.names(model)
     vn[vn == "(Intercept)"] <- "1_"
-    colnames(dfbetas) <- paste("dfb", abbreviate(vn), sep = ".")
+    colnames(dfbetas) <- paste0("dfb.", abbreviate(vn))
     dffits <- e * sqrt(h)/(si * (1 - h))
     if (any(ii <- is.infinite(dffits))) 
         dffits[ii] <- NaN
@@ -3426,7 +3430,7 @@ spline <- function (x, y = NULL, n = 3 * length(x), method = "fmm", xmin = min(x
     x <- x$x
     nx <- as.integer(length(x))
     if (is.na(nx)) 
-        stop("invalid value of length(x)")
+        stop(gettextf("invalid value of %s", "length(x)"), domain = NA)
     if (nx == 0) 
         stop("zero non-NA points")
     if (method == 1L && y[1L] != y[nx]) {
@@ -3580,11 +3584,11 @@ aggregate.data.frame <- function (x, by, FUN, ..., simplify = TRUE, drop = TRUE)
     if (!is.list(by)) 
         stop("'by' must be a list")
     if (is.null(names(by)) && length(by)) 
-        names(by) <- paste("Group", seq_along(by), sep = ".")
+        names(by) <- paste0("Group.", seq_along(by))
     else {
         nam <- names(by)
         ind <- which(!nzchar(nam))
-        names(by)[ind] <- paste("Group", ind, sep = ".")
+        names(by)[ind] <- paste0("Group.", ind)
     }
     nrx <- NROW(x)
     if (any(lengths(by) != nrx)) 
@@ -3595,9 +3599,12 @@ aggregate.data.frame <- function (x, by, FUN, ..., simplify = TRUE, drop = TRUE)
     x <- x[keep, , drop = FALSE]
     nrx <- NROW(x)
     ident <- function(x) {
-        y <- as.integer(as.factor(x))
-        z <- gsub(" ", "0", format(y, scientific = FALSE))
-        return(z)
+        y <- as.factor(x)
+        l <- length(levels(y))
+        s <- as.character(seq_len(l))
+        n <- nchar(s)
+        levels(y) <- paste0(strrep("0", n[l] - n), s)
+        as.character(y)
     }
     grp <- if (ncol(y)) {
         grp <- lapply(rev(y), ident)
@@ -4115,7 +4122,8 @@ plot.ts <- function (x, y = NULL, plot.type = c("multiple", "single"), xy.labels
                   ylab = "", log = log, col = col, bg = bg, pch = pch, 
                   ann = ann, type = "n", ...)
                 panel(x[, i], col = col, bg = bg, pch = pch, 
-                  type = type, ...)
+                  cex = cex, lwd = lwd, lty = lty, type = type, 
+                  ...)
                 if (frame.plot) 
                   box(...)
                 y.side <- if (i%%2 || !yax.flip) 
@@ -4170,23 +4178,25 @@ plot.ts <- function (x, y = NULL, plot.type = c("multiple", "single"), xy.labels
             n <- length(xy$x)
             if (missing(xy.labels)) 
                 xy.labels <- (n <= 150)
-            if (!is.logical(xy.labels)) {
+            do.lab <- if (is.logical(xy.labels)) 
+                xy.labels
+            else {
                 if (!is.character(xy.labels)) 
                   stop("'xy.labels' must be logical or character")
-                do.lab <- TRUE
+                TRUE
             }
-            else do.lab <- xy.labels
-            dev.hold()
-            on.exit(dev.flush())
             ptype <- if (do.lab) 
                 "n"
             else if (missing(type)) 
                 "p"
             else type
+            dev.hold()
+            on.exit(dev.flush())
             plot.default(xy, type = ptype, xlab = xlab, ylab = ylab, 
                 xlim = xlim, ylim = ylim, log = log, col = col, 
-                bg = bg, pch = pch, axes = axes, frame.plot = frame.plot, 
-                ann = ann, main = main, ...)
+                bg = bg, pch = pch, cex = cex, lty = lty, lwd = lwd, 
+                axes = axes, frame.plot = frame.plot, ann = ann, 
+                main = main, ...)
             if (missing(xy.lines)) 
                 xy.lines <- do.lab
             if (do.lab) 
@@ -4210,10 +4220,10 @@ plot.ts <- function (x, y = NULL, plot.type = c("multiple", "single"), xy.labels
             k <- ncol(x)
             tx <- time(x)
             xy <- xy.coords(x = matrix(rep.int(tx, k), ncol = k), 
-                y = x, log = log)
+                y = x, log = log, setLab = FALSE)
             xy$x <- tx
         }
-        else xy <- xy.coords(x, NULL, log = log)
+        else xy <- xy.coords(x, NULL, log = log, setLab = FALSE)
         if (is.null(xlim)) 
             xlim <- range(xy$x)
         if (is.null(ylim)) 
@@ -4225,11 +4235,13 @@ plot.ts <- function (x, y = NULL, plot.type = c("multiple", "single"), xy.labels
                 col = col[(i - 1L)%%length(col) + 1L], lty = lty[(i - 
                   1L)%%length(lty) + 1L], lwd = lwd[(i - 1L)%%length(lwd) + 
                   1L], bg = bg[(i - 1L)%%length(bg) + 1L], pch = pch[(i - 
-                  1L)%%length(pch) + 1L], type = type)
+                  1L)%%length(pch) + 1L], cex = cex[(i - 1L)%%length(cex) + 
+                  1L], type = type)
         }
         else {
             lines.default(xy$x, x, col = col[1L], bg = bg, lty = lty[1L], 
-                lwd = lwd[1L], pch = pch[1L], type = type)
+                lwd = lwd[1L], pch = pch[1L], cex = cex[1L], 
+                type = type)
         }
         if (ann) 
             title(main = main, xlab = xlab, ylab = ylab, ...)
@@ -5380,7 +5392,7 @@ bw.ucv <- function (x, nb = 1000L, lower = 0.1 * hmax, upper = hmax, tol = 0.1 *
         stop("invalid 'nb'")
     storage.mode(x) <- "double"
     hmax <- 1.144 * sqrt(var(x)) * n^(-1/5)
-    Z <- .Call(C_bw_den, nb, x)
+    Z <- bw_pair_cnts(x, nb, n > nb/2)
     d <- Z[[1L]]
     cnt <- Z[[2L]]
     fucv <- function(h) .Call(C_bw_ucv, n, d, cnt, h)
@@ -5780,12 +5792,13 @@ filter <- function (x, filter, method = c("convolution", "recursive"),
     xtsp <- tsp(x)
     n <- as.integer(NROW(x))
     if (is.na(n)) 
-        stop("invalid value of nrow(x)", domain = NA)
+        stop(gettextf("invalid value of %s", "NROW(x)"), domain = NA)
     nser <- NCOL(x)
     filter <- as.double(filter)
     nfilt <- as.integer(length(filter))
-    if (is.na(n)) 
-        stop("invalid value of length(filter)", domain = NA)
+    if (is.na(nfilt)) 
+        stop(gettextf("invalid value of %s", "length(filter)"), 
+            domain = NA)
     if (anyNA(filter)) 
         stop("missing values in 'filter'")
     if (method == "convolution") {
@@ -6743,7 +6756,7 @@ step <- function (object, scope, scale = 0, direction = c("both", "backward",
             aod <- drop1(fit, scope$drop, scale = scale, trace = trace, 
                 k = k, ...)
             rn <- row.names(aod)
-            row.names(aod) <- c(rn[1L], paste("-", rn[-1L], sep = " "))
+            row.names(aod) <- c(rn[1L], paste("-", rn[-1L]))
             if (any(aod$Df == 0, na.rm = TRUE)) {
                 zdf <- aod$Df == 0 & !is.na(aod$Df)
                 change <- rev(rownames(aod)[zdf])[1L]
@@ -6754,8 +6767,7 @@ step <- function (object, scope, scale = 0, direction = c("both", "backward",
                 aodf <- add1(fit, scope$add, scale = scale, trace = trace, 
                   k = k, ...)
                 rn <- row.names(aodf)
-                row.names(aodf) <- c(rn[1L], paste("+", rn[-1L], 
-                  sep = " "))
+                row.names(aodf) <- c(rn[1L], paste("+", rn[-1L]))
                 aod <- if (is.null(aod)) 
                   aodf
                 else rbind(aod, aodf[-1, , drop = FALSE])
@@ -7156,7 +7168,7 @@ bw.bcv <- function (x, nb = 1000L, lower = 0.1 * hmax, upper = hmax, tol = 0.1 *
         stop("invalid 'nb'")
     storage.mode(x) <- "double"
     hmax <- 1.144 * sqrt(var(x)) * n^(-1/5)
-    Z <- .Call(C_bw_den, nb, x)
+    Z <- bw_pair_cnts(x, nb, n > nb/2)
     d <- Z[[1L]]
     cnt <- Z[[2L]]
     fbcv <- function(h) .Call(C_bw_bcv, n, d, cnt, h)
@@ -7271,18 +7283,19 @@ hclust <- function (d, method = "complete", members = NULL)
 }
 
 
-smooth.spline <- function (x, y = NULL, w = NULL, df, spar = NULL, cv = FALSE, 
-    all.knots = FALSE, nknots = .nknots.smspl, keep.data = TRUE, 
+smooth.spline <- function (x, y = NULL, w = NULL, df, spar = NULL, lambda = NULL, 
+    cv = FALSE, all.knots = FALSE, nknots = .nknots.smspl, keep.data = TRUE, 
     df.offset = 0, penalty = 1, control.spar = list(), tol = 1e-06 * 
-        IQR(x)) 
+        IQR(x), keep.stuff = FALSE) 
 {
     contr.sp <- list(low = -1.5, high = 1.5, tol = 1e-04, eps = 2e-08, 
         maxit = 500, trace = getOption("verbose"))
     contr.sp[names(control.spar)] <- control.spar
-    if (!all(sapply(contr.sp[1:4], is.numeric)) || contr.sp$tol < 
+    ctrl.Num <- contr.sp[1:4]
+    if (!all(vapply(ctrl.Num, is.numeric, NA)) || contr.sp$tol < 
         0 || contr.sp$eps <= 0 || contr.sp$maxit <= 0) 
         stop("invalid 'control.spar'")
-    xy <- xy.coords(x, y)
+    xy <- xy.coords(x, y, setLab = FALSE)
     y <- xy$y
     x <- xy$x
     if (!all(is.finite(c(x, y)))) 
@@ -7290,8 +7303,9 @@ smooth.spline <- function (x, y = NULL, w = NULL, df, spar = NULL, cv = FALSE,
     n <- length(x)
     if (is.na(n)) 
         stop("invalid number of points")
-    w <- if (is.null(w)) 
-        rep_len(1, n)
+    no.wgts <- is.null(w)
+    w <- if (no.wgts) 
+        1
     else {
         if (n != length(w)) 
             stop("lengths of 'x' and 'w' must match")
@@ -7303,6 +7317,8 @@ smooth.spline <- function (x, y = NULL, w = NULL, df, spar = NULL, cv = FALSE,
     }
     if (!is.finite(tol) || tol <= 0) 
         stop("'tol' must be strictly positive and finite")
+    if (!match(keep.stuff, c(FALSE, TRUE))) 
+        stop("invalid 'keep.stuff'")
     xx <- round((x - mean(x))/tol)
     nd <- !duplicated(xx)
     ux <- sort(x[nd])
@@ -7320,9 +7336,11 @@ smooth.spline <- function (x, y = NULL, w = NULL, df, spar = NULL, cv = FALSE,
             sapply(X = unname(split(X, INDEX)), FUN = FUN, ..., 
                 simplify = simplify, USE.NAMES = FALSE)
         }
-        tmp <- matrix(unlist(tapply1(seq_len(n), ox, function(i, 
-            y, w) c(sum(w[i]), sum(w[i] * y[i]), sum(w[i] * y[i]^2)), 
-            y = y, w = w), use.names = FALSE), ncol = 3, byrow = TRUE)
+        tmp <- matrix(unlist(tapply1(seq_len(n), ox, if (length(w) == 
+            1L) 
+            function(i) c(length(i), sum(y[i]), sum(y[i]^2))
+        else function(i) c(sum(w[i]), sum(w[i] * y[i]), sum(w[i] * 
+            y[i]^2))), use.names = FALSE), ncol = 3, byrow = TRUE)
     }
     wbar <- tmp[, 1L]
     ybar <- tmp[, 2L]/ifelse(wbar > 0, wbar, 1)
@@ -7334,33 +7352,54 @@ smooth.spline <- function (x, y = NULL, w = NULL, df, spar = NULL, cv = FALSE,
         warning("cross-validation with non-unique 'x' values seems doubtful")
     r.ux <- ux[nx] - ux[1L]
     xbar <- (ux - ux[1L])/r.ux
-    if (all.knots) {
+    if (is.numeric(all.knots)) {
+        if (is.unsorted(all.knots, strictly = TRUE)) 
+            stop("Numeric 'all.knots' must be strictly increasing")
         if (!missing(nknots) && !is.null(nknots)) 
-            warning("'all.knots' is TRUE; 'nknots' specification is disregarded")
-        nknots <- nx
+            warning("'all.knots' is vector of knots; 'nknots' specification is disregarded")
+        nknots <- length(all.knots)
+        if (0 < all.knots[1] || all.knots[nknots] < 1) 
+            stop("numeric 'all.knots' must cover [0,1] (= the transformed data-range)")
+        knot <- c(rep(all.knots[1], 3), all.knots, rep(all.knots[nknots], 
+            3))
     }
-    else if (is.null(nknots)) 
-        nknots <- .nknots.smspl(nx)
     else {
-        if (is.function(nknots)) 
-            nknots <- nknots(nx)
-        else if (!is.numeric(nknots)) 
-            stop("'nknots' must be numeric (in {1,..,n})")
-        if (nknots < 1) 
-            stop("'nknots' must be at least 1")
-        else if (nknots > nx) 
-            stop("cannot use more inner knots than unique 'x' values")
+        if (all.knots) {
+            if (!missing(nknots) && !is.null(nknots)) 
+                warning("'all.knots' is TRUE; 'nknots' specification is disregarded")
+            nknots <- nx
+        }
+        else if (is.null(nknots)) 
+            nknots <- .nknots.smspl(nx)
+        else {
+            if (is.function(nknots)) 
+                nknots <- nknots(nx)
+            else if (!is.numeric(nknots)) 
+                stop("'nknots' must be numeric (in {1,..,n})")
+            if (nknots < 1) 
+                stop("'nknots' must be at least 1")
+            else if (nknots > nx) 
+                stop("cannot use more inner knots than unique 'x' values")
+        }
+        knot <- c(rep(xbar[1], 3), if (all.knots) xbar else xbar[seq.int(1, 
+            nx, length.out = nknots)], rep(xbar[nx], 3))
     }
-    knot <- c(rep(xbar[1], 3), if (all.knots) xbar else xbar[seq.int(1, 
-        nx, length.out = nknots)], rep(xbar[nx], 3))
     nk <- nknots + 2L
-    ispar <- if (is.null(spar) || missing(spar)) {
+    spar.is.lambda <- !missing(lambda)
+    if (spar.is.lambda <- !missing(lambda)) {
+        if (!missing(spar)) 
+            stop("must not specify both 'spar' and 'lambda'")
+        ispar <- 1L
+    }
+    else ispar <- if (is.null(spar) || missing(spar)) {
         if (contr.sp$trace) 
             -1L
         else 0L
     }
     else 1L
-    spar <- if (ispar == 1L) 
+    spar <- if (spar.is.lambda) 
+        as.double(lambda)
+    else if (ispar == 1L) 
         as.double(spar)
     else double(1)
     if (length(spar) != 1) 
@@ -7379,18 +7418,17 @@ smooth.spline <- function (x, y = NULL, w = NULL, df, spar = NULL, cv = FALSE,
         else warning("not using invalid df; must have 1 < df <= n := #{unique x} = ", 
             nx)
     }
-    iparms <- c(icrit = icrit, ispar = ispar, iter = as.integer(contr.sp$maxit))
-    keep.stuff <- FALSE
+    iparms <- c(icrit = icrit, ispar = ispar, iter = as.integer(contr.sp$maxit), 
+        spar.is.lambda)
     ans.names <- c("coef", "ty", "lev", "spar", "parms", "crit", 
         "iparms", "ier", if (keep.stuff) "scratch")
     fit <- .Fortran(C_rbart, as.double(penalty), as.double(dofoff), 
         x = as.double(xbar), y = as.double(ybar), w = as.double(wbar), 
         ssw = as.double(yssw), as.integer(nx), as.double(knot), 
         as.integer(nk), coef = double(nk), ty = double(nx), lev = double(if (is.na(cv)) 1L else nx), 
-        crit = double(1), iparms = iparms, spar = spar, parms = unlist(contr.sp[1:4]), 
-        scratch = double(17L * nk + 1L), ld4 = 4L, ldnk = 1L, 
-        ier = integer(1L))[ans.names]
-    stopifnot(identical(wbar, tmp[, 1]))
+        crit = double(1), iparms = iparms, spar = spar, parms = c(unlist(ctrl.Num), 
+            ratio = -1), scratch = double((17L + 1L) * nk + 1L), 
+        ld4 = 4L, ldnk = 1L, ier = integer(1L))[ans.names]
     if (is.na(cv)) 
         lev <- df <- NA
     else {
@@ -7400,11 +7438,13 @@ smooth.spline <- function (x, y = NULL, w = NULL, df, spar = NULL, cv = FALSE,
             stop("NA lev[]; probably smoothing parameter 'spar' way too large!")
     }
     if (fit$ier > 0L) {
-        sml <- fit$spar < 0.5
-        wtxt <- paste("smoothing parameter value too", if (sml) 
+        offKind <- if (spar.is.lambda) 
+            "extreme"
+        else if (sml <- fit$spar < 0.5) 
             "small"
-        else "large")
-        if (sml) {
+        else "large"
+        wtxt <- paste("smoothing parameter value too", offKind)
+        if (spar.is.lambda || sml) {
             stop(wtxt)
         }
         else {
@@ -7415,25 +7455,34 @@ smooth.spline <- function (x, y = NULL, w = NULL, df, spar = NULL, cv = FALSE,
     }
     cv.crit <- if (is.na(cv)) 
         NA
-    else if (cv) {
-        ww <- wbar
-        ww[!(ww > 0)] <- 1
-        weighted.mean(((y - fit$ty[ox])/(1 - (lev[ox] * w)/ww[ox]))^2, 
-            w)
+    else {
+        r <- y - fit$ty[ox]
+        if (cv) {
+            ww <- wbar
+            ww[ww == 0] <- 1
+            r <- r/(1 - (lev[ox] * w)/ww[ox])
+            if (no.wgts) 
+                mean(r^2)
+            else weighted.mean(r^2, w)
+        }
+        else (if (no.wgts) 
+            mean(r^2)
+        else weighted.mean(r^2, w))/(1 - (df.offset + penalty * 
+            df)/n)^2
     }
-    else weighted.mean((y - fit$ty[ox])^2, w)/(1 - (df.offset + 
-        penalty * df)/n)^2
-    pen.crit <- sum(wbar * (ybar - fit$ty)^2)
-    fit.object <- list(knot = knot, nk = nk, min = ux[1L], range = r.ux, 
-        coef = fit$coef)
-    class(fit.object) <- "smooth.spline.fit"
-    object <- list(x = ux, y = fit$ty, w = wbar, yin = ybar, 
-        data = if (keep.data) list(x = x, y = y, w = w), lev = lev, 
-        cv.crit = cv.crit, pen.crit = pen.crit, crit = fit$crit, 
-        df = df, spar = fit$spar, lambda = unname(fit$parms["low"]), 
-        iparms = fit$iparms, fit = fit.object, call = match.call())
-    class(object) <- "smooth.spline"
-    object
+    structure(list(x = ux, y = fit$ty, w = wbar, yin = ybar, 
+        tol = tol, data = if (keep.data) list(x = x, y = y, w = w), 
+        no.weights = no.wgts, lev = lev, cv.crit = cv.crit, pen.crit = sum(wbar * 
+            (ybar - fit$ty)^2), crit = fit$crit, df = df, spar = if (spar.is.lambda) NA else fit$spar, 
+        ratio = if (spar.is.lambda) NA else fit$parms[["ratio"]], 
+        lambda = fit$parms[["low"]], iparms = c(fit$iparms, errorI = if (fit$ier) fit$ier else NA), 
+        auxM = if (keep.stuff) list(XWy = fit$scratch[seq_len(nk)], 
+            XWX = fit$scratch[nk + seq_len(4 * nk)], Sigma = fit$scratch[5 * 
+                nk + seq_len(4 * nk)], R = fit$scratch[9 * nk + 
+                seq_len(4 * nk)]), fit = structure(list(knot = knot, 
+            nk = nk, min = ux[1L], range = r.ux, coef = fit$coef), 
+            class = "smooth.spline.fit"), call = match.call()), 
+        class = "smooth.spline")
 }
 
 
@@ -7618,7 +7667,7 @@ UseMethod("sortedXyData")
 
 lowess <- function (x, y = NULL, f = 2/3, iter = 3L, delta = 0.01 * diff(range(x))) 
 {
-    xy <- xy.coords(x, y)
+    xy <- xy.coords(x, y, setLab = FALSE)
     o <- order(xy$x)
     x <- as.double(xy$x[o])
     list(x = x, y = .Call(C_lowess, x, as.double(xy$y[o]), f, 
@@ -7916,7 +7965,7 @@ residuals <- function (object, ...)
 UseMethod("residuals")
 
 
-median <- function (x, na.rm = FALSE) 
+median <- function (x, na.rm = FALSE, ...) 
 UseMethod("median")
 
 
@@ -8299,10 +8348,9 @@ bw.SJ <- function (x, nb = 1000L, lower = 0.1 * hmax, upper = hmax, method = c("
         stop("invalid 'nb'")
     storage.mode(x) <- "double"
     method <- match.arg(method)
-    fSD <- function(h) (c1/SDh(alph2 * h^(5/7)))^(1/5) - h
     SDh <- function(h) .Call(C_bw_phi4, n, d, cnt, h)
     TDh <- function(h) .Call(C_bw_phi6, n, d, cnt, h)
-    Z <- .Call(C_bw_den, nb, x)
+    Z <- bw_pair_cnts(x, nb, n > nb/2)
     d <- Z[[1L]]
     cnt <- Z[[2L]]
     scale <- min(sd(x), IQR(x)/1.349)
@@ -8322,6 +8370,8 @@ bw.SJ <- function (x, nb = 1000L, lower = 0.1 * hmax, upper = hmax, method = c("
         if (!is.finite(alph2)) 
             stop("sample is too sparse to find alph2", domain = NA)
         itry <- 1L
+        fSD <- function(h) (c1/SDh(alph2 * h^(5/7)))^(1/5) - 
+            h
         while (fSD(lower) * fSD(upper) > 0) {
             if (itry > 99L || !bnd.Miss) 
                 stop("no solution in the specified range of bandwidths")
@@ -8548,6 +8598,10 @@ rf <- function (n, df1, df2, ncp)
 {
     if (missing(ncp)) 
         .Call(C_rf, n, df1, df2)
+    else if (is.na(ncp)) {
+        warning("NAs produced")
+        rep(NaN, n)
+    }
     else (rchisq(n, df1, ncp = ncp)/df1)/(rchisq(n, df2)/df2)
 }
 
@@ -8623,7 +8677,7 @@ kernapply <- function (x, ...)
     if (is.character(x)) 
         return("character")
     if (is.matrix(x) && is.numeric(x)) 
-        return(paste("nmatrix", ncol(x), sep = "."))
+        return(paste0("nmatrix.", ncol(x)))
     if (is.numeric(x)) 
         return("numeric")
     return("other")
@@ -8749,7 +8803,7 @@ cmdscale <- function (d, k = 2, eig = FALSE, add = FALSE, x.ret = FALSE,
     }
     n <- as.integer(n)
     if (is.na(n) || n > 46340) 
-        stop("invalid value of 'n'")
+        stop(gettextf("invalid value of %s", "'n'"), domain = NA)
     if ((k <- as.integer(k)) > n - 1 || k < 1) 
         stop("'k' must be in {1, 2, ..  n - 1}")
     x <- .Call(C_DoubleCentre, x)
@@ -8882,6 +8936,10 @@ rt <- function (n, df, ncp)
 {
     if (missing(ncp)) 
         .Call(C_rt, n, df)
+    else if (is.na(ncp)) {
+        warning("NAs produced")
+        rep(NaN, n)
+    }
     else rnorm(n, ncp)/sqrt(rchisq(n, df)/df)
 }
 
@@ -8978,7 +9036,7 @@ qbinom <- function (p, size, prob, lower.tail = TRUE, log.p = FALSE)
 .Call(C_qbinom, p, size, prob, lower.tail, log.p)
 
 
-median.default <- function (x, na.rm = FALSE) 
+median.default <- function (x, na.rm = FALSE, ...) 
 {
     if (is.factor(x) || is.data.frame(x)) 
         stop("need numeric data")
@@ -9508,10 +9566,12 @@ terms.formula <- function (x, specials = NULL, abb = NULL, data = NULL, neg.out 
 
 
 supsmu <- function (x, y, wt = rep(1, n), span = "cv", periodic = FALSE, 
-    bass = 0) 
+    bass = 0, trace = FALSE) 
 {
     if (span == "cv") 
         span <- 0
+    else if (span < 0 || span > 1) 
+        stop("'span' must be between 0 and 1.")
     n <- length(y)
     if (!n || !is.numeric(y)) 
         stop("'y' must be numeric vector")
@@ -9519,8 +9579,6 @@ supsmu <- function (x, y, wt = rep(1, n), span = "cv", periodic = FALSE,
         stop("number of observations in 'x' and 'y' must match.")
     if (length(wt) != n) 
         stop("number of weights must match number of observations.")
-    if (span < 0 || span > 1) 
-        stop("'span' must be between 0 and 1.")
     if (periodic) {
         iper <- 2L
         xrange <- range(x)
@@ -9539,7 +9597,7 @@ supsmu <- function (x, y, wt = rep(1, n), span = "cv", periodic = FALSE,
         warning(sprintf(ngettext(diff, "%d observation with NA, NaN or Inf deleted", 
             "%d observations with NAs, NaNs and/or Infs deleted"), 
             diff), domain = NA)
-    .Fortran(C_setsmu)
+    .Fortran(C_setsmu, as.integer(trace))
     smo <- .Fortran(C_supsmu, as.integer(leno), as.double(xo), 
         as.double(y[ord]), as.double(wt[ord]), as.integer(iper), 
         as.double(span), as.double(bass), smo = double(leno), 
@@ -10356,7 +10414,8 @@ UseMethod("biplot")
 
 
 xtabs <- function (formula = ~., data = parent.frame(), subset, sparse = FALSE, 
-    na.action, exclude = c(NA, NaN), drop.unused.levels = FALSE) 
+    na.action, addNA = FALSE, exclude = if (!addNA) c(NA, NaN), 
+    drop.unused.levels = FALSE) 
 {
     if (missing(formula) && missing(data)) 
         stop("must supply either 'formula' or 'data'")
@@ -10370,7 +10429,9 @@ xtabs <- function (formula = ~., data = parent.frame(), subset, sparse = FALSE,
     m <- match.call(expand.dots = FALSE)
     if (is.matrix(eval(m$data, parent.frame()))) 
         m$data <- as.data.frame(data)
-    m$... <- m$exclude <- m$drop.unused.levels <- m$sparse <- NULL
+    m$... <- m$exclude <- m$drop.unused.levels <- m$sparse <- m$addNA <- NULL
+    if (addNA && missing(na.action)) 
+        m$na.action <- quote(na.pass)
     m[[1L]] <- quote(stats::model.frame)
     mf <- eval(m, parent.frame())
     if (length(formula) == 2L) {
@@ -10389,19 +10450,26 @@ xtabs <- function (formula = ~., data = parent.frame(), subset, sparse = FALSE,
         else if (has.exclude) 
             u <- factor(as.character(u), levels = setdiff(levels(u), 
                 exclude), exclude = NULL)
+        if (addNA) 
+            u <- addNA(u, ifany = TRUE)
         u[, drop = drop.unused.levels]
     })
+    naAct <- if (!is.null(m$na.action)) 
+        m$na.action
+    else getOption("na.action", default = quote(na.omit))
+    na.rm <- identical(naAct, quote(na.omit)) || identical(naAct, 
+        na.omit) || identical(naAct, "na.omit")
     if (!sparse) {
         x <- if (is.null(y)) 
-            do.call("table", by)
+            table(by, dnn = names(by))
         else if (NCOL(y) == 1L) 
-            tapply(y, by, sum)
+            tapply(y, by, sum, na.rm = na.rm, default = 0L)
         else {
-            z <- lapply(as.data.frame(y), tapply, by, sum)
+            z <- lapply(as.data.frame(y), tapply, by, sum, na.rm = na.rm, 
+                default = 0L)
             array(unlist(z), dim = c(dim(z[[1L]]), length(z)), 
                 dimnames = c(dimnames(z[[1L]]), list(names(z))))
         }
-        x[is.na(x)] <- 0L
         class(x) <- c("xtabs", "table")
         attr(x, "call") <- match.call()
         x
@@ -10413,18 +10481,26 @@ xtabs <- function (formula = ~., data = parent.frame(), subset, sparse = FALSE,
         if (is.null(tryCatch(loadNamespace("Matrix"), error = function(e) NULL))) 
             stop(gettextf("%s needs package 'Matrix' correctly installed", 
                 "xtabs(*, sparse=TRUE)"), domain = NA)
-        if (length(i.ex <- unique(unlist(lapply(by, function(f) which(is.na(f))))))) 
+        if (length(i.ex <- unique(unlist(lapply(by, function(f) which(is.na(f))))))) {
             by <- lapply(by, `[`, -i.ex)
+            if (!is.null(y)) 
+                y <- y[-i.ex]
+        }
+        if (na.rm && !is.null(y) && any(isN <- is.na(y))) {
+            ok <- !isN
+            by <- lapply(by, `[`, ok)
+            y <- y[ok]
+        }
         rows <- by[[1L]]
         cols <- by[[2L]]
-        rl <- levels(rows)
-        cl <- levels(cols)
-        if (is.null(y)) 
-            y <- rep.int(1, length(rows))
-        methods::as(methods::new("dgTMatrix", i = as.integer(rows) - 
-            1L, j = as.integer(cols) - 1L, x = as.double(y), 
-            Dim = c(length(rl), length(cl)), Dimnames = list(rl, 
-                cl)), "CsparseMatrix")
+        dnms <- lapply(by, levels)
+        x <- if (is.null(y)) 
+            rep.int(1, length(rows))
+        else as.double(y)
+        methods::as(methods::new("dgTMatrix", x = x, Dimnames = dnms, 
+            i = as.integer(rows) - 1L, j = as.integer(cols) - 
+                1L, Dim = lengths(dnms, use.names = FALSE)), 
+            "CsparseMatrix")
     }
 }
 
@@ -10583,11 +10659,10 @@ summary.lm <- function (object, correlation = FALSE, symbolic.cor = FALSE,
     tval <- est/se
     ans <- z[c("call", "terms", if (!is.null(z$weights)) "weights")]
     ans$residuals <- r
-    ans$coefficients <- cbind(est, se, tval, 2 * pt(abs(tval), 
-        rdf, lower.tail = FALSE))
-    dimnames(ans$coefficients) <- list(names(z$coefficients)[Qr$pivot[p1]], 
-        c("Estimate", "Std. Error", "t value", "Pr(>|t|)"))
-    ans$aliased <- is.na(coef(object))
+    ans$coefficients <- cbind(Estimate = est, `Std. Error` = se, 
+        `t value` = tval, `Pr(>|t|)` = 2 * pt(abs(tval), rdf, 
+            lower.tail = FALSE))
+    ans$aliased <- is.na(z$coefficients)
     ans$sigma <- sqrt(resvar)
     ans$df <- c(p, rdf, NCOL(Qr$qr))
     if (p != attr(z$terms, "intercept")) {
@@ -11064,7 +11139,7 @@ reshape <- function (data, varying = NULL, v.names = NULL, timevar = "time",
         if (any(ll != ll[1L])) 
             stop("'varying' arguments must be the same length")
         if (ll[1L] != length(times)) 
-            stop("'times' is wrong length")
+            stop("'lengths(varying)' must all match 'length(times)'")
         if (!is.null(drop)) {
             if (is.character(drop)) 
                 drop <- names(data) %in% drop
@@ -11075,47 +11150,29 @@ reshape <- function (data, varying = NULL, v.names = NULL, timevar = "time",
         undoInfo <- list(varying = varying, v.names = v.names, 
             idvar = idvar, timevar = timevar)
         if (length(idvar) > 1L) {
-            repeat ({
-                tempidname <- basename(tempfile("tempID"))
-                if (!(tempidname %in% names(data))) 
-                  break
-            })
-            data[, tempidname] <- interaction(data[, idvar], 
-                drop = TRUE)
-            idvar <- tempidname
-            drop.idvar <- TRUE
+            ids <- interaction(data[, idvar], drop = TRUE)
         }
-        else drop.idvar <- FALSE
+        else if (idvar %in% names(data)) {
+            ids <- data[, idvar]
+        }
         d <- data
         all.varying <- unlist(varying)
         d <- d[, !(names(data) %in% all.varying), drop = FALSE]
-        d[, timevar] <- times[1L]
         if (is.null(v.names)) 
-            v.names <- unlist(lapply(varying, function(x) x[1L]))
-        for (i in seq_along(v.names)) d[, v.names[i]] <- data[, 
-            varying[[i]][1L]]
-        if (!(idvar %in% names(data))) 
-            d[, idvar] <- ids
-        rval <- d
-        if (length(times) == 1L) {
-            if (drop.idvar) 
-                rval[, idvar] <- NULL
-            return(rval)
-        }
-        if (is.null(new.row.names)) 
-            row.names(rval) <- paste(d[, idvar], times[1L], sep = ".")
-        else row.names(rval) <- new.row.names[1L:NROW(rval)]
-        for (i in 2L:length(times)) {
+            v.names <- vapply(varying, `[`, 1L, FUN.VALUE = character(1L))
+        rval <- do.call(rbind, lapply(seq_along(times), function(i) {
             d[, timevar] <- times[i]
-            for (j in seq_along(v.names)) d[, v.names[j]] <- data[, 
-                varying[[j]][i]]
+            varying.i <- vapply(varying, `[`, i, FUN.VALUE = character(1L))
+            d[, v.names] <- data[, varying.i]
             if (is.null(new.row.names)) 
-                row.names(d) <- paste(d[, idvar], times[i], sep = ".")
-            else row.names(d) <- new.row.names[NROW(rval) + 1L:NROW(d)]
-            rval <- rbind(rval, d)
+                row.names(d) <- paste(ids, times[i], sep = ".")
+            else row.names(d) <- new.row.names[(i - 1L) * NROW(d) + 
+                1L:NROW(d)]
+            d
+        }))
+        if (length(idvar) == 1L && !(idvar %in% names(data))) {
+            rval[, idvar] <- ids
         }
-        if (drop.idvar) 
-            rval[, idvar] <- NULL
         attr(rval, "reshapeLong") <- undoInfo
         return(rval)
     }
@@ -11272,7 +11329,7 @@ density.default <- function (x, bw = "nrd0", adjust = 1, kernel = c("gaussian",
     }
     N <- nx <- as.integer(length(x))
     if (is.na(N)) 
-        stop("invalid value of length(x)")
+        stop(gettextf("invalid value of %s", "length(x)"), domain = NA)
     x.finite <- is.finite(x)
     if (any(!x.finite)) {
         x <- x[x.finite]
@@ -12142,7 +12199,7 @@ kmeans <- function (x, centers, iter.max = 10L, nstart = 1L, algorithm = c("Hart
     }
     k <- as.integer(k)
     if (is.na(k)) 
-        stop("'invalid value of 'k'")
+        stop(gettextf("invalid value of %s", "'k'"), domain = NA)
     if (k == 1L) 
         nmeth <- 3L
     iter.max <- as.integer(iter.max)
@@ -12234,9 +12291,9 @@ rexp <- function (n, rate = 1)
 printCoefmat <- function (x, digits = max(3L, getOption("digits") - 2L), signif.stars = getOption("show.signif.stars"), 
     signif.legend = signif.stars, dig.tst = max(1L, min(5L, digits - 
         1L)), cs.ind = 1:k, tst.ind = k + 1, zap.ind = integer(), 
-    P.values = NULL, has.Pvalue = nc >= 4 && substr(colnames(x)[nc], 
-        1, 3) == "Pr(", eps.Pvalue = .Machine$double.eps, na.print = "NA", 
-    ...) 
+    P.values = NULL, has.Pvalue = nc >= 4L && substr(colnames(x)[nc], 
+        1L, 3L) %in% c("Pr(", "p-v"), eps.Pvalue = .Machine$double.eps, 
+    na.print = "NA", ...) 
 {
     if (is.null(d <- dim(x)) || length(d) != 2L) 
         stop("'x' must be coefficient matrix/data frame")
@@ -12936,13 +12993,11 @@ read.ftable <- function (file, sep = "", quote = "\"", row.var.names, col.vars,
             col.vars <- lapply(col.vars, as.character)
             n.col.vars <- length(col.vars)
             if (is.null(names(col.vars))) 
-                names(col.vars) <- paste("Factor", seq_along(col.vars), 
-                  sep = ".")
+                names(col.vars) <- paste0("Factor.", seq_along(col.vars))
             else {
                 nam <- names(col.vars)
                 ind <- which(!nzchar(nam))
-                names(col.vars)[ind] <- paste("Factor", ind, 
-                  sep = ".")
+                names(col.vars)[ind] <- paste0("Factor.", ind)
             }
         }
     }
@@ -13278,7 +13333,7 @@ dlogis <- function (x, location = 0, scale = 1, log = FALSE)
 
 .skeleton_package_title = "The R Stats Package"
 
-.skeleton_package_version = "3.3.0"
+.skeleton_package_version = "3.4.0"
 
 .skeleton_package_depends = ""
 

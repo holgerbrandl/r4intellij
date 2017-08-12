@@ -6,9 +6,17 @@
 
 knit_print.trunc_mat <- function (x, options) 
 {
-    summary <- format_summary(x)
+    header <- format_header(x)
+    if (length(header) > 0L) {
+        header[names2(header) != ""] <- paste0(names2(header), 
+            ": ", header)
+        summary <- header
+    }
+    else {
+        summary <- character()
+    }
     kable <- knitr::kable(x$table, row.names = FALSE)
-    extra <- format_extra(x)
+    extra <- format_footer(x)
     if (length(extra) > 0) {
         extra <- wrap("(", collapse(extra), ")", width = x$width)
     }
@@ -35,11 +43,18 @@ add_column <- function (.data, ..., .before = NULL, .after = NULL)
         return(.data)
     }
     if (nrow(df) != nrow(.data)) {
-        stopc("Expected ", nrow(.data), " rows, got ", nrow(df))
+        if (nrow(df) == 1) {
+            df <- df[rep(1L, nrow(.data)), ]
+        }
+        else {
+            stopc("`.data` must have ", nrow(.data), pluralise_n(" row(s)", 
+                nrow(.data)), ", not ", nrow(df))
+        }
     }
     extra_vars <- intersect(names(df), names(.data))
     if (length(extra_vars) > 0) {
-        stopc("Columns already in data frame: ", format_n(extra_vars))
+        stopc(pluralise_msg("Column(s) ", extra_vars), pluralise(" already exist[s]", 
+            extra_vars))
     }
     pos <- pos_from_before_after_names(.before, .after, colnames(.data))
     if (pos <= 0L) {
@@ -58,28 +73,8 @@ add_column <- function (.data, ..., .before = NULL, .after = NULL)
 
 lst_ <- function (xs) 
 {
-    n <- length(xs)
-    if (n == 0) 
-        return(list())
-    col_names <- names2(xs)
-    missing_names <- col_names == ""
-    if (any(missing_names)) {
-        deparse2 <- function(x) paste(deparse(x$expr, 500L), 
-            collapse = "")
-        defaults <- vapply(xs[missing_names], deparse2, character(1), 
-            USE.NAMES = FALSE)
-        col_names[missing_names] <- defaults
-    }
-    output <- vector("list", n)
-    names(output) <- character(n)
-    for (i in seq_len(n)) {
-        res <- lazyeval::lazy_eval(xs[[i]], output)
-        if (!is.null(res)) {
-            output[[i]] <- res
-        }
-        names(output)[i] <- col_names[[i]]
-    }
-    output
+    xs <- compat_lazy_dots(xs, caller_env())
+    lst(!(!(!xs)))
 }
 
 
@@ -92,7 +87,7 @@ is.tibble <- function (x)
 trunc_mat <- function (x, n = NULL, width = NULL, n_extra = NULL) 
 {
     rows <- nrow(x)
-    if (is.null(n)) {
+    if (is_null(n)) {
         if (is.na(rows) || rows > tibble_opt("print_max")) {
             n <- tibble_opt("print_min")
         }
@@ -106,7 +101,15 @@ trunc_mat <- function (x, n = NULL, width = NULL, n_extra = NULL)
     shrunk <- shrink_mat(df, width, rows, n, star = has_rownames(x))
     trunc_info <- list(width = width, rows_total = rows, rows_min = nrow(df), 
         n_extra = n_extra, summary = tbl_sum(x))
-    structure(c(shrunk, trunc_info), class = "trunc_mat")
+    structure(c(shrunk, trunc_info), class = c(paste0("trunc_mat_", 
+        class(x)), "trunc_mat"))
+}
+
+
+set_tidy_names <- function (x, syntactic = FALSE, quiet = FALSE) 
+{
+    new_names <- tidy_names(names2(x), syntactic, quiet)
+    set_names(x, new_names)
 }
 
 
@@ -119,15 +122,10 @@ as_tibble <- function (x, ...)
 rownames_to_column <- function (df, var = "rowname") 
 {
     stopifnot(is.data.frame(df))
-    if (has_name(df, var)) 
-        stopc("There is a column named ", var, " already!")
-    rn <- tibble(rownames(df))
-    names(rn) <- var
-    attribs <- attributes(df)
-    new_df <- c(rn, df)
-    attribs[["names"]] <- names(new_df)
-    attributes(new_df) <- attribs[names(attribs) != "row.names"]
-    attr(new_df, "row.names") <- .set_row_names(nrow(df))
+    if (has_name(df, var)) {
+        stopc("Column `", var, "` already exists")
+    }
+    new_df <- add_column(df, `:=`(!(!(var)), rownames(df)), .before = 1)
     new_df
 }
 
@@ -138,9 +136,21 @@ has_rownames <- function (df)
 }
 
 
+tibble_ <- function (xs) 
+{
+    as_tibble(lst_(xs))
+}
+
+
 as_data_frame <- function (x, ...) 
 {
     UseMethod("as_data_frame")
+}
+
+
+as.tibble <- function (x, ...) 
+{
+    UseMethod("as_tibble")
 }
 
 
@@ -148,96 +158,43 @@ is_vector_s3 <- function (x)
 UseMethod("is_vector_s3")
 
 
-tibble_ <- function (xs) 
-{
-    as_tibble(lst_(xs))
-}
-
-
 add_row <- function (.data, ..., .before = NULL, .after = NULL) 
 {
+    if (inherits(.data, "grouped_df")) {
+        stop("Can't add rows to grouped data frames", call. = FALSE)
+    }
     df <- tibble(...)
     attr(df, "row.names") <- .set_row_names(max(1L, nrow(df)))
     extra_vars <- setdiff(names(df), names(.data))
     if (length(extra_vars) > 0) {
-        stopc("This row would add new variables: ", format_n(extra_vars))
+        stopc(pluralise_msg("Can't add row with new variable(s) ", 
+            extra_vars))
     }
     missing_vars <- setdiff(names(.data), names(df))
-    df[missing_vars] <- lapply(.data[missing_vars], na_value)
+    df[missing_vars] <- map(.data[missing_vars], na_value)
     df <- df[names(.data)]
     pos <- pos_from_before_after(.before, .after, nrow(.data))
-    if (pos <= 0L) {
-        out <- rbind(df, .data)
-    }
-    else if (pos >= nrow(.data)) {
-        out <- rbind(.data, df)
-    }
-    else {
-        indexes <- seq_len(pos)
-        out <- rbind(.data[indexes, ], df, .data[-indexes, ])
-    }
+    out <- rbind_at(.data, df, pos)
     set_class(remove_rownames(out), class(.data))
 }
 
 
 tribble <- function (...) 
 {
-    dots <- list(...)
-    frame_names <- character()
-    i <- 1
-    while (TRUE) {
-        if (i > length(dots)) {
-            out <- rep(list(logical()), length(frame_names))
-            names(out) <- frame_names
-            return(as_tibble(out))
-        }
-        el <- dots[[i]]
-        if (!is.call(el)) 
-            break
-        if (!identical(el[[1]], as.name("~"))) 
-            break
-        if (length(el) != 2) {
-            stopc("expected a column name with a single argument; e.g. '~ name'")
-        }
-        candidate <- el[[2]]
-        if (!(is.symbol(candidate) || is.character(candidate))) {
-            stopc("expected a symbol or string denoting a column name")
-        }
-        frame_names <- c(frame_names, as.character(el[[2]]))
-        i <- i + 1
-    }
-    if (!length(frame_names)) {
-        stopc("no column names detected in 'tribble()' call")
-    }
-    frame_rest <- dots[i:length(dots)]
-    n_elements <- length(frame_rest)
-    frame_ncol <- length(frame_names)
-    if (n_elements%%frame_ncol != 0) {
-        stopc(sprintf("invalid 'tribble()' specification: had %s elements and %s columns", 
-            n_elements, frame_ncol))
-    }
-    frame_mat <- matrix(frame_rest, ncol = frame_ncol, byrow = TRUE)
-    frame_col <- lapply(seq_len(ncol(frame_mat)), function(i) {
-        col <- frame_mat[, i]
-        if (any(vapply(col, needs_list_col, logical(1L)))) {
-            col
-        }
-        else {
-            unlist(col)
-        }
-    })
-    names(frame_col) <- frame_names
-    as_tibble(frame_col)
+    data <- extract_frame_data_from_dots(...)
+    turn_frame_data_into_tibble(data$frame_names, data$frame_rest)
 }
 
 
 column_to_rownames <- function (df, var = "rowname") 
 {
     stopifnot(is.data.frame(df))
-    if (has_rownames(df)) 
-        stopc("This data frame already has row names.")
-    if (!has_name(df, var)) 
-        stopc("This data frame has no column named ", var, ".")
+    if (has_rownames(df)) {
+        stopc("`df` already has row names")
+    }
+    if (!has_name(df, var)) {
+        stopc("Column `num2` not found")
+    }
     rownames(df) <- df[[var]]
     df[[var]] <- NULL
     df
@@ -252,58 +209,14 @@ glimpse <- function (x, width = NULL, ...)
 
 frame_data <- function (...) 
 {
-    dots <- list(...)
-    frame_names <- character()
-    i <- 1
-    while (TRUE) {
-        if (i > length(dots)) {
-            out <- rep(list(logical()), length(frame_names))
-            names(out) <- frame_names
-            return(as_tibble(out))
-        }
-        el <- dots[[i]]
-        if (!is.call(el)) 
-            break
-        if (!identical(el[[1]], as.name("~"))) 
-            break
-        if (length(el) != 2) {
-            stopc("expected a column name with a single argument; e.g. '~ name'")
-        }
-        candidate <- el[[2]]
-        if (!(is.symbol(candidate) || is.character(candidate))) {
-            stopc("expected a symbol or string denoting a column name")
-        }
-        frame_names <- c(frame_names, as.character(el[[2]]))
-        i <- i + 1
-    }
-    if (!length(frame_names)) {
-        stopc("no column names detected in 'tribble()' call")
-    }
-    frame_rest <- dots[i:length(dots)]
-    n_elements <- length(frame_rest)
-    frame_ncol <- length(frame_names)
-    if (n_elements%%frame_ncol != 0) {
-        stopc(sprintf("invalid 'tribble()' specification: had %s elements and %s columns", 
-            n_elements, frame_ncol))
-    }
-    frame_mat <- matrix(frame_rest, ncol = frame_ncol, byrow = TRUE)
-    frame_col <- lapply(seq_len(ncol(frame_mat)), function(i) {
-        col <- frame_mat[, i]
-        if (any(vapply(col, needs_list_col, logical(1L)))) {
-            col
-        }
-        else {
-            unlist(col)
-        }
-    })
-    names(frame_col) <- frame_names
-    as_tibble(frame_col)
+    data <- extract_frame_data_from_dots(...)
+    turn_frame_data_into_tibble(data$frame_names, data$frame_rest)
 }
 
 
 enframe <- function (x, name = "name", value = "value") 
 {
-    if (is.null(names(x))) {
+    if (is_null(names(x))) {
         df <- tibble(seq_along(x), x)
     }
     else {
@@ -311,6 +224,17 @@ enframe <- function (x, name = "name", value = "value")
     }
     names(df) <- c(name, value)
     df
+}
+
+
+tidy_names <- function (name, syntactic = FALSE, quiet = FALSE) 
+{
+    name[is.na(name)] <- ""
+    orig_name <- name
+    name <- make_syntactic(name, syntactic)
+    name <- append_pos(name)
+    describe_tidying(orig_name, name, quiet)
+    name
 }
 
 
@@ -322,8 +246,27 @@ data_frame <- function (...)
 
 lst <- function (...) 
 {
-    lst_(lazyeval::lazy_dots(...))
+    xs <- quos(..., .named = 500L)
+    n <- length(xs)
+    if (n == 0) {
+        return(list())
+    }
+    col_names <- names2(xs)
+    output <- list_len(n)
+    names(output) <- character(n)
+    for (i in seq_len(n)) {
+        res <- eval_tidy(xs[[i]], output)
+        if (!is_null(res)) {
+            output[[i]] <- res
+        }
+        names(output)[i] <- col_names[[i]]
+    }
+    output
 }
+
+
+tbl_sum <- function (x) 
+UseMethod("tbl_sum", x)
 
 
 data_frame_ <- function (xs) 
@@ -332,11 +275,30 @@ data_frame_ <- function (xs)
 }
 
 
-tbl_sum <- function (x) 
-UseMethod("tbl_sum", x)
+rowid_to_column <- function (df, var = "rowid") 
+{
+    stopifnot(is.data.frame(df))
+    if (has_name(df, var)) {
+        stopc("Column `", var, "` already exists")
+    }
+    new_df <- add_column(df, `:=`(!(!(var)), seq_len(nrow(df))), 
+        .before = 1)
+    new_df
+}
 
 
-has_name <- assertthat::has_name # re-exported from assertthat package
+has_name <- function (x, name) 
+rlang::has_name(x, name)
+
+
+deframe <- function (x) 
+{
+    value <- x[[2L]]
+    name <- x[[1L]]
+    names(value) <- name
+    value
+}
+
 
 remove_rownames <- function (df) 
 {
@@ -353,7 +315,14 @@ repair_names <- function (x, prefix = "V", sep = "")
         return(x)
     }
     new_names <- make_unique(names2(x), prefix = prefix, sep = sep)
-    setNames(x, new_names)
+    set_names(x, new_names)
+}
+
+
+frame_matrix <- function (...) 
+{
+    data <- extract_frame_data_from_dots(...)
+    turn_frame_data_into_frame_matrix(data$frame_names, data$frame_rest)
 }
 
 
@@ -380,11 +349,11 @@ is_tibble <- function (x)
 
 .skeleton_package_title = "Simple Data Frames"
 
-.skeleton_package_version = "1.2"
+.skeleton_package_version = "1.3.3"
 
 .skeleton_package_depends = ""
 
-.skeleton_package_imports = "methods,utils,lazyeval,Rcpp"
+.skeleton_package_imports = "methods,rlang,Rcpp,utils"
 
 
 ## Internal

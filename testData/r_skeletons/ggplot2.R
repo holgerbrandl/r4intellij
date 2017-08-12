@@ -51,9 +51,10 @@ scale_colour_hue <- function (..., h = c(0, 360) + 15, c = 100, l = 65, h.start 
 }
 
 
-scale_size_datetime <- function () 
+scale_size_datetime <- function (..., range = c(1, 6)) 
 {
-    scale_size_continuous(trans = "time")
+    datetime_scale("size", "time", palette = area_pal(range), 
+        ...)
 }
 
 
@@ -142,11 +143,11 @@ scale_y_datetime <- function (name = waiver(), breaks = waiver(), date_breaks = 
     date_minor_breaks = waiver(), timezone = NULL, limits = NULL, 
     expand = waiver(), position = "left") 
 {
-    scale_datetime(c("y", "ymin", "ymax", "yend"), "time", name = name, 
-        breaks = breaks, date_breaks = date_breaks, labels = labels, 
-        date_labels = date_labels, minor_breaks = minor_breaks, 
+    datetime_scale(c("y", "ymin", "ymax", "yend"), "time", name = name, 
+        palette = identity, breaks = breaks, date_breaks = date_breaks, 
+        labels = labels, date_labels = date_labels, minor_breaks = minor_breaks, 
         date_minor_breaks = date_minor_breaks, timezone = timezone, 
-        limits = limits, expand = expand, position = position)
+        guide = "none", limits = limits, expand = expand, position = position)
 }
 
 
@@ -172,9 +173,11 @@ geom_map <- function (mapping = NULL, data = NULL, stat = "identity", ...,
 
 GeomTile <- "<environment>"
 
-scale_fill_date <- function () 
+scale_fill_date <- function (..., low = "#132B43", high = "#56B1F7", space = "Lab", 
+    na.value = "grey50", guide = "colourbar") 
 {
-    scale_fill_continuous(trans = "date")
+    datetime_scale("fill", "date", palette = seq_gradient_pal(low, 
+        high, space), na.value = na.value, guide = guide, ...)
 }
 
 
@@ -189,14 +192,16 @@ geom_area <- function (mapping = NULL, data = NULL, stat = "identity", position 
 
 StatSummaryBin <- "<environment>"
 
-theme_bw <- function (base_size = 11, base_family = "") 
+theme_bw <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
 {
-    theme_grey(base_size = base_size, base_family = base_family) %+replace% 
+    theme_grey(base_size = base_size, base_family = base_family, 
+        base_line_size = base_line_size, base_rect_size = base_rect_size) %+replace% 
         theme(panel.background = element_rect(fill = "white", 
             colour = NA), panel.border = element_rect(fill = NA, 
             colour = "grey20"), panel.grid.major = element_line(colour = "grey92"), 
             panel.grid.minor = element_line(colour = "grey92", 
-                size = 0.25), strip.background = element_rect(fill = "grey85", 
+                size = rel(0.5)), strip.background = element_rect(fill = "grey85", 
                 colour = "grey20"), legend.key = element_rect(fill = "white", 
                 colour = NA), complete = TRUE)
 }
@@ -338,6 +343,61 @@ annotate <- function (geom, x = NULL, y = NULL, xmin = NULL, xmax = NULL,
 }
 
 
+theme_test <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
+{
+    half_line <- base_size/2
+    theme(line = element_line(colour = "black", size = base_line_size, 
+        linetype = 1, lineend = "butt"), rect = element_rect(fill = "white", 
+        colour = "black", size = base_rect_size, linetype = 1), 
+        text = element_text(family = base_family, face = "plain", 
+            colour = "black", size = base_size, lineheight = 0.9, 
+            hjust = 0.5, vjust = 0.5, angle = 0, margin = margin(), 
+            debug = FALSE), axis.line = element_blank(), axis.line.x = NULL, 
+        axis.line.y = NULL, axis.text = element_text(size = rel(0.8), 
+            colour = "grey30"), axis.text.x = element_text(margin = margin(t = 0.8 * 
+            half_line/2), vjust = 1), axis.text.x.top = element_text(margin = margin(b = 0.8 * 
+            half_line/2), vjust = 0), axis.text.y = element_text(margin = margin(r = 0.8 * 
+            half_line/2), hjust = 1), axis.text.y.right = element_text(margin = margin(l = 0.8 * 
+            half_line/2), hjust = 0), axis.ticks = element_line(colour = "grey20"), 
+        axis.ticks.length = unit(half_line/2, "pt"), axis.title.x = element_text(margin = margin(t = half_line), 
+            vjust = 1), axis.title.x.top = element_text(margin = margin(b = half_line), 
+            vjust = 0), axis.title.y = element_text(angle = 90, 
+            margin = margin(r = half_line), vjust = 1), axis.title.y.right = element_text(angle = -90, 
+            margin = margin(l = half_line), vjust = 0), legend.background = element_rect(colour = NA), 
+        legend.spacing = unit(0.4, "cm"), legend.spacing.x = NULL, 
+        legend.spacing.y = NULL, legend.margin = margin(0, 0, 
+            0, 0, "cm"), legend.key = element_rect(fill = "white", 
+            colour = NA), legend.key.size = unit(1.2, "lines"), 
+        legend.key.height = NULL, legend.key.width = NULL, legend.text = element_text(size = rel(0.8)), 
+        legend.text.align = NULL, legend.title = element_text(hjust = 0), 
+        legend.title.align = NULL, legend.position = "right", 
+        legend.direction = NULL, legend.justification = "center", 
+        legend.box = NULL, legend.box.margin = margin(0, 0, 0, 
+            0, "cm"), legend.box.background = element_blank(), 
+        legend.box.spacing = unit(0.4, "cm"), panel.background = element_rect(fill = "white", 
+            colour = NA), panel.border = element_rect(fill = NA, 
+            colour = "grey20"), panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(), panel.spacing = unit(half_line, 
+            "pt"), panel.spacing.x = NULL, panel.spacing.y = NULL, 
+        panel.ontop = FALSE, strip.background = element_rect(fill = "grey85", 
+            colour = "grey20"), strip.text = element_text(colour = "grey10", 
+            size = rel(0.8)), strip.text.x = element_text(margin = margin(t = half_line, 
+            b = half_line)), strip.text.y = element_text(angle = -90, 
+            margin = margin(l = half_line, r = half_line)), strip.placement = "inside", 
+        strip.placement.x = NULL, strip.placement.y = NULL, strip.switch.pad.grid = unit(0.1, 
+            "cm"), strip.switch.pad.wrap = unit(0.1, "cm"), plot.background = element_rect(colour = "white"), 
+        plot.title = element_text(size = rel(1.2), hjust = 0, 
+            vjust = 1, margin = margin(b = half_line * 1.2)), 
+        plot.subtitle = element_text(size = rel(0.9), hjust = 0, 
+            vjust = 1, margin = margin(b = half_line * 0.9)), 
+        plot.caption = element_text(size = rel(0.9), hjust = 1, 
+            vjust = 1, margin = margin(t = half_line * 0.9)), 
+        plot.margin = margin(half_line, half_line, half_line, 
+            half_line), complete = TRUE)
+}
+
+
 scale_shape <- function (..., solid = TRUE) 
 {
     discrete_scale("shape", "shape_d", shape_pal(solid), ...)
@@ -346,6 +406,12 @@ scale_shape <- function (..., solid = TRUE)
 
 last_plot <- function () 
 .store$get()
+
+
+merge_element <- function (new, old) 
+{
+    UseMethod("merge_element")
+}
 
 
 scale_colour_discrete <- function (..., h = c(0, 360) + 15, c = 100, l = 65, h.start = 0, 
@@ -359,8 +425,8 @@ scale_colour_discrete <- function (..., h = c(0, 360) + 15, c = 100, l = 65, h.s
 map_data <- function (map, region = ".", exact = FALSE, ...) 
 {
     try_require("maps", "map_data")
-    fortify(map(map, region, exact = exact, plot = FALSE, fill = TRUE, 
-        ...))
+    fortify(maps::map(map, region, exact = exact, plot = FALSE, 
+        fill = TRUE, ...))
 }
 
 
@@ -383,7 +449,22 @@ StatSummary <- "<environment>"
 
 StatYdensity <- "<environment>"
 
+coord_sf <- function (xlim = NULL, ylim = NULL, expand = TRUE, crs = NULL, 
+    datum = sf::st_crs(4326), ndiscr = 100) 
+{
+    ggproto(NULL, CoordSf, limits = list(x = xlim, y = ylim), 
+        datum = datum, crs = crs, ndiscr = ndiscr, expand = expand)
+}
+
+
 ScaleContinuous <- "<environment>"
+
+stat_summary2d <- function (...) 
+{
+    message("Please use stat_summary_2d() instead")
+    stat_summary_2d(...)
+}
+
 
 max_height <- function (grobs) 
 {
@@ -408,13 +489,6 @@ label_both <- function (labels, multi_line = TRUE, sep = ": ")
         out <- list(unname(unlist(out)))
     }
     out
-}
-
-
-stat_summary2d <- function (...) 
-{
-    message("Please use stat_summary_2d() instead")
-    stat_summary_2d(...)
 }
 
 
@@ -467,32 +541,24 @@ geom_density2d <- function (mapping = NULL, data = NULL, stat = "density2d", pos
 }
 
 
-median_hilow <- function (x, ...) 
-{
-    if (!requireNamespace("Hmisc", quietly = TRUE)) 
-        stop("Hmisc package required for this function", call. = FALSE)
-    fun <- getExportedValue("Hmisc", fun)
-    result <- do.call(fun, list(x = quote(x), ...))
-    plyr::rename(data.frame(t(result)), c(Median = "y", Mean = "y", 
-        Lower = "ymin", Upper = "ymax"), warn_missing = FALSE)
-}
-
-
 theme <- function (line, rect, text, title, aspect.ratio, axis.title, 
-    axis.title.x, axis.title.x.top, axis.title.y, axis.title.y.right, 
-    axis.text, axis.text.x, axis.text.x.top, axis.text.y, axis.text.y.right, 
-    axis.ticks, axis.ticks.x, axis.ticks.y, axis.ticks.length, 
-    axis.line, axis.line.x, axis.line.y, legend.background, legend.margin, 
-    legend.spacing, legend.spacing.x, legend.spacing.y, legend.key, 
-    legend.key.size, legend.key.height, legend.key.width, legend.text, 
-    legend.text.align, legend.title, legend.title.align, legend.position, 
-    legend.direction, legend.justification, legend.box, legend.box.just, 
-    legend.box.margin, legend.box.background, legend.box.spacing, 
-    panel.background, panel.border, panel.spacing, panel.spacing.x, 
-    panel.spacing.y, panel.grid, panel.grid.major, panel.grid.minor, 
-    panel.grid.major.x, panel.grid.major.y, panel.grid.minor.x, 
-    panel.grid.minor.y, panel.ontop, plot.background, plot.title, 
-    plot.subtitle, plot.caption, plot.margin, strip.background, 
+    axis.title.x, axis.title.x.top, axis.title.x.bottom, axis.title.y, 
+    axis.title.y.left, axis.title.y.right, axis.text, axis.text.x, 
+    axis.text.x.top, axis.text.x.bottom, axis.text.y, axis.text.y.left, 
+    axis.text.y.right, axis.ticks, axis.ticks.x, axis.ticks.x.top, 
+    axis.ticks.x.bottom, axis.ticks.y, axis.ticks.y.left, axis.ticks.y.right, 
+    axis.ticks.length, axis.line, axis.line.x, axis.line.x.top, 
+    axis.line.x.bottom, axis.line.y, axis.line.y.left, axis.line.y.right, 
+    legend.background, legend.margin, legend.spacing, legend.spacing.x, 
+    legend.spacing.y, legend.key, legend.key.size, legend.key.height, 
+    legend.key.width, legend.text, legend.text.align, legend.title, 
+    legend.title.align, legend.position, legend.direction, legend.justification, 
+    legend.box, legend.box.just, legend.box.margin, legend.box.background, 
+    legend.box.spacing, panel.background, panel.border, panel.spacing, 
+    panel.spacing.x, panel.spacing.y, panel.grid, panel.grid.major, 
+    panel.grid.minor, panel.grid.major.x, panel.grid.major.y, 
+    panel.grid.minor.x, panel.grid.minor.y, panel.ontop, plot.background, 
+    plot.title, plot.subtitle, plot.caption, plot.margin, strip.background, 
     strip.placement, strip.text, strip.text.x, strip.text.y, 
     strip.switch.pad.grid, strip.switch.pad.wrap, ..., complete = FALSE, 
     validate = TRUE) 
@@ -540,6 +606,17 @@ theme <- function (line, rect, text, title, aspect.ratio, axis.title,
     }
     structure(elements, class = c("theme", "gg"), complete = complete, 
         validate = validate)
+}
+
+
+median_hilow <- function (x, ...) 
+{
+    if (!requireNamespace("Hmisc", quietly = TRUE)) 
+        stop("Hmisc package required for this function", call. = FALSE)
+    fun <- getExportedValue("Hmisc", fun)
+    result <- do.call(fun, list(x = quote(x), ...))
+    plyr::rename(data.frame(t(result)), c(Median = "y", Mean = "y", 
+        Lower = "ymin", Upper = "ymax"), warn_missing = FALSE)
 }
 
 
@@ -632,10 +709,8 @@ ggplot_build <- function (plot)
         }
         out
     }
-    layout <- create_layout(plot$facet)
-    data <- layout$setup(layer_data, plot$data, plot$plot_env, 
-        plot$coordinates)
-    data <- layout$map(data)
+    layout <- create_layout(plot$facet, plot$coordinates)
+    data <- layout$setup(layer_data, plot$data, plot$plot_env)
     data <- by_layer(function(l, d) l$compute_aesthetics(d, plot))
     data <- lapply(data, scales_transform_df, scales = scales)
     scale_x <- function() scales$get_scales("x")
@@ -649,17 +724,18 @@ ggplot_build <- function (plot)
     data <- by_layer(function(l, d) l$compute_position(d, layout))
     layout$reset_scales()
     layout$train_position(data, scale_x(), scale_y())
+    layout$setup_panel_params()
     data <- layout$map_position(data)
     npscales <- scales$non_position_scales()
     if (npscales$n() > 0) {
         lapply(data, scales_train_df, scales = npscales)
         data <- lapply(data, scales_map_df, scales = npscales)
     }
-    layout$train_ranges(plot$coordinates)
     data <- by_layer(function(l, d) l$compute_geom_2(d))
     data <- by_layer(function(l, d) l$finish_statistics(d))
     data <- layout$finish_data(data)
-    list(data = data, layout = layout, plot = plot)
+    structure(list(data = data, layout = layout, plot = plot), 
+        class = "ggplot_built")
 }
 
 
@@ -677,11 +753,11 @@ aes_all <- function (vars)
 }
 
 
-scale_colour_continuous <- function (..., low = "#132B43", high = "#56B1F7", space = "Lab", 
-    na.value = "grey50", guide = "colourbar") 
+scale_colour_continuous <- function (..., type = getOption("ggplot2.continuous.colour", 
+    default = "gradient")) 
 {
-    continuous_scale("colour", "gradient", seq_gradient_pal(low, 
-        high, space), na.value = na.value, guide = guide, ...)
+    switch(type, gradient = scale_colour_gradient(...), viridis = scale_colour_viridis_c(...), 
+        stop("Unknown scale type", call. = FALSE))
 }
 
 
@@ -752,9 +828,29 @@ geom_abline <- function (mapping = NULL, data = NULL, ..., slope, intercept,
 }
 
 
+GeomSf <- "<environment>"
+
+scale_colour_viridis_c <- function (..., alpha = 1, begin = 0, end = 1, direction = 1, 
+    option = "D", values = NULL, space = "Lab", na.value = "grey50", 
+    guide = "colourbar") 
+{
+    continuous_scale("colour", "viridis_c", gradient_n_pal(viridis_pal(alpha, 
+        begin, end, direction, option)(6), values, space), na.value = na.value, 
+        guide = guide, ...)
+}
+
+
 scale_linetype_manual <- function (..., values) 
 {
     manual_scale("linetype", values, ...)
+}
+
+
+scale_colour_viridis_d <- function (..., alpha = 1, begin = 0, end = 1, direction = 1, 
+    option = "D") 
+{
+    discrete_scale("colour", "viridis_d", viridis_pal(alpha, 
+        begin, end, direction, option), ...)
 }
 
 
@@ -875,6 +971,16 @@ coord_quickmap <- function (xlim = NULL, ylim = NULL, expand = TRUE)
 }
 
 
+scale_color_viridis_c <- function (..., alpha = 1, begin = 0, end = 1, direction = 1, 
+    option = "D", values = NULL, space = "Lab", na.value = "grey50", 
+    guide = "colourbar") 
+{
+    continuous_scale("colour", "viridis_c", gradient_n_pal(viridis_pal(alpha, 
+        begin, end, direction, option)(6), values, space), na.value = na.value, 
+        guide = guide, ...)
+}
+
+
 mean_cl_boot <- function (x, ...) 
 {
     if (!requireNamespace("Hmisc", quietly = TRUE)) 
@@ -883,6 +989,14 @@ mean_cl_boot <- function (x, ...)
     result <- do.call(fun, list(x = quote(x), ...))
     plyr::rename(data.frame(t(result)), c(Median = "y", Mean = "y", 
         Lower = "ymin", Upper = "ymax"), warn_missing = FALSE)
+}
+
+
+scale_color_viridis_d <- function (..., alpha = 1, begin = 0, end = 1, direction = 1, 
+    option = "D") 
+{
+    discrete_scale("colour", "viridis_d", viridis_pal(alpha, 
+        begin, end, direction, option), ...)
 }
 
 
@@ -991,11 +1105,11 @@ scale_x_date <- function (name = waiver(), breaks = waiver(), date_breaks = waiv
     date_minor_breaks = waiver(), limits = NULL, expand = waiver(), 
     position = "bottom") 
 {
-    scale_datetime(c("x", "xmin", "xmax", "xend"), "date", name = name, 
-        breaks = breaks, date_breaks = date_breaks, labels = labels, 
-        date_labels = date_labels, minor_breaks = minor_breaks, 
-        date_minor_breaks = date_minor_breaks, limits = limits, 
-        expand = expand, position = position)
+    datetime_scale(c("x", "xmin", "xmax", "xend"), "date", name = name, 
+        palette = identity, breaks = breaks, date_breaks = date_breaks, 
+        labels = labels, date_labels = date_labels, minor_breaks = minor_breaks, 
+        date_minor_breaks = date_minor_breaks, guide = "none", 
+        limits = limits, expand = expand, position = position)
 }
 
 
@@ -1133,19 +1247,6 @@ coord_fixed <- function (ratio = 1, xlim = NULL, ylim = NULL, expand = TRUE)
 }
 
 
-scale_y_date <- function (name = waiver(), breaks = waiver(), date_breaks = waiver(), 
-    labels = waiver(), date_labels = waiver(), minor_breaks = waiver(), 
-    date_minor_breaks = waiver(), limits = NULL, expand = waiver(), 
-    position = "left") 
-{
-    scale_datetime(c("y", "ymin", "ymax", "yend"), "date", name = name, 
-        breaks = breaks, date_breaks = date_breaks, labels = labels, 
-        date_labels = date_labels, minor_breaks = minor_breaks, 
-        date_minor_breaks = date_minor_breaks, limits = limits, 
-        expand = expand, position = position)
-}
-
-
 stat_ellipse <- function (mapping = NULL, data = NULL, geom = "path", position = "identity", 
     ..., type = "t", level = 0.95, segments = 51, na.rm = FALSE, 
     show.legend = NA, inherit.aes = TRUE) 
@@ -1158,15 +1259,39 @@ stat_ellipse <- function (mapping = NULL, data = NULL, geom = "path", position =
 }
 
 
-theme_classic <- function (base_size = 11, base_family = "") 
+scale_y_date <- function (name = waiver(), breaks = waiver(), date_breaks = waiver(), 
+    labels = waiver(), date_labels = waiver(), minor_breaks = waiver(), 
+    date_minor_breaks = waiver(), limits = NULL, expand = waiver(), 
+    position = "left") 
 {
-    theme_bw(base_size = base_size, base_family = base_family) %+replace% 
-        theme(panel.border = element_blank(), panel.grid.major = element_blank(), 
-            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black", 
-                size = 0.5), legend.key = element_blank(), strip.background = element_rect(fill = "white", 
-                colour = "black", size = 1), complete = TRUE)
+    datetime_scale(c("y", "ymin", "ymax", "yend"), "date", name = name, 
+        palette = identity, breaks = breaks, date_breaks = date_breaks, 
+        labels = labels, date_labels = date_labels, minor_breaks = minor_breaks, 
+        date_minor_breaks = date_minor_breaks, guide = "none", 
+        limits = limits, expand = expand, position = position)
 }
 
+
+theme_classic <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
+{
+    theme_bw(base_size = base_size, base_family = base_family, 
+        base_line_size = base_line_size, base_rect_size = base_rect_size) %+replace% 
+        theme(panel.border = element_blank(), panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(), axis.line = element_line(colour = "black", 
+                size = rel(1)), legend.key = element_blank(), 
+            strip.background = element_rect(fill = "white", colour = "black", 
+                size = rel(2)), complete = TRUE)
+}
+
+
+autolayer <- function (object, ...) 
+{
+    UseMethod("autolayer")
+}
+
+
+StatSf <- "<environment>"
 
 StatBin <- "<environment>"
 
@@ -1334,19 +1459,39 @@ scale_y_log10 <- function (...)
 }
 
 
+summarise_layers <- function (p) 
+{
+    stopifnot(inherits(p, "ggplot_built"))
+    default_mapping <- unclass(p$plot$mapping)
+    layer_mappings <- lapply(p$plot$layers, function(layer) {
+        defaults(layer$mapping, default_mapping)
+    })
+    tibble(mapping = layer_mappings)
+}
+
+
 GeomSmooth <- "<environment>"
+
+scale_alpha_datetime <- function (..., range = c(0.1, 1)) 
+{
+    datetime_scale("alpha", "time", palette = rescale_pal(range), 
+        ...)
+}
+
 
 GeomErrorbar <- "<environment>"
 
-theme_grey <- function (base_size = 11, base_family = "") 
+theme_grey <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
 {
     half_line <- base_size/2
-    theme(line = element_line(colour = "black", size = 0.5, linetype = 1, 
-        lineend = "butt"), rect = element_rect(fill = "white", 
-        colour = "black", size = 0.5, linetype = 1), text = element_text(family = base_family, 
-        face = "plain", colour = "black", size = base_size, lineheight = 0.9, 
-        hjust = 0.5, vjust = 0.5, angle = 0, margin = margin(), 
-        debug = FALSE), axis.line = element_blank(), axis.line.x = NULL, 
+    theme(line = element_line(colour = "black", size = base_line_size, 
+        linetype = 1, lineend = "butt"), rect = element_rect(fill = "white", 
+        colour = "black", size = base_rect_size, linetype = 1), 
+        text = element_text(family = base_family, face = "plain", 
+            colour = "black", size = base_size, lineheight = 0.9, 
+            hjust = 0.5, vjust = 0.5, angle = 0, margin = margin(), 
+            debug = FALSE), axis.line = element_blank(), axis.line.x = NULL, 
         axis.line.y = NULL, axis.text = element_text(size = rel(0.8), 
             colour = "grey30"), axis.text.x = element_text(margin = margin(t = 0.8 * 
             half_line/2), vjust = 1), axis.text.x.top = element_text(margin = margin(b = 0.8 * 
@@ -1370,7 +1515,7 @@ theme_grey <- function (base_size = 11, base_family = "")
             0, "cm"), legend.box.background = element_blank(), 
         legend.box.spacing = unit(0.4, "cm"), panel.background = element_rect(fill = "grey92", 
             colour = NA), panel.border = element_blank(), panel.grid.major = element_line(colour = "white"), 
-        panel.grid.minor = element_line(colour = "white", size = 0.25), 
+        panel.grid.minor = element_line(colour = "white", size = rel(0.5)), 
         panel.spacing = unit(half_line, "pt"), panel.spacing.x = NULL, 
         panel.spacing.y = NULL, panel.ontop = FALSE, strip.background = element_rect(fill = "grey85", 
             colour = NA), strip.text = element_text(colour = "grey10", 
@@ -1404,6 +1549,13 @@ geom_rect <- function (mapping = NULL, data = NULL, stat = "identity", position 
     layer(data = data, mapping = mapping, stat = stat, geom = GeomRect, 
         position = position, show.legend = show.legend, inherit.aes = inherit.aes, 
         params = list(na.rm = na.rm, ...))
+}
+
+
+scale_alpha_date <- function (..., range = c(0.1, 1)) 
+{
+    datetime_scale("alpha", "date", palette = rescale_pal(range), 
+        ...)
 }
 
 
@@ -1494,15 +1646,17 @@ ggsave <- function (filename, plot = last_plot(), device = NULL, path = NULL,
 }
 
 
-theme_light <- function (base_size = 11, base_family = "") 
+theme_light <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
 {
-    theme_grey(base_size = base_size, base_family = base_family) %+replace% 
+    theme_grey(base_size = base_size, base_family = base_family, 
+        base_line_size = base_line_size, base_rect_size = base_rect_size) %+replace% 
         theme(panel.background = element_rect(fill = "white", 
             colour = NA), panel.border = element_rect(fill = NA, 
-            colour = "grey70", size = 0.5), panel.grid.major = element_line(colour = "grey87", 
-            size = 0.25), panel.grid.minor = element_line(colour = "grey87", 
-            size = 0.125), axis.ticks = element_line(colour = "grey70", 
-            size = 0.25), legend.key = element_rect(fill = "white", 
+            colour = "grey70", size = rel(1)), panel.grid.major = element_line(colour = "grey87", 
+            size = rel(0.5)), panel.grid.minor = element_line(colour = "grey87", 
+            size = rel(0.25)), axis.ticks = element_line(colour = "grey70", 
+            size = rel(0.5)), legend.key = element_rect(fill = "white", 
             colour = NA), strip.background = element_rect(fill = "grey70", 
             colour = NA), strip.text = element_text(colour = "white", 
             size = rel(0.8)), complete = TRUE)
@@ -1526,9 +1680,9 @@ inherits(x, "Coord")
 layer_scales <- function (plot, i = 1L, j = 1L) 
 {
     b <- ggplot_build(plot)
-    layout <- b$layout$panel_layout
+    layout <- b$layout$layout
     selected <- layout[layout$ROW == i & layout$COL == j, , drop = FALSE]
-    list(x = b$layout$panel_scales$x[[selected$SCALE_X]], y = b$layout$panel_scales$y[[selected$SCALE_Y]])
+    list(x = b$layout$panel_scales_x[[selected$SCALE_X]], y = b$layout$panel_scales_y[[selected$SCALE_Y]])
 }
 
 
@@ -1831,6 +1985,28 @@ qplot <- function (x, y = NULL, ..., data, facets = NULL, margins = FALSE,
 }
 
 
+scale_type <- function (x) 
+UseMethod("scale_type")
+
+
+geom_sf <- function (mapping = aes(), data = NULL, stat = "sf", position = "identity", 
+    na.rm = FALSE, show.legend = NA, inherit.aes = TRUE, ...) 
+{
+    if (!is.null(data) && inherits(data, "sf")) {
+        geometry_col <- attr(data, "sf_column")
+    }
+    else {
+        geometry_col <- "geometry"
+    }
+    if (is.null(mapping$geometry)) {
+        mapping$geometry <- as.name(geometry_col)
+    }
+    c(layer(geom = GeomSf, mapping = mapping, data = data, stat = stat, 
+        position = position, show.legend = show.legend, inherit.aes = inherit.aes, 
+        params = list(na.rm = na.rm, ...)), coord_sf())
+}
+
+
 remove_missing <- function (df, na.rm = FALSE, vars = names(df), name = "", finite = FALSE) 
 {
     stopifnot(is.logical(na.rm))
@@ -1838,11 +2014,11 @@ remove_missing <- function (df, na.rm = FALSE, vars = names(df), name = "", fini
     if (name != "") 
         name <- paste(" (", name, ")", sep = "")
     if (finite) {
-        missing <- !finite.cases(df[, vars, drop = FALSE])
+        missing <- !cases(df[, vars, drop = FALSE], is_finite)
         str <- "non-finite"
     }
     else {
-        missing <- !stats::complete.cases(df[, vars, drop = FALSE])
+        missing <- !cases(df[, vars, drop = FALSE], is_complete)
         str <- "missing"
     }
     if (any(missing)) {
@@ -2023,9 +2199,11 @@ geom_density <- function (mapping = NULL, data = NULL, stat = "density", positio
 }
 
 
-scale_colour_datetime <- function () 
+scale_colour_datetime <- function (..., low = "#132B43", high = "#56B1F7", space = "Lab", 
+    na.value = "grey50", guide = "colourbar") 
 {
-    scale_colour_continuous(trans = "time")
+    datetime_scale("colour", "time", palette = seq_gradient_pal(low, 
+        high, space), na.value = na.value, guide = guide, ...)
 }
 
 
@@ -2061,7 +2239,7 @@ draw_key_vline <- function (data, params, size)
 layer_grob <- function (plot, i = 1L) 
 {
     b <- ggplot_build(plot)
-    b$plot$layers[[i]]$draw_geom(b$data[[i]], b$layout, b$plot$coordinates)
+    b$plot$layers[[i]]$draw_geom(b$data[[i]], b$layout)
 }
 
 
@@ -2090,7 +2268,8 @@ scale_shape_continuous <- function (...)
 }
 
 
-theme_void <- function (base_size = 11, base_family = "") 
+theme_void <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
 {
     theme(line = element_blank(), rect = element_blank(), text = element_text(family = base_family, 
         face = "plain", colour = "black", size = base_size, lineheight = 0.9, 
@@ -2131,15 +2310,17 @@ geom_tile <- function (mapping = NULL, data = NULL, stat = "identity", position 
 }
 
 
-theme_gray <- function (base_size = 11, base_family = "") 
+theme_gray <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
 {
     half_line <- base_size/2
-    theme(line = element_line(colour = "black", size = 0.5, linetype = 1, 
-        lineend = "butt"), rect = element_rect(fill = "white", 
-        colour = "black", size = 0.5, linetype = 1), text = element_text(family = base_family, 
-        face = "plain", colour = "black", size = base_size, lineheight = 0.9, 
-        hjust = 0.5, vjust = 0.5, angle = 0, margin = margin(), 
-        debug = FALSE), axis.line = element_blank(), axis.line.x = NULL, 
+    theme(line = element_line(colour = "black", size = base_line_size, 
+        linetype = 1, lineend = "butt"), rect = element_rect(fill = "white", 
+        colour = "black", size = base_rect_size, linetype = 1), 
+        text = element_text(family = base_family, face = "plain", 
+            colour = "black", size = base_size, lineheight = 0.9, 
+            hjust = 0.5, vjust = 0.5, angle = 0, margin = margin(), 
+            debug = FALSE), axis.line = element_blank(), axis.line.x = NULL, 
         axis.line.y = NULL, axis.text = element_text(size = rel(0.8), 
             colour = "grey30"), axis.text.x = element_text(margin = margin(t = 0.8 * 
             half_line/2), vjust = 1), axis.text.x.top = element_text(margin = margin(b = 0.8 * 
@@ -2163,7 +2344,7 @@ theme_gray <- function (base_size = 11, base_family = "")
             0, "cm"), legend.box.background = element_blank(), 
         legend.box.spacing = unit(0.4, "cm"), panel.background = element_rect(fill = "grey92", 
             colour = NA), panel.border = element_blank(), panel.grid.major = element_line(colour = "white"), 
-        panel.grid.minor = element_line(colour = "white", size = 0.25), 
+        panel.grid.minor = element_line(colour = "white", size = rel(0.5)), 
         panel.spacing = unit(half_line, "pt"), panel.spacing.x = NULL, 
         panel.spacing.y = NULL, panel.ontop = FALSE, strip.background = element_rect(fill = "grey85", 
             colour = NA), strip.text = element_text(colour = "grey10", 
@@ -2352,9 +2533,11 @@ stat_summary_bin <- function (mapping = NULL, data = NULL, geom = "pointrange", 
 }
 
 
-theme_minimal <- function (base_size = 11, base_family = "") 
+theme_minimal <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
 {
-    theme_bw(base_size = base_size, base_family = base_family) %+replace% 
+    theme_bw(base_size = base_size, base_family = base_family, 
+        base_line_size = base_line_size, base_rect_size = base_rect_size) %+replace% 
         theme(axis.ticks = element_blank(), legend.background = element_blank(), 
             legend.key = element_blank(), panel.background = element_blank(), 
             panel.border = element_blank(), strip.background = element_blank(), 
@@ -2380,14 +2563,14 @@ scale_color_distiller <- function (..., type = "seq", palette = 1, direction = -
 
 ggplot_gtable <- function (data) 
 {
+    stopifnot(inherits(data, "ggplot_built"))
     plot <- data$plot
     layout <- data$layout
     data <- data$data
     theme <- plot_theme(plot)
-    geom_grobs <- Map(function(l, d) l$draw_geom(d, layout, plot$coordinates), 
+    geom_grobs <- Map(function(l, d) l$draw_geom(d, layout), 
         plot$layers, data)
-    plot_table <- layout$render(geom_grobs, data, plot$coordinates, 
-        theme, plot$labels)
+    plot_table <- layout$render(geom_grobs, data, theme, plot$labels)
     position <- theme$legend.position
     if (length(position) == 2) {
         position <- "manual"
@@ -2531,9 +2714,11 @@ scale_color_discrete <- function (..., h = c(0, 360) + 15, c = 100, l = 65, h.st
 }
 
 
-scale_colour_date <- function () 
+scale_colour_date <- function (..., low = "#132B43", high = "#56B1F7", space = "Lab", 
+    na.value = "grey50", guide = "colourbar") 
 {
-    scale_colour_continuous(trans = "date")
+    datetime_scale("colour", "date", palette = seq_gradient_pal(low, 
+        high, space), na.value = na.value, guide = guide, ...)
 }
 
 
@@ -2620,14 +2805,16 @@ geom_contour <- function (mapping = NULL, data = NULL, stat = "contour", positio
 }
 
 
-theme_dark <- function (base_size = 11, base_family = "") 
+theme_dark <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
 {
-    theme_grey(base_size = base_size, base_family = base_family) %+replace% 
+    theme_grey(base_size = base_size, base_family = base_family, 
+        base_line_size = base_line_size, base_rect_size = base_rect_size) %+replace% 
         theme(panel.background = element_rect(fill = "grey50", 
             colour = NA), panel.grid.major = element_line(colour = "grey42", 
-            size = 0.25), panel.grid.minor = element_line(colour = "grey42", 
-            size = 0.125), axis.ticks = element_line(colour = "grey20", 
-            size = 0.25), legend.key = element_rect(fill = "grey50", 
+            size = rel(0.5)), panel.grid.minor = element_line(colour = "grey42", 
+            size = rel(0.25)), axis.ticks = element_line(colour = "grey20", 
+            size = rel(0.5)), legend.key = element_rect(fill = "grey50", 
             colour = NA), strip.background = element_rect(fill = "grey15", 
             colour = NA), strip.text = element_text(colour = "grey90", 
             size = rel(0.8)), complete = TRUE)
@@ -2673,9 +2860,11 @@ scale_size_continuous <- function (name = waiver(), breaks = waiver(), labels = 
 }
 
 
-scale_fill_datetime <- function () 
+scale_fill_datetime <- function (..., low = "#132B43", high = "#56B1F7", space = "Lab", 
+    na.value = "grey50", guide = "colourbar") 
 {
-    scale_fill_continuous(trans = "time")
+    datetime_scale("fill", "time", palette = seq_gradient_pal(low, 
+        high, space), na.value = na.value, guide = guide, ...)
 }
 
 
@@ -2807,6 +2996,33 @@ label_value <- function (labels, multi_line = TRUE)
 }
 
 
+summarise_layout <- function (p) 
+{
+    stopifnot(inherits(p, "ggplot_built"))
+    l <- p$layout
+    layout <- l$layout
+    layout <- tibble(panel = l$layout$PANEL, row = l$layout$ROW, 
+        col = l$layout$COL)
+    facet_vars <- l$facet$vars()
+    layout$vars <- lapply(seq_len(nrow(layout)), function(i) {
+        res <- lapply(facet_vars, function(var) l$layout[[var]][i])
+        setNames(res, facet_vars)
+    })
+    xyranges <- lapply(l$panel_params, l$coord$range)
+    layout$xmin <- vapply(xyranges, function(xyrange) xyrange$x[[1]], 
+        numeric(1))
+    layout$xmax <- vapply(xyranges, function(xyrange) xyrange$x[[2]], 
+        numeric(1))
+    layout$ymin <- vapply(xyranges, function(xyrange) xyrange$y[[1]], 
+        numeric(1))
+    layout$ymax <- vapply(xyranges, function(xyrange) xyrange$y[[2]], 
+        numeric(1))
+    layout$xscale <- lapply(seq_len(nrow(layout)), function(n) l$get_scales(n)$x)
+    layout$yscale <- lapply(seq_len(nrow(layout)), function(n) l$get_scales(n)$y)
+    layout
+}
+
+
 Facet <- "<environment>"
 
 geom_freqpoly <- function (mapping = NULL, data = NULL, stat = "bin", position = "identity", 
@@ -2901,6 +3117,19 @@ scale_y_discrete <- function (..., expand = waiver(), position = "left")
 }
 
 
+stat_ydensity <- function (mapping = NULL, data = NULL, geom = "violin", position = "dodge", 
+    ..., bw = "nrd0", adjust = 1, kernel = "gaussian", trim = TRUE, 
+    scale = "area", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) 
+{
+    scale <- match.arg(scale, c("area", "count", "width"))
+    layer(data = data, mapping = mapping, stat = StatYdensity, 
+        geom = geom, position = position, show.legend = show.legend, 
+        inherit.aes = inherit.aes, params = list(bw = bw, adjust = adjust, 
+            kernel = kernel, trim = trim, scale = scale, na.rm = na.rm, 
+            ...))
+}
+
+
 discrete_scale <- function (aesthetics, scale_name, palette, name = waiver(), breaks = waiver(), 
     labels = waiver(), limits = NULL, expand = waiver(), na.translate = TRUE, 
     na.value = NA, drop = TRUE, guide = "legend", position = "left", 
@@ -2921,19 +3150,6 @@ discrete_scale <- function (aesthetics, scale_name, palette, name = waiver(), br
 }
 
 
-stat_ydensity <- function (mapping = NULL, data = NULL, geom = "violin", position = "dodge", 
-    ..., bw = "nrd0", adjust = 1, kernel = "gaussian", trim = TRUE, 
-    scale = "area", na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) 
-{
-    scale <- match.arg(scale, c("area", "count", "width"))
-    layer(data = data, mapping = mapping, stat = StatYdensity, 
-        geom = geom, position = position, show.legend = show.legend, 
-        inherit.aes = inherit.aes, params = list(bw = bw, adjust = adjust, 
-            kernel = kernel, trim = trim, scale = scale, na.rm = na.rm, 
-            ...))
-}
-
-
 scale_radius <- function (name = waiver(), breaks = waiver(), labels = waiver(), 
     limits = NULL, range = c(1, 6), trans = "identity", guide = "legend") 
 {
@@ -2948,11 +3164,11 @@ scale_x_datetime <- function (name = waiver(), breaks = waiver(), date_breaks = 
     date_minor_breaks = waiver(), timezone = NULL, limits = NULL, 
     expand = waiver(), position = "bottom") 
 {
-    scale_datetime(c("x", "xmin", "xmax", "xend"), "time", name = name, 
-        breaks = breaks, date_breaks = date_breaks, labels = labels, 
-        date_labels = date_labels, minor_breaks = minor_breaks, 
+    datetime_scale(c("x", "xmin", "xmax", "xend"), "time", name = name, 
+        palette = identity, breaks = breaks, date_breaks = date_breaks, 
+        labels = labels, date_labels = date_labels, minor_breaks = minor_breaks, 
         date_minor_breaks = date_minor_breaks, timezone = timezone, 
-        limits = limits, expand = expand, position = position)
+        guide = "none", limits = limits, expand = expand, position = position)
 }
 
 
@@ -2974,15 +3190,17 @@ stat_ecdf <- function (mapping = NULL, data = NULL, geom = "step", position = "i
 }
 
 
-theme_linedraw <- function (base_size = 11, base_family = "") 
+theme_linedraw <- function (base_size = 11, base_family = "", base_line_size = base_size/22, 
+    base_rect_size = base_size/22) 
 {
-    theme_bw(base_size = base_size, base_family = base_family) %+replace% 
+    theme_bw(base_size = base_size, base_family = base_family, 
+        base_line_size = base_line_size, base_rect_size = base_rect_size) %+replace% 
         theme(axis.text = element_text(colour = "black", size = rel(0.8)), 
-            axis.ticks = element_line(colour = "black", size = 0.25), 
+            axis.ticks = element_line(colour = "black", size = rel(0.5)), 
             panel.border = element_rect(fill = NA, colour = "black", 
-                size = 0.5), panel.grid.major = element_line(colour = "black", 
-                size = 0.05), panel.grid.minor = element_line(colour = "black", 
-                size = 0.025), strip.background = element_rect(fill = "black"), 
+                size = rel(1)), panel.grid.major = element_line(colour = "black", 
+                size = rel(0.1)), panel.grid.minor = element_line(colour = "black", 
+                size = rel(0.05)), strip.background = element_rect(fill = "black"), 
             strip.text = element_text(colour = "white", size = rel(0.8)), 
             complete = TRUE)
 }
@@ -3020,9 +3238,9 @@ draw_key_smooth <- function (data, params, size)
 }
 
 
-position_dodge <- function (width = NULL) 
+position_dodge <- function (width = NULL, preserve = c("total", "single")) 
 {
-    ggproto(NULL, PositionDodge, width = width)
+    ggproto(NULL, PositionDodge, width = width, preserve = match.arg(preserve))
 }
 
 
@@ -3080,8 +3298,6 @@ geom_blank <- function (mapping = NULL, data = NULL, stat = "identity", position
 }
 
 
-Stat <- "<environment>"
-
 stat_function <- function (mapping = NULL, data = NULL, geom = "path", position = "identity", 
     ..., fun, xlim = NULL, n = 101, args = list(), na.rm = FALSE, 
     show.legend = NA, inherit.aes = TRUE) 
@@ -3092,6 +3308,8 @@ stat_function <- function (mapping = NULL, data = NULL, geom = "path", position 
             args = args, na.rm = na.rm, xlim = xlim, ...))
 }
 
+
+Stat <- "<environment>"
 
 label_parsed <- function (labels, multi_line = TRUE) 
 {
@@ -3233,6 +3451,10 @@ scale_color_manual <- function (..., values)
         add_theme(e1, e2, e2name)
     else if (is.ggplot(e1)) 
         add_ggplot(e1, e2, e2name)
+    else if (is.ggproto(e1)) {
+        stop("Cannot add ggproto objects together.", " Did you forget to add this object to a ggplot object?", 
+            call. = FALSE)
+    }
 }
 
 
@@ -3254,6 +3476,16 @@ scale_alpha_manual <- function (..., values)
 }
 
 
+expand_scale <- function (mult = 0, add = 0) 
+{
+    stopifnot(is.numeric(mult) && is.numeric(add))
+    stopifnot((length(mult) %in% 1:2) && (length(add) %in% 1:2))
+    mult <- rep(mult, length.out = 2)
+    add <- rep(add, length.out = 2)
+    c(mult[1], add[1], mult[2], add[2])
+}
+
+
 PositionFill <- "<environment>"
 
 StatQuantile <- "<environment>"
@@ -3270,9 +3502,10 @@ unit <- grid::unit # re-exported from grid package
 
 GeomLinerange <- "<environment>"
 
-scale_size_date <- function () 
+scale_size_date <- function (..., range = c(1, 6)) 
 {
-    scale_size_continuous(trans = "date")
+    datetime_scale("size", "date", palette = area_pal(range), 
+        ...)
 }
 
 
@@ -3344,7 +3577,7 @@ ggproto <- function (`_class` = NULL, `_inherit` = NULL, ...)
         class(e) <- c(`_class`, class(super))
     }
     else {
-        class(e) <- c(`_class`, "ggproto")
+        class(e) <- c(`_class`, "ggproto", "gg")
     }
     e
 }
@@ -3383,6 +3616,8 @@ is.ggplot <- function (x)
 inherits(x, "ggplot")
 
 
+CoordSf <- "<environment>"
+
 guides <- function (...) 
 {
     args <- list(...)
@@ -3416,13 +3651,13 @@ stat_sum <- function (mapping = NULL, data = NULL, geom = "point", position = "i
 
 
 geom_segment <- function (mapping = NULL, data = NULL, stat = "identity", position = "identity", 
-    ..., arrow = NULL, lineend = "butt", na.rm = FALSE, show.legend = NA, 
-    inherit.aes = TRUE) 
+    ..., arrow = NULL, lineend = "butt", linejoin = "round", 
+    na.rm = FALSE, show.legend = NA, inherit.aes = TRUE) 
 {
     layer(data = data, mapping = mapping, stat = stat, geom = GeomSegment, 
         position = position, show.legend = show.legend, inherit.aes = inherit.aes, 
-        params = list(arrow = arrow, lineend = lineend, na.rm = na.rm, 
-            ...))
+        params = list(arrow = arrow, lineend = lineend, linejoin = linejoin, 
+            na.rm = na.rm, ...))
 }
 
 
@@ -3517,6 +3752,15 @@ cut_width <- function (x, width, center = NULL, boundary = NULL, closed = c("rig
 
 FacetWrap <- "<environment>"
 
+stat_sf <- function (mapping = NULL, data = NULL, geom = "rect", position = "identity", 
+    na.rm = FALSE, show.legend = NA, inherit.aes = TRUE, ...) 
+{
+    layer(stat = StatSf, data = data, mapping = mapping, geom = geom, 
+        position = position, show.legend = show.legend, inherit.aes = inherit.aes, 
+        params = list(na.rm = na.rm, ...))
+}
+
+
 scale_colour_gradientn <- function (..., colours, values = NULL, space = "Lab", na.value = "grey50", 
     guide = "colourbar", colors) 
 {
@@ -3544,11 +3788,10 @@ position_identity <- function ()
 }
 
 
-scale_fill_continuous <- function (..., low = "#132B43", high = "#56B1F7", space = "Lab", 
-    na.value = "grey50", guide = "colourbar") 
+scale_fill_continuous <- function (..., type = getOption("ggplot2.continuous.fill", default = "gradient")) 
 {
-    continuous_scale("fill", "gradient", seq_gradient_pal(low, 
-        high, space), na.value = na.value, guide = guide, ...)
+    switch(type, gradient = scale_fill_gradient(...), viridis = scale_fill_viridis_c(...), 
+        stop("Unknown scale type", call. = FALSE))
 }
 
 
@@ -3565,9 +3808,27 @@ benchplot <- function (x)
 }
 
 
+scale_fill_viridis_c <- function (..., alpha = 1, begin = 0, end = 1, direction = 1, 
+    option = "D", values = NULL, space = "Lab", na.value = "grey50", 
+    guide = "colourbar") 
+{
+    continuous_scale("fill", "viridis_c", gradient_n_pal(viridis_pal(alpha, 
+        begin, end, direction, option)(6), values, space), na.value = na.value, 
+        guide = guide, ...)
+}
+
+
 facet_null <- function (shrink = TRUE) 
 {
     ggproto(NULL, FacetNull, shrink = shrink)
+}
+
+
+scale_fill_viridis_d <- function (..., alpha = 1, begin = 0, end = 1, direction = 1, 
+    option = "D") 
+{
+    discrete_scale("fill", "viridis_d", viridis_pal(alpha, begin, 
+        end, direction, option), ...)
 }
 
 
@@ -3607,9 +3868,8 @@ layer <- function (geom = NULL, stat = NULL, data = NULL, mapping = NULL,
         show.legend <- params$show_guide
         params$show_guide <- NULL
     }
-    if (!is.logical(show.legend) || length(show.legend) != 1) {
-        warning("`show.legend` must be a logical vector of length 1.", 
-            call. = FALSE)
+    if (!is.logical(show.legend)) {
+        warning("`show.legend` must be a logical vector.", call. = FALSE)
         show.legend <- FALSE
     }
     data <- fortify(data)
@@ -3636,7 +3896,7 @@ layer <- function (geom = NULL, stat = NULL, data = NULL, mapping = NULL,
         warning("Ignoring unknown parameters: ", paste(extra_param, 
             collapse = ", "), call. = FALSE, immediate. = TRUE)
     }
-    extra_aes <- setdiff(names(mapping), c(geom$aesthetics(), 
+    extra_aes <- setdiff(mapped_aesthetics(mapping), c(geom$aesthetics(), 
         stat$aesthetics()))
     if (check.aes && length(extra_aes) > 0) {
         warning("Ignoring unknown aesthetics: ", paste(extra_aes, 
@@ -3697,6 +3957,22 @@ panel_cols <- function (table)
 
 
 StatSum <- "<environment>"
+
+summarise_coord <- function (p) 
+{
+    stopifnot(inherits(p, "ggplot_built"))
+    trans_get_log_base <- function(trans) {
+        if (!is.null(trans) && grepl("^log-", trans$name)) {
+            environment(trans$transform)$base
+        }
+        else {
+            NA_real_
+        }
+    }
+    list(xlog = trans_get_log_base(p$layout$coord$trans$x), ylog = trans_get_log_base(p$layout$coord$trans$y), 
+        flip = inherits(p$layout$coord, "CoordFlip"))
+}
+
 
 scale_fill_gradient2 <- function (..., low = muted("red"), mid = "white", high = muted("blue"), 
     midpoint = 0, space = "Lab", na.value = "grey50", guide = "colourbar") 
@@ -3932,7 +4208,7 @@ txhousing <- ggplot2::txhousing		## Housing sales in TX
 
 .skeleton_package_title = "Create Elegant Data Visualisations Using the Grammar of Graphics"
 
-.skeleton_package_version = "2.2.1"
+.skeleton_package_version = "2.2.1.9000"
 
 .skeleton_package_depends = ""
 

@@ -158,6 +158,14 @@ is.list <- function (x)  .Primitive("is.list")
 switch <- function (EXPR, ...)  .Primitive("switch")
 
 
+.tryResumeInterrupt <- function () 
+{
+    r <- findRestart("resume")
+    if (!is.null(r)) 
+        invokeRestart(r)
+}
+
+
 identity <- function (x) 
 x
 
@@ -303,9 +311,9 @@ T <- TRUE
 `[` <- .Primitive("[")
 
 
-.C_R_addTaskCallback <- structure(list(name = "R_addTaskCallback", address = pointer("0xe16e40"), 
+.C_R_addTaskCallback <- structure(list(name = "R_addTaskCallback", address = pointer("0x7fe9a3600790"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 4L), class = c("CallRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
@@ -328,7 +336,7 @@ T <- TRUE
 `^` <- function (e1, e2)  .Primitive("^")
 
 
-c <- function (..., recursive = FALSE)  .Primitive("c")
+c <- function (...)  .Primitive("c")
 
 
 asNamespace <- function (ns, base.OK = TRUE) 
@@ -379,9 +387,9 @@ anyDuplicated <- function (x, incomparables = FALSE, ...)
 UseMethod("anyDuplicated")
 
 
-.F_dqrqy <- structure(list(name = "dqrqy", address = pointer("0xec1540"), 
+.F_dqrqy <- structure(list(name = "dqrqy", address = pointer("0x7fe9a3605b40"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 7L), class = c("FortranRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
@@ -415,26 +423,10 @@ setdiff <- function (x, y)
 }
 
 
-unix.time <- function (expr, gcFirst = TRUE) 
+unix.time <- function (...) 
 {
-    ppt <- function(y) {
-        if (!is.na(y[4L])) 
-            y[1L] <- y[1L] + y[4L]
-        if (!is.na(y[5L])) 
-            y[2L] <- y[2L] + y[5L]
-        y[1L:3L]
-    }
-    if (!exists("proc.time")) 
-        return(rep(NA_real_, 5L))
-    if (gcFirst) 
-        gc(FALSE)
-    time <- proc.time()
-    on.exit(cat("Timing stopped at:", ppt(proc.time() - time), 
-        "\n"))
-    expr
-    new.time <- proc.time()
-    on.exit()
-    structure(new.time - time, class = "proc_time")
+    .Deprecated("system.time")
+    system.time(...)
 }
 
 
@@ -489,9 +481,9 @@ as.list <- function (x, ...)
 UseMethod("as.list")
 
 
-.F_dqrxb <- structure(list(name = "dqrxb", address = pointer("0xec2500"), 
+.F_dqrxb <- structure(list(name = "dqrxb", address = pointer("0x7fe9a3605b80"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 7L), class = c("FortranRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
@@ -538,8 +530,15 @@ diff.default <- function (x, lag = 1L, differences = 1L, ...)
 .Internal(mapply(FUN, dots, MoreArgs))
 
 
-debugonce <- function (fun, text = "", condition = NULL) 
-.Internal(debugonce(fun, text, condition))
+debugonce <- function (fun, text = "", condition = NULL, signature = NULL) 
+{
+    if (is.null(signature)) 
+        .Internal(debugonce(fun, text, condition))
+    else if (requireNamespace("methods")) 
+        methods::.debugMethod(fun, text, condition, signature, 
+            once = TRUE)
+    else stop("failed to load the methods package for debugging by signature")
+}
 
 
 print.AsIs <- function (x, ...) 
@@ -670,7 +669,7 @@ simplify2array <- function (x, higher = TRUE)
         unlist(x, recursive = FALSE)
     else if (common.len > 1L) {
         n <- length(x)
-        r <- as.vector(unlist(x, recursive = FALSE))
+        r <- unlist(x, recursive = FALSE, use.names = FALSE)
         if (higher && length(c.dim <- unique(lapply(x, dim))) == 
             1 && is.numeric(c.dim <- c.dim[[1L]]) && prod(d <- c(c.dim, 
             n)) == length(r)) {
@@ -817,6 +816,10 @@ withRestarts <- function (expr, ...)
 }
 
 
+diff.difftime <- function (x, ...) 
+structure(NextMethod("diff"), units = attr(x, "units"))
+
+
 seek <- function (con, ...) 
 UseMethod("seek")
 
@@ -905,20 +908,19 @@ outer <- function (X, Y, FUN = "*", ...)
         if (!no.ny) 
             ny <- list(names(Y))
     }
-    if (is.character(FUN) && FUN == "*") {
+    robj <- if (is.character(FUN) && FUN == "*") {
         if (!missing(...)) 
             stop("using ... with FUN = \"*\" is an error")
-        robj <- as.vector(X) %*% t(as.vector(Y))
-        dim(robj) <- c(dX, dY)
+        as.vector(X) %*% t(as.vector(Y))
     }
     else {
         FUN <- match.fun(FUN)
         Y <- rep(Y, rep.int(length(X), length(Y)))
         if (length(X)) 
             X <- rep(X, times = ceiling(length(Y)/length(X)))
-        robj <- FUN(X, Y, ...)
-        dim(robj) <- c(dX, dY)
+        FUN(X, Y, ...)
     }
+    dim(robj) <- c(dX, dY)
     if (!(no.nx && no.ny)) {
         if (no.nx) 
             nx <- vector("list", length(dX))
@@ -1280,8 +1282,15 @@ mean <- function (x, ...)
 UseMethod("mean")
 
 
-debug <- function (fun, text = "", condition = NULL) 
-.Internal(debug(fun, text, condition))
+debug <- function (fun, text = "", condition = NULL, signature = NULL) 
+{
+    if (is.null(signature)) 
+        .Internal(debug(fun, text, condition))
+    else if (requireNamespace("methods")) 
+        methods::.debugMethod(fun, text, condition, signature, 
+            once = FALSE)
+    else stop("failed to load the methods package for debugging by signature")
+}
 
 
 is.function <- function (x)  .Primitive("is.function")
@@ -1427,9 +1436,9 @@ as.data.frame.AsIs <- function (x, row.names = NULL, optional = FALSE, ...)
 }
 
 
-.F_dtrco <- structure(list(name = "dtrco", address = pointer("0xec2520"), 
+.F_dtrco <- structure(list(name = "dtrco", address = pointer("0x7fe9a3605ba0"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 6L), class = c("FortranRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
@@ -1450,19 +1459,19 @@ print.listof <- function (x, ...)
 }
 
 
-order <- function (..., na.last = TRUE, decreasing = FALSE, method = c("shell", 
-    "radix")) 
+order <- function (..., na.last = TRUE, decreasing = FALSE, method = c("auto", 
+    "shell", "radix")) 
 {
     z <- list(...)
-    if (missing(method)) {
-        ints <- all(vapply(z, function(x) is.integer(x) || is.factor(x), 
-            logical(1L)))
-        method <- if (ints) 
+    method <- match.arg(method)
+    if (method == "auto") {
+        useRadix <- all(vapply(z, function(x) {
+            (is.numeric(x) || is.factor(x) || is.logical(x)) && 
+                is.integer(length(x))
+        }, logical(1L)))
+        method <- if (useRadix) 
             "radix"
         else "shell"
-    }
-    else {
-        method <- match.arg(method)
     }
     if (any(unlist(lapply(z, is.object)))) {
         z <- lapply(z, function(x) if (is.object(x)) 
@@ -1641,9 +1650,9 @@ character <- function (length = 0L)
 .Internal(vector("character", length))
 
 
-.F_dqrcf <- structure(list(name = "dqrcf", address = pointer("0xd88420"), 
+.F_dqrcf <- structure(list(name = "dqrcf", address = pointer("0x7fe9a3605ae0"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 8L), class = c("FortranRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
@@ -1960,7 +1969,7 @@ loadNamespace <- function (package, lib.loc = NULL, keep.source = getOption("kee
         }
         makeNamespace <- function(name, version = NULL, lib = NULL) {
             impenv <- new.env(parent = .BaseNamespaceEnv, hash = TRUE)
-            attr(impenv, "name") <- paste("imports", name, sep = ":")
+            attr(impenv, "name") <- paste0("imports:", name)
             env <- new.env(parent = impenv, hash = TRUE)
             name <- as.character(as.name(name))
             version <- as.character(version)
@@ -1970,8 +1979,7 @@ loadNamespace <- function (package, lib.loc = NULL, keep.source = getOption("kee
             setNamespaceInfo(env, "exports", new.env(hash = TRUE, 
                 parent = baseenv()))
             dimpenv <- new.env(parent = baseenv(), hash = TRUE)
-            attr(dimpenv, "name") <- paste("lazydata", name, 
-                sep = ":")
+            attr(dimpenv, "name") <- paste0("lazydata:", name)
             setNamespaceInfo(env, "lazydata", dimpenv)
             setNamespaceInfo(env, "imports", list(base = TRUE))
             setNamespaceInfo(env, "path", normalizePath(file.path(lib, 
@@ -2008,7 +2016,7 @@ loadNamespace <- function (package, lib.loc = NULL, keep.source = getOption("kee
             if (!file.exists(popath)) 
                 return()
             bindtextdomain(pkgname, popath)
-            bindtextdomain(paste("R", pkgname, sep = "-"), popath)
+            bindtextdomain(paste0("R-", pkgname), popath)
         }
         assignNativeRoutines <- function(dll, lib, env, nativeRoutines) {
             if (length(nativeRoutines) == 0L) 
@@ -2020,7 +2028,7 @@ loadNamespace <- function (package, lib.loc = NULL, keep.source = getOption("kee
                 lapply(routines, function(type) {
                   lapply(type, function(sym) {
                     varName <- paste0(fixes[1L], sym$name, fixes[2L])
-                    if (exists(varName, envir = env)) 
+                    if (exists(varName, envir = env, inherits = FALSE)) 
                       warning(gettextf("failed to assign RegisteredNativeSymbol for %s to %s since %s is already defined in the %s namespace", 
                         sym$name, varName, varName, sQuote(package)), 
                         domain = NA, call. = FALSE)
@@ -2036,7 +2044,7 @@ loadNamespace <- function (package, lib.loc = NULL, keep.source = getOption("kee
             lapply(seq_along(symNames), function(i) {
                 varName <- names(symNames)[i]
                 origVarName <- symNames[i]
-                if (exists(varName, envir = env)) 
+                if (exists(varName, envir = env, inherits = FALSE)) 
                   if (origVarName != varName) 
                     warning(gettextf("failed to assign NativeSymbolInfo for %s to %s since %s is already defined in the %s namespace", 
                       origVarName, varName, varName, sQuote(package)), 
@@ -2095,6 +2103,55 @@ loadNamespace <- function (package, lib.loc = NULL, keep.source = getOption("kee
                 stop(gettextf("namespace %s %s is being loaded, but %s %s is required", 
                   sQuote(package), version, zop, zversion), domain = NA)
         }
+        checkLicense <- function(pkg, pkgInfo, pkgPath) {
+            L <- tools:::analyze_license(pkgInfo$DESCRIPTION["License"])
+            if (!L$is_empty && !L$is_verified) {
+                site_file <- path.expand(file.path(R.home("etc"), 
+                  "licensed.site"))
+                if (file.exists(site_file) && pkg %in% readLines(site_file)) 
+                  return()
+                personal_file <- path.expand("~/.R/licensed")
+                if (file.exists(personal_file)) {
+                  agreed <- readLines(personal_file)
+                  if (pkg %in% agreed) 
+                    return()
+                }
+                else agreed <- character()
+                if (!interactive()) 
+                  stop(gettextf("package %s has a license that you need to accept in an interactive session", 
+                    sQuote(pkg)), domain = NA)
+                lfiles <- file.path(pkgpath, c("LICENSE", "LICENCE"))
+                lfiles <- lfiles[file.exists(lfiles)]
+                if (length(lfiles)) {
+                  message(gettextf("package %s has a license that you need to accept after viewing", 
+                    sQuote(pkg)), domain = NA)
+                  readline("press RETURN to view license")
+                  encoding <- pkgInfo$DESCRIPTION["Encoding"]
+                  if (is.na(encoding)) 
+                    encoding <- ""
+                  if (encoding == "latin1") 
+                    encoding <- "cp1252"
+                  file.show(lfiles[1L], encoding = encoding)
+                }
+                else {
+                  message(gettextf(paste("package %s has a license that you need to accept:", 
+                    "according to the DESCRIPTION file it is", 
+                    "%s", sep = "\n"), sQuote(pkg), pkgInfo$DESCRIPTION["License"]), 
+                    domain = NA)
+                }
+                choice <- utils::menu(c("accept", "decline"), 
+                  title = paste("License for", sQuote(pkg)))
+                if (choice != 1) 
+                  stop(gettextf("license for package %s not accepted", 
+                    sQuote(package)), domain = NA, call. = FALSE)
+                dir.create(dirname(personal_file), showWarnings = FALSE)
+                writeLines(c(agreed, pkg), personal_file)
+            }
+        }
+        if (!package %in% c("datasets", "grDevices", "graphics", 
+            "methods", "stats", "tools", "utils") && isTRUE(getOption("checkPackageLicense", 
+            FALSE))) 
+            checkLicense(package, pkgInfo, pkgpath)
         ns <- makeNamespace(package, version = version, lib = package.lib)
         on.exit(.Internal(unregisterNamespace(package)))
         for (i in nsInfo$imports) {
@@ -2122,7 +2179,9 @@ loadNamespace <- function (package, lib.loc = NULL, keep.source = getOption("kee
         codename <- strsplit(package, "_", fixed = TRUE)[[1L]][1L]
         codeFile <- file.path(pkgpath, "R", codename)
         if (file.exists(codeFile)) {
+            save.enc <- options(encoding = "native.enc")
             res <- try(sys.source(codeFile, env, keep.source = keep.source))
+            options(save.enc)
             if (inherits(res, "try-error")) 
                 stop(gettextf("unable to load R code in package %s", 
                   sQuote(package)), call. = FALSE, domain = NA)
@@ -2168,10 +2227,8 @@ loadNamespace <- function (package, lib.loc = NULL, keep.source = getOption("kee
             classPatterns <- nsInfo$exportClassPatterns
             if (!length(classPatterns)) 
                 classPatterns <- nsInfo$exportPatterns
-            for (p in classPatterns) {
-                pClasses <- c(aClasses[grep(p, aClasses)], pClasses)
-            }
-            pClasses <- unique(pClasses)
+            pClasses <- unique(unlist(lapply(classPatterns, grep, 
+                aClasses, value = TRUE)))
             if (length(pClasses)) {
                 good <- vapply(pClasses, methods::isClass, NA, 
                   where = ns)
@@ -2318,6 +2375,10 @@ getOption <- function (x, default = NULL)
 }
 
 
+duplicated.warnings <- function (x, incomparables = FALSE, ...) 
+duplicated(paste(names(x), as.character(x)), incomparables, ...)
+
+
 forceAndCall <- function (n, FUN, ...)  .Primitive("forceAndCall")
 
 
@@ -2391,6 +2452,17 @@ as.data.frame.logical <- function (x, row.names = NULL, optional = FALSE, ..., n
     if (!optional) 
         names(value) <- nm
     structure(value, row.names = row.names, class = "data.frame")
+}
+
+
+.valid.factor <- function (object) 
+{
+    levs <- levels(object)
+    if (!is.character(levs)) 
+        return("factor levels must be \"character\"")
+    if (d <- anyDuplicated(levs)) 
+        return(sprintf("duplicated level [%d] in factor", d))
+    TRUE
 }
 
 
@@ -2637,19 +2709,16 @@ within.data.frame <- function (data, expr, ...)
 
 format.AsIs <- function (x, width = 12, ...) 
 {
-    if (is.character(x)) 
+    if (is.character(x) || (is.atomic(x) && is.matrix(x))) 
         return(format.default(x, ...))
     if (is.null(width)) 
-        width = 12L
-    n <- length(x)
-    rvec <- rep.int(NA_character_, n)
-    for (i in seq_len(n)) {
-        y <- x[[i]]
+        width <- 12L
+    rvec <- vapply(x, function(y) {
         cl <- oldClass(y)
         if (m <- match("AsIs", cl, 0L)) 
             oldClass(y) <- cl[-m]
-        rvec[i] <- toString(y, width = width, ...)
-    }
+        toString(y, width = width, ...)
+    }, "")
     dim(rvec) <- dim(x)
     dimnames(rvec) <- dimnames(x)
     format.default(rvec, justify = "right")
@@ -2777,7 +2846,7 @@ grouping <- function (...)
         else x)
         return(do.call("grouping", z))
     }
-    nalast <- FALSE
+    nalast <- TRUE
     decreasing <- rep_len(FALSE, length(z))
     group <- TRUE
     sortStr <- FALSE
@@ -2875,7 +2944,7 @@ getDLLRegisteredRoutines.character <- function (dll, addNames = TRUE)
     dll <- which.max(w)
     if (sum(w) > 1L) 
         warning(gettextf("multiple DLLs match '%s'. Using '%s'", 
-            dll, dll[["path"]]), domain = NA)
+            names(dll), dlls[[dll]][["path"]]), domain = NA)
     getDLLRegisteredRoutines(dlls[[dll]], addNames)
 }
 
@@ -3119,7 +3188,7 @@ require <- function (package, lib.loc = NULL, quietly = FALSE, warn.conflicts = 
 {
     if (!character.only) 
         package <- as.character(substitute(package))
-    loaded <- paste("package", package, sep = ":") %in% search()
+    loaded <- paste0("package:", package) %in% search()
     if (!loaded) {
         if (!quietly) 
             packageStartupMessage(gettextf("Loading required package: %s", 
@@ -3237,8 +3306,8 @@ weekdays.POSIXt <- function (x, abbreviate = FALSE)
 }
 
 
-droplevels.factor <- function (x, ...) 
-factor(x)
+droplevels.factor <- function (x, exclude = if (anyNA(levels(x))) NULL else NA, ...) 
+factor(x, exclude = exclude)
 
 
 rapply <- function (object, f, classes = "ANY", deflt = NULL, how = c("unlist", 
@@ -3328,14 +3397,26 @@ readBin <- function (con, what, n = 1L, size = NA_integer_, signed = TRUE,
 }
 
 
-isSymmetric.matrix <- function (object, tol = 100 * .Machine$double.eps, ...) 
+isSymmetric.matrix <- function (object, tol = 100 * .Machine$double.eps, tol1 = 8 * 
+    tol, ...) 
 {
     if (!is.matrix(object)) 
         return(FALSE)
     d <- dim(object)
-    if (d[1L] != d[2L]) 
+    if ((n <- d[1L]) != d[2L]) 
         return(FALSE)
-    test <- if (is.complex(object)) 
+    if (n <= 1L) 
+        return(TRUE)
+    iCplx <- is.complex(object)
+    if (length(tol1)) {
+        Cj <- if (iCplx) 
+            Conj
+        else identity
+        for (i in unique(c(1L, 2L, n - 1L, n))) if (is.character(all.equal(object[i, 
+            ], Cj(object[, i]), tolerance = tol1, ...))) 
+            return(FALSE)
+    }
+    test <- if (iCplx) 
         all.equal.numeric(object, Conj(t(object)), tolerance = tol, 
             ...)
     else all.equal(object, t(object), tolerance = tol, ...)
@@ -3691,7 +3772,7 @@ polyroot <- function (z)
 .Internal(polyroot(z))
 
 
-R.version.string <- "R version 3.3.0 (2016-05-03)"
+R.version.string <- "R version 3.4.0 (2017-04-21)"
 
 
 colMeans <- function (x, na.rm = FALSE, dims = 1L) 
@@ -3777,11 +3858,11 @@ callCC <- function (fun)
 }
 
 
-R.version <- structure(list(platform = "x86_64-pc-linux-gnu", arch = "x86_64", 
-    os = "linux-gnu", system = "x86_64, linux-gnu", status = "", 
-    major = "3", minor = "3.0", year = "2016", month = "05", 
-    day = "03", `svn rev` = "70573", language = "R", version.string = "R version 3.3.0 (2016-05-03)", 
-    nickname = "Supposedly Educational"), .Names = c("platform", 
+R.version <- structure(list(platform = "x86_64-apple-darwin15.6.0", arch = "x86_64", 
+    os = "darwin15.6.0", system = "x86_64, darwin15.6.0", status = "", 
+    major = "3", minor = "4.0", year = "2017", month = "04", 
+    day = "21", `svn rev` = "72570", language = "R", version.string = "R version 3.4.0 (2017-04-21)", 
+    nickname = "You Stupid Darkness"), .Names = c("platform", 
 "arch", "os", "system", "status", "major", "minor", "year", "month", 
 "day", "svn rev", "language", "version.string", "nickname"), class = "simple.list")
 
@@ -3842,18 +3923,13 @@ all.equal.numeric <- function (target, current, tolerance = sqrt(.Machine$double
         return(msg)
     }
     out <- out | target == current
-    if (all(out)) {
-        if (is.null(msg)) 
-            return(TRUE)
-        else return(msg)
-    }
+    if (all(out)) 
+        return(if (is.null(msg)) TRUE else msg)
     target <- target[!out]
     current <- current[!out]
     if (is.integer(target) && is.integer(current)) 
         target <- as.double(target)
-    xy <- mean((if (cplx) 
-        Mod
-    else abs)(target - current))
+    xy <- mean(abs(target - current))
     what <- if (is.null(scale)) {
         xn <- mean(abs(target))
         if (is.finite(xn) && xn > tolerance) {
@@ -4025,9 +4101,10 @@ requireNamespace <- function (package, ..., quietly = FALSE)
 
 
 .Platform <- structure(list(OS.type = "unix", file.sep = "/", dynlib.ext = ".so", 
-    GUI = "X11", endian = "little", pkgType = "source", path.sep = ":", 
-    r_arch = ""), .Names = c("OS.type", "file.sep", "dynlib.ext", 
-"GUI", "endian", "pkgType", "path.sep", "r_arch"))
+    GUI = "X11", endian = "little", pkgType = "mac.binary.el-capitan", 
+    path.sep = ":", r_arch = ""), .Names = c("OS.type", "file.sep", 
+"dynlib.ext", "GUI", "endian", "pkgType", "path.sep", "r_arch"
+))
 
 
 eigen <- function (x, symmetric, only.values = FALSE, EISPACK = FALSE) 
@@ -4058,8 +4135,10 @@ eigen <- function (x, symmetric, only.values = FALSE, EISPACK = FALSE)
         else .Internal(La_rg_cmplx(x, only.values))
         ord <- sort.list(Mod(z$values), decreasing = TRUE)
     }
-    return(list(values = z$values[ord], vectors = if (!only.values) z$vectors[, 
-        ord, drop = FALSE]))
+    if (only.values) 
+        list(values = z$values[ord], vectors = NULL)
+    else structure(class = "eigen", list(values = z$values[ord], 
+        vectors = z$vectors[, ord, drop = FALSE]))
 }
 
 
@@ -4103,20 +4182,19 @@ difftime <- function (time1, time2, tz, units = c("auto", "secs", "mins",
     z <- unclass(time1) - unclass(time2)
     attr(z, "tzone") <- NULL
     units <- match.arg(units)
-    if (units == "auto") {
-        if (all(is.na(z))) 
-            units <- "secs"
+    if (units == "auto") 
+        units <- if (all(is.na(z))) 
+            "secs"
         else {
             zz <- min(abs(z), na.rm = TRUE)
-            if (is.na(zz) || zz < 60) 
-                units <- "secs"
+            if (!is.finite(zz) || zz < 60) 
+                "secs"
             else if (zz < 3600) 
-                units <- "mins"
+                "mins"
             else if (zz < 86400) 
-                units <- "hours"
-            else units <- "days"
+                "hours"
+            else "days"
         }
-    }
     switch(units, secs = .difftime(z, units = "secs"), mins = .difftime(z/60, 
         units = "mins"), hours = .difftime(z/3600, units = "hours"), 
         days = .difftime(z/86400, units = "days"), weeks = .difftime(z/(7 * 
@@ -4198,7 +4276,9 @@ print.Date <- function (x, max = NULL, ...)
         cat(" [ reached getOption(\"max.print\") -- omitted", 
             length(x) - max, "entries ]\n")
     }
-    else print(format(x), max = max, ...)
+    else print(if (length(x)) 
+        format(x)
+    else paste(class(x)[1L], "of length 0"), max = max, ...)
     invisible(x)
 }
 
@@ -4264,7 +4344,7 @@ write.dcf <- function (x, file = "", append = FALSE, indent = 0.1 * getOption("w
     is_not_empty <- nzchar(out)
     eor <- character(sum(is_not_empty))
     if (length(eor)) {
-        eor[diff(c(col(out))[is_not_empty]) >= 1L] <- "\n"
+        eor[which(diff(c(col(out))[is_not_empty]) >= 1L)] <- "\n"
     }
     writeLines(paste0(c(out[is_not_empty]), eor), file)
 }
@@ -4343,16 +4423,12 @@ strwrap <- function (x, width = 0.9 * getOption("width"), indent = 0, exdent = 0
     indentString <- strrep(" ", indent)
     exdentString <- strrep(" ", exdent)
     y <- list()
-    UB <- TRUE
-    if (all(Encoding(x) == "UTF-8")) 
-        UB <- FALSE
-    else {
-        enc <- Encoding(x) %in% c("latin1", "UTF-8")
-        if (length(enc)) 
-            x[enc] <- enc2native(x[enc])
-    }
-    z <- lapply(strsplit(x, "\n[ \t\n]*\n", perl = TRUE, useBytes = UB), 
-        strsplit, "[ \t\n]", perl = TRUE, useBytes = UB)
+    enc <- Encoding(x)
+    x <- enc2utf8(x)
+    if (any(ind <- !validEnc(x))) 
+        x[ind] <- iconv(x[ind], "UTF-8", "UTF-8", sub = "byte")
+    z <- lapply(strsplit(x, "\n[ \t\n]*\n", perl = TRUE), strsplit, 
+        "[ \t\n]", perl = TRUE)
     for (i in seq_along(z)) {
         yi <- character()
         for (j in seq_along(z[[i]])) {
@@ -4419,6 +4495,14 @@ strwrap <- function (x, width = 0.9 * getOption("width"), indent = 0, exdent = 0
         y <- if (length(yi)) 
             c(y, list(yi[-length(yi)]))
         else c(y, "")
+    }
+    if (length(pos <- which(enc == "latin1"))) {
+        y[pos] <- lapply(y[pos], function(s) {
+            e <- Encoding(s)
+            if (length(p <- which(e == "UTF-8"))) 
+                s[p] <- iconv(s[p], "UTF-8", "latin1", sub = "byte")
+            s
+        })
     }
     if (simplify) 
         y <- as.character(unlist(y))
@@ -4552,7 +4636,7 @@ path.package <- function (package = NULL, quiet = FALSE)
     searchpaths <- lapply(seq_along(s), function(i) attr(as.environment(i), 
         "path"))
     searchpaths[[length(s)]] <- system.file()
-    pkgs <- paste("package", package, sep = ":")
+    pkgs <- paste0("package:", package)
     pos <- match(pkgs, s)
     if (any(m <- is.na(pos))) {
         if (!quiet) {
@@ -4599,7 +4683,7 @@ Summary.difftime <- function (..., na.rm)
         .difftime(do.call(.Generic), "secs")
     }
     else {
-        units <- sapply(x, function(x) attr(x, "units"))
+        units <- sapply(x, attr, "units")
         if (all(units == units[1L])) {
             args <- c(lapply(x, as.vector), na.rm = na.rm)
         }
@@ -4636,11 +4720,11 @@ t.default <- function (x)
 .Internal(t.default(x))
 
 
-.Options <- pairlist(prompt = "> ", continue = "+ ", expressions = 5000L, width = 80L, deparse.cutoff = 60L, digits = 7L, echo = FALSE, verbose = FALSE, check.bounds = FALSE, keep.source = FALSE, keep.source.pkgs = FALSE, warning.length = 1000L, nwarnings = 50L, OutDec = ".", browserNLdisabled = FALSE, CBoundsCheck = FALSE, rl_word_breaks = " \t\n\"\\'`><=%;,|&{()}", warn = 0, timeout = 60, encoding = "native.enc", show.error.messages = TRUE, scipen = 0, max.print = 99999L, add.smooth = TRUE, stringsAsFactors = TRUE, showErrorCalls = TRUE, defaultPackages = c("datasets", 
-"utils", "grDevices", "graphics", "stats", "methods"), papersize = "letter", printcmd = "/usr/bin/lpr", dvipscmd = "dvips", texi2dvi = "/usr/bin/texi2dvi", browser = "xdg-open", pager = "/usr/lib/R/bin/pager", pdfviewer = "/usr/bin/xdg-open", useFancyQuotes = TRUE, help.try.all.packages = FALSE, help.search.types = c("vignette", 
-"demo", "help"), citation.bibtex.max = 1L, internet.info = 2L, pkgType = "source", str = structure(list(
+.Options <- pairlist(prompt = "> ", continue = "+ ", expressions = 5000L, width = 80L, deparse.cutoff = 60L, digits = 7L, echo = FALSE, verbose = FALSE, check.bounds = FALSE, keep.source = FALSE, keep.source.pkgs = FALSE, warning.length = 1000L, nwarnings = 50L, OutDec = ".", browserNLdisabled = FALSE, CBoundsCheck = FALSE, matprod = "default", PCRE_study = 10L, PCRE_use_JIT = TRUE, PCRE_limit_recursion = NA, rl_word_breaks = " \t\n\"\\'`><=%;,|&{()}", warn = 0, timeout = 60, encoding = "native.enc", show.error.messages = TRUE, scipen = 0, max.print = 99999L, add.smooth = TRUE, stringsAsFactors = TRUE, showErrorCalls = TRUE, defaultPackages = c("datasets", 
+"utils", "grDevices", "graphics", "stats", "methods"), papersize = "a4", printcmd = "lpr", dvipscmd = "dvips", texi2dvi = "/usr/local/bin/texi2dvi", browser = "/usr/bin/open", pager = "/Library/Frameworks/R.framework/Resources/bin/pager", pdfviewer = "/usr/bin/open", useFancyQuotes = TRUE, help_type = "html", help.try.all.packages = FALSE, help.search.types = c("vignette", 
+"demo", "help"), citation.bibtex.max = 1L, internet.info = 2L, pkgType = "both", str = structure(list(
     strict.width = "no", digits.d = 3L, vec.len = 4L), .Names = c("strict.width", 
-"digits.d", "vec.len")), demo.ask = "default", example.ask = "default", HTTPUserAgent = "R (3.3.0 x86_64-pc-linux-gnu x86_64 linux-gnu)", menu.graphics = TRUE, mailer = "mailto", unzip = "/usr/bin/unzip", editor = "vi", repos = structure("@CRAN@", .Names = "CRAN"), locatorBell = TRUE, device.ask.default = FALSE, bitmapType = "cairo", device = function (file = if (onefile) "Rplots.pdf" else "Rplot%03d.pdf", 
+"digits.d", "vec.len")), demo.ask = "default", example.ask = "default", HTTPUserAgent = "R (3.4.0 x86_64-apple-darwin15.6.0 x86_64 darwin15.6.0)", menu.graphics = TRUE, mailer = "mailto", install.packages.compile.from.source = "interactive", unzip = "/usr/bin/unzip", editor = "vi", repos = structure("@CRAN@", .Names = "CRAN"), locatorBell = TRUE, device.ask.default = FALSE, bitmapType = "quartz", device = function (file = if (onefile) "Rplots.pdf" else "Rplot%03d.pdf", 
     width, height, onefile, family, title, fonts, version, paper, 
     encoding, bg, fg, pointsize, pagecentre, colormodel, useDingbats, 
     useKerning, fillOddEven, compress) 
@@ -4914,7 +4998,7 @@ expand.grid <- function (..., KEEP.OUT.ATTRS = TRUE, stringsAsFactors = TRUE)
             orep <- orep/nx
             x <- x[rep.int(rep.int(seq_len(nx), rep.int(rep.fac, 
                 nx)), orep)]
-            if (stringsAsFactors && !is.factor(x) && is.character(x)) 
+            if (stringsAsFactors && is.character(x) && !is.factor(x)) 
                 x <- factor(x, levels = unique(x))
             cargs[[i]] <- x
             rep.fac <- rep.fac * nx
@@ -5031,12 +5115,12 @@ determinant.matrix <- function (x, logarithm = TRUE, ...)
 }
 
 
-split.default <- function (x, f, drop = FALSE, sep = ".", ...) 
+split.default <- function (x, f, drop = FALSE, sep = ".", lex.order = FALSE, ...) 
 {
     if (!missing(...)) 
         .NotYetUsed(deparse(...), error = FALSE)
     if (is.list(f)) 
-        f <- interaction(f, drop = drop, sep = sep)
+        f <- interaction(f, drop = drop, sep = sep, lex.order = lex.order)
     else if (!is.factor(f)) 
         f <- as.factor(f)
     else if (drop) 
@@ -5122,7 +5206,8 @@ registerS3methods <- function (info, package, env)
         fin[i, 2], fin[i, 3], fin[i, 4], env)
     if (package != "MASS" && nrow(overwrite) && Sys.getenv("_R_LOAD_CHECK_OVERWRITE_S3_METHODS_") %in% 
         c(package, "all")) {
-        std <- as.vector(unlist(tools:::.get_standard_package_names()))
+        std <- unlist(tools:::.get_standard_package_names(), 
+            use.names = FALSE)
         overwrite <- overwrite[overwrite[, 2L] %in% std, , drop = FALSE]
         if (nr <- nrow(overwrite)) {
             msg <- ngettext(nr, "Registered S3 method from a standard package overwritten by '%s':", 
@@ -5238,9 +5323,7 @@ attr(x, "levels")
 
 .mergeExportMethods <- function (new, ns) 
 {
-    mm <- ".__M__"
-    newMethods <- new[substr(new, 1L, nchar(mm, type = "c")) == 
-        mm]
+    newMethods <- new[startsWith(new, ".__M__")]
     nsimports <- parent.env(ns)
     for (what in newMethods) {
         if (!is.null(m1 <- nsimports[[what]])) {
@@ -5339,7 +5422,7 @@ bindtextdomain <- function (domain, dirname = NULL)
 .Internal(bindtextdomain(domain, dirname))
 
 
-tapply <- function (X, INDEX, FUN = NULL, ..., simplify = TRUE) 
+tapply <- function (X, INDEX, FUN = NULL, ..., default = NA, simplify = TRUE) 
 {
     FUN <- if (!is.null(FUN)) 
         match.fun(FUN)
@@ -5370,14 +5453,13 @@ tapply <- function (X, INDEX, FUN = NULL, ..., simplify = TRUE)
     names(ans) <- NULL
     index <- as.logical(lengths(ans))
     ans <- lapply(X = ans[index], FUN = FUN, ...)
-    if (simplify && all(lengths(ans) == 1L)) {
-        ansmat <- array(dim = extent, dimnames = namelist)
-        ans <- unlist(ans, recursive = FALSE)
+    ansmat <- array(if (simplify && all(lengths(ans) == 1L)) {
+        ans <- unlist(ans, recursive = FALSE, use.names = FALSE)
+        if (!is.null(ans) && is.na(default) && is.atomic(ans)) 
+            vector(typeof(ans))
+        else default
     }
-    else {
-        ansmat <- array(vector("list", prod(extent)), dim = extent, 
-            dimnames = namelist)
-    }
+    else vector("list", prod(extent)), dim = extent, dimnames = namelist)
     if (length(ans)) {
         ansmat[index] <- ans
     }
@@ -5433,7 +5515,7 @@ UseMethod("solve")
 
 
 is.qr <- function (x) 
-inherits(x, "qr")
+is.list(x) && inherits(x, "qr")
 
 
 summary.Date <- function (object, digits = 12L, ...) 
@@ -5459,7 +5541,7 @@ solve.default <- function (a, b, tol = .Machine$double.eps, LINPACK = FALSE, ...
         }
         return(.Internal(La_solve_cmplx(a, b)))
     }
-    if (is.qr(a)) {
+    if (inherits(a, "qr")) {
         warning("solve.default called with a \"qr\" object: use 'qr.solve'")
         return(solve.qr(a, b, tol))
     }
@@ -5525,9 +5607,9 @@ mapply <- function (FUN, ..., MoreArgs = NULL, SIMPLIFY = TRUE, USE.NAMES = TRUE
 {
     if (!missing(new)) {
         new <- Sys.glob(path.expand(new))
-        paths <- unique(normalizePath(c(new, .Library.site, .Library), 
-            "/"))
-        .lib.loc <<- paths[dir.exists(paths)]
+        paths <- c(new, .Library.site, .Library)
+        paths <- paths[dir.exists(paths)]
+        .lib.loc <<- unique(normalizePath(paths, "/"))
     }
     else .lib.loc
 }
@@ -5626,11 +5708,13 @@ addNA <- function (x, ifany = FALSE)
 {
     if (!is.factor(x)) 
         x <- factor(x)
-    if (ifany & !anyNA(x)) 
+    if (ifany && !anyNA(x)) 
         return(x)
     ll <- levels(x)
     if (!anyNA(ll)) 
         ll <- c(ll, NA)
+    else if (!ifany && !anyNA(x)) 
+        return(x)
     factor(x, levels = ll, exclude = NULL)
 }
 
@@ -5895,7 +5979,19 @@ structure(NextMethod("c"), class = "noquote")
 
 print.connection <- function (x, ...) 
 {
-    print(unlist(summary(x)))
+    usumm <- tryCatch(unlist(summary(x)), error = function(e) {
+    })
+    if (is.null(usumm)) {
+        cl <- oldClass(x)
+        cl <- cl[cl != "connection"]
+        cat("A connection, ", if (length(cl)) 
+            paste0("specifically, ", paste(sQuote(cl), collapse = ", "), 
+                ", "), "but invalid.\n", sep = "")
+    }
+    else {
+        cat("A connection with")
+        print(cbind(` ` = usumm), ...)
+    }
     invisible(x)
 }
 
@@ -6025,11 +6121,12 @@ UseMethod("print")
 
 
 sort.list <- function (x, partial = NULL, na.last = TRUE, decreasing = FALSE, 
-    method = c("shell", "quick", "radix")) 
+    method = c("auto", "shell", "quick", "radix")) 
 {
-    if (is.integer(x) || is.factor(x)) 
-        method <- "radix"
     method <- match.arg(method)
+    if (method == "auto" && (is.numeric(x) || is.factor(x) || 
+        is.logical(x)) && is.integer(length(x))) 
+        method <- "radix"
     if (!is.atomic(x)) 
         stop("'x' must be atomic for 'sort.list'\nHave you called 'sort' on a list?")
     if (!is.null(partial)) 
@@ -6209,10 +6306,11 @@ print.factor <- function (x, quote = FALSE, max.levels = NULL, width = getOption
             "ordered"
         else "factor", "(0)\n", sep = "")
     else {
-        xx <- x
-        class(xx) <- NULL
-        levels(xx) <- NULL
+        xx <- character(length(x))
         xx[] <- as.character(x)
+        keepAttrs <- setdiff(names(attributes(x)), c("levels", 
+            "class"))
+        attributes(xx)[keepAttrs] <- attributes(x)[keepAttrs]
         print(xx, quote = quote, ...)
     }
     maxl <- if (is.null(max.levels)) 
@@ -6241,6 +6339,8 @@ print.factor <- function (x, quote = FALSE, max.levels = NULL, width = getOption
             c(lev[1L:max(1, maxl - 1)], "...", if (maxl > 1) lev[n])
         else lev, collapse = colsep), "\n", sep = "")
     }
+    if (!isTRUE(val <- .valid.factor(x))) 
+        warning(val)
     invisible(x)
 }
 
@@ -6488,6 +6588,14 @@ mean.POSIXct <- function (x, ...)
 .POSIXct(mean(unclass(x), ...), attr(x, "tzone"))
 
 
+print.eigen <- function (x, ...) 
+{
+    cat("eigen() decomposition\n")
+    print(unclass(x), ...)
+    invisible(x)
+}
+
+
 memDecompress <- function (from, type = c("unknown", "gzip", "bzip2", "xz", "none"), 
     asChar = FALSE) 
 {
@@ -6556,9 +6664,10 @@ fifo <- function (description, open = "", blocking = FALSE, encoding = getOption
 .Internal(fifo(description, open, blocking, encoding))
 
 
-sample.int <- function (n, size = n, replace = FALSE, prob = NULL) 
+sample.int <- function (n, size = n, replace = FALSE, prob = NULL, useHash = (!replace && 
+    is.null(prob) && size <= n/2 && n > 1e+07)) 
 {
-    if (!replace && is.null(prob) && n > 1e+07 && size <= n/2) 
+    if (useHash) 
         .Internal(sample2(n, size))
     else .Internal(sample(n, size, replace, prob))
 }
@@ -6962,9 +7071,9 @@ Negate <- function (f)
 }
 
 
-.C_R_removeTaskCallback <- structure(list(name = "R_removeTaskCallback", address = pointer("0xe0e670"), 
+.C_R_removeTaskCallback <- structure(list(name = "R_removeTaskCallback", address = pointer("0x7fe9a3605ac0"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 1L), class = c("CallRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
@@ -7055,11 +7164,19 @@ ifelse <- function (test, yes, no)
             if (is.na(test)) 
                 return(NA)
             else if (test) {
-                if (length(yes) == 1 && is.null(attributes(yes))) 
-                  return(yes)
+                if (length(yes) == 1) {
+                  yat <- attributes(yes)
+                  if (is.null(yat) || (is.function(yes) && identical(names(yat), 
+                    "srcref"))) 
+                    return(yes)
+                }
             }
-            else if (length(no) == 1 && is.null(attributes(no))) 
-                return(no)
+            else if (length(no) == 1) {
+                nat <- attributes(no)
+                if (is.null(nat) || (is.function(no) && identical(names(nat), 
+                  "srcref"))) 
+                  return(no)
+            }
         }
     }
     else test <- if (isS4(test)) 
@@ -7225,7 +7342,8 @@ parseNamespaceFile <- function (package, package.lib, mustExist = TRUE)
         evalToChar <- function(cc) {
             vars <- all.vars(cc)
             names(vars) <- vars
-            as.character(eval(eval(call("substitute", cc, as.list(vars)))))
+            as.character(eval(eval(call("substitute", cc, as.list(vars))), 
+                .GlobalEnv))
         }
         switch(as.character(e[[1L]]), `if` = if (eval(e[[2L]], 
             .GlobalEnv)) parseDirective(e[[3L]]) else if (length(e) == 
@@ -7297,7 +7415,7 @@ parseNamespaceFile <- function (package, package.lib, mustExist = TRUE)
                     if (nzchar(symNames[idx])) {
                       e <- parse(text = symNames[idx], keep.source = FALSE, 
                         srcfile = NULL)[[1L]]
-                      if (is.call(e)) val <- eval(e) else val <- as.character(e)
+                      if (is.call(e)) val <- eval(e, .GlobalEnv) else val <- as.character(e)
                       if (length(val)) fixes[seq_along(val)] <- val
                     }
                     symNames <- symNames[-idx]
@@ -7386,6 +7504,25 @@ withCallingHandlers(expr, message = function(c) invokeRestart("muffleMessage"))
     names(y) <- names(x)
     class(y) <- unique(c(attr(x, ".classes"), "numeric_version"))
     y
+}
+
+
+withAutoprint <- function (exprs, evaluated = FALSE, local = parent.frame(), print. = TRUE, 
+    echo = TRUE, max.deparse.length = Inf, width.cutoff = max(20, 
+        getOption("width")), deparseCtrl = c("keepInteger", "showAttributes", 
+        "keepNA"), ...) 
+{
+    if (!evaluated) {
+        exprs <- substitute(exprs)
+        if (is.call(exprs)) {
+            if (exprs[[1]] == quote(`{`)) 
+                exprs <- as.list(exprs[-1])
+        }
+    }
+    source(exprs = exprs, local = local, print.eval = print., 
+        echo = echo, max.deparse.length = max.deparse.length, 
+        width.cutoff = width.cutoff, deparseCtrl = deparseCtrl, 
+        ...)
 }
 
 
@@ -7735,11 +7872,13 @@ dynGet <- function (x, ifnotfound = stop(gettextf("%s not found", sQuote(x)),
     domain = NA), minframe = 1L, inherits = FALSE) 
 {
     n <- sys.nframe()
+    myObj <- structure(list(.b = as.raw(7)), foo = 47L)
     while (n > minframe) {
         n <- n - 1L
         env <- sys.frame(n)
-        if (exists(x, envir = env, inherits = inherits)) 
-            return(get(x, envir = env, inherits = inherits))
+        r <- get0(x, envir = env, inherits = inherits, ifnotfound = myObj)
+        if (!identical(r, myObj)) 
+            return(r)
     }
     ifnotfound
 }
@@ -7805,12 +7944,14 @@ strptime <- function (x, format, tz = "")
 }
 
 
-droplevels.data.frame <- function (x, except = NULL, ...) 
+droplevels.data.frame <- function (x, except = NULL, exclude, ...) 
 {
     ix <- vapply(x, is.factor, NA)
     if (!is.null(except)) 
         ix[except] <- FALSE
-    x[ix] <- lapply(x[ix], factor)
+    x[ix] <- if (missing(exclude)) 
+        lapply(x[ix], droplevels)
+    else lapply(x[ix], droplevels, exclude = exclude)
     x
 }
 
@@ -7854,9 +7995,7 @@ namespaceImportFrom <- function (self, ns, vars, generics, packages, from = "non
     whichMethodMetaNames <- function(impvars) {
         if (!.isMethodsDispatchOn()) 
             return(numeric())
-        mm <- ".__T__"
-        seq_along(impvars)[substr(impvars, 1L, nchar(mm, type = "c")) == 
-            mm]
+        seq_along(impvars)[startsWith(impvars, ".__T__")]
     }
     genericPackage <- function(f) {
         if (methods::is(f, "genericFunction")) 
@@ -8147,8 +8286,14 @@ complex <- function (length.out = 0L, real = numeric(), imaginary = numeric(),
 }
 
 
-undebug <- function (fun) 
-.Internal(undebug(fun))
+undebug <- function (fun, signature = NULL) 
+{
+    if (is.null(signature)) 
+        .Internal(undebug(fun))
+    else if (requireNamespace("methods")) 
+        methods::.undebugMethod(fun, signature = signature)
+    else stop("failed to load methods package for undebugging by signature")
+}
 
 
 gamma <- function (x)  .Primitive("gamma")
@@ -8271,8 +8416,7 @@ formatDL <- function (x, y, style = c("table", "list"), width = 0.9 * getOption(
     style <- match.arg(style)
     if (is.null(indent)) 
         indent <- switch(style, table = width/3, list = width/9)
-    if (indent > 0.5 * width) 
-        stop("incorrect values of 'indent' and 'width'")
+    indent <- min(indent, 0.5 * width)
     indentString <- strrep(" ", indent)
     if (style == "table") {
         i <- (nchar(x, type = "w") > indent - 3L)
@@ -8490,13 +8634,12 @@ getExportedValue <- function (ns, name)
 
 solve.qr <- function (a, b, ...) 
 {
-    if (!is.qr(a)) 
+    if (!inherits(a, "qr")) 
         stop("this is the \"qr\" method for the generic function solve()")
     nc <- ncol(a$qr)
     nr <- nrow(a$qr)
     if (a$rank != min(nc, nr)) 
-        if (a$rank != nc) 
-            stop("singular matrix 'a' in 'solve'")
+        stop("singular matrix 'a' in 'solve'")
     if (missing(b)) {
         if (nc != nr) 
             stop("only square matrices can be inverted")
@@ -8809,7 +8952,7 @@ print.warnings <- function (x, ...)
 split.Date <- function (x, f, drop = FALSE, ...) 
 {
     oclass <- class(x)
-    y <- split.default(unclass(x), f, drop = drop)
+    y <- split.default(unclass(x), f, drop = drop, ...)
     for (i in seq_along(y)) class(y[[i]]) <- oclass
     y
 }
@@ -8948,49 +9091,15 @@ library <- function (package, help, pos = 2, lib.loc = NULL, character.only = FA
             stop(gettextf("package %s is not installed for 'arch = %s'", 
                 sQuote(pkgname), r_arch), call. = FALSE, domain = NA)
     }
-    checkLicense <- function(pkg, pkgInfo, pkgPath) {
-        L <- tools:::analyze_license(pkgInfo$DESCRIPTION["License"])
-        if (!L$is_empty && !L$is_verified) {
-            site_file <- path.expand(file.path(R.home("etc"), 
-                "licensed.site"))
-            if (file.exists(site_file) && pkg %in% readLines(site_file)) 
-                return()
-            personal_file <- path.expand("~/.R/licensed")
-            if (file.exists(personal_file)) {
-                agreed <- readLines(personal_file)
-                if (pkg %in% agreed) 
-                  return()
-            }
-            else agreed <- character()
-            if (!interactive()) 
-                stop(gettextf("package %s has a license that you need to accept in an interactive session", 
-                  sQuote(pkg)), domain = NA)
-            lfiles <- file.path(pkgpath, c("LICENSE", "LICENCE"))
-            lfiles <- lfiles[file.exists(lfiles)]
-            if (length(lfiles)) {
-                message(gettextf("package %s has a license that you need to accept after viewing", 
-                  sQuote(pkg)), domain = NA)
-                readline("press RETURN to view license")
-                encoding <- pkgInfo$DESCRIPTION["Encoding"]
-                if (is.na(encoding)) 
-                  encoding <- ""
-                if (encoding == "latin1") 
-                  encoding <- "cp1252"
-                file.show(lfiles[1L], encoding = encoding)
-            }
-            else {
-                message(gettextf(paste("package %s has a license that you need to accept:", 
-                  "according to the DESCRIPTION file it is", 
-                  "%s", sep = "\n"), sQuote(pkg), pkgInfo$DESCRIPTION["License"]), 
-                  domain = NA)
-            }
-            choice <- utils::menu(c("accept", "decline"), title = paste("License for", 
-                sQuote(pkg)))
-            if (choice != 1) 
-                stop(gettextf("license for package %s not accepted", 
-                  sQuote(package)), domain = NA, call. = FALSE)
-            dir.create(dirname(personal_file), showWarnings = FALSE)
-            writeLines(c(agreed, pkg), personal_file)
+    testFeatures <- function(features, pkgInfo, pkgname, pkgpath) {
+        needsComp <- as.character(pkgInfo$DESCRIPTION["NeedsCompilation"])
+        if (identical(needsComp, "yes")) {
+            internalsID <- features$internalsID
+            if (is.null(internalsID)) 
+                internalsID <- "0310d4b8-ccb1-4bb8-ba94-d36a55f60262"
+            if (internalsID != .Internal(internalsID())) 
+                stop(gettextf("package %s was installed by an R version with different internals; it needs to be reinstalled for use with this R version", 
+                  sQuote(pkgname)), call. = FALSE, domain = NA)
         }
     }
     checkNoGenerics <- function(env, pkg) {
@@ -9001,8 +9110,7 @@ library <- function (package, help, pos = 2, lib.loc = NULL, character.only = FA
         if (exists(".noGenerics", envir = nenv, inherits = FALSE)) 
             TRUE
         else {
-            length(grep(pattern = "^\\.__T", names(env))) == 
-                0L
+            !any(startsWith(names(env), ".__T"))
         }
     }
     checkConflicts <- function(package, pkgname, pkgpath, nogenerics, 
@@ -9067,7 +9175,7 @@ library <- function (package, help, pos = 2, lib.loc = NULL, character.only = FA
             stop("'package' must be of length 1")
         if (is.na(package) || (package == "")) 
             stop("invalid package name")
-        pkgname <- paste("package", package, sep = ":")
+        pkgname <- paste0("package:", package)
         newpackage <- is.na(match(pkgname, search()))
         if (newpackage) {
             pkgpath <- find.package(package, lib.loc, quiet = TRUE, 
@@ -9091,11 +9199,12 @@ library <- function (package, help, pos = 2, lib.loc = NULL, character.only = FA
                   sQuote(package)), domain = NA)
             pkgInfo <- readRDS(pfile)
             testRversion(pkgInfo, package, pkgpath)
-            if (!package %in% c("datasets", "grDevices", "graphics", 
-                "methods", "splines", "stats", "stats4", "tcltk", 
-                "tools", "utils") && isTRUE(getOption("checkPackageLicense", 
-                FALSE))) 
-                checkLicense(package, pkgInfo, pkgpath)
+            ffile <- system.file("Meta", "features.rds", package = package, 
+                lib.loc = which.lib.loc)
+            features <- if (file.exists(ffile)) 
+                readRDS(ffile)
+            else NULL
+            testFeatures(features, pkgInfo, package, pkgpath)
             if (is.character(pos)) {
                 npos <- match(pos, search())
                 if (is.na(npos)) {
@@ -9112,24 +9221,36 @@ library <- function (package, help, pos = 2, lib.loc = NULL, character.only = FA
                   newversion <- as.numeric_version(pkgInfo$DESCRIPTION["Version"])
                   oldversion <- as.numeric_version(getNamespaceVersion(package))
                   if (newversion != oldversion) {
-                    res <- try(unloadNamespace(package))
-                    if (inherits(res, "try-error")) 
-                      stop(gettextf("Package %s version %s cannot be unloaded", 
-                        sQuote(package), oldversion), domain = NA)
+                    res <- tryCatch(unloadNamespace(package), 
+                      error = function(e) {
+                        P <- if (!is.null(cc <- conditionCall(e))) 
+                          paste("Error in", deparse(cc)[1L], 
+                            ": ")
+                        else "Error : "
+                        stop(gettextf("Package %s version %s cannot be unloaded:\n %s", 
+                          sQuote(package), oldversion, paste0(P, 
+                            conditionMessage(e), "\n")), domain = NA)
+                      })
                   }
                 }
-                tt <- try({
+                tt <- tryCatch({
                   attr(package, "LibPath") <- which.lib.loc
                   ns <- loadNamespace(package, lib.loc)
                   env <- attachNamespace(ns, pos = pos, deps)
-                })
-                attr(package, "LibPath") <- NULL
-                if (inherits(tt, "try-error")) 
+                }, error = function(e) {
+                  P <- if (!is.null(cc <- conditionCall(e))) 
+                    paste(" in", deparse(cc)[1L])
+                  else ""
+                  msg <- gettextf("package or namespace load failed for %s%s:\n %s", 
+                    sQuote(package), P, conditionMessage(e))
                   if (logical.return) 
-                    return(FALSE)
-                  else stop(gettextf("package or namespace load failed for %s", 
-                    sQuote(package)), call. = FALSE, domain = NA)
-                else {
+                    message(paste("Error:", msg), domain = NA)
+                  else stop(msg, call. = FALSE, domain = NA)
+                })
+                if (logical.return && is.null(tt)) 
+                  return(FALSE)
+                attr(package, "LibPath") <- NULL
+                {
                   on.exit(detach(pos = pos))
                   nogenerics <- !.isMethodsDispatchOn() || checkNoGenerics(env, 
                     package)
@@ -9177,7 +9298,7 @@ library <- function (package, help, pos = 2, lib.loc = NULL, character.only = FA
                 }
                 nm <- paste0(names(txt), ":")
                 formatDL(nm, txt, indent = max(nchar(nm, "w")) + 
-                  3)
+                  3L)
             }
             else if (basename(f) %in% "vignette.rds") {
                 txt <- readRDS(f)
@@ -9331,7 +9452,7 @@ autoloader <- function (name, package, ...)
     m[[1L]] <- as.name("library")
     eval(m, .GlobalEnv)
     autoload(name, package, reset = TRUE, ...)
-    where <- match(paste("package", package, sep = ":"), search())
+    where <- match(paste0("package:", package), search())
     if (exists(name, where = where, inherits = FALSE)) 
         eval(as.name(name), as.environment(where))
     else stop(gettextf("autoloader did not find '%s' in '%s'", 
@@ -9459,21 +9580,19 @@ range <- function (..., na.rm = FALSE)  .Primitive("range")
 
 
 source <- function (file, local = FALSE, echo = verbose, print.eval = echo, 
-    verbose = getOption("verbose"), prompt.echo = getOption("prompt"), 
-    max.deparse.length = 150, chdir = FALSE, encoding = getOption("encoding"), 
-    continue.echo = getOption("continue"), skip.echo = 0, keep.source = getOption("keep.source")) 
+    exprs, spaced = use_file, verbose = getOption("verbose"), 
+    prompt.echo = getOption("prompt"), max.deparse.length = 150, 
+    width.cutoff = 60L, deparseCtrl = "showAttributes", chdir = FALSE, 
+    encoding = getOption("encoding"), continue.echo = getOption("continue"), 
+    skip.echo = 0, keep.source = getOption("keep.source")) 
 {
-    envir <- if (isTRUE(local)) {
+    envir <- if (isTRUE(local)) 
         parent.frame()
-    }
-    else if (identical(local, FALSE)) {
+    else if (identical(local, FALSE)) 
         .GlobalEnv
-    }
-    else if (is.environment(local)) {
+    else if (is.environment(local)) 
         local
-    }
     else stop("'local' must be TRUE, FALSE or an environment")
-    have_encoding <- !missing(encoding) && encoding != "unknown"
     if (!missing(echo)) {
         if (!is.logical(echo)) 
             stop("'echo' must be logical")
@@ -9486,115 +9605,126 @@ source <- function (file, local = FALSE, echo = verbose, print.eval = echo,
         cat("'envir' chosen:")
         print(envir)
     }
-    ofile <- file
-    from_file <- FALSE
-    srcfile <- NULL
-    if (is.character(file)) {
-        if (identical(encoding, "unknown")) {
-            enc <- utils::localeToCharset()
-            encoding <- enc[length(enc)]
-        }
-        else enc <- encoding
-        if (length(enc) > 1L) {
-            encoding <- NA
-            owarn <- options(warn = 2)
-            for (e in enc) {
-                if (is.na(e)) 
-                  next
-                zz <- file(file, encoding = e)
-                res <- tryCatch(readLines(zz, warn = FALSE), 
-                  error = identity)
-                close(zz)
-                if (!inherits(res, "error")) {
-                  encoding <- e
-                  break
-                }
+    if (use_file <- missing(exprs)) {
+        ofile <- file
+        from_file <- FALSE
+        srcfile <- NULL
+        if (is.character(file)) {
+            have_encoding <- !missing(encoding) && encoding != 
+                "unknown"
+            if (identical(encoding, "unknown")) {
+                enc <- utils::localeToCharset()
+                encoding <- enc[length(enc)]
             }
-            options(owarn)
-        }
-        if (is.na(encoding)) 
-            stop("unable to find a plausible encoding")
-        if (verbose) 
-            cat(gettextf("encoding = \"%s\" chosen", encoding), 
-                "\n", sep = "")
-        if (file == "") {
-            file <- stdin()
-            srcfile <- "<stdin>"
-        }
-        else {
-            filename <- file
-            file <- file(filename, "r", encoding = encoding)
-            on.exit(close(file))
-            if (isTRUE(keep.source)) {
-                lines <- readLines(file, warn = FALSE)
-                on.exit()
-                close(file)
-                srcfile <- srcfilecopy(filename, lines, file.mtime(filename)[1], 
-                  isFile = TRUE)
+            else enc <- encoding
+            if (length(enc) > 1L) {
+                encoding <- NA
+                owarn <- options(warn = 2)
+                for (e in enc) {
+                  if (is.na(e)) 
+                    next
+                  zz <- file(file, encoding = e)
+                  res <- tryCatch(readLines(zz, warn = FALSE), 
+                    error = identity)
+                  close(zz)
+                  if (!inherits(res, "error")) {
+                    encoding <- e
+                    break
+                  }
+                }
+                options(owarn)
+            }
+            if (is.na(encoding)) 
+                stop("unable to find a plausible encoding")
+            if (verbose) 
+                cat(gettextf("encoding = \"%s\" chosen", encoding), 
+                  "\n", sep = "")
+            if (file == "") {
+                file <- stdin()
+                srcfile <- "<stdin>"
             }
             else {
-                from_file <- TRUE
-                srcfile <- filename
+                filename <- file
+                file <- file(filename, "r", encoding = encoding)
+                on.exit(close(file))
+                if (isTRUE(keep.source)) {
+                  lines <- readLines(file, warn = FALSE)
+                  on.exit()
+                  close(file)
+                  srcfile <- srcfilecopy(filename, lines, file.mtime(filename)[1], 
+                    isFile = TRUE)
+                }
+                else {
+                  from_file <- TRUE
+                  srcfile <- filename
+                }
+                loc <- utils::localeToCharset()[1L]
+                encoding <- if (have_encoding) 
+                  switch(loc, `UTF-8` = "UTF-8", `ISO8859-1` = "latin1", 
+                    "unknown")
+                else "unknown"
             }
-            loc <- utils::localeToCharset()[1L]
-            encoding <- if (have_encoding) 
-                switch(loc, `UTF-8` = "UTF-8", `ISO8859-1` = "latin1", 
-                  "unknown")
-            else "unknown"
+        }
+        else {
+            lines <- readLines(file, warn = FALSE)
+            srcfile <- if (isTRUE(keep.source)) 
+                srcfilecopy(deparse(substitute(file)), lines)
+            else deparse(substitute(file))
+        }
+        exprs <- if (!from_file) {
+            if (length(lines)) 
+                .Internal(parse(stdin(), n = -1, lines, "?", 
+                  srcfile, encoding))
+            else expression()
+        }
+        else .Internal(parse(file, n = -1, NULL, "?", srcfile, 
+            encoding))
+        on.exit()
+        if (from_file) 
+            close(file)
+        if (verbose) 
+            cat("--> parsed", length(exprs), "expressions; now eval(.)ing them:\n")
+        if (chdir) {
+            if (is.character(ofile)) {
+                if (grepl("^(ftp|http|file)://", ofile)) 
+                  warning("'chdir = TRUE' makes no sense for a URL")
+                else if ((path <- dirname(ofile)) != ".") {
+                  owd <- getwd()
+                  if (is.null(owd)) 
+                    stop("cannot 'chdir' as current directory is unknown")
+                  on.exit(setwd(owd), add = TRUE)
+                  setwd(path)
+                }
+            }
+            else {
+                warning("'chdir = TRUE' makes no sense for a connection")
+            }
         }
     }
     else {
-        lines <- readLines(file, warn = FALSE)
-        if (isTRUE(keep.source)) 
-            srcfile <- srcfilecopy(deparse(substitute(file)), 
-                lines)
-        else srcfile <- deparse(substitute(file))
+        if (!missing(file)) 
+            stop("specify either 'file' or 'exprs' but not both")
+        if (!is.expression(exprs)) 
+            exprs <- as.expression(exprs)
     }
-    exprs <- if (!from_file) {
-        if (length(lines)) 
-            .Internal(parse(stdin(), n = -1, lines, "?", srcfile, 
-                encoding))
-        else expression()
-    }
-    else .Internal(parse(file, n = -1, NULL, "?", srcfile, encoding))
-    on.exit()
-    if (from_file) 
-        close(file)
     Ne <- length(exprs)
-    if (verbose) 
-        cat("--> parsed", Ne, "expressions; now eval(.)ing them:\n")
-    if (chdir) {
-        if (is.character(ofile)) {
-            if (grepl("^(ftp|http|file)://", ofile)) 
-                warning("'chdir = TRUE' makes no sense for a URL")
-            else if ((path <- dirname(ofile)) != ".") {
-                owd <- getwd()
-                if (is.null(owd)) 
-                  stop("cannot 'chdir' as current directory is unknown")
-                on.exit(setwd(owd), add = TRUE)
-                setwd(path)
-            }
-        }
-        else {
-            warning("'chdir = TRUE' makes no sense for a connection")
-        }
-    }
     if (echo) {
         sd <- "\""
         nos <- "[^\"]*"
         oddsd <- paste0("^", nos, sd, "(", nos, sd, nos, sd, 
             ")*", nos, "$")
         trySrcLines <- function(srcfile, showfrom, showto) {
-            lines <- tryCatch(suppressWarnings(getSrcLines(srcfile, 
-                showfrom, showto)), error = function(e) e)
-            if (inherits(lines, "error")) 
-                character()
-            else lines
+            tryCatch(suppressWarnings(getSrcLines(srcfile, showfrom, 
+                showto)), error = function(e) character())
         }
     }
     yy <- NULL
     lastshown <- 0
     srcrefs <- attr(exprs, "srcref")
+    if (verbose && !is.null(srcrefs)) {
+        cat("has srcrefs:\n")
+        utils::str(srcrefs)
+    }
     for (i in seq_len(Ne + echo)) {
         tail <- i > Ne
         if (!tail) {
@@ -9635,8 +9765,9 @@ source <- function (file, local = FALSE, echo = verbose, print.eval = echo,
             }
             if (is.null(srcref)) {
                 if (!tail) {
-                  dep <- substr(paste(deparse(ei, control = "showAttributes"), 
-                    collapse = "\n"), 12L, 1000000L)
+                  dep <- substr(paste(deparse(ei, width.cutoff = width.cutoff, 
+                    control = deparseCtrl), collapse = "\n"), 
+                    12L, 1000000L)
                   dep <- paste0(prompt.echo, gsub("\n", paste0("\n", 
                     continue.echo), dep))
                   nd <- nchar(dep, "c") - 1L
@@ -9647,7 +9778,8 @@ source <- function (file, local = FALSE, echo = verbose, print.eval = echo,
                 dep <- substr(dep, 1L, if (do.trunc) 
                   max.deparse.length
                 else nd)
-                cat("\n", dep, if (do.trunc) 
+                cat(if (spaced) 
+                  "\n", dep, if (do.trunc) 
                   paste(if (grepl(sd, dep) && grepl(oddsd, dep)) 
                     " ...\" ..."
                   else " ....", "[TRUNCATED] "), "\n", sep = "")
@@ -9673,8 +9805,8 @@ source <- function (file, local = FALSE, echo = verbose, print.eval = echo,
                 else print(yy$value)
             }
             if (verbose) 
-                cat(" .. after ", sQuote(deparse(ei, control = c("showAttributes", 
-                  "useSource"))), "\n", sep = "")
+                cat(" .. after ", sQuote(deparse(ei, control = unique(c(deparseCtrl, 
+                  "useSource")))), "\n", sep = "")
         }
     }
     invisible(yy)
@@ -9789,11 +9921,11 @@ qr.default <- function (x, tol = 1e-07, LAPACK = FALSE, ...)
 .Internal(rowMeans(x, m, n, na.rm))
 
 
-version <- structure(list(platform = "x86_64-pc-linux-gnu", arch = "x86_64", 
-    os = "linux-gnu", system = "x86_64, linux-gnu", status = "", 
-    major = "3", minor = "3.0", year = "2016", month = "05", 
-    day = "03", `svn rev` = "70573", language = "R", version.string = "R version 3.3.0 (2016-05-03)", 
-    nickname = "Supposedly Educational"), .Names = c("platform", 
+version <- structure(list(platform = "x86_64-apple-darwin15.6.0", arch = "x86_64", 
+    os = "darwin15.6.0", system = "x86_64, darwin15.6.0", status = "", 
+    major = "3", minor = "4.0", year = "2017", month = "04", 
+    day = "21", `svn rev` = "72570", language = "R", version.string = "R version 3.4.0 (2017-04-21)", 
+    nickname = "You Stupid Darkness"), .Names = c("platform", 
 "arch", "os", "system", "status", "major", "minor", "year", "month", 
 "day", "svn rev", "language", "version.string", "nickname"), class = "simple.list")
 
@@ -9979,12 +10111,12 @@ xor.octmode <- function (a, b)
 as.octmode(bitwXor(as.octmode(a), as.octmode(b)))
 
 
-summary.factor <- function (object, maxsum = 100, ...) 
+summary.factor <- function (object, maxsum = 100L, ...) 
 {
     nas <- is.na(object)
     ll <- levels(object)
-    if (any(nas)) 
-        maxsum <- maxsum - 1
+    if (ana <- any(nas)) 
+        maxsum <- maxsum - 1L
     tbl <- table(object)
     tt <- c(tbl)
     names(tt) <- dimnames(tbl)[[1L]]
@@ -9993,7 +10125,7 @@ summary.factor <- function (object, maxsum = 100, ...)
         o <- sort.list(tt, decreasing = TRUE)
         tt <- c(tt[o[-drop]], `(Other)` = sum(tt[o[drop]]))
     }
-    if (any(nas)) 
+    if (ana) 
         c(tt, `NA's` = sum(nas))
     else tt
 }
@@ -10062,7 +10194,6 @@ summary.data.frame <- function (object, maxsum = 7L, digits = max(3L, getOption(
             cn <- paste0(substring(blanks, 1L, pad0), cn, substring(blanks, 
                 1L, pad1))
             nm[i] <- paste(cn, collapse = "  ")
-            z[[i]] <- sms
         }
         else {
             sms <- format(sms, digits = digits)
@@ -10070,8 +10201,8 @@ summary.data.frame <- function (object, maxsum = 7L, digits = max(3L, getOption(
             sms <- paste0(lbs, ":", sms, "  ")
             lw[i] <- ncw(lbs[1L])
             length(sms) <- nr
-            z[[i]] <- sms
         }
+        z[[i]] <- sms
     }
     if (nv) {
         z <- unlist(z, use.names = TRUE)
@@ -10106,38 +10237,47 @@ pmax <- function (..., na.rm = FALSE)
     if (all(vapply(elts, function(x) is.atomic(x) && !is.object(x), 
         NA))) {
         mmm <- .Internal(pmax(na.rm, ...))
+        mostattributes(mmm) <- attributes(elts[[1L]])
     }
     else {
         mmm <- elts[[1L]]
-        attr(mmm, "dim") <- NULL
         has.na <- FALSE
+        as <- methods::as
+        asL <- function(x) if (isS4(x)) 
+            as(x, "logical")
+        else x
         for (each in elts[-1L]) {
-            attr(each, "dim") <- NULL
             l1 <- length(each)
             l2 <- length(mmm)
-            if (l2 < l1) {
-                if (l2 && l1%%l2) 
+            if (l2 && (l2 < l1 || !l1)) {
+                if (l1%%l2) 
                   warning("an argument will be fractionally recycled")
                 mmm <- rep(mmm, length.out = l1)
             }
-            else if (l1 && l1 < l2) {
+            else if (l1 && (l1 < l2 || !l2)) {
                 if (l2%%l1) 
                   warning("an argument will be fractionally recycled")
                 each <- rep(each, length.out = l2)
             }
-            nas <- cbind(is.na(mmm), is.na(each))
-            if (has.na || (has.na <- any(nas))) {
-                mmm[nas[, 1L]] <- each[nas[, 1L]]
-                each[nas[, 2L]] <- mmm[nas[, 2L]]
+            na.m <- is.na(mmm)
+            na.e <- is.na(each)
+            if (has.na || (has.na <- any(na.m) || any(na.e))) {
+                if (any(na.m <- asL(na.m))) 
+                  mmm[na.m] <- each[na.m]
+                if (any(na.e <- asL(na.e))) 
+                  each[na.e] <- mmm[na.e]
             }
-            change <- mmm < each
+            nS4 <- !isS4(mmm)
+            if (isS4(change <- mmm < each) && (nS4 || !isS4(each))) 
+                change <- as(change, "logical")
             change <- change & !is.na(change)
             mmm[change] <- each[change]
             if (has.na && !na.rm) 
-                mmm[nas[, 1L] | nas[, 2L]] <- NA
+                mmm[na.m | na.e] <- NA
+            if (nS4) 
+                mostattributes(mmm) <- attributes(elts[[1L]])
         }
     }
-    mostattributes(mmm) <- attributes(elts[[1L]])
     mmm
 }
 
@@ -10490,11 +10630,13 @@ read.dcf <- function (file, fields = NULL, all = FALSE, keep.white = NULL)
     pos <- cumsum(lengths)
     tags <- sub(":.*", "", lines[line_has_tag])
     lines[line_has_tag] <- sub("[^:]*:[[:space:]]*", "", lines[line_has_tag])
-    foldable <- rep.int(is.na(match(tags, keep.white)), lengths)
+    fold <- is.na(match(tags, keep.white))
+    foldable <- rep.int(fold, lengths)
     lines[foldable] <- sub("^[[:space:]]*", "", lines[foldable])
     lines[foldable] <- sub("[[:space:]]*$", "", lines[foldable])
     vals <- mapply(function(from, to) paste(lines[from:to], collapse = "\n"), 
         c(1L, pos[-length(pos)] + 1L), pos)
+    vals[fold] <- trimws(vals[fold])
     out <- .assemble_things_into_a_data_frame(tags, vals, nums[pos])
     if (!is.null(fields)) 
         out <- out[fields]
@@ -10645,38 +10787,47 @@ pmin <- function (..., na.rm = FALSE)
     if (all(vapply(elts, function(x) is.atomic(x) && !is.object(x), 
         NA))) {
         mmm <- .Internal(pmin(na.rm, ...))
+        mostattributes(mmm) <- attributes(elts[[1L]])
     }
     else {
         mmm <- elts[[1L]]
-        attr(mmm, "dim") <- NULL
         has.na <- FALSE
+        as <- methods::as
+        asL <- function(x) if (isS4(x)) 
+            as(x, "logical")
+        else x
         for (each in elts[-1L]) {
-            attr(each, "dim") <- NULL
             l1 <- length(each)
             l2 <- length(mmm)
-            if (l2 < l1) {
-                if (l2 && l1%%l2) 
+            if (l2 && (l2 < l1 || !l1)) {
+                if (l1%%l2) 
                   warning("an argument will be fractionally recycled")
                 mmm <- rep(mmm, length.out = l1)
             }
-            else if (l1 && l1 < l2) {
+            else if (l1 && (l1 < l2 || !l2)) {
                 if (l2%%l1) 
                   warning("an argument will be fractionally recycled")
                 each <- rep(each, length.out = l2)
             }
-            nas <- cbind(is.na(mmm), is.na(each))
-            if (has.na || (has.na <- any(nas))) {
-                mmm[nas[, 1L]] <- each[nas[, 1L]]
-                each[nas[, 2L]] <- mmm[nas[, 2L]]
+            na.m <- is.na(mmm)
+            na.e <- is.na(each)
+            if (has.na || (has.na <- any(na.m) || any(na.e))) {
+                if (any(na.m <- asL(na.m))) 
+                  mmm[na.m] <- each[na.m]
+                if (any(na.e <- asL(na.e))) 
+                  each[na.e] <- mmm[na.e]
             }
-            change <- mmm > each
+            nS4 <- !isS4(mmm)
+            if (isS4(change <- mmm > each) && (nS4 || !isS4(each))) 
+                change <- as(change, "logical")
             change <- change & !is.na(change)
             mmm[change] <- each[change]
             if (has.na && !na.rm) 
-                mmm[nas[, 1L] | nas[, 2L]] <- NA
+                mmm[na.m | na.e] <- NA
+            if (nS4) 
+                mostattributes(mmm) <- attributes(elts[[1L]])
         }
     }
-    mostattributes(mmm) <- attributes(elts[[1L]])
     mmm
 }
 
@@ -10794,8 +10945,7 @@ as.Date(as.character(x), ...)
 }
 
 
-.Library.site <- c("/usr/local/lib/R/site-library", "/usr/lib/R/site-library", 
-"/usr/lib/R/library")
+.Library.site <- character(0)
 
 
 gcinfo <- function (verbose) 
@@ -10904,7 +11054,7 @@ getCallingDLLe <- function (e)
 }
 
 
-.popath <- "/usr/lib/R/library/translations"
+.popath <- NA_character_
 
 
 cummax <- function (x)  .Primitive("cummax")
@@ -11290,9 +11440,16 @@ table <- function (..., exclude = if (useNA == "no") c(NA, NaN), useNA = c("no",
             nm
         }
     }
-    if (!missing(exclude) && is.null(exclude)) 
-        useNA <- "always"
-    useNA <- match.arg(useNA)
+    miss.use <- missing(useNA)
+    miss.exc <- missing(exclude)
+    useNA <- if (miss.use && !miss.exc && !match(NA, exclude, 
+        nomatch = 0L)) 
+        "ifany"
+    else match.arg(useNA)
+    doNA <- useNA != "no"
+    if (!miss.use && !miss.exc && doNA && match(NA, exclude, 
+        nomatch = 0L)) 
+        warning("'exclude' containing NA and 'useNA' != \"no\"' are a bit contradicting")
     args <- list(...)
     if (!length(args)) 
         stop("nothing to tabulate")
@@ -11313,34 +11470,55 @@ table <- function (..., exclude = if (useNA == "no") c(NA, NaN), useNA = c("no",
             lens <- length(a)
         else if (length(a) != lens) 
             stop("all arguments must have the same length")
-        cat <- if (is.factor(a)) {
-            if (any(is.na(levels(a)))) 
-                a
-            else {
-                if (is.null(exclude) && useNA != "no") 
-                  addNA(a, ifany = (useNA == "ifany"))
-                else {
-                  if (useNA != "no") 
-                    a <- addNA(a, ifany = (useNA == "ifany"))
-                  ll <- levels(a)
-                  a <- factor(a, levels = ll[!(ll %in% exclude)], 
-                    exclude = if (useNA == "no") 
-                      NA)
+        fact.a <- is.factor(a)
+        if (doNA) 
+            aNA <- anyNA(a)
+        if (!fact.a) {
+            a0 <- a
+            a <- factor(a, exclude = exclude)
+        }
+        add.na <- doNA
+        if (add.na) {
+            ifany <- (useNA == "ifany")
+            anNAc <- anyNA(a)
+            add.na <- if (!ifany || anNAc) {
+                ll <- levels(a)
+                if (add.ll <- !anyNA(ll)) {
+                  ll <- c(ll, NA)
+                  TRUE
                 }
+                else if (!ifany && !anNAc) 
+                  FALSE
+                else TRUE
+            }
+            else FALSE
+        }
+        if (add.na) 
+            a <- factor(a, levels = ll, exclude = NULL)
+        else ll <- levels(a)
+        a <- as.integer(a)
+        if (fact.a && !miss.exc) {
+            ll <- ll[keep <- which(match(ll, exclude, nomatch = 0L) == 
+                0L)]
+            a <- match(a, keep)
+        }
+        else if (!fact.a && add.na) {
+            if (ifany && !aNA && add.ll) {
+                ll <- ll[!is.na(ll)]
+                is.na(a) <- match(a0, c(exclude, NA), nomatch = 0L) > 
+                  0L
+            }
+            else {
+                is.na(a) <- match(a0, exclude, nomatch = 0L) > 
+                  0L
             }
         }
-        else {
-            a <- factor(a, exclude = exclude)
-            if (useNA != "no") 
-                addNA(a, ifany = (useNA == "ifany"))
-            else a
-        }
-        nl <- length(ll <- levels(cat))
+        nl <- length(ll)
         dims <- c(dims, nl)
         if (prod(dims) > .Machine$integer.max) 
             stop("attempt to make a table with >= 2^31 elements")
         dn <- c(dn, list(ll))
-        bin <- bin + pd * (as.integer(cat) - 1L)
+        bin <- bin + pd * (a - 1L)
         pd <- pd * nl
     }
     names(dn) <- dnn
@@ -11483,16 +11661,18 @@ cut <- function (x, ...)
 UseMethod("cut")
 
 
-summary.default <- function (object, ..., digits = max(3L, getOption("digits") - 
-    3L)) 
+summary.default <- function (object, ..., digits) 
 {
     if (is.factor(object)) 
         return(summary.factor(object, ...))
-    else if (is.matrix(object)) 
-        return(summary.matrix(object, digits = digits, ...))
+    else if (is.matrix(object)) {
+        if (missing(digits)) 
+            return(summary.matrix(object, ...))
+        else return(summary.matrix(object, digits = digits, ...))
+    }
     value <- if (is.logical(object)) 
         c(Mode = "logical", {
-            tb <- table(object, exclude = NULL)
+            tb <- table(object, exclude = NULL, useNA = "ifany")
             if (!is.null(n <- dimnames(tb)[[1L]]) && any(iN <- is.na(n))) dimnames(tb)[[1L]][iN] <- "NA's"
             tb
         })
@@ -11500,7 +11680,9 @@ summary.default <- function (object, ..., digits = max(3L, getOption("digits") -
         nas <- is.na(object)
         object <- object[!nas]
         qq <- stats::quantile(object)
-        qq <- signif(c(qq[1L:3L], mean(object), qq[4L:5L]), digits)
+        qq <- c(qq[1L:3L], mean(object), qq[4L:5L])
+        if (!missing(digits)) 
+            qq <- signif(qq, digits)
         names(qq) <- c("Min.", "1st Qu.", "Median", "Mean", "3rd Qu.", 
             "Max.")
         if (any(nas)) 
@@ -11605,12 +11787,11 @@ factor <- function (x = character(), levels, labels = levels, exclude = NA,
     if (missing(levels)) {
         y <- unique(x, nmax = nmax)
         ind <- sort.list(y)
-        y <- as.character(y)
-        levels <- unique(y[ind])
+        levels <- unique(as.character(y)[ind])
     }
     force(ordered)
-    exclude <- as.vector(exclude, typeof(x))
-    x <- as.character(x)
+    if (!is.character(x)) 
+        x <- as.character(x)
     levels <- levels[is.na(match(levels, exclude))]
     f <- match(x, levels)
     if (!is.null(nx)) 
@@ -11706,15 +11887,15 @@ system.time <- function (expr, gcFirst = TRUE)
             y[1L] <- y[1L] + y[4L]
         if (!is.na(y[5L])) 
             y[2L] <- y[2L] + y[5L]
-        y[1L:3L]
+        paste(formatC(y[1L:3L]), collapse = " ")
     }
     if (!exists("proc.time")) 
         return(rep(NA_real_, 5L))
     if (gcFirst) 
         gc(FALSE)
     time <- proc.time()
-    on.exit(cat("Timing stopped at:", ppt(proc.time() - time), 
-        "\n"))
+    on.exit(message("Timing stopped at: ", ppt(proc.time() - 
+        time)))
     expr
     new.time <- proc.time()
     on.exit()
@@ -11845,8 +12026,14 @@ as.double.POSIXlt <- function (x, ...)
 as.double(as.POSIXct(x))
 
 
-isdebugged <- function (fun) 
-.Internal(isdebugged(fun))
+isdebugged <- function (fun, signature = NULL) 
+{
+    if (is.null(signature)) 
+        .Internal(isdebugged(fun))
+    else if (requireNamespace("methods")) 
+        methods::.isMethodDebugged(fun, signature)
+    else stop("failed to load methods package for handling signature")
+}
 
 
 `mostattributes<-` <- function (obj, value) 
@@ -12131,12 +12318,16 @@ startsWith <- function (x, prefix)
 .Internal(startsWith(x, prefix))
 
 
-.F_dqrdc2 <- structure(list(name = "dqrdc2", address = pointer("0xd88440"), 
+.F_dqrdc2 <- structure(list(name = "dqrdc2", address = pointer("0x7fe9a3605b00"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 9L), class = c("FortranRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
+
+
+La_library <- function () 
+.Internal(La_library())
 
 
 Cstack_info <- function () 
@@ -12155,7 +12346,8 @@ Recall <- function (...)
 .Internal(Recall(...))
 
 
-try <- function (expr, silent = FALSE) 
+try <- function (expr, silent = FALSE, outFile = getOption("try.outFile", 
+    default = stderr())) 
 {
     tryCatch(expr, error = function(e) {
         call <- conditionCall(e)
@@ -12180,7 +12372,7 @@ try <- function (expr, silent = FALSE)
         .Internal(seterrmessage(msg[1L]))
         if (!silent && identical(getOption("show.error.messages"), 
             TRUE)) {
-            cat(msg, file = stderr())
+            cat(msg, file = outFile)
             .Internal(printDeferredWarnings())
         }
         invisible(structure(msg, class = "try-error", condition = e))
@@ -12241,7 +12433,7 @@ seq.default <- function (from = 1, to = 1, by = ((to - from)/(length.out - 1)),
     if ((One <- nargs() == 1L) && !missing(from)) {
         lf <- length(from)
         return(if (mode(from) == "numeric" && lf == 1L) {
-            if (!is.finite(from)) stop("'from' cannot be NA, NaN or infinite")
+            if (!is.finite(from)) stop("'from' must be a finite number")
             1L:from
         } else if (lf) 1L:lf else integer())
     }
@@ -12258,17 +12450,18 @@ seq.default <- function (from = 1, to = 1, by = ((to - from)/(length.out - 1)),
             warning("first element used of 'length.out' argument")
             length.out <- length.out[1L]
         }
-        length.out <- ceiling(length.out)
+        if (!is.integer(length.out)) 
+            length.out <- ceiling(length.out)
     }
     chkDots(...)
     if (!missing(from) && length(from) != 1L) 
         stop("'from' must be of length 1")
     if (!missing(to) && length(to) != 1L) 
         stop("'to' must be of length 1")
-    if (!missing(from) && !is.finite(from)) 
-        stop("'from' cannot be NA, NaN or infinite")
-    if (!missing(to) && !is.finite(to)) 
-        stop("'to' cannot be NA, NaN or infinite")
+    if (!missing(from) && !is.finite(if (is.character(from)) from <- as.numeric(from) else from)) 
+        stop("'from' must be a finite number")
+    if (!missing(to) && !is.finite(if (is.character(to)) to <- as.numeric(to) else to)) 
+        stop("'to' must be a finite number")
     if (is.null(length.out)) 
         if (missing(by)) 
             from:to
@@ -12276,12 +12469,13 @@ seq.default <- function (from = 1, to = 1, by = ((to - from)/(length.out - 1)),
             del <- to - from
             if (del == 0 && to == 0) 
                 return(to)
+            if (length(by) != 1L) 
+                stop("'by' must be of length 1")
             n <- del/by
-            if (!(length(n) && is.finite(n))) {
-                if (length(by) && by == 0 && length(del) && del == 
-                  0) 
+            if (!is.finite(n)) {
+                if (by == 0 && del == 0) 
                   return(from)
-                stop("invalid (to - from)/by in seq(.)")
+                stop("invalid '(to - from)/by'")
             }
             if (n < 0L) 
                 stop("wrong sign in 'by' argument")
@@ -12303,7 +12497,7 @@ seq.default <- function (from = 1, to = 1, by = ((to - from)/(length.out - 1)),
             }
         }
     else if (!is.finite(length.out) || length.out < 0L) 
-        stop("length must be non-negative number")
+        stop("'length.out' must be a non-negative number")
     else if (length.out == 0L) 
         integer()
     else if (One) 
@@ -12316,8 +12510,14 @@ seq.default <- function (from = 1, to = 1, by = ((to - from)/(length.out - 1)),
         if (length.out > 2L) 
             if (from == to) 
                 rep.int(from, length.out)
-            else as.vector(c(from, from + seq_len(length.out - 
-                2L) * by, to))
+            else {
+                by <- if (is.integer(del <- to - from) & is.integer(n1 <- length.out - 
+                  1L) && del%%n1 == 0L) 
+                  del%/%n1
+                else del/n1
+                as.vector(c(from, from + seq_len(length.out - 
+                  2L) * by, to))
+            }
         else as.vector(c(from, to))[seq_len(length.out)]
     }
     else if (missing(to)) 
@@ -12420,7 +12620,7 @@ pairlist <- function (...)
 as.pairlist(list(...))
 
 
-.Library <- "/usr/lib/R/library"
+.Library <- "/Library/Frameworks/R.framework/Resources/library"
 
 
 as.pairlist <- function (x) 
@@ -12433,7 +12633,7 @@ print.difftime <- function (x, digits = getOption("digits"), ...)
         cat("Time differences in ", attr(x, "units"), "\n", sep = "")
         y <- unclass(x)
         attr(y, "units") <- NULL
-        print(y)
+        print(y, digits = digits, ...)
     }
     else cat("Time difference of ", format(unclass(x), digits = digits), 
         " ", attr(x, "units"), "\n", sep = "")
@@ -13050,7 +13250,8 @@ url <- function (description, open = "", blocking = TRUE, encoding = getOption("
 
 sample <- function (x, size, replace = FALSE, prob = NULL) 
 {
-    if (length(x) == 1L && is.numeric(x) && x >= 1) {
+    if (length(x) == 1L && is.numeric(x) && is.finite(x) && x >= 
+        1) {
         if (missing(size)) 
             size <- x
         sample.int(x, size, replace, prob)
@@ -13102,7 +13303,7 @@ is.environment <- function (x)  .Primitive("is.environment")
     for (pkg in setdiff(pkgs, "base")) {
         depends <- pkgInfo$Depends[names(pkgInfo$Depends) == 
             pkg]
-        attached <- paste("package", pkg, sep = ":") %in% search()
+        attached <- paste0("package:", pkg) %in% search()
         current <- .findVersion(pkg, lib.loc)
         if (is.null(current)) 
             stop(gettextf("package %s required by %s could not be found", 
@@ -13605,8 +13806,11 @@ merge.data.frame <- function (x, y, by = intersect(names(x), names(y)), by.x = b
                 domain = NA)
         res <- cbind(x, y)
         if (sort) 
-            res <- res[if (all.x || all.y) 
-                do.call("order", x[, seq_len(l.b), drop = FALSE])
+            res <- res[if (all.x || all.y) {
+                x <- x[, seq_len(l.b), drop = FALSE]
+                attributes(x) <- NULL
+                do.call("order", x)
+            }
             else sort.list(bx[m$xi]), , drop = FALSE]
     }
     attr(res, "row.names") <- .set_row_names(nrow(res))
@@ -13619,14 +13823,28 @@ stopifnot <- function (...)
     n <- length(ll <- list(...))
     if (n == 0L) 
         return(invisible())
+    Dparse <- function(call, cutoff = 60L) {
+        ch <- deparse(call, width.cutoff = cutoff)
+        if (length(ch) > 1L) 
+            paste(ch[1L], "....")
+        else ch
+    }
+    head <- function(x, n = 6L) x[seq_len(if (n < 0L) max(length(x) + 
+        n, 0L) else min(n, length(x)))]
+    abbrev <- function(ae, n = 3L) paste(c(head(ae, n), if (length(ae) > 
+        n) "...."), collapse = "\n  ")
     mc <- match.call()
     for (i in 1L:n) if (!(is.logical(r <- ll[[i]]) && !anyNA(r) && 
         all(r))) {
-        ch <- deparse(mc[[i + 1]], width.cutoff = 60L)
-        if (length(ch) > 1L) 
-            ch <- paste(ch[1L], "....")
-        stop(sprintf(ngettext(length(r), "%s is not TRUE", "%s are not all TRUE"), 
-            ch), call. = FALSE, domain = NA)
+        cl.i <- mc[[i + 1L]]
+        msg <- if (is.call(cl.i) && identical(cl.i[[1]], quote(all.equal)) && 
+            (is.null(ni <- names(cl.i)) || length(cl.i) == 3L || 
+                length(cl.i <- cl.i[!nzchar(ni)]) == 3L)) 
+            sprintf(gettext("%s and %s are not equal:\n  %s"), 
+                Dparse(cl.i[[2]]), Dparse(cl.i[[3]]), abbrev(r))
+        else sprintf(ngettext(length(r), "%s is not TRUE", "%s are not all TRUE"), 
+            Dparse(cl.i))
+        stop(msg, call. = FALSE, domain = NA)
     }
     invisible()
 }
@@ -13671,12 +13889,13 @@ format(structure(as.character(x), names = names(x), dim = dim(x),
 kronecker(X, Y)
 
 
-sys.source <- function (file, envir = baseenv(), chdir = FALSE, keep.source = getOption("keep.source.pkgs")) 
+sys.source <- function (file, envir = baseenv(), chdir = FALSE, keep.source = getOption("keep.source.pkgs"), 
+    toplevel.env = as.environment(envir)) 
 {
     if (!(is.character(file) && file.exists(file))) 
         stop(gettextf("'%s' is not an existing file", file))
     keep.source <- as.logical(keep.source)
-    oop <- options(keep.source = keep.source, topLevelEnvironment = as.environment(envir))
+    oop <- options(keep.source = keep.source, topLevelEnvironment = toplevel.env)
     on.exit(options(oop))
     if (keep.source) {
         lines <- readLines(file, warn = FALSE)
@@ -13912,7 +14131,7 @@ attachNamespace <- function (ns, pos = 2L, depends = NULL)
     ns <- asNamespace(ns, base.OK = FALSE)
     nsname <- getNamespaceName(ns)
     nspath <- .getNamespaceInfo(ns, "path")
-    attname <- paste("package", nsname, sep = ":")
+    attname <- paste0("package:", nsname)
     if (attname %in% search()) 
         stop("namespace is already attached")
     env <- attach(NULL, pos = pos, name = attname)
@@ -14068,9 +14287,9 @@ as.data.frame.difftime <- function (x, row.names = NULL, optional = FALSE, ..., 
 }
 
 
-.F_dqrqty <- structure(list(name = "dqrqty", address = pointer("0xd88460"), 
+.F_dqrqty <- structure(list(name = "dqrqty", address = pointer("0x7fe9a3605b20"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 7L), class = c("FortranRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
@@ -14270,8 +14489,8 @@ grepRaw <- function (pattern, x, offset = 1L, ignore.case = FALSE, value = FALSE
 220924800, 252460800, 283996800, 315532800, 362793600, 394329600, 
 425865600, 489024000, 567993600, 631152000, 662688000, 709948800, 
 741484800, 773020800, 820454400, 867715200, 915148800, 1136073600, 
-1230768000, 1341100800, 1435708800), class = c("POSIXct", "POSIXt"
-))
+1230768000, 1341100800, 1435708800, 1483228800), class = c("POSIXct", 
+"POSIXt"))
 
 
 .cache_class <- function (class, extends)  .Primitive(".cache_class")
@@ -14284,7 +14503,8 @@ find.package <- function (package = NULL, lib.loc = NULL, quiet = FALSE, verbose
     }
     if (length(package) == 1L && package %in% c("base", "tools", 
         "utils", "grDevices", "graphics", "stats", "datasets", 
-        "methods", "grid", "parallel", "splines", "stats4", "tcltk")) 
+        "methods", "grid", "parallel", "splines", "stats4", "tcltk", 
+        "compiler")) 
         return(file.path(.Library, package))
     if (is.null(package)) 
         package <- .packages()
@@ -14362,7 +14582,7 @@ find.package <- function (package = NULL, lib.loc = NULL, quiet = FALSE, verbose
 
 
 split.POSIXct <- function (x, f, drop = FALSE, ...) 
-lapply(split.default(as.double(x), f, drop = drop), .POSIXct, 
+lapply(split.default(as.double(x), f, drop = drop, ...), .POSIXct, 
     tz = attr(x, "tzone"))
 
 
@@ -14672,9 +14892,16 @@ formatC <- function (x, digits = NULL, width = NULL, format = NULL, flag = "",
     preserve.width = "individual", zero.print = NULL, drop0trailing = FALSE) 
 {
     if (is.object(x)) {
+        if (!(is.atomic(x) || inherits(x, "vector"))) 
+            warning("class of 'x' was discarded")
         x <- unclass(x)
-        warning("class of 'x' was discarded")
     }
+    flag <- as.character(flag)
+    if (length(flag) != 1) 
+        stop("'flag' must be a string, i.e., of length 1")
+    nf <- strsplit(flag, "")[[1L]]
+    if (!all(nf %in% c("0", "+", "-", " ", "#", "'", "I"))) 
+        stop("'flag' should contain only characters from [0+- #'I]")
     format.char <- function(x, width, flag) {
         if (is.null(width)) 
             width <- 0L
@@ -14751,27 +14978,21 @@ formatC <- function (x, digits = NULL, width = NULL, format = NULL, flag = "",
         width <- digits
     i.strlen <- pmax(abs(as.integer(width)), if (format == "fg" || 
         format == "f") {
-        xEx <- as.integer(floor(log10(abs(x + ifelse(x == 0, 
-            1, 0)))))
+        xEx <- as.integer(floor(log10(abs(x + (x == 0)))))
         as.integer(x < 0 | flag != "") + digits + if (format == 
             "f") {
             2L + pmax(xEx, 0L)
         }
         else {
-            pmax(xEx, digits, digits + (-xEx) + 1L) + ifelse(nzchar(flag), 
-                nchar(flag, "b"), 0L) + 1L
+            1L + pmax(xEx, digits, digits + (-xEx) + 1L) + length(nf)
         }
     }
     else rep.int(digits + 8L, n))
-    flag <- as.character(flag)
-    nf <- strsplit(flag, "")[[1L]]
-    if (!all(nf %in% c("0", "+", "-", " ", "#"))) 
-        stop("'flag' can contain only '0+- #'")
     if (digits > 0 && any(nf == "#")) 
         digits <- -digits
     attr(x, "Csingle") <- NULL
     r <- .Internal(formatC(x, as.character(mode), width, digits, 
-        as.character(format), as.character(flag), i.strlen))
+        as.character(format), flag, i.strlen))
     if (some.special) 
         r[!Ok] <- format.char(rQ, width = width, flag = flag)
     if (nzchar(big.mark) || nzchar(small.mark) || decimal.mark != 
@@ -15010,7 +15231,7 @@ data.frame <- function (..., row.names = NULL, check.rows = FALSE, check.names =
     value <- unlist(vlist, recursive = FALSE, use.names = FALSE)
     vnames <- unlist(vnames[ncols > 0L])
     if (fix.empty.names && any(noname <- !nzchar(vnames))) 
-        vnames[noname] <- paste("Var", seq_along(vnames), sep = ".")[noname]
+        vnames[noname] <- paste0("Var.", seq_along(vnames))[noname]
     if (check.names) {
         if (fix.empty.names) 
             vnames <- make.names(vnames, unique = TRUE)
@@ -15063,7 +15284,7 @@ enc2utf8 <- function (x)  .Primitive("enc2utf8")
 
 qr.solve <- function (a, b, tol = 1e-07) 
 {
-    if (!is.qr(a)) 
+    if (!inherits(a, "qr")) 
         a <- qr(a, tol = tol)
     nc <- ncol(a$qr)
     nr <- nrow(a$qr)
@@ -15112,6 +15333,8 @@ UseMethod("unique")
 
 `formals<-` <- function (fun, envir = environment(fun), value) 
 {
+    if (!is.function(fun)) 
+        warning("'fun' is not a function")
     bd <- body(fun)
     as.function(c(value, if (is.null(bd) || is.list(bd)) list(bd) else bd), 
         envir)
@@ -15497,9 +15720,9 @@ expression <- function (...)  .Primitive("expression")
 .Internal(shortRowNames(x, type))
 
 
-.F_dqrrsd <- structure(list(name = "dqrrsd", address = pointer("0xec1d20"), 
+.F_dqrrsd <- structure(list(name = "dqrrsd", address = pointer("0x7fe9a3605b60"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 7L), class = c("FortranRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
@@ -15531,6 +15754,8 @@ as.factor <- function (x)
         levels <- sort(unique.default(x))
         f <- match(x, levels)
         levels(f) <- as.character(levels)
+        if (!is.null(nx <- names(x))) 
+            names(f) <- nx
         class(f) <- "factor"
         f
     }
@@ -15549,7 +15774,7 @@ as.data.frame.table <- function (x, row.names = NULL, ..., responseName = "Freq"
 }
 
 
-print.summaryDefault <- function (x, ...) 
+print.summaryDefault <- function (x, digits = max(3L, getOption("digits") - 3L), ...) 
 {
     xx <- x
     if (is.numeric(x) || is.complex(x)) {
@@ -15560,14 +15785,14 @@ print.summaryDefault <- function (x, ...)
     m <- match("NA's", names(xx), 0)
     if (inherits(x, "Date") || inherits(x, "POSIXct")) {
         xx <- if (length(a <- attr(x, "NAs"))) 
-            c(format(xx), `NA's` = as.character(a))
-        else format(xx)
-        print(xx, ...)
+            c(format(xx, digits = digits), `NA's` = as.character(a))
+        else format(xx, digits = digits)
+        print(xx, digits = digits, ...)
         return(invisible(x))
     }
     else if (m && !is.character(x)) 
-        xx <- c(format(xx[-m]), `NA's` = as.character(xx[m]))
-    print.table(xx, ...)
+        xx <- c(format(xx[-m], digits = digits), `NA's` = as.character(xx[m]))
+    print.table(xx, digits = digits, ...)
     invisible(x)
 }
 
@@ -15591,6 +15816,8 @@ untrace <- function (what, signature = NULL, where = topenv(parent.frame()))
 
 structure <- function (.Data, ...) 
 {
+    if (is.null(.Data)) 
+        warning("Calling 'structure(NULL, *)' is deprecated, as NULL cannot have attributes.\n  Consider 'structure(list(), *)' instead.")
     attrib <- list(...)
     if (length(attrib)) {
         specials <- c(".Dim", ".Dimnames", ".Names", ".Tsp", 
@@ -15604,7 +15831,7 @@ structure <- function (.Data, ...)
             storage.mode(.Data) <- "integer"
         attributes(.Data) <- c(attributes(.Data), attrib)
     }
-    return(.Data)
+    .Data
 }
 
 
@@ -15616,15 +15843,20 @@ setwd <- function (dir)
 .Internal(setwd(dir))
 
 
-print.POSIXct <- function (x, ...) 
+print.POSIXct <- function (x, tz = "", usetz = TRUE, ...) 
 {
     max.print <- getOption("max.print", 9999L)
+    FORM <- if (missing(tz)) 
+        function(z) format(x, usetz = usetz)
+    else function(z) format(x, tz = tz, usetz = usetz)
     if (max.print < length(x)) {
-        print(format(x[seq_len(max.print)], usetz = TRUE), ...)
+        print(FORM(x[seq_len(max.print)]), ...)
         cat(" [ reached getOption(\"max.print\") -- omitted", 
             length(x) - max.print, "entries ]\n")
     }
-    else print(format(x, usetz = TRUE), ...)
+    else print(if (length(x)) 
+        FORM(x)
+    else paste(class(x)[1L], "of length 0"), ...)
     invisible(x)
 }
 
@@ -15799,22 +16031,27 @@ utf8ToInt <- function (x)
 
 
 sort.int <- function (x, partial = NULL, na.last = NA, decreasing = FALSE, 
-    method = c("shell", "quick", "radix"), index.return = FALSE) 
+    method = c("auto", "shell", "quick", "radix"), index.return = FALSE) 
 {
-    useRadix <- (!missing(method) && method == "radix") || (missing(method) && 
-        is.null(partial) && (is.integer(x) || is.factor(x) || 
-        is.logical(x)))
-    if (useRadix) {
+    method <- match.arg(method)
+    if (method == "auto" && is.null(partial) && (is.numeric(x) || 
+        is.factor(x) || is.logical(x)) && is.integer(length(x))) 
+        method <- "radix"
+    if (method == "radix") {
         if (!is.null(partial)) {
             stop("'partial' sorting not supported by radix method")
+        }
+        if (index.return && is.na(na.last)) {
+            x <- x[!is.na(x)]
+            na.last <- TRUE
         }
         o <- order(x, na.last = na.last, decreasing = decreasing, 
             method = "radix")
         y <- x[o]
-        if (index.return) 
-            return(list(x = y, ix = o))
-        else return(y)
+        return(if (index.return) list(x = y, ix = o) else y)
     }
+    else if (method == "auto" || !is.numeric(x)) 
+        method <- "shell"
     if (isfact <- is.factor(x)) {
         if (index.return) 
             stop("'index.return' only for non-factors")
@@ -15832,7 +16069,8 @@ sort.int <- function (x, partial = NULL, na.last = NA, decreasing = FALSE,
     if (index.return && !is.na(na.last)) 
         stop("'index.return' only for 'na.last = NA'")
     if (!is.null(partial)) {
-        if (index.return || decreasing || isfact || !missing(method)) 
+        if (index.return || decreasing || isfact || method != 
+            "shell") 
             stop("unsupported options for partial sorting")
         if (!all(is.finite(partial))) 
             stop("non-finite 'partial'")
@@ -15846,9 +16084,6 @@ sort.int <- function (x, partial = NULL, na.last = NA, decreasing = FALSE,
     }
     else {
         nms <- names(x)
-        method <- if (is.numeric(x) && !missing(method)) 
-            match.arg(method)
-        else "shell"
         switch(method, quick = {
             if (!is.null(nms)) {
                 if (decreasing) x <- -x
@@ -15881,9 +16116,9 @@ sort.int <- function (x, partial = NULL, na.last = NA, decreasing = FALSE,
 
 
 identical <- function (x, y, num.eq = TRUE, single.NA = TRUE, attrib.as.set = TRUE, 
-    ignore.bytecode = TRUE, ignore.environment = FALSE) 
+    ignore.bytecode = TRUE, ignore.environment = FALSE, ignore.srcref = TRUE) 
 .Internal(identical(x, y, num.eq, single.NA, attrib.as.set, ignore.bytecode, 
-    ignore.environment))
+    ignore.environment, ignore.srcref))
 
 
 sys.calls <- function () 
@@ -16034,7 +16269,7 @@ tabulate <- function (bin, nbins = max(1L, bin, na.rm = TRUE))
         stop("attempt to make a table with >= 2^31 elements")
     nbins <- as.integer(nbins)
     if (is.na(nbins)) 
-        stop("invalid value of 'nbins'")
+        stop(gettextf("invalid value of %s", "'nbins'"), domain = NA)
     .Internal(tabulate(bin, nbins))
 }
 
@@ -16131,15 +16366,20 @@ list(sys.calls = sys.calls(), sys.parents = sys.parents(), sys.frames = sys.fram
 getNativeSymbolInfo(as.character(name), PACKAGE = x)
 
 
-print.POSIXlt <- function (x, ...) 
+print.POSIXlt <- function (x, tz = "", usetz = TRUE, ...) 
 {
     max.print <- getOption("max.print", 9999L)
+    FORM <- if (missing(tz)) 
+        function(z) format(x, usetz = usetz)
+    else function(z) format(x, tz = tz, usetz = usetz)
     if (max.print < length(x)) {
-        print(format(x[seq_len(max.print)], usetz = TRUE), ...)
+        print(FORM(x[seq_len(max.print)]), ...)
         cat(" [ reached getOption(\"max.print\") -- omitted", 
             length(x) - max.print, "entries ]\n")
     }
-    else print(format(x, usetz = TRUE), ...)
+    else print(if (length(x)) 
+        FORM(x)
+    else paste(class(x)[1L], "of length 0"), ...)
     invisible(x)
 }
 
@@ -16162,13 +16402,30 @@ Sys.timezone <- function (location = TRUE)
     lt <- normalizePath("/etc/localtime")
     if (grepl(pat <- "^/usr/share/zoneinfo/", lt)) 
         sub(pat, "", lt)
+    else if (lt == "/etc/localtime" && file.exists("/etc/timezone") && 
+        dir.exists("/usr/share/zoneinfo") && {
+        info <- file.info(normalizePath("/etc/timezone"), extra_cols = FALSE)
+        (!info$isdir && info$size <= 200L)
+    } && {
+        tz1 <- tryCatch(readBin("/etc/timezone", "raw", 200L), 
+            error = function(e) raw(0L))
+        length(tz1) > 0L && all(tz1 %in% as.raw(c(9:10, 13L, 
+            32:126)))
+    } && {
+        tz2 <- gsub("^[[:space:]]+|[[:space:]]+$", "", rawToChar(tz1))
+        tzp <- file.path("/usr/share/zoneinfo", tz2)
+        file.exists(tzp) && !dir.exists(tzp) && identical(file.size(normalizePath(tzp)), 
+            file.size(lt))
+    }) 
+        tz2
     else NA_character_
 }
 
 
 unloadNamespace <- function (ns) 
 {
-    if (any(ns == loadedNamespaces())) {
+    if ((is.character(ns) && any(ns == loadedNamespaces())) || 
+        (is.environment(ns) && any(getNamespaceName(ns) == loadedNamespaces()))) {
         runHook <- function(hookname, env, ...) {
             if (!is.null(fun <- env[[hookname]])) {
                 res <- tryCatch(fun(...), error = identity)
@@ -16181,7 +16438,7 @@ unloadNamespace <- function (ns)
         }
         ns <- asNamespace(ns, base.OK = FALSE)
         nsname <- getNamespaceName(ns)
-        pos <- match(paste("package", nsname, sep = ":"), search())
+        pos <- match(paste0("package:", nsname), search())
         if (!is.na(pos)) 
             detach(pos = pos)
         users <- getNamespaceUsers(ns)
@@ -16286,20 +16543,6 @@ rbind.data.frame <- function (..., deparse.level = 1, make.row.names = TRUE, str
         }
         else stop("names do not match previous names")
     }
-    if (make.row.names) 
-        Make.row.names <- function(nmi, ri, ni, nrow) {
-            if (nzchar(nmi)) {
-                if (ni == 0L) 
-                  character()
-                else if (ni > 1L) 
-                  paste(nmi, ri, sep = ".")
-                else nmi
-            }
-            else if (nrow > 0L && identical(ri, seq_len(ni)) && 
-                identical(unlist(rlabs, FALSE, FALSE), seq_len(nrow))) 
-                as.integer(seq.int(from = nrow + 1L, length.out = ni))
-            else ri
-        }
     allargs <- list(...)
     allargs <- allargs[lengths(allargs) > 0L]
     if (length(allargs)) {
@@ -16320,8 +16563,29 @@ rbind.data.frame <- function (..., deparse.level = 1, make.row.names = TRUE, str
         nms <- character(n)
     cl <- NULL
     perm <- rows <- vector("list", n)
-    rlabs <- if (make.row.names) 
-        rows
+    if (make.row.names) {
+        rlabs <- rows
+        autoRnms <- TRUE
+        Make.row.names <- function(nmi, ri, ni, nrow) {
+            if (nzchar(nmi)) {
+                if (autoRnms) 
+                  autoRnms <<- FALSE
+                if (ni == 0L) 
+                  character()
+                else if (ni > 1L) 
+                  paste(nmi, ri, sep = ".")
+                else nmi
+            }
+            else if (autoRnms && nrow > 0L && identical(ri, seq_len(ni))) 
+                as.integer(seq.int(from = nrow + 1L, length.out = ni))
+            else {
+                if (autoRnms && (nrow > 0L || !identical(ri, 
+                  seq_len(ni)))) 
+                  autoRnms <<- FALSE
+                ri
+            }
+        }
+    }
     nrow <- 0L
     value <- clabs <- NULL
     all.levs <- list()
@@ -16463,10 +16727,11 @@ rbind.data.frame <- function (..., deparse.level = 1, make.row.names = TRUE, str
             }
         }
     }
-    if (make.row.names) {
+    rlabs <- if (make.row.names && !autoRnms) {
         rlabs <- unlist(rlabs)
         if (anyDuplicated(rlabs)) 
-            rlabs <- make.unique(as.character(rlabs), sep = "")
+            make.unique(as.character(rlabs), sep = "")
+        else rlabs
     }
     if (is.null(cl)) {
         as.data.frame(value, row.names = rlabs, fix.empty.names = TRUE, 
@@ -16583,13 +16848,12 @@ prettyNum <- function (x, big.mark = "", big.interval = 3L, small.mark = "",
     if (nchar(input.d.mark) == 0) 
         stop("'input.d.mark' has no characters")
     x.sp <- strsplit(x, input.d.mark, fixed = TRUE)
-    if (any((lx.sp <- lengths(x.sp)) > 2)) {
+    if (any(lengths(x.sp) > 2)) {
         x.sp <- lapply(x.sp, function(xs) {
             lx <- length(xs)
             if (lx <= 2) 
                 xs
-            else c(paste(xs[1:(lx - 1)], collapse = input.d.mark), 
-                xs[lx])
+            else c(paste(xs[-lx], collapse = input.d.mark), xs[lx])
         })
     }
     B. <- vapply(x.sp, `[`, "", 1L)
@@ -16767,7 +17031,7 @@ close <- function (con, ...)
 UseMethod("close")
 
 
-format.summaryDefault <- function (x, ...) 
+format.summaryDefault <- function (x, digits = max(3L, getOption("digits") - 3L), ...) 
 {
     xx <- x
     if (is.numeric(x) || is.complex(x)) {
@@ -16778,12 +17042,12 @@ format.summaryDefault <- function (x, ...)
     m <- match("NA's", names(x), 0)
     if (inherits(x, "Date") || inherits(x, "POSIXct")) {
         if (length(a <- attr(x, "NAs"))) 
-            c(format(xx, ...), `NA's` = as.character(a))
-        else format(xx)
+            c(format(xx, digits = digits, ...), `NA's` = as.character(a))
+        else format(xx, digits = digits)
     }
     else if (m && !is.character(x)) 
-        xx <- c(format(xx[-m], ...), `NA's` = as.character(xx[m]))
-    else format(xx, ...)
+        xx <- c(format(xx[-m], digits = digits, ...), `NA's` = as.character(xx[m]))
+    else format(xx, digits = digits, ...)
 }
 
 
@@ -16982,11 +17246,12 @@ truncate.connection <- function (con, ...)
 
 
 abbreviate <- function (names.arg, minlength = 4L, use.classes = TRUE, dot = FALSE, 
-    strict = FALSE, method = c("left.kept", "both.sides")) 
+    strict = FALSE, method = c("left.kept", "both.sides"), named = TRUE) 
 {
     if (minlength <= 0L) {
         x <- rep.int("", length(names.arg))
-        names(x) <- names.arg
+        if (named) 
+            names(x) <- names.arg
         return(x)
     }
     names.arg <- sub("^ +", "", sub(" +$", "", as.character(names.arg)))
@@ -17027,7 +17292,8 @@ abbreviate <- function (names.arg, minlength = 4L, use.classes = TRUE, dot = FAL
         chgd <- x != old
         x[chgd] <- paste0(x[chgd], ".")
     }
-    names(x) <- old
+    if (named) 
+        names(x) <- old
     x
 }
 
@@ -17293,7 +17559,7 @@ cut.default <- function (x, breaks, labels = NULL, include.lowest = FALSE, right
             else "[", ch.br[-nb], ",", ch.br[-1L], if (right) 
                 "]"
             else ")")
-        else paste("Range", seq_len(nb - 1L), sep = "_")
+        else paste0("Range_", seq_len(nb - 1L))
         if (ok && include.lowest) {
             if (right) 
                 substr(labels[1L], 1L, 1L) <- "["
@@ -17465,7 +17731,7 @@ Math.difftime <- function (x, ...)
 }
 
 
-.__S3MethodsTable__. <- graphics::.__S3MethodsTable__. # re-exported from graphics package
+.__S3MethodsTable__. <- compiler::.__S3MethodsTable__. # re-exported from compiler package
 
 NROW <- function (x) 
 if (length(d <- dim(x))) d[1L] else length(x)
@@ -17565,9 +17831,9 @@ structure(NextMethod("["), class = class(x))
 }
 
 
-.C_R_getTaskCallbackNames <- structure(list(name = "R_getTaskCallbackNames", address = pointer("0xe0e650"), 
+.C_R_getTaskCallbackNames <- structure(list(name = "R_getTaskCallbackNames", address = pointer("0x7fe9a3600270"), 
     dll = structure(list(name = "base", path = "base", dynamicLookup = FALSE, 
-        handle = <pointer: (nil)>, info = pointer("0x7ffb61973b20")), .Names = c("name", 
+        handle = pointer("0x0"), info = pointer("0x7fe9a4800000")), .Names = c("name", 
     "path", "dynamicLookup", "handle", "info"), class = "DLLInfo"), 
     numParameters = 0L), class = c("CallRoutine", "NativeSymbolInfo"
 ), .Names = c("name", "address", "dll", "numParameters"))
@@ -17599,7 +17865,7 @@ structure(NextMethod("["), class = class(x))
 
 .skeleton_package_title = "The R Base Package"
 
-.skeleton_package_version = "3.3.0"
+.skeleton_package_version = "3.4.0"
 
 .skeleton_package_depends = ""
 

@@ -581,6 +581,28 @@ de.ncols <- function (inlist)
 }
 
 
+SweaveSyntConv <- function (file, syntax, output = NULL) 
+{
+    if (is.character(syntax)) 
+        syntax <- get(syntax)
+    if (!identical(class(syntax), "SweaveSyntax")) 
+        stop(gettextf("target syntax not of class %s", dQuote("SweaveSyntax")), 
+            domain = NA)
+    if (is.null(syntax$trans)) 
+        stop("target syntax contains no translation table")
+    insynt <- SweaveGetSyntax(file)
+    text <- readLines(file)
+    if (is.null(output)) 
+        output <- sub(insynt$extension, syntax$trans$extension, 
+            basename(file))
+    TN <- names(syntax$trans)
+    for (n in TN) if (n != "extension") 
+        text <- gsub(insynt[[n]], syntax$trans[[n]], text)
+    cat(text, file = output, sep = "\n")
+    cat("Wrote file", output, "\n")
+}
+
+
 new.packages <- function (lib.loc = NULL, repos = getOption("repos"), contriburl = contrib.url(repos, 
     type), instPkgs = installed.packages(lib.loc = lib.loc), 
     method, available = NULL, ask = FALSE, ..., type = getOption("pkgType")) 
@@ -638,28 +660,6 @@ read.socket <- function (socket, maxlen = 256L, loop = FALSE)
             break
     }
     rval
-}
-
-
-SweaveSyntConv <- function (file, syntax, output = NULL) 
-{
-    if (is.character(syntax)) 
-        syntax <- get(syntax)
-    if (!identical(class(syntax), "SweaveSyntax")) 
-        stop(gettextf("target syntax not of class %s", dQuote("SweaveSyntax")), 
-            domain = NA)
-    if (is.null(syntax$trans)) 
-        stop("target syntax contains no translation table")
-    insynt <- SweaveGetSyntax(file)
-    text <- readLines(file)
-    if (is.null(output)) 
-        output <- sub(insynt$extension, syntax$trans$extension, 
-            basename(file))
-    TN <- names(syntax$trans)
-    for (n in TN) if (n != "extension") 
-        text <- gsub(insynt[[n]], syntax$trans[[n]], text)
-    cat(text, file = output, sep = "\n")
-    cat("Wrote file", output, "\n")
 }
 
 
@@ -860,6 +860,10 @@ SweaveHooks <- function (options, run = FALSE, envir = .GlobalEnv)
 }
 
 
+hasName <- function (x, name) 
+match(name, names(x), nomatch = 0L) > 0L
+
+
 assignInNamespace <- function (x, value, ns, pos = -1, envir = as.environment(pos)) 
 {
     nf <- sys.nframe()
@@ -950,7 +954,7 @@ RweaveLatexSetup <- function (file, syntax, output = NULL, quiet = FALSE, debug 
     dots <- list(...)
     if (is.null(output)) {
         prefix.string <- basename(sub(syntax$extension, "", file))
-        output <- paste(prefix.string, "tex", sep = ".")
+        output <- paste0(prefix.string, ".tex")
     }
     else prefix.string <- basename(sub("\\.tex$", "", output))
     if (!quiet) 
@@ -1057,18 +1061,22 @@ setRepositories <- function (graphics = getOption("menu.graphics"), ind = NULL,
 }
 
 
-dump.frames <- function (dumpto = "last.dump", to.file = FALSE) 
+dump.frames <- function (dumpto = "last.dump", to.file = FALSE, include.GlobalEnv = FALSE) 
 {
     calls <- sys.calls()
     last.dump <- sys.frames()
     names(last.dump) <- limitedLabels(calls)
+    if (include.GlobalEnv) {
+        last.dump <- c(.GlobalEnv = as.environment(as.list(.GlobalEnv, 
+            all.names = TRUE)), last.dump)
+    }
     last.dump <- last.dump[-length(last.dump)]
     attr(last.dump, "error.message") <- geterrmessage()
     class(last.dump) <- "dump.frames"
     if (dumpto != "last.dump") 
         assign(dumpto, last.dump)
     if (to.file) 
-        save(list = dumpto, file = paste(dumpto, "rda", sep = "."))
+        save(list = dumpto, file = paste0(dumpto, ".rda"))
     else assign(dumpto, last.dump, envir = .GlobalEnv)
     invisible()
 }
@@ -1118,10 +1126,11 @@ sessionInfo <- function (package = NULL)
             ver <- sub(".*<string>", "", ver)
             ver <- sub("</string>$", "", ver)
             ver1 <- strsplit(ver, ".", fixed = TRUE)[[1L]][2L]
-            sprintf("OS X %s (%s)", ver, switch(ver1, `4` = "Tiger", 
-                `5` = "Leopard", `6` = "Snow Leopard", `7` = "Lion", 
-                `8` = "Mountain Lion", `9` = "Mavericks", `10` = "Yosemite", 
-                `11` = "El Capitan", "unknown"))
+            sprintf("%s %s %s", ifelse(as.numeric(ver1) < 12, 
+                "OS X", "macOS"), switch(ver1, `6` = "Snow Leopard", 
+                `7` = "Lion", `8` = "Mountain Lion", `9` = "Mavericks", 
+                `10` = "Yosemite", `11` = "El Capitan", `12` = "Sierra", 
+                ""), ver)
         }, SunOS = {
             ver <- system("uname -r", intern = TRUE)
             paste("Solaris", strsplit(ver, ".", fixed = TRUE)[[1L]][2L])
@@ -1150,6 +1159,10 @@ sessionInfo <- function (package = NULL)
         pkgDesc <- c(pkgDesc, lapply(loadedOnly, packageDescription))
         z$loadedOnly <- pkgDesc[loadedOnly]
     }
+    z$matprod <- as.character(options("matprod"))
+    es <- extSoftVersion()
+    z$BLAS <- as.character(es["BLAS"])
+    z$LAPACK <- La_library()
     class(z) <- "sessionInfo"
     z
 }
@@ -1316,7 +1329,7 @@ person <- function (given = NULL, family = NULL, middle = NULL, email = NULL,
         warning(gettextf("Not all arguments are of the same length, the following need to be recycled: %s", 
             paste(names(args)[!args_length_ok], collapse = ", ")), 
             domain = NA)
-    args <- lapply(args, function(x) rep(x, length.out = max(args_length)))
+    args <- lapply(args, function(x) rep_len(x, max(args_length)))
     person1 <- function(given = NULL, family = NULL, middle = NULL, 
         email = NULL, role = NULL, comment = NULL, first = NULL, 
         last = NULL) {
@@ -1363,17 +1376,15 @@ person <- function (given = NULL, family = NULL, middle = NULL, email = NULL,
             email = email, comment = comment)
         if (any(ind <- (lengths(rval) == 0L))) 
             rval[ind] <- vector("list", length = sum(ind))
-        if (all(sapply(rval, is.null))) 
-            rval <- NULL
-        return(rval)
+        if (all(vapply(rval, is.null, NA))) 
+            NULL
+        else rval
     }
     rval <- lapply(seq_along(args$given), function(i) with(args, 
         person1(given = given[[i]], family = family[[i]], middle = middle[[i]], 
             email = email[[i]], role = role[[i]], comment = comment[[i]], 
             first = first[[i]], last = last[[i]])))
-    rval <- rval[!sapply(rval, is.null)]
-    class(rval) <- "person"
-    rval
+    structure(rval[!vapply(rval, is.null, NA)], class = "person")
 }
 
 
@@ -1526,8 +1537,7 @@ install.packages <- function (pkgs, lib, repos = getOption("repos"), contriburl 
     if (length(lib) == 1L && .Platform$OS.type == "windows") {
         ok <- dir.exists(lib)
         if (ok) {
-            fn <- file.path(lib, paste("_test_dir", Sys.getpid(), 
-                sep = "_"))
+            fn <- file.path(lib, paste0("_test_dir_", Sys.getpid()))
             unlink(fn, recursive = TRUE)
             res <- try(dir.create(fn, showWarnings = FALSE))
             if (inherits(res, "try-error") || !res) 
@@ -1639,7 +1649,7 @@ install.packages <- function (pkgs, lib, repos = getOption("repos"), contriburl 
     }
     if (type == "both") {
         if (type2 == "source") 
-            stop("type == \"both\" can only be used on Windows or a CRAN build for Mac OS X")
+            stop("type == \"both\" can only be used on Windows or a CRAN build for macOS")
         if (!missing(contriburl) || !is.null(available)) 
             type <- type2
     }
@@ -1780,7 +1790,7 @@ install.packages <- function (pkgs, lib, repos = getOption("repos"), contriburl 
     }
     if (.Platform$OS.type == "windows") {
         if (substr(type, 1L, 10L) == "mac.binary") 
-            stop("cannot install MacOS X binary packages on Windows")
+            stop("cannot install macOS binary packages on Windows")
         if (type %in% "win.binary") {
             .install.winbinary(pkgs = pkgs, lib = lib, contriburl = contriburl, 
                 method = method, available = available, destdir = destdir, 
@@ -1799,7 +1809,7 @@ install.packages <- function (pkgs, lib, repos = getOption("repos"), contriburl 
     else {
         if (substr(type, 1L, 10L) == "mac.binary") {
             if (!grepl("darwin", R.version$platform)) 
-                stop("cannot install MacOS X binary packages on this platform")
+                stop("cannot install macOS binary packages on this platform")
             .install.macbinary(pkgs = pkgs, lib = lib, contriburl = contriburl, 
                 method = method, available = available, destdir = destdir, 
                 dependencies = dependencies, quiet = quiet, ...)
@@ -1842,7 +1852,7 @@ install.packages <- function (pkgs, lib, repos = getOption("repos"), contriburl 
             Sys.setenv(R_LIBS = libpath)
             on.exit(Sys.setenv(R_LIBS = oldrlibs))
         }
-        else env <- paste("R_LIBS", shQuote(libpath), sep = "=")
+        else env <- paste0("R_LIBS=", shQuote(libpath))
     }
     if (is.character(clean)) 
         args0 <- c(args0, clean)
@@ -2226,7 +2236,7 @@ de.restore <- function (inlist, ncols, coltypes, argnames, args)
 file.edit <- function (..., title = file, editor = getOption("editor"), fileEncoding = "") 
 {
     file <- path.expand(c(...))
-    title <- rep(as.character(title), len = length(file))
+    title <- rep_len(as.character(title), length(file))
     if (nzchar(fileEncoding) && fileEncoding != "native.enc") {
         tfile <- file
         for (i in seq_along(file)) {
@@ -2273,19 +2283,18 @@ fix <- function (x, ...)
 makeRweaveLatexCodeRunner <- function (evalFunc = RweaveEvalWithOpt) 
 {
     function(object, chunk, options) {
-        pdf.Swd <- function(name, width, height, ...) grDevices::pdf(file = paste(chunkprefix, 
-            "pdf", sep = "."), width = width, height = height, 
-            version = options$pdf.version, encoding = options$pdf.encoding, 
-            compress = options$pdf.compress)
-        eps.Swd <- function(name, width, height, ...) grDevices::postscript(file = paste(name, 
-            "eps", sep = "."), width = width, height = height, 
-            paper = "special", horizontal = FALSE)
-        png.Swd <- function(name, width, height, options, ...) grDevices::png(filename = paste(chunkprefix, 
-            "png", sep = "."), width = width, height = height, 
-            res = options$resolution, units = "in")
-        jpeg.Swd <- function(name, width, height, options, ...) grDevices::jpeg(filename = paste(chunkprefix, 
-            "jpeg", sep = "."), width = width, height = height, 
-            res = options$resolution, units = "in")
+        pdf.Swd <- function(name, width, height, ...) grDevices::pdf(file = paste0(chunkprefix, 
+            ".pdf"), width = width, height = height, version = options$pdf.version, 
+            encoding = options$pdf.encoding, compress = options$pdf.compress)
+        eps.Swd <- function(name, width, height, ...) grDevices::postscript(file = paste0(name, 
+            ".eps"), width = width, height = height, paper = "special", 
+            horizontal = FALSE)
+        png.Swd <- function(name, width, height, options, ...) grDevices::png(filename = paste0(chunkprefix, 
+            ".png"), width = width, height = height, res = options$resolution, 
+            units = "in")
+        jpeg.Swd <- function(name, width, height, options, ...) grDevices::jpeg(filename = paste0(chunkprefix, 
+            ".jpeg"), width = width, height = height, res = options$resolution, 
+            units = "in")
         if (!(options$engine %in% c("R", "S"))) 
             return(object)
         devs <- devoffs <- list()
@@ -2307,10 +2316,17 @@ makeRweaveLatexCodeRunner <- function (evalFunc = RweaveEvalWithOpt)
                 devoffs <- c(devoffs, list(grDevices::dev.off))
             }
             if (nzchar(grd <- options$grdevice)) {
-                devs <- c(devs, list(get(grd, envir = .GlobalEnv)))
-                grdo <- paste(grd, "off", sep = ".")
-                devoffs <- c(devoffs, if (exists(grdo, envir = .GlobalEnv)) list(get(grdo, 
-                  envir = .GlobalEnv)) else list(grDevices::dev.off))
+                grdo <- paste0(grd, ".off")
+                if (grepl("::", grd, fixed = TRUE)) {
+                  devs <- c(devs, eval(parse(text = grd)))
+                  devoffs <- c(devoffs, if (!inherits(grdo <- tryCatch(eval(parse(text = grdo)), 
+                    error = identity), "error")) list(grdo) else list(grDevices::dev.off))
+                }
+                else {
+                  devs <- c(devs, list(get(grd, envir = .GlobalEnv)))
+                  devoffs <- c(devoffs, if (exists(grdo, envir = .GlobalEnv)) list(get(grdo, 
+                    envir = .GlobalEnv)) else list(grDevices::dev.off))
+                }
             }
         }
         if (!object$quiet) {
@@ -2351,7 +2367,7 @@ makeRweaveLatexCodeRunner <- function (evalFunc = RweaveEvalWithOpt)
         if (options$split) {
             chunkout <- object$chunkout[chunkprefix][[1L]]
             if (is.null(chunkout)) {
-                chunkout <- file(paste(chunkprefix, "tex", sep = "."), 
+                chunkout <- file(paste0(chunkprefix, ".tex"), 
                   "w")
                 if (!is.null(options$label)) 
                   object$chunkout[[chunkprefix]] <- chunkout
@@ -2381,26 +2397,22 @@ makeRweaveLatexCodeRunner <- function (evalFunc = RweaveEvalWithOpt)
                 openSinput <<- TRUE
             }
             leading <- max(leading, 1L)
-            cat("\n", paste(getOption("prompt"), dce[seq_len(leading)], 
-                sep = "", collapse = "\n"), file = chunkout, 
-                sep = "")
+            cat("\n", paste0(getOption("prompt"), dce[seq_len(leading)], 
+                collapse = "\n"), file = chunkout, sep = "")
             if (length(dce) > leading) 
-                cat("\n", paste(getOption("continue"), dce[-seq_len(leading)], 
-                  sep = "", collapse = "\n"), file = chunkout, 
-                  sep = "")
+                cat("\n", paste0(getOption("continue"), dce[-seq_len(leading)], 
+                  collapse = "\n"), file = chunkout, sep = "")
             linesout[thisline + seq_along(dce)] <<- srcline
             filenumout[thisline + seq_along(dce)] <<- srcfilenum
             thisline <<- thisline + length(dce)
         }
         trySrcLines <- function(srcfile, showfrom, showto, ce) {
-            lines <- tryCatch(suppressWarnings(getSrcLines(srcfile, 
-                showfrom, showto)), error = function(e) e)
-            if (inherits(lines, "error")) {
-                lines <- if (is.null(ce)) 
+            tryCatch(suppressWarnings(getSrcLines(srcfile, showfrom, 
+                showto)), error = function(e) {
+                if (is.null(ce)) 
                   character()
                 else deparse(ce, width.cutoff = 0.75 * getOption("width"))
-            }
-            lines
+            })
         }
         echoComments <- function(showto) {
             if (options$echo && !is.na(lastshown) && lastshown < 
@@ -2576,6 +2588,20 @@ makeRweaveLatexCodeRunner <- function (evalFunc = RweaveEvalWithOpt)
         object$filenumout <- c(object$filenumout, filenumout)
         object
     }
+}
+
+
+.RtangleCodeLabel <- function (chunk) 
+{
+    if (length(lnos <- grep("^#line ", chunk, value = TRUE))) {
+        srclines <- attr(chunk, "srclines")
+        lno <- if (length(srclines)) 
+            paste(min(srclines), max(srclines), sep = "-")
+        else srclines
+        fn <- sub("[^\"]*\"([^\"]+).*", "\\1", lnos[1L])
+        paste(fn, lno, sep = ":")
+    }
+    else "(missing #line/file info)"
 }
 
 
@@ -3016,6 +3042,17 @@ getParseText <- function (parseData, id)
 }
 
 
+isS3stdGeneric <- function (f) 
+{
+    bdexpr <- body(f)
+    while (as.character(bdexpr[[1L]]) == "{") bdexpr <- bdexpr[[2L]]
+    ret <- is.call(bdexpr) && identical(bdexpr[[1L]], as.name("UseMethod"))
+    if (ret) 
+        names(ret) <- bdexpr[[2L]]
+    ret
+}
+
+
 modifyList <- function (x, val, keep.null = FALSE) 
 {
     stopifnot(is.list(x), is.list(val))
@@ -3068,18 +3105,18 @@ available.packages <- function (contriburl = contrib.url(repos, type), method, f
         localcran <- length(grep("^file:", repos)) > 0L
         if (localcran) {
             if (substring(repos, 1L, 8L) == "file:///") {
-                tmpf <- paste(substring(repos, 8L), "PACKAGES", 
-                  sep = "/")
+                tmpf <- paste0(substring(repos, 8L), "/PACKAGES")
                 if (.Platform$OS.type == "windows") {
                   if (length(grep("^/[A-Za-z]:", tmpf))) 
                     tmpf <- substring(tmpf, 2L)
                 }
             }
             else {
-                tmpf <- paste(substring(repos, 6L), "PACKAGES", 
-                  sep = "/")
+                tmpf <- paste0(substring(repos, 6L), "/PACKAGES")
             }
-            res0 <- read.dcf(file = tmpf)
+            res0 <- if (file.exists(dest <- paste0(tmpf, ".rds"))) 
+                readRDS(dest)
+            else read.dcf(file = tmpf)
             if (length(res0)) 
                 rownames(res0) <- res0[, "Package"]
         }
@@ -3088,37 +3125,57 @@ available.packages <- function (contriburl = contrib.url(repos, type), method, f
                 TRUE), ".rds"))
             if (file.exists(dest)) {
                 res0 <- readRDS(dest)
+                if (length(res0)) 
+                  rownames(res0) <- res0[, "Package"]
             }
             else {
-                tmpf <- tempfile()
-                on.exit(unlink(tmpf))
+                need_dest <- FALSE
                 op <- options(warn = -1L)
                 z <- tryCatch({
-                  download.file(url = paste(repos, "PACKAGES.gz", 
-                    sep = "/"), destfile = tmpf, method = method, 
-                    cacheOK = FALSE, quiet = TRUE, mode = "wb")
+                  download.file(url = paste0(repos, "/PACKAGES.rds"), 
+                    destfile = dest, method = method, cacheOK = FALSE, 
+                    quiet = TRUE, mode = "wb")
                 }, error = identity)
-                if (inherits(z, "error")) 
-                  z <- tryCatch({
-                    download.file(url = paste(repos, "PACKAGES", 
-                      sep = "/"), destfile = tmpf, method = method, 
-                      cacheOK = FALSE, quiet = TRUE, mode = "wb")
-                  }, error = identity)
                 options(op)
                 if (!inherits(z, "error")) 
-                  z <- res0 <- tryCatch(read.dcf(file = tmpf), 
-                    error = identity)
-                unlink(tmpf)
-                on.exit()
+                  z <- res0 <- tryCatch(readRDS(dest), error = identity)
+                if (inherits(z, "error")) {
+                  need_dest <- TRUE
+                  tmpf <- tempfile()
+                  on.exit(unlink(tmpf))
+                  op <- options(warn = -1L)
+                  z <- tryCatch({
+                    download.file(url = paste0(repos, "/PACKAGES.gz"), 
+                      destfile = tmpf, method = method, cacheOK = FALSE, 
+                      quiet = TRUE, mode = "wb")
+                  }, error = identity)
+                  if (inherits(z, "error")) 
+                    z <- tryCatch({
+                      download.file(url = paste0(repos, "/PACKAGES"), 
+                        destfile = tmpf, method = method, cacheOK = FALSE, 
+                        quiet = TRUE, mode = "wb")
+                    }, error = identity)
+                  options(op)
+                  if (!inherits(z, "error")) 
+                    z <- res0 <- tryCatch(read.dcf(file = tmpf), 
+                      error = identity)
+                  unlink(tmpf)
+                  on.exit()
+                }
                 if (inherits(z, "error")) {
                   warning(gettextf("unable to access index for repository %s", 
                     repos), ":\n  ", conditionMessage(z), call. = FALSE, 
                     immediate. = TRUE, domain = NA)
                   next
                 }
-                if (length(res0)) 
+                if (length(res0)) {
                   rownames(res0) <- res0[, "Package"]
-                saveRDS(res0, dest, compress = TRUE)
+                  if (need_dest) 
+                    saveRDS(res0, dest, compress = TRUE)
+                }
+                else if (!need_dest) {
+                  unlink(dest)
+                }
             }
         }
         if (length(res0)) {
@@ -3503,7 +3560,7 @@ getAnywhere <- function (x)
         if (exists(x, envir = ns, inherits = FALSE)) {
             f <- get(x, envir = ns, inherits = FALSE)
             objs <- c(objs, list(f))
-            where <- c(where, paste("namespace", i, sep = ":"))
+            where <- c(where, paste0("namespace:", i))
             visible <- c(visible, FALSE)
         }
     }
@@ -4257,15 +4314,11 @@ bug.report <- function (subject = "", address, file = "R.bug.report", package = 
 {
     baseR <- function() {
         writeLines(c("  Bug reports on R and the base packages need to be submitted", 
-            "  to the tracker at http://bugs.r-project.org/ .", 
+            "  to the tracker at <https://bugs.R-project.org/>.", 
             "", "  We will now try to open that website in a browser"))
         flush.console()
         Sys.sleep(2)
         browseURL("https://bugs.r-project.org/bugzilla3/index.cgi")
-    }
-    findEmail <- function(x) {
-        x <- paste(x, collapse = " ")
-        sub("[^<]*<([^>]+)>.*", "\\1", x)
     }
     if (is.null(package)) 
         return(baseR())
@@ -4279,19 +4332,63 @@ bug.report <- function (subject = "", address, file = "R.bug.report", package = 
     info <- c(info, "", bug.report.info())
     if (identical(DESC$Priority, "base")) 
         return(baseR())
-    if (!is.null(DESC$BugReports)) {
-        writeLines(info)
-        cat("\nThis package has a bug submission web page, which we will now attempt\n", 
-            "to open.  The information above may be useful in your report. If the web\n", 
-            "page doesn't work, you should send email to the maintainer,\n", 
-            DESC$Maintainer, ".\n", sep = "")
+    findEmail2 <- function(x) {
+        x <- paste(x, collapse = " ")
+        if (grepl("mailto:", x)) 
+            sub(".*mailto:([^ ]+).*", "\\1", x)
+        else if (grepl("[^<]*<([^>]+)", x)) 
+            sub("[^<]*<([^>]+)>.*", "\\1", x)
+        else if (grepl("(^|.* )[^ ]+@[[:alnum:]._]+", x)) 
+            sub("(^|.* )([^ ]+@[[:alnum:]._]+).*", "\\2", x)
+        else NA_character_
+    }
+    BR <- DESC$BugReports
+    if (!is.null(BR) && nzchar(BR)) {
+        BR <- trimws(BR)
+        if (grepl("^https?://", BR)) {
+            writeLines(info)
+            cat("\nThis package has a bug submission web page, which we will now attempt\n", 
+                "to open.  The information above may be useful in your report.\n", 
+                "If the web page does not work, you should send email to the maintainer,\n", 
+                DESC$Maintainer, ".\n", sep = "")
+            flush.console()
+            Sys.sleep(2)
+            browseURL(BR)
+            return(invisible())
+        }
+        else {
+            cat("This package has a BugReports field which is not the URL of a web page:\n\n", 
+                "  BugReports: ", BR, "\n\n", sep = "")
+            em <- findEmail2(BR)
+            if (!is.na(em)) {
+                cat("It appears to contain an email address, so we will try that.\n\n")
+                address <- em
+            }
+            else cat("We will ignore it and email the maintainer.\n\n")
+            flush.console()
+            Sys.sleep(2)
+        }
+    }
+    CT <- DESC$Contact
+    if (!is.null(CT) && nzchar(CT)) {
+        cat("This package has a Contact field:\n\n", "  Contact: ", 
+            CT, "\n\n", sep = "")
+        em <- findEmail2(CT)
+        if (!is.na(em)) {
+            cat("That appears to contain an email address, so we will try that\n")
+            address <- em
+        }
+        else cat("We cannot make sense of that, so will ignore it.\n\n")
         flush.console()
         Sys.sleep(2)
-        browseURL(DESC$BugReports)
-        return(invisible())
     }
-    if (missing(address)) 
+    if (missing(address)) {
+        findEmail <- function(x) {
+            x <- paste(x, collapse = " ")
+            sub("[^<]*<([^>]+)>.*", "\\1", x)
+        }
         address <- findEmail(DESC$Maintainer)
+    }
     create.post(instructions = c("", "<<insert bug report here>>", 
         rep("", 3)), description = "bug report", subject = subject, 
         address = address, filename = file, info = info, ...)
@@ -4469,10 +4566,11 @@ contrib.url <- function (repos, type = getOption("pkgType"))
 }
 
 
-strOptions <- function (strict.width = "no", digits.d = 3, vec.len = 4, formatNum = function(x, 
-    ...) format(x, trim = TRUE, drop0trailing = TRUE, ...)) 
+strOptions <- function (strict.width = "no", digits.d = 3, vec.len = 4, drop.deparse.attr = TRUE, 
+    formatNum = function(x, ...) format(x, trim = TRUE, drop0trailing = TRUE, 
+        ...)) 
 list(strict.width = strict.width, digits.d = digits.d, vec.len = vec.len, 
-    formatNum = match.fun(formatNum))
+    drop.deparse.attr = drop.deparse.attr, formatNum = match.fun(formatNum))
 
 
 packageDescription <- function (pkg, lib.loc = NULL, fields = NULL, drop = TRUE, encoding = "") 
@@ -4865,25 +4963,30 @@ isS3method <- function (method, f, class, envir = parent.frame())
     }
     else {
         f.c <- strsplit(method, ".", fixed = TRUE)[[1]]
-        if (length(f.c) < 2 || !is.character(f.c)) 
+        nfc <- length(f.c)
+        if (nfc < 2 || !is.character(f.c)) 
             return(FALSE)
-        f <- f.c[1]
-        class <- if (length(f.c) > 2) 
-            paste(f.c[-1], collapse = ".")
-        else f.c[2]
+        if (nfc == 2) {
+            f <- f.c[[1L]]
+            class <- f.c[[2L]]
+        }
+        else {
+            for (j in 2:nfc) if (isS3method(f = paste(f.c[1:(j - 
+                1)], collapse = "."), class = paste(f.c[j:nfc], 
+                collapse = "."), envir = envir)) 
+                return(TRUE)
+            return(FALSE)
+        }
     }
     if (!any(f == getKnownS3generics())) {
-        truegf <- findGeneric(f, envir)
-        if (nzchar(truegf)) 
-            f <- truegf
-        else return(FALSE)
+        if (!nzchar(f <- findGeneric(f, envir))) 
+            return(FALSE)
     }
     if (!is.null(m <- get0(method, envir = envir, mode = "function"))) {
         pkg <- if (isNamespace(em <- environment(m))) 
             environmentName(em)
         else if (is.primitive(m)) 
             "base"
-        else NULL
         return(is.na(match(method, tools::nonS3methods(pkg))))
     }
     defenv <- if (!is.na(w <- .knownS3Generics[f])) 
@@ -5579,10 +5682,10 @@ cite <- function (keys, bib, ...)
     sp <- search()
     methods.called <- identical(sys.call(-1)[[1]], as.symbol("methods"))
     an <- lapply(seq_along(sp), ls)
-    names(an) <- sp
-    an <- unlist(an)
+    lens <- lengths(an)
+    an <- unlist(an, use.names = FALSE)
+    names(an) <- rep(sp, lens)
     an <- an[!duplicated(an)]
-    names(an) <- sub("[0-9]*$", "", names(an))
     info <- data.frame(visible = rep.int(TRUE, length(an)), from = .rmpkg(names(an)), 
         row.names = an)
     if (!missing(generic.function)) {
@@ -5604,9 +5707,8 @@ cite <- function (keys, bib, ...)
                 generic.function <- truegf
             }
         }
-        name <- paste0("^", generic.function, ".")
-        name <- gsub("([.[$+*])", "\\\\\\1", name)
-        info <- info[grep(name, row.names(info)), ]
+        info <- info[startsWith(row.names(info), paste0(generic.function, 
+            ".")), ]
         info <- info[!row.names(info) %in% S3MethodsStopList, 
             ]
         if (nrow(info)) {
@@ -5629,8 +5731,9 @@ cite <- function (keys, bib, ...)
                 environment(genfun)
             else .BaseNamespaceEnv
         }
-        S3reg <- ls(get(".__S3MethodsTable__.", envir = defenv), 
-            pattern = name)
+        S3reg <- names(get(".__S3MethodsTable__.", envir = defenv))
+        S3reg <- S3reg[startsWith(S3reg, paste0(generic.function, 
+            "."))]
         if (length(S3reg)) 
             info <- rbindSome(info, S3reg, msg = paste("registered S3method for", 
                 generic.function))
@@ -6482,19 +6585,19 @@ bibentry <- function (bibtype, textVersion = NULL, header = NULL, footer = NULL,
         header = header, footer = footer, key = key), list(...))
     args <- lapply(args, .listify)
     other <- lapply(other, .listify)
-    max_length <- max(sapply(c(args, other), length))
+    max_length <- max(lengths(c(args, other)))
     args_length <- lengths(args)
     if (!all(args_length_ok <- args_length %in% c(1L, max_length))) 
         warning(gettextf("Not all arguments are of the same length, the following need to be recycled: %s", 
             paste(names(args)[!args_length_ok], collapse = ", ")), 
             domain = NA)
-    args <- lapply(args, function(x) rep(x, length.out = max_length))
+    args <- lapply(args, function(x) rep_len(x, max_length))
     other_length <- lengths(other)
     if (!all(other_length_ok <- other_length %in% c(1L, max_length))) 
         warning(gettextf("Not all arguments are of the same length, the following need to be recycled: %s", 
             paste(names(other)[!other_length_ok], collapse = ", ")), 
             domain = NA)
-    other <- lapply(other, function(x) rep(x, length.out = max_length))
+    other <- lapply(other, function(x) rep_len(x, max_length))
     bibentry1 <- function(bibtype, textVersion, header = NULL, 
         footer = NULL, key = NULL, ..., other = list()) {
         bibtype <- as.character(bibtype)
@@ -6541,12 +6644,12 @@ bibentry <- function (bibtype, textVersion = NULL, header = NULL, footer = NULL,
 
 
 RtangleSetup <- function (file, syntax, output = NULL, annotate = TRUE, split = FALSE, 
-    quiet = FALSE, ...) 
+    quiet = FALSE, drop.evalFALSE = FALSE, ...) 
 {
     dots <- list(...)
     if (is.null(output)) {
         prefix.string <- basename(sub(syntax$extension, "", file))
-        output <- paste(prefix.string, "R", sep = ".")
+        output <- paste0(prefix.string, ".R")
     }
     else prefix.string <- basename(sub("\\.[rsRS]$", "", output))
     if (!split) {
@@ -6576,7 +6679,7 @@ RtangleSetup <- function (file, syntax, output = NULL, annotate = TRUE, split = 
     options[names(dots)] <- dots
     options <- RweaveLatexOptions(options)
     list(output = output, annotate = annotate, options = options, 
-        chunkout = list(), quiet = quiet, syntax = syntax)
+        chunkout = list(), quiet = quiet, syntax = syntax, drop.evalFALSE = drop.evalFALSE)
 }
 
 
@@ -6865,14 +6968,14 @@ help <- function (topic, package = NULL, lib.loc = NULL, verbose = getOption("ve
     try.all.packages = getOption("help.try.all.packages"), help_type = getOption("help_type")) 
 {
     types <- c("text", "html", "pdf")
+    help_type <- if (!length(help_type)) 
+        "text"
+    else match.arg(tolower(help_type), types)
     if (!missing(package)) 
         if (is.name(y <- substitute(package))) 
             package <- as.character(y)
     if (missing(topic)) {
         if (!is.null(package)) {
-            help_type <- if (!length(help_type)) 
-                "text"
-            else match.arg(tolower(help_type), types)
             if (interactive() && help_type == "html") {
                 port <- tools::startDynamicHelp(NA)
                 if (port <= 0L) 
@@ -6907,15 +7010,13 @@ help <- function (topic, package = NULL, lib.loc = NULL, verbose = getOption("ve
             stop("'topic' should be a name, length-one character vector or reserved word")
         topic <- stopic
     }
-    help_type <- if (!length(help_type)) 
-        "text"
-    else match.arg(tolower(help_type), types)
     paths <- index.search(topic, find.package(if (is.null(package)) 
         loadedNamespaces()
     else package, lib.loc, verbose = verbose))
-    tried_all_packages <- FALSE
-    if (!length(paths) && is.logical(try.all.packages) && !is.na(try.all.packages) && 
-        try.all.packages && is.null(package) && is.null(lib.loc)) {
+    try.all.packages <- !length(paths) && is.logical(try.all.packages) && 
+        !is.na(try.all.packages) && try.all.packages && is.null(package) && 
+        is.null(lib.loc)
+    if (try.all.packages) {
         for (lib in .libPaths()) {
             packages <- .packages(TRUE, lib)
             packages <- packages[is.na(match(packages, .packages()))]
@@ -6923,13 +7024,10 @@ help <- function (topic, package = NULL, lib.loc = NULL, verbose = getOption("ve
                 packages)))
         }
         paths <- paths[nzchar(paths)]
-        tried_all_packages <- TRUE
     }
-    paths <- unique(paths)
-    attributes(paths) <- list(call = match.call(), topic = topic, 
-        tried_all_packages = tried_all_packages, type = help_type)
-    class(paths) <- "help_files_with_topic"
-    paths
+    structure(unique(paths), call = match.call(), topic = topic, 
+        tried_all_packages = try.all.packages, type = help_type, 
+        class = "help_files_with_topic")
 }
 
 
@@ -7018,6 +7116,17 @@ mirror2html <- function (mirrors = NULL, file = "mirrors.html", head = "mirrors-
     if (file != "") 
         writeLines(z, file)
     invisible(z)
+}
+
+
+debugcall <- function (call, once = FALSE) 
+{
+    stopifnot(length(once) == 1L, is.logical(once), !is.na(once))
+    call <- substitute(call)
+    .debugcall(call, if (once) 
+        debugonce
+    else debug)
+    invisible(call)
 }
 
 
@@ -7126,8 +7235,13 @@ citation <- function (package = "base", lib.loc = NULL, auto = NULL)
                 domain = NA)
         meta <- packageDescription(pkg = package, lib.loc = dirname(dir))
         citfile <- file.path(dir, "CITATION")
+        test <- file_test("-f", citfile)
+        if (!test) {
+            citfile <- file.path(dir, "inst", "CITATION")
+            test <- file_test("-f", citfile)
+        }
         if (is.null(auto)) 
-            auto <- !file_test("-f", citfile)
+            auto <- !test
         if (!auto) {
             return(readCitationFile(citfile, meta))
         }
@@ -7163,8 +7277,16 @@ citation <- function (package = "base", lib.loc = NULL, auto = NULL)
     }
     author <- meta$`Authors@R`
     if (length(author)) {
-        author <- .read_authors_at_R_field(author)
-        author <- Filter(.person_has_author_role, author)
+        aar <- .read_authors_at_R_field(author)
+        author <- Filter(function(e) {
+            !(is.null(e$given) && is.null(e$family)) && !is.na(match("aut", 
+                e$role))
+        }, aar)
+        if (!length(author)) 
+            author <- Filter(function(e) {
+                !(is.null(e$given) && is.null(e$family)) && !is.na(match("cre", 
+                  e$role))
+            }, aar)
     }
     if (length(author)) {
         has_authors_at_R_field <- TRUE
@@ -7274,6 +7396,8 @@ removeSource <- function (fn)
         if (is.name(part)) 
             return(part)
         attr(part, "srcref") <- NULL
+        attr(part, "wholeSrcref") <- NULL
+        attr(part, "srcfile") <- NULL
         if (is.language(part) && is.recursive(part)) {
             for (i in seq_along(part)) part[[i]] <- recurse(part[[i]])
         }
@@ -7569,7 +7693,7 @@ RweaveLatexWritedoc <- function (object, chunk)
             object$options$label <- "concordance"
             prefix <- RweaveChunkPrefix(object$options)
             object$options$label <- savelabel
-            object$concordfile <- paste(prefix, "tex", sep = ".")
+            object$concordfile <- paste0(prefix, ".tex")
             chunk[pos[1L]] <- sub(object$syntax$docopt, paste0("\\\\input{", 
                 prefix, "}"), chunk[pos[1L]])
             object$haveconcordance <- TRUE
@@ -7611,6 +7735,9 @@ find <- function (what, mode = "any", numeric = FALSE, simple.words = TRUE)
         }
         else {
             li <- ls(pos = i, pattern = what, all.names = TRUE)
+            li <- grep("^[.](__|C_|F_)", li, invert = TRUE, value = TRUE)
+            if (sp[i] == "package:base") 
+                li <- li[!li %in% .dot_internals]
             ll <- length(li)
             if (ll > 0 && check.mode) {
                 mode.ok <- sapply(li, exists, where = i, mode = mode, 
@@ -8578,7 +8705,7 @@ aspell <- function (files, filter, control = list(), encoding = "unknown",
     }
     else if (!is.function(filter)) 
         stop("Invalid 'filter' argument.")
-    encoding <- rep(encoding, length.out = length(files))
+    encoding <- rep_len(encoding, length(files))
     verbose <- getOption("verbose")
     db <- data.frame(Original = character(), File = character(), 
         Line = integer(), Column = integer(), stringsAsFactors = FALSE)
@@ -8714,6 +8841,19 @@ suppressForeignCheck <- function (names, package, add = TRUE)
 registerNames(names, package, ".__suppressForeign__", add)
 
 
+undebugcall <- function (call) 
+{
+    call <- substitute(call)
+    .debugcall(call, undebug)
+    invisible(NULL)
+}
+
+
+Stangle <- function (file, driver = Rtangle(), syntax = getOption("SweaveSyntax"), 
+    encoding = "", ...) 
+Sweave(file = file, driver = driver, encoding = encoding, ...)
+
+
 aspell_package_C_files <- function (dir, ignore = character(), control = list(), program = NULL, 
     dictionaries = character()) 
 {
@@ -8754,10 +8894,9 @@ download.file <- function (url, destfile, method, quiet = FALSE, mode = "w", cac
     if (method == "auto") {
         if (length(url) != 1L || typeof(url) != "character") 
             stop("'url' must be a length-one character vector")
-        method <- if (capabilities("libcurl") && grepl("^(ht|f)tps:", 
-            url)) 
-            "libcurl"
-        else "internal"
+        method <- if (grepl("^file:", url)) 
+            "internal"
+        else "libcurl"
     }
     switch(method, internal = {
         status <- .External(C_download, url, destfile, quiet, 
@@ -8774,6 +8913,7 @@ download.file <- function (url, destfile, method, quiet = FALSE, mode = "w", cac
         if (!cacheOK) extra <- c(extra, "--cache=off")
         status <- system(paste("wget", paste(extra, collapse = " "), 
             shQuote(url), "-O", shQuote(path.expand(destfile))))
+        if (status) stop("'wget' call had nonzero exit status")
     }, curl = {
         if (length(url) != 1L || typeof(url) != "character") stop("'url' must be a length-one character vector")
         if (length(destfile) != 1L || typeof(url) != "character") stop("'destfile' must be a length-one character vector")
@@ -8781,6 +8921,7 @@ download.file <- function (url, destfile, method, quiet = FALSE, mode = "w", cac
         if (!cacheOK) extra <- c(extra, "-H 'Pragma: no-cache'")
         status <- system(paste("curl", paste(extra, collapse = " "), 
             shQuote(url), " -o", shQuote(path.expand(destfile))))
+        if (status) stop("'curl' call had nonzero exit status")
     }, lynx = stop("method 'lynx' is defunct", domain = NA))
     if (status) 
         warning("download had nonzero exit status")
@@ -8793,11 +8934,14 @@ apropos <- function (what, where = FALSE, ignore.case = TRUE, mode = "any")
     stopifnot(is.character(what))
     x <- character(0L)
     check.mode <- mode != "any"
-    for (i in seq_along(search())) {
+    for (i in seq_along(sp <- search())) {
         li <- if (ignore.case) 
             grep(what, ls(pos = i, all.names = TRUE), ignore.case = TRUE, 
                 value = TRUE)
         else ls(pos = i, pattern = what, all.names = TRUE)
+        li <- grep("^[.](__|C_|F_)", li, invert = TRUE, value = TRUE)
+        if (sp[i] == "package:base") 
+            li <- li[!li %in% .dot_internals]
         if (length(li)) {
             if (check.mode) 
                 li <- li[sapply(li, exists, where = i, mode = mode, 
@@ -8818,9 +8962,35 @@ xemacs <- function (name = NULL, file = "")
 edit.default(name, file, editor = "xemacs")
 
 
-Stangle <- function (file, driver = Rtangle(), syntax = getOption("SweaveSyntax"), 
-    encoding = "", ...) 
-Sweave(file = file, driver = driver, encoding = encoding, ...)
+strcapture <- function (pattern, x, proto, perl = FALSE, useBytes = FALSE) 
+{
+    m <- regexec(pattern, x, perl = perl, useBytes = useBytes)
+    str <- regmatches(x, m)
+    ntokens <- length(proto) + 1L
+    nomatch <- lengths(str) == 0L
+    str[nomatch] <- list(rep(NA_character_, ntokens))
+    if (length(str) > 0L && length(str[[1L]]) != ntokens) {
+        stop("The number of captures in 'pattern' != 'length(proto)'")
+    }
+    mat <- matrix(as.character(unlist(str)), ncol = ntokens, 
+        byrow = TRUE)[, -1L, drop = FALSE]
+    ans <- lapply(seq_along(proto), function(i) {
+        if (isS4(proto[[i]])) {
+            methods::as(mat[, i], class(proto[[i]]))
+        }
+        else {
+            fun <- match.fun(paste0("as.", class(proto[[i]])))
+            fun(mat[, i])
+        }
+    })
+    names(ans) <- names(proto)
+    if (isS4(proto)) {
+        methods::as(ans, class(proto))
+    }
+    else {
+        as.data.frame(ans, optional = TRUE, stringsAsFactors = FALSE)
+    }
+}
 
 
 methods <- function (generic.function, class) 
@@ -8853,7 +9023,7 @@ UseMethod("as.person")
 
 .skeleton_package_title = "The R Utils Package"
 
-.skeleton_package_version = "3.3.0"
+.skeleton_package_version = "3.4.0"
 
 .skeleton_package_depends = ""
 

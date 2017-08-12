@@ -162,7 +162,7 @@ quartz.save <- function (file, type = "png", device = dev.cur(), dpi = 100,
     oc$device <- quartz
     oc$type <- type
     if (missing(file)) 
-        file <- paste("Rplot", type, sep = ".")
+        file <- paste0("Rplot.", type)
     oc$file <- file
     oc$dpi <- dpi
     din <- dev.size("in")
@@ -530,7 +530,7 @@ dev.flush <- function (level = 1L)
 
 xyTable <- function (x, y = NULL, digits) 
 {
-    x <- xy.coords(x, y)
+    x <- xy.coords(x, y, setLab = FALSE)
     y <- signif(x$y, digits = digits)
     x <- signif(x$x, digits = digits)
     n <- length(x)
@@ -641,14 +641,17 @@ dev2bitmap <- function (file, type = "png16m", height = 7, width = 7, res = 72,
 
 
 xy.coords <- function (x, y = NULL, xlab = NULL, ylab = NULL, log = NULL, 
-    recycle = FALSE) 
+    recycle = FALSE, setLab = TRUE) 
 {
     if (is.null(y)) {
-        ylab <- xlab
+        if (is.null(ylab)) 
+            ylab <- xlab
         if (is.language(x)) {
             if (inherits(x, "formula") && length(x) == 3) {
-                ylab <- deparse(x[[2L]])
-                xlab <- deparse(x[[3L]])
+                if (setLab) {
+                  ylab <- deparse(x[[2L]])
+                  xlab <- deparse(x[[3L]])
+                }
                 y <- eval(x[[2L]], environment(x))
                 x <- eval(x[[3L]], environment(x))
             }
@@ -659,30 +662,36 @@ xy.coords <- function (x, y = NULL, xlab = NULL, ylab = NULL, log = NULL,
                 x[, 1]
             else x
             x <- stats::time(x)
-            xlab <- "Time"
+            if (setLab) 
+                xlab <- "Time"
         }
         else if (is.complex(x)) {
             y <- Im(x)
             x <- Re(x)
-            xlab <- paste0("Re(", ylab, ")")
-            ylab <- paste0("Im(", ylab, ")")
+            if (setLab) {
+                xlab <- paste0("Re(", ylab, ")")
+                ylab <- paste0("Im(", ylab, ")")
+            }
         }
         else if (is.matrix(x) || is.data.frame(x)) {
             x <- data.matrix(x)
             if (ncol(x) == 1) {
-                xlab <- "Index"
+                if (setLab) 
+                  xlab <- "Index"
                 y <- x[, 1]
                 x <- seq_along(y)
             }
             else {
                 colnames <- dimnames(x)[[2L]]
-                if (is.null(colnames)) {
-                  xlab <- paste0(ylab, "[,1]")
-                  ylab <- paste0(ylab, "[,2]")
-                }
-                else {
-                  xlab <- colnames[1L]
-                  ylab <- colnames[2L]
+                if (setLab) {
+                  if (is.null(colnames)) {
+                    xlab <- paste0(ylab, "[,1]")
+                    ylab <- paste0(ylab, "[,2]")
+                  }
+                  else {
+                    xlab <- colnames[1L]
+                    ylab <- colnames[2L]
+                  }
                 }
                 y <- x[, 2]
                 x <- x[, 1]
@@ -690,8 +699,10 @@ xy.coords <- function (x, y = NULL, xlab = NULL, ylab = NULL, log = NULL,
         }
         else if (is.list(x)) {
             if (all(c("x", "y") %in% names(x))) {
-                xlab <- paste0(ylab, "$x")
-                ylab <- paste0(ylab, "$y")
+                if (setLab) {
+                  xlab <- paste0(ylab, "$x")
+                  ylab <- paste0(ylab, "$y")
+                }
                 y <- x[["y"]]
                 x <- x[["x"]]
             }
@@ -700,7 +711,8 @@ xy.coords <- function (x, y = NULL, xlab = NULL, ylab = NULL, log = NULL,
         else {
             if (is.factor(x)) 
                 x <- as.numeric(x)
-            xlab <- "Index"
+            if (setLab) 
+                xlab <- "Index"
             y <- x
             x <- seq_along(x)
         }
@@ -732,8 +744,7 @@ xy.coords <- function (x, y = NULL, xlab = NULL, ylab = NULL, log = NULL,
             y[ii] <- NA
         }
     }
-    return(list(x = as.double(x), y = as.double(y), xlab = xlab, 
-        ylab = ylab))
+    list(x = as.double(x), y = as.double(y), xlab = xlab, ylab = ylab)
 }
 
 
@@ -956,10 +967,10 @@ tiff <- function (filename = "Rplot%03d.tiff", width = 480, height = 480,
         invisible(.External(C_devCairo, filename, 8L, g$width, 
             g$height, pointsize, bg, res, antialias, comp, d$family, 
             300))
-    else invisible(.External2(C_X11, paste("tiff::", comp, ":", 
-        filename, sep = ""), g$width, g$height, pointsize, d$gamma, 
-        d$colortype, d$maxcubesize, bg, bg, d$fonts, res, 0L, 
-        0L, "", 0, 0, d$family))
+    else invisible(.External2(C_X11, paste0("tiff::", comp, ":", 
+        filename), g$width, g$height, pointsize, d$gamma, d$colortype, 
+        d$maxcubesize, bg, bg, d$fonts, res, 0L, 0L, "", 0, 0, 
+        d$family))
 }
 
 
@@ -1006,9 +1017,8 @@ check.options <- function (new, name.opt, reset = FALSE, assign.opt = FALSE, env
                   ")")), collapse = " and "), " ", ngettext(as.integer(sum(ii)), 
                   "differs between new and previous", "differ between new and previous"), 
                   if (any(do.keep)) {
-                    paste("\n\t ==> ", gettextf("NOT changing %s", 
-                      paste(sQuote(names(prev[do.keep])), collapse = " & ")), 
-                      sep = "")
+                    paste0("\n\t ==> ", gettextf("NOT changing %s", 
+                      paste(sQuote(names(prev[do.keep])), collapse = " & ")))
                   }
                   else "", domain = NA, call. = FALSE)
             }
@@ -1136,10 +1146,10 @@ jpeg <- function (filename = "Rplot%03d.jpeg", width = 480, height = 480,
         invisible(.External(C_devCairo, filename, 3L, g$width, 
             g$height, pointsize, bg, res, antialias, quality, 
             d$family, 300))
-    else invisible(.External2(C_X11, paste("jpeg::", quality, 
-        ":", filename, sep = ""), g$width, g$height, pointsize, 
-        d$gamma, d$colortype, d$maxcubesize, bg, bg, d$fonts, 
-        res, 0L, 0L, "", 0, 0, d$family))
+    else invisible(.External2(C_X11, paste0("jpeg::", quality, 
+        ":", filename), g$width, g$height, pointsize, d$gamma, 
+        d$colortype, d$maxcubesize, bg, bg, d$fonts, res, 0L, 
+        0L, "", 0, 0, d$family))
 }
 
 
@@ -1363,15 +1373,15 @@ x, name = "XYZ", white = NULL), .Names = c("toXYZ", "fromXYZ",
 
 
 getGraphicsEvent <- function (prompt = "Waiting for input", onMouseDown = NULL, onMouseMove = NULL, 
-    onMouseUp = NULL, onKeybd = NULL, consolePrompt = prompt) 
+    onMouseUp = NULL, onKeybd = NULL, onIdle = NULL, consolePrompt = prompt) 
 {
     if (!interactive()) 
         return(NULL)
     if (!missing(prompt) || !missing(onMouseDown) || !missing(onMouseMove) || 
-        !missing(onMouseUp) || !missing(onKeybd)) {
+        !missing(onMouseUp) || !missing(onKeybd) || !missing(onIdle)) {
         setGraphicsEventHandlers(prompt = prompt, onMouseDown = onMouseDown, 
             onMouseMove = onMouseMove, onMouseUp = onMouseUp, 
-            onKeybd = onKeybd)
+            onKeybd = onKeybd, onIdle = onIdle)
     }
     .External2(C_getGraphicsEvent, consolePrompt)
 }
@@ -1502,7 +1512,7 @@ quartz.options <- function (..., reset = FALSE)
 
 chull <- function (x, y = NULL) 
 {
-    X <- xy.coords(x, y, recycle = TRUE)
+    X <- xy.coords(x, y, recycle = TRUE, setLab = FALSE)
     x <- cbind(X$x, X$y)
     if (any(!is.finite(x))) 
         stop("finite coordinates are needed")
@@ -1785,10 +1795,9 @@ bmp <- function (filename = "Rplot%03d.bmp", width = 480, height = 480,
         invisible(.External(C_devCairo, filename, 9L, g$width, 
             g$height, pointsize, bg, res, antialias, 100L, d$family, 
             300))
-    else invisible(.External2(C_X11, paste("bmp::", filename, 
-        sep = ""), g$width, g$height, pointsize, d$gamma, d$colortype, 
-        d$maxcubesize, bg, bg, d$fonts, res, 0L, 0L, "", 0, 0, 
-        d$family))
+    else invisible(.External2(C_X11, paste0("bmp::", filename), 
+        g$width, g$height, pointsize, d$gamma, d$colortype, d$maxcubesize, 
+        bg, bg, d$fonts, res, 0L, 0L, "", 0, 0, d$family))
 }
 
 
@@ -1822,10 +1831,9 @@ png <- function (filename = "Rplot%03d.png", width = 480, height = 480,
         invisible(.External(C_devCairo, filename, 5L, g$width, 
             g$height, pointsize, bg, res, antialias, 100L, d$family, 
             300))
-    else invisible(.External2(C_X11, paste("png::", filename, 
-        sep = ""), g$width, g$height, pointsize, d$gamma, d$colortype, 
-        d$maxcubesize, bg, bg, d$fonts, res, 0L, 0L, "", 0, 0, 
-        d$family))
+    else invisible(.External2(C_X11, paste0("png::", filename), 
+        g$width, g$height, pointsize, d$gamma, d$colortype, d$maxcubesize, 
+        bg, bg, d$fonts, res, 0L, 0L, "", 0, 0, d$family))
 }
 
 
@@ -2070,15 +2078,17 @@ dev.set <- function (which = dev.next())
 
 
 xyz.coords <- function (x, y = NULL, z = NULL, xlab = NULL, ylab = NULL, zlab = NULL, 
-    log = NULL, recycle = FALSE) 
+    log = NULL, recycle = FALSE, setLab = TRUE) 
 {
     if (is.null(y)) {
         if (is.language(x)) {
             if (inherits(x, "formula") && length(x) == 3 && length(rhs <- x[[3L]]) == 
                 3) {
-                zlab <- deparse(x[[2L]])
-                ylab <- deparse(rhs[[3L]])
-                xlab <- deparse(rhs[[2L]])
+                if (setLab) {
+                  zlab <- deparse(x[[2L]])
+                  ylab <- deparse(rhs[[3L]])
+                  xlab <- deparse(rhs[[2L]])
+                }
                 pf <- parent.frame()
                 z <- eval(x[[2L]], environment(x), pf)
                 y <- eval(rhs[[3L]], environment(x), pf)
@@ -2091,22 +2101,25 @@ xyz.coords <- function (x, y = NULL, z = NULL, xlab = NULL, ylab = NULL, zlab = 
             if (ncol(x) < 2) 
                 stop("at least 2 columns needed")
             if (ncol(x) == 2) {
-                xlab <- "Index"
+                if (setLab) 
+                  xlab <- "Index"
                 y <- x[, 1]
                 z <- x[, 2]
                 x <- seq_along(y)
             }
             else {
                 colnames <- dimnames(x)[[2L]]
-                if (is.null(colnames)) {
-                  zlab <- paste0(xlab, "[,3]")
-                  ylab <- paste0(xlab, "[,2]")
-                  xlab <- paste0(xlab, "[,1]")
-                }
-                else {
-                  xlab <- colnames[1L]
-                  ylab <- colnames[2L]
-                  zlab <- colnames[3L]
+                if (setLab) {
+                  if (is.null(colnames)) {
+                    zlab <- paste0(xlab, "[,3]")
+                    ylab <- paste0(xlab, "[,2]")
+                    xlab <- paste0(xlab, "[,1]")
+                  }
+                  else {
+                    xlab <- colnames[1L]
+                    ylab <- colnames[2L]
+                    zlab <- colnames[3L]
+                  }
                 }
                 y <- x[, 2]
                 z <- x[, 3]
@@ -2115,9 +2128,11 @@ xyz.coords <- function (x, y = NULL, z = NULL, xlab = NULL, ylab = NULL, zlab = 
         }
         else if (is.list(x)) {
             if (all(c("x", "y", "z") %in% names(x))) {
-                zlab <- paste0(xlab, "$z")
-                ylab <- paste0(xlab, "$y")
-                xlab <- paste0(xlab, "$x")
+                if (setLab) {
+                  zlab <- paste0(xlab, "$z")
+                  ylab <- paste0(xlab, "$y")
+                  xlab <- paste0(xlab, "$x")
+                }
                 y <- x[["y"]]
                 z <- x[["z"]]
                 x <- x[["x"]]
@@ -2130,24 +2145,29 @@ xyz.coords <- function (x, y = NULL, z = NULL, xlab = NULL, ylab = NULL, zlab = 
             z <- y
             y <- Im(x)
             x <- Re(x)
-            zlab <- ylab
-            ylab <- paste0("Im(", xlab, ")")
-            xlab <- paste0("Re(", xlab, ")")
+            if (setLab) {
+                zlab <- ylab
+                ylab <- paste0("Im(", xlab, ")")
+                xlab <- paste0("Re(", xlab, ")")
+            }
         }
         else if (is.complex(y)) {
             z <- x
             x <- Re(y)
             y <- Im(y)
-            zlab <- xlab
-            xlab <- paste0("Re(", ylab, ")")
-            ylab <- paste0("Im(", ylab, ")")
+            if (setLab) {
+                zlab <- xlab
+                xlab <- paste0("Re(", ylab, ")")
+                ylab <- paste0("Im(", ylab, ")")
+            }
         }
         else {
             if (is.factor(x)) 
                 x <- as.numeric(x)
             if (is.factor(y)) 
                 y <- as.numeric(y)
-            xlab <- "Index"
+            if (setLab) 
+                xlab <- "Index"
             z <- y
             y <- x
             x <- seq_along(x)
@@ -2275,7 +2295,7 @@ embedFonts <- function (file, format, outfile = file, fontpaths = character(),
 
 densCols <- function (x, y = NULL, nbin = 128, bandwidth, colramp = colorRampPalette(blues9[-(1:3)])) 
 {
-    xy <- xy.coords(x, y)
+    xy <- xy.coords(x, y, setLab = FALSE)
     select <- is.finite(xy$x) & is.finite(xy$y)
     x <- cbind(xy$x, xy$y)[select, ]
     map <- .smoothScatterCalcDensity(x, nbin, bandwidth)
@@ -2398,7 +2418,7 @@ boxplot.stats <- function (x, coef = 1.5, do.conf = TRUE, do.out = TRUE)
 
 .skeleton_package_title = "The R Graphics Devices and Support for Colours and Fonts"
 
-.skeleton_package_version = "3.3.0"
+.skeleton_package_version = "3.4.0"
 
 .skeleton_package_depends = ""
 

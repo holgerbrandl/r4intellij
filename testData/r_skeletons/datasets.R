@@ -186,7 +186,7 @@ women <- datasets::women		## Average Heights and Weights for American Women
 
 .skeleton_package_title = "The R Datasets Package"
 
-.skeleton_package_version = "3.3.0"
+.skeleton_package_version = "3.4.0"
 
 .skeleton_package_depends = ""
 

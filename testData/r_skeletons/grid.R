@@ -165,7 +165,7 @@ grid.reorder <- function (gPath, order, back = TRUE, grep = FALSE, redraw = TRUE
 
 engine.display.list <- function (on = TRUE) 
 {
-    grid.Call(L_setEngineDLon, as.logical(on))
+    grid.Call(C_setEngineDLon, as.logical(on))
 }
 
 
@@ -286,12 +286,12 @@ layout.widths <- function (lay)
 
 xsplinePoints <- function (x) 
 {
-    dlon <- grid.Call(L_setDLon, FALSE)
-    on.exit(grid.Call(L_setDLon, dlon))
-    tempgpar <- grid.Call(L_getGPar)
-    on.exit(grid.Call(L_setGPar, tempgpar), add = TRUE)
+    dlon <- grid.Call(C_setDLon, FALSE)
+    on.exit(grid.Call(C_setDLon, dlon))
+    tempgpar <- grid.Call(C_getGPar)
+    on.exit(grid.Call(C_setGPar, tempgpar), add = TRUE)
     preDraw(x)
-    devPoints <- grid.Call(L_xsplinePoints, x$x, x$y, x$shape, 
+    devPoints <- grid.Call(C_xsplinePoints, x$x, x$y, x$shape, 
         x$open, x$arrow, x$repEnds, xsplineIndex(x), 0)
     postDraw(x)
     unitPoints <- lapply(devPoints, function(x) {
@@ -406,12 +406,12 @@ grid.gremove <- function (..., grep = TRUE, global = TRUE)
 
 grid.display.list <- function (on = TRUE) 
 {
-    grid.Call(L_setDLon, as.logical(on))
+    grid.Call(C_setDLon, as.logical(on))
     if (on) {
-        grid.Call(L_setDisplayList, vector("list", 100L))
-        grid.Call(L_setDLindex, 0L)
+        grid.Call(C_setDisplayList, vector("list", 100L))
+        grid.Call(C_setDLindex, 0L)
     }
-    else grid.Call(L_setDisplayList, NULL)
+    else grid.Call(C_setDisplayList, NULL)
 }
 
 
@@ -533,7 +533,7 @@ depth <- function (x, ...)
 
 grid.locator <- function (unit = "native") 
 {
-    location <- c(grid.Call(L_locator), 1)
+    location <- c(grid.Call(C_locator), 1)
     if (is.na(location[1L])) 
         invisible(NULL)
     else {
@@ -554,7 +554,7 @@ grid.gget <- function (..., grep = TRUE, global = TRUE)
 
 calcStringMetric <- function (text) 
 {
-    metric <- grid.Call(L_stringMetric, text)
+    metric <- grid.Call(C_stringMetric, text)
     names(metric) <- c("ascent", "descent", "width")
     metric
 }
@@ -593,12 +593,12 @@ grid.newpage <- function (recording = TRUE)
             fun <- get(fun)
         try(fun())
     }
-    .Call(L_newpagerecording)
-    .Call(L_newpage)
-    .Call(L_initGPar)
-    .Call(L_initViewportStack)
+    .Call(C_newpagerecording)
+    .Call(C_newpage)
+    .Call(C_initGPar)
+    .Call(C_initViewportStack)
     if (recording) {
-        .Call(L_initDisplayList)
+        .Call(C_initDisplayList)
         grDevices:::recordPalette()
         for (fun in getHook("grid.newpage")) {
             if (is.character(fun)) 
@@ -761,7 +761,7 @@ grid.panel <- function (x = stats::runif(10), y = stats::runif(10), zrange = c(0
 
 current.rotation <- function () 
 {
-    grid.Call(L_currentViewport)$rotation
+    grid.Call(C_currentViewport)$rotation
 }
 
 
@@ -794,7 +794,7 @@ current.parent <- function (n = 1)
 {
     if (n < 1) 
         stop("Invalid number of generations")
-    vp <- grid.Call(L_currentViewport)
+    vp <- grid.Call(C_currentViewport)
     generation <- 1
     while (generation <= n) {
         if (is.null(vp)) 
@@ -870,7 +870,7 @@ grobName <- function (grob = NULL, prefix = "GRID")
 
 grid.cap <- function () 
 {
-    grid.Call(L_cap)
+    grid.Call(C_cap)
 }
 
 
@@ -917,7 +917,7 @@ unit.length <- function (unit)
 
 current.transform <- function () 
 {
-    grid.Call(L_currentViewport)$trans
+    grid.Call(C_currentViewport)$trans
 }
 
 
@@ -994,7 +994,7 @@ grid.pretty <- function (range)
 {
     if (!is.numeric(range)) 
         stop("'range' must be numeric")
-    .Call(L_pretty, range)
+    .Call(C_pretty, range)
 }
 
 
@@ -1005,7 +1005,7 @@ popViewport <- function (n = 1, recording = TRUE)
     if (n == 0) 
         n <- vpDepth()
     if (n > 0) {
-        grid.Call.graphics(L_unsetviewport, as.integer(n))
+        grid.Call.graphics(C_unsetviewport, as.integer(n))
         if (recording) {
             class(n) <- "pop"
             record(n)
@@ -1074,7 +1074,7 @@ applyEdits <- function (x, edits)
 
 grid.show.layout <- function (l, newpage = TRUE, vp.ex = 0.8, bg = "light grey", 
     cell.border = "blue", cell.fill = "light blue", cell.label = TRUE, 
-    label.col = "blue", unit.col = "red", vp = NULL) 
+    label.col = "blue", unit.col = "red", vp = NULL, ...) 
 {
     if (!is.layout(l)) 
         stop("'l' must be a layout")
@@ -1094,20 +1094,20 @@ grid.show.layout <- function (l, newpage = TRUE, vp.ex = 0.8, bg = "light grey",
         if (cell.label) 
             grid.text(paste0("(", i, ", ", j, ")"), gp = gpar(col = label.col))
         if (j == 1) 
-            grid.text(as.character(l$heights[i, top = FALSE]), 
+            grid.text(format(l$heights[i, top = FALSE], ...), 
                 gp = gp.red, just = c("right", "centre"), x = unit(-0.05, 
                   "inches"), y = unit(0.5, "npc"), rot = 0)
         if (i == l$nrow) 
-            grid.text(as.character(l$widths[j, top = FALSE]), 
+            grid.text(format(l$widths[j, top = FALSE], ...), 
                 gp = gp.red, just = c("centre", "top"), x = unit(0.5, 
                   "npc"), y = unit(-0.05, "inches"), rot = 0)
         if (j == l$ncol) 
-            grid.text(as.character(l$heights[i, top = FALSE]), 
+            grid.text(format(l$heights[i, top = FALSE], ...), 
                 gp = gp.red, just = c("left", "centre"), x = unit(1, 
                   "npc") + unit(0.05, "inches"), y = unit(0.5, 
                   "npc"), rot = 0)
         if (i == 1) 
-            grid.text(as.character(l$widths[j, top = FALSE]), 
+            grid.text(format(l$widths[j, top = FALSE], ...), 
                 gp = gp.red, just = c("centre", "bottom"), x = unit(0.5, 
                   "npc"), y = unit(1, "npc") + unit(0.05, "inches"), 
                 rot = 0)
@@ -1568,16 +1568,16 @@ arrowsGrob <- function (x = c(0.25, 0.75), y = 0.5, default.units = "npc",
 
 current.vpTree <- function (all = TRUE) 
 {
-    cpvp <- grid.Call(L_currentViewport)
+    cpvp <- grid.Call(C_currentViewport)
     moving <- all && vpDepth() > 0
     if (moving) {
-        savedname <- cpvp$name
+        savedpath <- current.vpPath()
         upViewport(0, recording = FALSE)
-        cpvp <- grid.Call(L_currentViewport)
+        cpvp <- grid.Call(C_currentViewport)
     }
     tree <- vpTreeFromNode(cpvp)
     if (moving) {
-        downViewport(savedname, recording = FALSE)
+        downViewport(savedpath, recording = FALSE)
     }
     tree
 }
@@ -1718,10 +1718,10 @@ grid.set <- function (gPath, newGrob, strict = FALSE, grep = FALSE, redraw = TRU
     grep <- rep(grep, length.out = depth(gPath))
     result <- setDLfromGPath(gPath, newGrob, strict, grep)
     if (result$index) {
-        dl.index <- grid.Call(L_getDLindex)
-        grid.Call(L_setDLindex, as.integer(result$index))
-        grid.Call(L_setDLelt, result$grob)
-        grid.Call(L_setDLindex, as.integer(dl.index))
+        dl.index <- grid.Call(C_getDLindex)
+        grid.Call(C_setDLindex, as.integer(result$index))
+        grid.Call(C_setDLelt, result$grob)
+        grid.Call(C_setDLindex, as.integer(dl.index))
         if (redraw) 
             draw.all()
     }
@@ -1812,7 +1812,7 @@ stringDescent <- function (string)
 
 getNames <- function () 
 {
-    dl <- grid.Call(L_getDisplayList)[1L:grid.Call(L_getDLindex)]
+    dl <- grid.Call(C_getDisplayList)[1L:grid.Call(C_getDLindex)]
     names <- sapply(dl, getName)
     names[nzchar(names)]
 }
@@ -1820,7 +1820,7 @@ getNames <- function ()
 
 current.viewport <- function () 
 {
-    vpFromPushedvp(grid.Call(L_currentViewport))
+    vpFromPushedvp(grid.Call(C_currentViewport))
 }
 
 
@@ -1868,7 +1868,7 @@ convertUnit <- function (x, unitTo, axisFrom = "x", typeFrom = "location", axisT
         stop("'x' argument must be a unit object")
     if (is.na(whatfrom) || is.na(whatto)) 
         stop("invalid 'axis' or 'type'")
-    value <- grid.Call(L_convert, x, as.integer(whatfrom), as.integer(whatto), 
+    value <- grid.Call(C_convert, x, as.integer(whatfrom), as.integer(whatto), 
         valid.units(unitTo))
     if (!valueOnly) 
         unit(value, unitTo)
@@ -1907,7 +1907,7 @@ grid.plot.and.legend <- function ()
 current.vpPath <- function () 
 {
     names <- NULL
-    pvp <- grid.Call(L_currentViewport)
+    pvp <- grid.Call(C_currentViewport)
     while (!rootVP(pvp)) {
         names <- c(names, pvp$name)
         pvp <- pvp$parent
@@ -2073,20 +2073,20 @@ grid.remove <- function (gPath, warn = TRUE, strict = FALSE, grep = FALSE, globa
 grid.DLapply <- function (FUN, ...) 
 {
     FUN <- match.fun(FUN)
-    gridDLindex <- grid.Call(L_getDLindex)
+    gridDLindex <- grid.Call(C_getDLindex)
     newDL <- vector("list", gridDLindex)
     for (i in 1:(gridDLindex - 1)) {
-        elt <- grid.Call(L_getDLelt, i)
+        elt <- grid.Call(C_getDLelt, i)
         newElt <- FUN(elt, ...)
         if (!(is.null(newElt) || inherits(newElt, class(elt)))) 
             stop("invalid modification of the display list")
         newDL[[i]] <- newElt
     }
     for (i in 1:(gridDLindex - 1)) {
-        grid.Call(L_setDLindex, i)
-        grid.Call(L_setDLelt, newDL[[i]])
+        grid.Call(C_setDLindex, i)
+        grid.Call(C_setDLelt, newDL[[i]])
     }
-    grid.Call(L_setDLindex, gridDLindex)
+    grid.Call(C_setDLindex, gridDLindex)
 }
 
 
@@ -2411,7 +2411,7 @@ showGrob <- function (x = NULL, gPath = NULL, strict = FALSE, grep = FALSE,
 {
     if (is.null(x)) {
         if (is.null(gPath)) {
-            dl <- grid.Call(L_getDisplayList)[1L:grid.Call(L_getDLindex)]
+            dl <- grid.Call(C_getDisplayList)[1L:grid.Call(C_getDLindex)]
             grid.newpage(recording = FALSE)
             lapply(dl[-1], function(y) {
                 if (is.grob(y)) 
@@ -2502,7 +2502,7 @@ upViewport <- function (n = 1, recording = TRUE)
     if (n > 0) {
         path <- current.vpPath()
         upPath <- path[(depth(path) - n + 1):depth(path)]
-        grid.Call.graphics(L_upviewport, as.integer(n))
+        grid.Call.graphics(C_upviewport, as.integer(n))
         if (recording) {
             class(n) <- "up"
             record(n)
@@ -2539,7 +2539,7 @@ grid.segments <- function (x0 = unit(0, "npc"), y0 = unit(0, "npc"), x1 = unit(1
 
 layoutRegion <- function (layout.pos.row = 1, layout.pos.col = 1) 
 {
-    region <- grid.Call(L_layoutRegion, if (is.null(layout.pos.row)) 
+    region <- grid.Call(C_layoutRegion, if (is.null(layout.pos.row)) 
         layout.pos.row
     else as.integer(rep(layout.pos.row, length.out = 2)), if (is.null(layout.pos.col)) 
         layout.pos.col
@@ -2782,7 +2782,7 @@ bezierGrob <- function (x = c(0, 0.5, 1, 0.5), y = c(0.5, 1, 0.5, 0), id = NULL,
 get.gpar <- function (names = NULL) 
 {
     if (is.null(names)) {
-        result <- grid.Call(L_getGPar)
+        result <- grid.Call(C_getGPar)
         result$gamma <- NULL
     }
     else {
@@ -2792,7 +2792,7 @@ get.gpar <- function (names = NULL)
             warning("'gamma' 'gpar' element is defunct")
             names <- names[-match("gamma", names)]
         }
-        result <- unclass(grid.Call(L_getGPar))[names]
+        result <- unclass(grid.Call(C_getGPar))[names]
     }
     class(result) <- "gpar"
     result
@@ -2842,7 +2842,7 @@ postDrawDetails <- function (x)
 
 .skeleton_package_title = "The Grid Graphics Package"
 
-.skeleton_package_version = "3.3.0"
+.skeleton_package_version = "3.4.0"
 
 .skeleton_package_depends = ""
 

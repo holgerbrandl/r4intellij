@@ -65,13 +65,13 @@ title <- function (main = NULL, sub = NULL, xlab = NULL, ylab = NULL,
 
 axis.Date <- function (side, x, at, format, labels = TRUE, ...) 
 {
-    mat <- missing(at) || is.null(at)
-    if (!mat) 
-        x <- as.Date(at)
-    else x <- as.Date(x)
-    range <- par("usr")[if (side%%2) 
+    has.at <- !missing(at) && !is.null(at)
+    x <- as.Date(if (has.at) 
+        at
+    else x)
+    range <- sort(par("usr")[if (side%%2) 
         1L:2L
-    else 3:4L]
+    else 3:4L])
     range[1L] <- ceiling(range[1L])
     range[2L] <- floor(range[2L])
     d <- range[2L] - range[1L]
@@ -105,7 +105,7 @@ axis.Date <- function (side, x, at, format, labels = TRUE, ...)
         if (missing(format)) 
             format <- "%Y"
     }
-    if (!mat) 
+    if (has.at) 
         z <- x[is.finite(x)]
     keep <- z >= range[1L] & z <= range[2L]
     z <- z[keep]
@@ -885,9 +885,9 @@ image.default <- function (x = seq(0, 1, length.out = nrow(z)), y = seq(0, 1,
     else if (is.list(x)) {
         xn <- deparse(substitute(x))
         if (missing(xlab)) 
-            xlab <- paste(xn, "x", sep = "$")
+            xlab <- paste0(xn, "$x")
         if (missing(ylab)) 
-            ylab <- paste(xn, "y", sep = "$")
+            ylab <- paste0(xn, "$y")
         y <- x$y
         x <- x$x
     }
@@ -1502,7 +1502,7 @@ Axis <- function (x = NULL, at = NULL, ..., side, labels = NULL)
 }
 
 
-text.default <- function (x, y = NULL, labels = seq_along(x), adj = NULL, pos = NULL, 
+text.default <- function (x, y = NULL, labels = seq_along(x$x), adj = NULL, pos = NULL, 
     offset = 0.5, vfont = NULL, cex = 1, col = NULL, font = NULL, 
     ...) 
 {
@@ -1510,12 +1510,13 @@ text.default <- function (x, y = NULL, labels = seq_along(x), adj = NULL, pos = 
         labels <- y
         y <- NULL
     }
+    x <- xy.coords(x, y, recycle = TRUE, setLab = FALSE)
     labels <- as.graphicsAnnot(labels)
     if (!is.null(vfont)) 
         vfont <- c(typeface = pmatch(vfont[1L], Hershey$typeface), 
             fontindex = pmatch(vfont[2L], Hershey$fontindex))
-    .External.graphics(C_text, xy.coords(x, y, recycle = TRUE), 
-        labels, adj, pos, offset, vfont, cex, col, font, ...)
+    .External.graphics(C_text, x, labels, adj, pos, offset, vfont, 
+        cex, col, font, ...)
     invisible()
 }
 
@@ -1563,7 +1564,7 @@ legend <- function (x, y = NULL, legend, fill = NULL, col = par("col"),
             "left", "topleft", "top", "topright", "right", "center"))
     else NA
     if (is.na(auto)) {
-        xy <- xy.coords(x, y)
+        xy <- xy.coords(x, y, setLab = FALSE)
         x <- xy$x
         y <- xy$y
         nx <- length(x)
@@ -1959,7 +1960,7 @@ grid <- function (nx = NULL, ny = nx, col = "lightgray", lty = "dotted",
 polypath <- function (x, y = NULL, border = NULL, col = NA, lty = par("lty"), 
     rule = "winding", ...) 
 {
-    xy <- xy.coords(x, y)
+    xy <- xy.coords(x, y, setLab = FALSE)
     if (is.logical(border)) {
         if (!is.na(border) && border) 
             border <- par("fg")
@@ -2018,7 +2019,7 @@ close.screen <- function (n, all.screens = FALSE)
 xspline <- function (x, y = NULL, shape = 0, open = TRUE, repEnds = TRUE, 
     draw = TRUE, border = par("fg"), col = NA, ...) 
 {
-    xy <- xy.coords(x, y)
+    xy <- xy.coords(x, y, setLab = FALSE)
     s <- rep.int(shape, length(xy$x))
     if (open) 
         s[1L] <- s[length(x)] <- 0
@@ -2228,8 +2229,11 @@ contour.default <- function (x = seq(0, 1, length.out = nrow(z)), y = seq(0, 1,
     if (!is.null(vfont)) 
         vfont <- c(typeface = pmatch(vfont[1L], Hershey$typeface), 
             fontindex = pmatch(vfont[2L], Hershey$fontindex))
-    if (!is.null(labels)) 
+    if (!is.null(labels)) {
         labels <- as.character(labels)
+        if (drawlabels && !length(labels)) 
+            stop("'labels' is length zero.  Use 'drawlabels = FALSE' to suppress labels.")
+    }
     .External.graphics(C_contour, x, y, z, levels, labels, labcex, 
         drawlabels, method, vfont, col, lty, lwd)
     if (!add) {
@@ -2364,13 +2368,13 @@ rasterImage <- function (image, xleft, ybottom, xright, ytop, angle = 0, interpo
 
 axis.POSIXct <- function (side, x, at, format, labels = TRUE, ...) 
 {
-    mat <- missing(at) || is.null(at)
-    if (!mat) 
-        x <- as.POSIXct(at)
-    else x <- as.POSIXct(x)
-    range <- par("usr")[if (side%%2) 
+    has.at <- !missing(at) && !is.null(at)
+    x <- as.POSIXct(if (has.at) 
+        at
+    else x)
+    range <- sort(par("usr")[if (side%%2) 
         1L:2L
-    else 3L:4L]
+    else 3L:4L])
     d <- range[2L] - range[1L]
     z <- c(range, x[is.finite(x)])
     attr(z, "tzone") <- attr(x, "tzone")
@@ -2441,7 +2445,7 @@ axis.POSIXct <- function (side, x, at, format, labels = TRUE, ...)
         if (missing(format)) 
             format <- "%Y"
     }
-    if (!mat) 
+    if (has.at) 
         z <- x[is.finite(x)]
     keep <- z >= range[1L] & z <= range[2L]
     z <- z[keep]
@@ -3577,7 +3581,7 @@ polygon <- function (x, y = NULL, density = NULL, angle = 45, border = NULL,
     col = NA, lty = par("lty"), ..., fillOddEven = FALSE) 
 {
     ..debug.hatch <- FALSE
-    xy <- xy.coords(x, y)
+    xy <- xy.coords(x, y, setLab = FALSE)
     if (is.numeric(density) && all(is.na(density) | density < 
         0)) 
         density <- NULL
@@ -3813,7 +3817,7 @@ axTicks <- function (side, axp = NULL, usr = NULL, log = NULL, nintLog = NULL)
 
 .skeleton_package_title = "The R Graphics Package"
 
-.skeleton_package_version = "3.3.0"
+.skeleton_package_version = "3.4.0"
 
 .skeleton_package_depends = ""
 

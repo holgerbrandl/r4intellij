@@ -17,7 +17,7 @@ invert_match <- function (loc)
 }
 
 
-str_to_upper <- function (string, locale = "") 
+str_to_upper <- function (string, locale = "en") 
 {
     stri_trans_toupper(string, locale = locale)
 }
@@ -82,7 +82,7 @@ str_detect <- function (string, pattern)
 }
 
 
-str_to_title <- function (string, locale = "") 
+str_to_title <- function (string, locale = "en") 
 {
     stri_trans_totitle(string, opts_brkiter = stri_opts_brkiter(locale = locale))
 }
@@ -95,6 +95,12 @@ str_wrap <- function (string, width = 80, indent = 0, exdent = 0)
     out <- stri_wrap(string, width = width, indent = indent, 
         exdent = exdent, simplify = FALSE)
     vapply(out, str_c, collapse = "\n", character(1))
+}
+
+
+str_which <- function (string, pattern) 
+{
+    which(str_detect(string, pattern))
 }
 
 
@@ -193,6 +199,9 @@ perl <- function (pattern)
 
 str_replace <- function (string, pattern, replacement) 
 {
+    if (!missing(replacement) && is.function(replacement)) {
+        return(str_transform(string, pattern, replacement))
+    }
     switch(type(pattern), empty = , bound = stop("Not implemented", 
         call. = FALSE), fixed = stri_replace_first_fixed(string, 
         pattern, replacement, opts_fixed = opts(pattern)), coll = stri_replace_first_coll(string, 
@@ -293,11 +302,12 @@ str_view_all <- function (string, pattern, match = NA)
 }
 
 
-str_sort <- function (x, decreasing = FALSE, na_last = TRUE, locale = "", 
-    ...) 
+str_sort <- function (x, decreasing = FALSE, na_last = TRUE, locale = "en", 
+    numeric = FALSE, ...) 
 {
     stri_sort(x, decreasing = decreasing, na_last = na_last, 
-        opts_collator = stri_opts_collator(locale, ...))
+        opts_collator = stri_opts_collator(locale, numeric = numeric, 
+            ...))
 }
 
 
@@ -375,17 +385,18 @@ str_match <- function (string, pattern)
 }
 
 
-str_to_lower <- function (string, locale = "") 
+str_to_lower <- function (string, locale = "en") 
 {
     stri_trans_tolower(string, locale = locale)
 }
 
 
-str_order <- function (x, decreasing = FALSE, na_last = TRUE, locale = "", 
-    ...) 
+str_order <- function (x, decreasing = FALSE, na_last = TRUE, locale = "en", 
+    numeric = FALSE, ...) 
 {
     stri_order(x, decreasing = decreasing, na_last = na_last, 
-        opts_collator = stri_opts_collator(locale, ...))
+        opts_collator = stri_opts_collator(locale, numeric = numeric, 
+            ...))
 }
 
 
@@ -416,13 +427,16 @@ str_match_all <- function (string, pattern)
     if (type(pattern) != "regex") {
         stop("Can only match regular expressions", call. = FALSE)
     }
-    stri_match_all_regex(string, pattern, cg_missing = "", omit_no_match = TRUE, 
+    stri_match_all_regex(string, pattern, omit_no_match = TRUE, 
         opts_regex = opts(pattern))
 }
 
 
 str_replace_all <- function (string, pattern, replacement) 
 {
+    if (!missing(replacement) && is.function(replacement)) {
+        return(str_transform_all(string, pattern, replacement))
+    }
     if (!is.null(names(pattern))) {
         vec <- FALSE
         replacement <- unname(pattern)
@@ -441,7 +455,7 @@ str_replace_all <- function (string, pattern, replacement)
 }
 
 
-coll <- function (pattern, ignore_case = FALSE, locale = NULL, ...) 
+coll <- function (pattern, ignore_case = FALSE, locale = "en", ...) 
 {
     if (!is_bare_character(pattern)) {
         stop("Can only modify plain character vectors.", call. = FALSE)
@@ -476,7 +490,7 @@ words <- stringr::words		## Sample character vectors for practicing string manip
 
 .skeleton_package_title = "Simple, Consistent Wrappers for Common String Operations"
 
-.skeleton_package_version = "1.1.0"
+.skeleton_package_version = "1.2.0"
 
 .skeleton_package_depends = ""
 

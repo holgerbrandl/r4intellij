@@ -8,8 +8,12 @@ read_delim_chunked <- function (file, callback, chunk_size = 10000, delim, quote
     escape_backslash = FALSE, escape_double = TRUE, col_names = TRUE, 
     col_types = NULL, locale = default_locale(), na = c("", "NA"), 
     quoted_na = TRUE, comment = "", trim_ws = FALSE, skip = 0, 
-    guess_max = min(1000, chunk_size), progress = interactive()) 
+    guess_max = min(1000, chunk_size), progress = show_progress()) 
 {
+    if (!nzchar(delim)) {
+        stop("`delim` must be at least one character, ", "use `read_table()` for whitespace delimited input.", 
+            call. = FALSE)
+    }
     tokenizer <- tokenizer_delim(delim, quote = quote, escape_backslash = escape_backslash, 
         escape_double = escape_double, na = na, quoted_na = quoted_na, 
         comment = comment, trim_ws = trim_ws)
@@ -34,8 +38,8 @@ col_date <- function (format = "")
 
 fwf_widths <- function (widths, col_names = NULL) 
 {
-    pos <- cumsum(c(1, abs(widths)))
-    fwf_positions(pos[-length(pos)], pos[-1] - 1, col_names)
+    pos <- cumsum(c(1L, abs(widths)))
+    fwf_positions(pos[-length(pos)], pos[-1] - 1L, col_names)
 }
 
 
@@ -94,15 +98,21 @@ SideEffectChunkCallback <- "<environment>"
 
 write_file <- function (x, path, append = FALSE) 
 {
-    path <- normalizePath(path, mustWork = FALSE)
-    if (is.raw(x)) {
-        write_file_raw_(x, path, append = append)
+    path <- standardise_path(path, input = FALSE)
+    if (!isOpen(path)) {
+        on.exit(close(path), add = TRUE)
+        if (isTRUE(append)) {
+            open(path, "ab")
+        }
+        else {
+            open(path, "wb")
+        }
     }
-    else if (is.character(x)) {
-        write_file_(x, path, append = append)
+    if (is.raw(x)) {
+        write_file_raw_(x, path)
     }
     else {
-        stop("`x` must be a raw or character vector", call. = FALSE)
+        write_file_(x, path)
     }
     invisible(x)
 }
@@ -112,7 +122,7 @@ format_delim <- function (x, delim, na = "NA", append = FALSE, col_names = !appe
 {
     stopifnot(is.data.frame(x))
     x <- lapply(x, output_column)
-    stream_delim(x, "", delim, col_names = col_names, append = append, 
+    stream_delim(x, NULL, delim, col_names = col_names, append = append, 
         na = na)
 }
 
@@ -126,49 +136,32 @@ tokenizer_delim <- function (delim, quote = "\"", na = "NA", quoted_na = TRUE, c
 }
 
 
-col_numeric <- function () 
-{
-    warning("Deprecated: please use `col_number()`")
-    collector("number")
-}
-
-
 col_double <- function () 
 {
     collector("double")
 }
 
 
-fwf_empty <- function (file, skip = 0, col_names = NULL, comment = "") 
+fwf_empty <- function (file, skip = 0, col_names = NULL, comment = "", n = 100L) 
 {
     ds <- datasource(file, skip = skip)
-    out <- whitespaceColumns(ds, comment = comment)
+    out <- whitespaceColumns(ds, comment = comment, n = n)
     out$end[length(out$end)] <- NA
-    if (is.null(col_names)) {
-        col_names <- paste0("X", seq_along(out$begin))
-    }
-    else {
-        stopifnot(length(out$begin) == length(col_names))
-    }
+    col_names <- fwf_col_names(col_names, length(out$begin))
     out$col_names <- col_names
     out
 }
 
 
-parse_factor <- function (x, levels, ordered = FALSE, na = c("", "NA"), locale = default_locale()) 
+parse_factor <- function (x, levels, ordered = FALSE, na = c("", "NA"), locale = default_locale(), 
+    include_na = TRUE) 
 {
-    parse_vector(x, col_factor(levels, ordered), na = na, locale = locale)
+    parse_vector(x, col_factor(levels, ordered, include_na), 
+        na = na, locale = locale)
 }
 
 
 DataFrameCallback <- "<environment>"
-
-parse_numeric <- function (x, na = c("", "NA"), locale = default_locale()) 
-{
-    warning("Deprecated: please use `parse_number()`")
-    parse_vector(x, col_number(), na = na, locale = locale)
-}
-
 
 type_convert <- function (df, col_types = NULL, na = c("", "NA"), trim_ws = TRUE, 
     locale = default_locale()) 
@@ -218,11 +211,12 @@ parse_vector <- function (x, collector, na = c("", "NA"), locale = default_local
 }
 
 
-tokenizer_csv <- function (na = "NA", quoted_na = TRUE, comment = "", trim_ws = TRUE) 
+tokenizer_csv <- function (na = "NA", quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE) 
 {
-    tokenizer_delim(delim = ",", quote = "\"", na = na, quoted_na = quoted_na, 
-        comment = comment, trim_ws = trim_ws, escape_double = TRUE, 
-        escape_backslash = FALSE)
+    tokenizer_delim(delim = ",", na = na, quoted_na = quoted_na, 
+        quote = quote, comment = comment, trim_ws = trim_ws, 
+        escape_double = TRUE, escape_backslash = FALSE)
 }
 
 
@@ -233,21 +227,27 @@ output_column <- function (x)
 
 
 spec_csv <- function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = c("", "NA"), quoted_na = TRUE, comment = "", trim_ws = TRUE, 
-    skip = 0, n_max = 0, guess_max = 1000, progress = interactive()) 
+    na = c("", "NA"), quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE, skip = 0, n_max = 0, guess_max = 1000, progress = show_progress()) 
 attr((function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = c("", "NA"), quoted_na = TRUE, comment = "", trim_ws = TRUE, 
-    skip = 0, n_max = 0, guess_max = 1000, progress = interactive()) 
+    na = c("", "NA"), quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE, skip = 0, n_max = 0, guess_max = 1000, progress = show_progress()) 
 {
-    tokenizer <- tokenizer_csv(na = na, quoted_na = TRUE, comment = comment, 
-        trim_ws = trim_ws)
+    tokenizer <- tokenizer_csv(na = na, quoted_na = TRUE, quote = quote, 
+        comment = comment, trim_ws = trim_ws)
     read_delimited(file, tokenizer, col_names = col_names, col_types = col_types, 
         locale = locale, skip = skip, comment = comment, n_max = n_max, 
         guess_max = guess_max, progress = progress)
 })(file = file, col_names = col_names, col_types = col_types, 
-    locale = locale, na = na, quoted_na = quoted_na, comment = comment, 
-    trim_ws = trim_ws, skip = skip, n_max = n_max, guess_max = guess_max, 
-    progress = progress), "spec")
+    locale = locale, na = na, quoted_na = quoted_na, quote = quote, 
+    comment = comment, trim_ws = trim_ws, skip = skip, n_max = n_max, 
+    guess_max = guess_max, progress = progress), "spec")
+
+
+tokenizer_ws <- function (na = "NA", comment = "") 
+{
+    structure(list(na = na, comment = comment), class = "tokenizer_ws")
+}
 
 
 cols <- function (..., .default = col_guess()) 
@@ -292,9 +292,9 @@ cols_condense <- function (x)
 }
 
 
-col_factor <- function (levels, ordered = FALSE) 
+col_factor <- function (levels, ordered = FALSE, include_na = FALSE) 
 {
-    collector("factor", levels = levels, ordered = ordered)
+    collector("factor", levels = levels, ordered = ordered, include_na = include_na)
 }
 
 
@@ -304,26 +304,40 @@ read_rds <- function (path)
 }
 
 
-fwf_positions <- function (start, end, col_names = NULL) 
+fwf_cols <- function (...) 
 {
-    stopifnot(length(start) == length(end))
-    if (is.null(col_names)) {
-        col_names <- paste0("X", seq_along(start))
+    x <- lapply(list(...), as.integer)
+    names(x) <- fwf_col_names(names(x), length(x))
+    x <- tibble::as_tibble(x)
+    if (nrow(x) == 2) {
+        fwf_positions(as.integer(x[1, ]), as.integer(x[2, ]), 
+            names(x))
+    }
+    else if (nrow(x) == 1) {
+        fwf_widths(as.integer(x[1, ]), names(x))
     }
     else {
-        stopifnot(length(start) == length(col_names))
+        stop("All variables must have either one (width) two (start, end) values.", 
+            call. = FALSE)
     }
-    list(begin = start - 1, end = end, col_names = col_names)
+}
+
+
+fwf_positions <- function (start, end = NULL, col_names = NULL) 
+{
+    stopifnot(length(start) == length(end))
+    col_names <- fwf_col_names(col_names, length(start))
+    tibble(begin = start - 1L, end = end, col_names = col_names)
 }
 
 
 read_tsv_chunked <- function (file, callback, chunk_size = 10000, col_names = TRUE, 
     col_types = NULL, locale = default_locale(), na = c("", "NA"), 
-    quoted_na = TRUE, comment = "", trim_ws = TRUE, skip = 0, 
-    guess_max = min(1000, chunk_size), progress = interactive()) 
+    quoted_na = TRUE, quote = "\"", comment = "", trim_ws = TRUE, 
+    skip = 0, guess_max = min(1000, chunk_size), progress = show_progress()) 
 {
     tokenizer <- tokenizer_tsv(na = na, quoted_na = quoted_na, 
-        comment = comment, trim_ws = trim_ws)
+        quote = quote, comment = comment, trim_ws = trim_ws)
     read_delimited_chunked(file, callback = callback, chunk_size = chunk_size, 
         tokenizer, col_names = col_names, col_types = col_types, 
         locale = locale, skip = skip, comment = comment, guess_max = guess_max, 
@@ -332,11 +346,23 @@ read_tsv_chunked <- function (file, callback, chunk_size = 10000, col_names = TR
 
 
 read_csv <- function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = c("", "NA"), quoted_na = TRUE, comment = "", trim_ws = TRUE, 
-    skip = 0, n_max = Inf, guess_max = min(1000, n_max), progress = interactive()) 
+    na = c("", "NA"), quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE, skip = 0, n_max = Inf, guess_max = min(1000, 
+        n_max), progress = show_progress()) 
 {
-    tokenizer <- tokenizer_csv(na = na, quoted_na = TRUE, comment = comment, 
-        trim_ws = trim_ws)
+    tokenizer <- tokenizer_csv(na = na, quoted_na = TRUE, quote = quote, 
+        comment = comment, trim_ws = trim_ws)
+    read_delimited(file, tokenizer, col_names = col_names, col_types = col_types, 
+        locale = locale, skip = skip, comment = comment, n_max = n_max, 
+        guess_max = guess_max, progress = progress)
+}
+
+
+read_table2 <- function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
+    na = "NA", skip = 0, n_max = Inf, guess_max = min(n_max, 
+        1000), progress = show_progress(), comment = "") 
+{
+    tokenizer <- tokenizer_ws(na = na, comment = comment)
     read_delimited(file, tokenizer, col_names = col_names, col_types = col_types, 
         locale = locale, skip = skip, comment = comment, n_max = n_max, 
         guess_max = guess_max, progress = progress)
@@ -349,7 +375,7 @@ parse_integer <- function (x, na = c("", "NA"), locale = default_locale())
 }
 
 
-read_lines_raw <- function (file, skip = 0, n_max = -1L, progress = interactive()) 
+read_lines_raw <- function (file, skip = 0, n_max = -1L, progress = show_progress()) 
 {
     if (empty_file(file)) {
         return(list())
@@ -358,6 +384,8 @@ read_lines_raw <- function (file, skip = 0, n_max = -1L, progress = interactive(
     read_lines_raw_(ds, n_max = n_max, progress = progress)
 }
 
+
+ListCallback <- "<environment>"
 
 read_file <- function (file, locale = default_locale()) 
 {
@@ -377,9 +405,23 @@ col_character <- function ()
 
 write_lines <- function (x, path, na = "NA", append = FALSE) 
 {
-    x <- as.character(x)
-    path <- normalizePath(path, mustWork = FALSE)
-    write_lines_(x, path, na, append)
+    is_raw <- is.list(x) && inherits(x[[1]], "raw")
+    if (!is_raw) {
+        x <- as.character(x)
+    }
+    path <- standardise_path(path, input = FALSE)
+    if (!isOpen(path)) {
+        on.exit(close(path), add = TRUE)
+        open(path, if (isTRUE(append)) 
+            "ab"
+        else "wb")
+    }
+    if (is_raw) {
+        write_lines_raw_(x, path)
+    }
+    else {
+        write_lines_(x, path, na)
+    }
     invisible(x)
 }
 
@@ -387,13 +429,6 @@ write_lines <- function (x, path, na = "NA", append = FALSE)
 col_skip <- function () 
 {
     collector("skip")
-}
-
-
-col_euro_double <- function () 
-{
-    warning("Deprecated: please set locale")
-    collector("double")
 }
 
 
@@ -431,7 +466,6 @@ date_names <- function (mon, mon_ab = mon, day, day_ab = day, am_pm = c("AM",
 write_delim <- function (x, path, delim = " ", na = "NA", append = FALSE, col_names = !append) 
 {
     stopifnot(is.data.frame(x))
-    path <- normalizePath(path, mustWork = FALSE)
     x_out <- lapply(x, output_column)
     stream_delim(x_out, path, delim, col_names = col_names, append = append, 
         na = na)
@@ -455,16 +489,25 @@ guess_encoding <- function (file, n_max = 10000, threshold = 0.2)
         stop("stringi package required for encoding operations", 
             call. = FALSE)
     }
-    lines <- read_lines_raw(file, n_max = n_max)
-    all <- unlist(lines)
-    if (stringi::stri_enc_isascii(all)) {
-        return(data.frame(encoding = "ASCII", confidence = 1))
+    if (is.character(file)) {
+        lines <- unlist(read_lines_raw(file, n_max = n_max))
     }
-    guess <- stringi::stri_enc_detect(all)
-    df <- as.data.frame(guess[[1]], stringsAsFactors = FALSE)
+    else if (is.raw(file)) {
+        lines <- file
+    }
+    else if (is.list(file)) {
+        lines <- unlist(file)
+    }
+    else {
+        stop("Unknown input to `file`", call. = FALSE)
+    }
+    if (stringi::stri_enc_isascii(lines)) {
+        return(tibble::tibble(encoding = "ASCII", confidence = 1))
+    }
+    guess <- stringi::stri_enc_detect(lines)
+    df <- tibble::as_tibble(guess[[1]])
     names(df) <- tolower(names(df))
-    df[df$confidence > threshold, c("encoding", "confidence"), 
-        drop = FALSE]
+    df[df$confidence > threshold, c("encoding", "confidence")]
 }
 
 
@@ -507,15 +550,17 @@ col_number <- function ()
 
 
 read_csv2 <- function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = c("", "NA"), quoted_na = TRUE, comment = "", trim_ws = TRUE, 
-    skip = 0, n_max = Inf, guess_max = min(1000, n_max), progress = interactive()) 
+    na = c("", "NA"), quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE, skip = 0, n_max = Inf, guess_max = min(1000, 
+        n_max), progress = show_progress()) 
 {
     if (locale$decimal_mark == ".") {
+        message("Using ',' as decimal and '.' as grouping mark. Use read_delim() for more control.")
         locale$decimal_mark <- ","
         locale$grouping_mark <- "."
     }
     tokenizer <- tokenizer_delim(delim = ";", na = na, quoted_na = quoted_na, 
-        comment = comment, trim_ws = trim_ws)
+        quote = quote, comment = comment, trim_ws = trim_ws)
     read_delimited(file, tokenizer, col_names = col_names, col_types = col_types, 
         locale = locale, skip = skip, comment = comment, n_max = n_max, 
         guess_max = guess_max, progress = progress)
@@ -525,6 +570,12 @@ read_csv2 <- function (file, col_names = TRUE, col_types = NULL, locale = defaul
 datasource <- function (file, skip = 0, comment = "") 
 {
     if (inherits(file, "source")) {
+        if (!missing(skip)) {
+            file$skip <- skip
+        }
+        if (!missing(comment)) {
+            file$comment <- comment
+        }
         file
     }
     else if (is.connection(file)) {
@@ -558,8 +609,12 @@ read_delim <- function (file, delim, quote = "\"", escape_backslash = FALSE,
     escape_double = TRUE, col_names = TRUE, col_types = NULL, 
     locale = default_locale(), na = c("", "NA"), quoted_na = TRUE, 
     comment = "", trim_ws = FALSE, skip = 0, n_max = Inf, guess_max = min(1000, 
-        n_max), progress = interactive()) 
+        n_max), progress = show_progress()) 
 {
+    if (!nzchar(delim)) {
+        stop("`delim` must be at least one character, ", "use `read_table()` for whitespace delimited input.", 
+            call. = FALSE)
+    }
     tokenizer <- tokenizer_delim(delim, quote = quote, escape_backslash = escape_backslash, 
         escape_double = escape_double, na = na, quoted_na = quoted_na, 
         comment = comment, trim_ws = trim_ws)
@@ -573,13 +628,17 @@ spec_delim <- function (file, delim, quote = "\"", escape_backslash = FALSE,
     escape_double = TRUE, col_names = TRUE, col_types = NULL, 
     locale = default_locale(), na = c("", "NA"), quoted_na = TRUE, 
     comment = "", trim_ws = FALSE, skip = 0, n_max = 0, guess_max = 1000, 
-    progress = interactive()) 
+    progress = show_progress()) 
 attr((function (file, delim, quote = "\"", escape_backslash = FALSE, 
     escape_double = TRUE, col_names = TRUE, col_types = NULL, 
     locale = default_locale(), na = c("", "NA"), quoted_na = TRUE, 
     comment = "", trim_ws = FALSE, skip = 0, n_max = 0, guess_max = 1000, 
-    progress = interactive()) 
+    progress = show_progress()) 
 {
+    if (!nzchar(delim)) {
+        stop("`delim` must be at least one character, ", "use `read_table()` for whitespace delimited input.", 
+            call. = FALSE)
+    }
     tokenizer <- tokenizer_delim(delim, quote = quote, escape_backslash = escape_backslash, 
         escape_double = escape_double, na = na, quoted_na = quoted_na, 
         comment = comment, trim_ws = trim_ws)
@@ -634,7 +693,6 @@ locale <- function (date_names = "en", date_format = "%AD", time_format = "%AT",
 write_excel_csv <- function (x, path, na = "NA", append = FALSE, col_names = !append) 
 {
     stopifnot(is.data.frame(x))
-    path <- normalizePath(path, mustWork = FALSE)
     x_out <- lapply(x, output_column)
     stream_delim(x_out, path, ",", col_names = col_names, append = append, 
         na = na, bom = TRUE)
@@ -654,30 +712,31 @@ format_tsv <- function (x, na = "NA", append = FALSE, col_names = !append)
 }
 
 
-tokenizer_tsv <- function (na = "NA", quoted_na = TRUE, comment = "", trim_ws = TRUE) 
+tokenizer_tsv <- function (na = "NA", quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE) 
 {
-    tokenizer_delim(delim = "\t", quote = "\"", na = na, quoted_na = quoted_na, 
-        comment = comment, trim_ws = trim_ws, escape_double = TRUE, 
-        escape_backslash = FALSE)
+    tokenizer_delim(delim = "\t", na = na, quoted_na = quoted_na, 
+        quote = quote, comment = comment, trim_ws = trim_ws, 
+        escape_double = TRUE, escape_backslash = FALSE)
 }
 
 
 spec_tsv <- function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = c("", "NA"), quoted_na = TRUE, comment = "", trim_ws = TRUE, 
-    skip = 0, n_max = 0, guess_max = 1000, progress = interactive()) 
+    na = c("", "NA"), quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE, skip = 0, n_max = 0, guess_max = 1000, progress = show_progress()) 
 attr((function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = c("", "NA"), quoted_na = TRUE, comment = "", trim_ws = TRUE, 
-    skip = 0, n_max = 0, guess_max = 1000, progress = interactive()) 
+    na = c("", "NA"), quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE, skip = 0, n_max = 0, guess_max = 1000, progress = show_progress()) 
 {
     tokenizer <- tokenizer_tsv(na = na, quoted_na = quoted_na, 
-        comment = comment, trim_ws = trim_ws)
+        quote = quote, comment = comment, trim_ws = trim_ws)
     read_delimited(file, tokenizer, col_names = col_names, col_types = col_types, 
         locale = locale, skip = skip, comment = comment, n_max = n_max, 
         guess_max = guess_max, progress = progress)
 })(file = file, col_names = col_names, col_types = col_types, 
-    locale = locale, na = na, quoted_na = quoted_na, comment = comment, 
-    trim_ws = trim_ws, skip = skip, n_max = n_max, guess_max = guess_max, 
-    progress = progress), "spec")
+    locale = locale, na = na, quoted_na = quoted_na, quote = quote, 
+    comment = comment, trim_ws = trim_ws, skip = skip, n_max = n_max, 
+    guess_max = guess_max, progress = progress), "spec")
 
 
 tokenizer_log <- function () 
@@ -694,15 +753,15 @@ date_names_langs <- function ()
 
 read_fwf <- function (file, col_positions, col_types = NULL, locale = default_locale(), 
     na = c("", "NA"), comment = "", skip = 0, n_max = Inf, guess_max = min(n_max, 
-        1000), progress = interactive()) 
+        1000), progress = show_progress()) 
 {
     ds <- datasource(file, skip = skip)
     if (inherits(ds, "source_file") && empty_file(file)) {
-        return(tibble::data_frame())
+        return(tibble::tibble())
     }
     tokenizer <- tokenizer_fwf(col_positions$begin, col_positions$end, 
         na = na, comment = comment)
-    spec <- col_spec_standardise(file, skip = skip, n = guess_max, 
+    spec <- col_spec_standardise(file, skip = skip, guess_max = guess_max, 
         tokenizer = tokenizer, locale = locale, col_names = col_positions$col_names, 
         col_types = col_types, drop_skipped_names = TRUE)
     if (is.null(col_types) && !inherits(ds, "source_string")) {
@@ -712,19 +771,19 @@ read_fwf <- function (file, col_positions, col_types = NULL, locale = default_lo
         locale_ = locale, n_max = if (n_max == Inf) 
             -1
         else n_max, progress = progress)
-    out <- name_problems(out)
+    out <- name_problems(out, names(spec$cols), source_name(file))
     attr(out, "spec") <- spec
-    warn_problems(out, source_name(file))
+    warn_problems(out)
 }
 
 
 read_csv_chunked <- function (file, callback, chunk_size = 10000, col_names = TRUE, 
     col_types = NULL, locale = default_locale(), na = c("", "NA"), 
-    quoted_na = TRUE, comment = "", trim_ws = TRUE, skip = 0, 
-    guess_max = min(1000, chunk_size), progress = interactive()) 
+    quoted_na = TRUE, quote = "\"", comment = "", trim_ws = TRUE, 
+    skip = 0, guess_max = min(1000, chunk_size), progress = show_progress()) 
 {
-    tokenizer <- tokenizer_csv(na = na, quoted_na = TRUE, comment = comment, 
-        trim_ws = trim_ws)
+    tokenizer <- tokenizer_csv(na = na, quoted_na = TRUE, quote = quote, 
+        comment = comment, trim_ws = trim_ws)
     read_delimited_chunked(file, callback = callback, chunk_size = chunk_size, 
         tokenizer, col_names = col_names, col_types = col_types, 
         locale = locale, skip = skip, comment = comment, guess_max = guess_max, 
@@ -734,17 +793,20 @@ read_csv_chunked <- function (file, callback, chunk_size = 10000, col_names = TR
 
 read_table <- function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
     na = "NA", skip = 0, n_max = Inf, guess_max = min(n_max, 
-        1000), progress = interactive()) 
+        1000), progress = show_progress(), comment = "") 
 {
-    columns <- fwf_empty(file, skip = skip)
-    tokenizer <- tokenizer_fwf(columns$begin, columns$end, na = na)
-    spec <- col_spec_standardise(file = file, skip = skip, n = guess_max, 
+    ds <- datasource(file, skip = skip)
+    columns <- fwf_empty(ds, skip = skip, n = guess_max, comment = comment)
+    skip <- skip + columns$skip
+    tokenizer <- tokenizer_fwf(columns$begin, columns$end, na = na, 
+        comment = comment)
+    spec <- col_spec_standardise(file = ds, skip = skip, guess_max = guess_max, 
         col_names = col_names, col_types = col_types, locale = locale, 
         tokenizer = tokenizer)
-    if (progress) {
-        print(spec, n = getOption("readr.num_columns", 20))
+    ds <- datasource(file = ds, skip = skip + isTRUE(col_names))
+    if (is.null(col_types) && !inherits(ds, "source_string")) {
+        show_cols_spec(spec)
     }
-    ds <- datasource(file, skip = skip + isTRUE(col_names))
     res <- read_tokens(ds, tokenizer, spec$cols, names(spec$cols), 
         locale_ = locale, n_max = n_max, progress = progress)
     attr(res, "spec") <- spec
@@ -764,13 +826,6 @@ col_datetime <- function (format = "")
 }
 
 
-parse_euro_double <- function (x, na = c("", "NA")) 
-{
-    warning("Deprecated: please set locale")
-    parse_vector(x, col_double(), na = na)
-}
-
-
 parse_number <- function (x, na = c("", "NA"), locale = default_locale()) 
 {
     parse_vector(x, col_number(), na = na, locale = locale)
@@ -778,11 +833,12 @@ parse_number <- function (x, na = c("", "NA"), locale = default_locale())
 
 
 read_tsv <- function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = c("", "NA"), quoted_na = TRUE, comment = "", trim_ws = TRUE, 
-    skip = 0, n_max = Inf, guess_max = min(1000, n_max), progress = interactive()) 
+    na = c("", "NA"), quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE, skip = 0, n_max = Inf, guess_max = min(1000, 
+        n_max), progress = show_progress()) 
 {
     tokenizer <- tokenizer_tsv(na = na, quoted_na = quoted_na, 
-        comment = comment, trim_ws = trim_ws)
+        quote = quote, comment = comment, trim_ws = trim_ws)
     read_delimited(file, tokenizer, col_names = col_names, col_types = col_types, 
         locale = locale, skip = skip, comment = comment, n_max = n_max, 
         guess_max = guess_max, progress = progress)
@@ -797,7 +853,7 @@ guess_parser <- function (x, locale = default_locale())
 
 
 read_lines <- function (file, skip = 0, n_max = -1L, locale = default_locale(), 
-    na = character(), progress = interactive()) 
+    na = character(), progress = show_progress()) 
 {
     if (empty_file(file)) {
         return(character())
@@ -820,7 +876,7 @@ date_names_lang <- function (language)
 
 
 read_log <- function (file, col_names = FALSE, col_types = NULL, skip = 0, 
-    n_max = -1, progress = interactive()) 
+    n_max = Inf, progress = show_progress()) 
 {
     tokenizer <- tokenizer_log()
     read_delimited(file, tokenizer, col_names = col_names, col_types = col_types, 
@@ -829,7 +885,7 @@ read_log <- function (file, col_names = FALSE, col_types = NULL, skip = 0,
 
 
 read_lines_chunked <- function (file, callback, chunk_size = 10000, skip = 0, locale = default_locale(), 
-    na = character(), progress = interactive()) 
+    na = character(), progress = show_progress()) 
 {
     if (empty_file(file)) {
         return(character())
@@ -869,15 +925,16 @@ col_guess <- function ()
 
 read_csv2_chunked <- function (file, callback, chunk_size = 10000, col_names = TRUE, 
     col_types = NULL, locale = default_locale(), na = c("", "NA"), 
-    quoted_na = TRUE, comment = "", trim_ws = TRUE, skip = 0, 
-    guess_max = min(1000, chunk_size), progress = interactive()) 
+    quoted_na = TRUE, quote = "\"", comment = "", trim_ws = TRUE, 
+    skip = 0, guess_max = min(1000, chunk_size), progress = show_progress()) 
 {
     if (locale$decimal_mark == ".") {
+        message("Using ',' as decimal and '.' as grouping mark. Use read_delim() for more control.")
         locale$decimal_mark <- ","
         locale$grouping_mark <- "."
     }
     tokenizer <- tokenizer_delim(delim = ";", na = na, quoted_na = quoted_na, 
-        comment = comment, trim_ws = trim_ws)
+        quote = quote, comment = comment, trim_ws = trim_ws)
     read_delimited_chunked(file, callback = callback, chunk_size = chunk_size, 
         tokenizer, col_names = col_names, col_types = col_types, 
         locale = locale, skip = skip, comment = comment, guess_max = guess_max, 
@@ -886,26 +943,31 @@ read_csv2_chunked <- function (file, callback, chunk_size = 10000, col_names = T
 
 
 spec_table <- function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = "NA", skip = 0, n_max = 0, guess_max = 1000, progress = interactive()) 
+    na = "NA", skip = 0, n_max = 0, guess_max = 1000, progress = show_progress(), 
+    comment = "") 
 attr((function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = "NA", skip = 0, n_max = 0, guess_max = 1000, progress = interactive()) 
+    na = "NA", skip = 0, n_max = 0, guess_max = 1000, progress = show_progress(), 
+    comment = "") 
 {
-    columns <- fwf_empty(file, skip = skip)
-    tokenizer <- tokenizer_fwf(columns$begin, columns$end, na = na)
-    spec <- col_spec_standardise(file = file, skip = skip, n = guess_max, 
+    ds <- datasource(file, skip = skip)
+    columns <- fwf_empty(ds, skip = skip, n = guess_max, comment = comment)
+    skip <- skip + columns$skip
+    tokenizer <- tokenizer_fwf(columns$begin, columns$end, na = na, 
+        comment = comment)
+    spec <- col_spec_standardise(file = ds, skip = skip, guess_max = guess_max, 
         col_names = col_names, col_types = col_types, locale = locale, 
         tokenizer = tokenizer)
-    if (progress) {
-        print(spec, n = getOption("readr.num_columns", 20))
+    ds <- datasource(file = ds, skip = skip + isTRUE(col_names))
+    if (is.null(col_types) && !inherits(ds, "source_string")) {
+        show_cols_spec(spec)
     }
-    ds <- datasource(file, skip = skip + isTRUE(col_names))
     res <- read_tokens(ds, tokenizer, spec$cols, names(spec$cols), 
         locale_ = locale, n_max = n_max, progress = progress)
     attr(res, "spec") <- spec
     res
 })(file = file, col_names = col_names, col_types = col_types, 
     locale = locale, na = na, skip = skip, n_max = n_max, guess_max = guess_max, 
-    progress = progress), "spec")
+    progress = progress, comment = comment), "spec")
 
 
 tokenize <- function (file, tokenizer = tokenizer_csv(), skip = 0, n_max = -1L) 
@@ -916,25 +978,26 @@ tokenize <- function (file, tokenizer = tokenizer_csv(), skip = 0, n_max = -1L)
 
 
 spec_csv2 <- function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = c("", "NA"), quoted_na = TRUE, comment = "", trim_ws = TRUE, 
-    skip = 0, n_max = 0, guess_max = 1000, progress = interactive()) 
+    na = c("", "NA"), quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE, skip = 0, n_max = 0, guess_max = 1000, progress = show_progress()) 
 attr((function (file, col_names = TRUE, col_types = NULL, locale = default_locale(), 
-    na = c("", "NA"), quoted_na = TRUE, comment = "", trim_ws = TRUE, 
-    skip = 0, n_max = 0, guess_max = 1000, progress = interactive()) 
+    na = c("", "NA"), quoted_na = TRUE, quote = "\"", comment = "", 
+    trim_ws = TRUE, skip = 0, n_max = 0, guess_max = 1000, progress = show_progress()) 
 {
     if (locale$decimal_mark == ".") {
+        message("Using ',' as decimal and '.' as grouping mark. Use read_delim() for more control.")
         locale$decimal_mark <- ","
         locale$grouping_mark <- "."
     }
     tokenizer <- tokenizer_delim(delim = ";", na = na, quoted_na = quoted_na, 
-        comment = comment, trim_ws = trim_ws)
+        quote = quote, comment = comment, trim_ws = trim_ws)
     read_delimited(file, tokenizer, col_names = col_names, col_types = col_types, 
         locale = locale, skip = skip, comment = comment, n_max = n_max, 
         guess_max = guess_max, progress = progress)
 })(file = file, col_names = col_names, col_types = col_types, 
-    locale = locale, na = na, quoted_na = quoted_na, comment = comment, 
-    trim_ws = trim_ws, skip = skip, n_max = n_max, guess_max = guess_max, 
-    progress = progress), "spec")
+    locale = locale, na = na, quoted_na = quoted_na, quote = quote, 
+    comment = comment, trim_ws = trim_ws, skip = skip, n_max = n_max, 
+    guess_max = guess_max, progress = progress), "spec")
 
 
 
@@ -946,9 +1009,9 @@ attr((function (file, col_names = TRUE, col_types = NULL, locale = default_local
 
 ## Package Info
 
-.skeleton_package_title = "Read Tabular Data"
+.skeleton_package_title = "Read Rectangular Text Data"
 
-.skeleton_package_version = "1.0.0"
+.skeleton_package_version = "1.1.1"
 
 .skeleton_package_depends = ""
 

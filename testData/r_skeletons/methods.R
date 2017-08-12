@@ -146,7 +146,7 @@ setMethod(paste0(f, "<-"), ..., where = where)
     , className = structure("EmptyMethodsList", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -183,7 +183,7 @@ object[where][[1L]]
     maov = S4_object(), 
     glm.null = S4_object()), .Names = c("mlm", 
 "aov", "glm", "maov", "glm.null"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -311,7 +311,7 @@ hasMethods <- function (f, where, package = "")
     , className = structure("ObjectsWithPackage", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -350,7 +350,7 @@ sigToEnv <- function (signature, generic)
     , className = structure("namedList", package = "methods")
     , package = "methods"
     , subclasses = structure(list(listOfMethods = S4_object()), .Names = "listOfMethods")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -463,7 +463,7 @@ NULL
 "internalDispatchMethod", "internalDispatchMethod", "nonstandardGroupGenericFunction", 
 "defaultBindingFunction", "refMethodDefWithTrace", "externalRefMethod"
 ))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -557,7 +557,7 @@ metaNameUndo <- function (strings, prefix, searchForm = FALSE)
     , className = "matrix"
     , package = "methods"
     , subclasses = structure(list(mts = S4_object()), .Names = "mts")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -584,7 +584,7 @@ metaNameUndo <- function (strings, prefix, searchForm = FALSE)
 "externalptr", "name", "refClass", ".environment", ".externalptr", 
 ".name", "sourceEnvironment", "refGeneratorSlot", "localRefClass"
 ))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -616,7 +616,7 @@ metaNameUndo <- function (strings, prefix, searchForm = FALSE)
     , className = structure("nonstandardGroupGenericFunction", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -654,7 +654,7 @@ metaNameUndo <- function (strings, prefix, searchForm = FALSE)
     , className = structure("refMethodDefWithTrace", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -677,7 +677,7 @@ metaNameUndo <- function (strings, prefix, searchForm = FALSE)
     , className = structure("classGeneratorFunction", package = "methods")
     , package = "methods"
     , subclasses = structure(list(refObjectGenerator = S4_object()), .Names = "refObjectGenerator")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -700,7 +700,7 @@ findMethod <- function (f, signature, where = topenv(parent.frame()))
     for (i in seq_along(where)) {
         wherei <- where[[i]]
         table <- get(fM, wherei, inherits = FALSE)
-        mi <- .findMethodInTable(signature, table, fdef)
+        mi <- .findMethodForFdef(signature, table, fdef)
         found[i] <- !is.null(mi)
     }
     value <- where[found]
@@ -857,7 +857,7 @@ names(formals(def))
     , className = "NULL"
     , package = "methods"
     , subclasses = structure(list(.NULL = S4_object()), .Names = ".NULL")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -875,7 +875,7 @@ names(formals(def))
     , className = structure("glm.null", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -1115,7 +1115,7 @@ getGeneric <- function (f, mustFind = FALSE, where, package = "")
     namedList = S4_object(), 
     listOfMethods = S4_object()), .Names = c("data.frame", 
 "namedList", "listOfMethods"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -1158,8 +1158,8 @@ makePrototypeFromClassDef <- function (slots, ClassDef, extends, where)
             next
         if (identical(what, "VIRTUAL")) {
         }
-        else if (isClass(what, where = where)) {
-            cli <- getClass(what, where = where)
+        else if (isClass(what, where = packageSlot(exti))) {
+            cli <- getClassDef(what, package = packageSlot(exti))
             slotsi <- names(cli@slots)
             pri <- cli@prototype
             if (is.null(prototype)) {
@@ -1228,7 +1228,7 @@ makePrototypeFromClassDef <- function (slots, ClassDef, extends, where)
         warning(gettextf("in constructing the prototype for class %s, slots in prototype and not in class: %s", 
             dQuote(className), paste(extra, collapse = ", ")), 
             domain = NA)
-    slotDefs <- getSlots(ClassDef)
+    slotDefs <- ClassDef@slots
     slotNames <- names(slotDefs)
     pnames <- names(attributes(prototype))
     pnames <- pnames[!is.na(match(pnames, slotNames))]
@@ -1272,7 +1272,7 @@ makePrototypeFromClassDef <- function (slots, ClassDef, extends, where)
     , className = structure("functionWithTrace", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -1298,9 +1298,46 @@ makePrototypeFromClassDef <- function (slots, ClassDef, extends, where)
     , className = structure("MethodDefinitionWithTrace", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
+
+
+.debugMethod <- function (fun, text = "", condition = NULL, signature, once = FALSE) 
+{
+    stopifnot(is.null(condition), identical(text, ""))
+    if (is.primitive(fun)) 
+        fun <- getGeneric(fun)
+    if (!is(fun, "standardGeneric")) 
+        stop("Function must be an S4 generic")
+    if (isdebugged(fun, signature = signature)) 
+        return(invisible(NULL))
+    m <- selectMethod(fun, signature)
+    bd <- body(m)
+    isrematch <- isRematched(m)
+    if (isrematch) 
+        bd <- body(bd[[2L]][[3L]])
+    at <- if (is(bd, "{")) 
+        2L
+    else numeric()
+    tracer <- if (once) {
+        if (isrematch) 
+            quote(quote({
+                untrace(sys.frame(2L)$.Generic, signature = sys.frame(2L)$.target)
+                browser()
+            }))
+        else quote(quote({
+            untrace(.Generic, signature = .target)
+            browser()
+        }))
+    }
+    else {
+        quote(browser)
+    }
+    eval(substitute(trace(fun, tracer, signature = signature, 
+        print = TRUE, at = at), list(tracer = tracer)))
+    invisible(NULL)
+}
 
 
 slotNames <- function (x) 
@@ -1364,7 +1401,7 @@ setLoadActions <- function (..., .where = topenv(parent.frame()))
 "internalDispatchMethod", "nonstandardGroupGenericFunction", 
 ".NULL", "defaultBindingFunction", "refMethodDefWithTrace", "externalRefMethod"
 ))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -1391,7 +1428,7 @@ setLoadActions <- function (..., .where = topenv(parent.frame()))
     , subclasses = structure(list(internalDispatchMethod = S4_object(), 
     derivedDefaultMethodWithTrace = S4_object()), .Names = c("internalDispatchMethod", 
 "derivedDefaultMethodWithTrace"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -1439,7 +1476,7 @@ checkAtAssignment <- function (cl, name, valueClass)
 "MethodDefinitionWithTrace", "MethodWithNextWithTrace", "genericFunctionWithTrace", 
 "standardGenericWithTrace", "nonstandardGenericWithTrace", "groupGenericFunctionWithTrace", 
 "derivedDefaultMethodWithTrace", "refMethodDefWithTrace"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -1703,7 +1740,7 @@ standardGeneric("cbind2")
     , className = "builtin"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -1733,7 +1770,7 @@ standardGeneric("cbind2")
     , className = structure("ClassUnionRepresentation", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -1796,7 +1833,7 @@ isGeneric <- function (f, where = topenv(parent.frame()), fdef = NULL, getName =
     , className = structure("refClassRepresentation", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -1856,7 +1893,7 @@ newBasic <- function (Class, ...)
     refGeneratorSlot = S4_object(), 
     localRefClass = S4_object()), .Names = c("sourceEnvironment", 
 "envRefClass", "refGeneratorSlot", "localRefClass"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -1875,7 +1912,7 @@ newBasic <- function (Class, ...)
     , subclasses = structure(list(envRefClass = S4_object(), 
     refObjectGenerator = S4_object()), .Names = c("envRefClass", 
 "refObjectGenerator"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -1899,7 +1936,7 @@ completeSubclasses <- function (classDef, class2, extensionDef, where, classDef2
         for (i in seq_along(contains)) {
             obji <- contains[[i]]
             cli <- contains[[i]]@superClass
-            cliDef <- getClassDef(cli, where)
+            cliDef <- getClassDef(cli, package = packageSlot(obji))
             if (!extends(classDef2, cliDef)) 
                 setIs(class2, cli, extensionObject = obji, doComplete = FALSE, 
                   where = where)
@@ -1919,7 +1956,7 @@ completeSubclasses <- function (classDef, class2, extensionDef, where, classDef2
     , className = structure("table", package = "methods")
     , package = "methods"
     , subclasses = structure(list(summaryDefault = S4_object()), .Names = "summaryDefault")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -1949,16 +1986,22 @@ getLoadActions <- function (where = topenv(parent.frame()))
 
 
 getClassDef <- function (Class, where = topenv(parent.frame()), package = packageSlot(Class), 
-    inherits = TRUE, resolve.msg = getOption("getClass.msg", 
-        default = TRUE)) 
+    inherits = TRUE) 
 {
-    value <- if (inherits) 
-        .getClassFromCache(Class, where, package = package, resolve.msg = resolve.msg)
+    if (inherits) {
+        value <- .getClassesFromCache(Class)
+        if (is.list(value)) 
+            value <- .resolveClassList(value, where, package)
+    }
+    else value <- NULL
     if (is.null(value)) {
         cname <- classMetaName(if (length(Class) > 1L) 
             Class[[1L]]
         else Class)
-        if (identical(nzchar(package), TRUE)) {
+        if (is.character(where)) {
+            package <- where
+        }
+        if (isTRUE(nzchar(package))) {
             whereP <- .requirePackage(package)
             value <- get0(cname, whereP, inherits = inherits)
         }
@@ -2041,7 +2084,7 @@ findClass <- function (Class, where = topenv(parent.frame()), unique = "")
     .name = S4_object()), .Names = c("name", 
 "call", "{", "if", "<-", "for", "while", "repeat", "(", ".name"
 ))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2062,7 +2105,7 @@ findClass <- function (Class, where = topenv(parent.frame()), unique = "")
     , className = structure("anova.glm.null", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2113,13 +2156,13 @@ setPrimitiveMethods <- function (f, fdef, code, generic, mlist = get(".Methods",
 
 is <- function (object, class2) 
 {
-    cl <- class(object)
-    S3Case <- length(cl) > 1L
+    class1 <- class(object)
+    S3Case <- length(class1) > 1L
     if (S3Case) 
-        cl <- cl[[1L]]
+        class1 <- class1[[1L]]
     if (missing(class2)) 
-        return(extends(cl))
-    class1Def <- getClassDef(cl)
+        return(extends(class1))
+    class1Def <- getClassDef(class1)
     if (is.null(class1Def)) 
         return(inherits(object, class2))
     if (is.character(class2)) 
@@ -2133,14 +2176,21 @@ is <- function (object, class2)
         extends(class2Def, "oldClass"))
     if (S3Case) 
         inherits(object, class2)
-    else if (.identC(cl, class2) || .identC(class2, "ANY")) 
+    else if (.identC(class1, class2) || .identC(class2, "ANY")) 
         TRUE
-    else if (is.logical(ext <- possibleExtends(cl, class2, class1Def, 
-        class2Def))) 
-        ext
-    else if (ext@simple) 
-        TRUE
-    else ext@test(object)
+    else {
+        if (!is.null(contained <- class1Def@contains[[class2]])) 
+            contained@simple || contained@test(object)
+        else if (is.null(class2Def)) 
+            FALSE
+        else if (!.identC(class(class2Def), "classRepresentation") && 
+            isClassUnion(class2Def)) 
+            any(c(class1, names(class1Def@contains)) %in% names(class2Def@subclasses))
+        else {
+            ext <- class2Def@subclasses[[class1]]
+            !is.null(ext) && (ext@simple || ext@test(object))
+        }
+    }
 }
 
 
@@ -2172,7 +2222,7 @@ standardGeneric("Logic")
     , className = structure("socket", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2246,7 +2296,7 @@ asMethodDefinition <- function (def, signature = list(.anyClassName), sealed = F
     , className = "special"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2297,7 +2347,7 @@ representation <- function (...)
     , className = structure("SealedMethodDefinition", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2338,7 +2388,7 @@ isSealedMethod <- function (f, signature, fdef = getGeneric(f, FALSE, where = wh
     , className = "raw"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2400,7 +2450,7 @@ S3Part <- function (object, strictS3 = FALSE, S3Class)
     localRefClass = S4_object()), .Names = c(".environment", 
 "sourceEnvironment", "envRefClass", "refGeneratorSlot", "localRefClass"
 ))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2418,7 +2468,7 @@ S3Part <- function (object, strictS3 = FALSE, S3Class)
     , className = "integer"
     , package = "methods"
     , subclasses = structure(list(factor = S4_object()), .Names = "factor")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2471,7 +2521,7 @@ listFromMlist <- function (mlist, prefix = list(), sigs. = TRUE, methods. = TRUE
     , className = structure("mts", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -2518,7 +2568,7 @@ listFromMlist <- function (mlist, prefix = list(), sigs. = TRUE, methods. = TRUE
     , className = structure("standardGeneric", package = "methods")
     , package = "methods"
     , subclasses = structure(list(standardGenericWithTrace = S4_object()), .Names = "standardGenericWithTrace")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -2536,7 +2586,7 @@ listFromMlist <- function (mlist, prefix = list(), sigs. = TRUE, methods. = TRUE
     , className = structure("MethodsList", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2625,7 +2675,7 @@ assign(".packageName", pkg, envir = env)
     , subclasses = structure(list(nonstandardGroupGenericFunction = S4_object(), 
     groupGenericFunctionWithTrace = S4_object()), .Names = c("nonstandardGroupGenericFunction", 
 "groupGenericFunctionWithTrace"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2687,13 +2737,32 @@ getSubclasses <- function (ClassDef)
     , className = "("
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
 
 Arith <- function (e1, e2) 
 standardGeneric("Arith")
+
+
+.isMethodDebugged <- function (fun, signature) 
+{
+    meth <- selectMethod(fun, signature)
+    if (!is(meth, "MethodDefinitionWithTrace")) 
+        return(FALSE)
+    bd <- body(meth)
+    if (isRematched(meth)) {
+        is(bd[[3L]], "{") && identical(bd[[3L]][[2L]][1L], quote(.doTrace())) && 
+            identical(bd[[3L]][[2L]][[2L]][1:3], quote(trace(.local, 
+                tracer = browser)))
+    }
+    else {
+        fstexp <- bd
+        while (is(bd, "{")) bd <- bd[[2L]]
+        identical(bd[1:2], quote(.doTrace(browser())))
+    }
+}
 
 
 .__C__LinearMethodsList <- new("classRepresentation"
@@ -2710,7 +2779,7 @@ standardGeneric("Arith")
     , className = structure("LinearMethodsList", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2725,7 +2794,7 @@ standardGeneric("Arith")
     , className = structure("formula", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -2771,7 +2840,7 @@ assignClassDef <- function (Class, def, where = .GlobalEnv, force = FALSE)
     , className = structure("ordered", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -2843,16 +2912,20 @@ setMethod <- function (f, signature = character(), definition, where = topenv(pa
             sQuote(f)), domain = NA)
     if (!hasMethods) {
         setGeneric(f, where = where)
+        doMessage <- !isS3Generic(fdef)
         fdef <- getGeneric(f, where = where)
-        thisPackage <- getPackageName(where)
-        thisPName <- if (identical(thisPackage, ".GlobalEnv")) 
-            "the global environment"
-        else paste("package", sQuote(thisPackage))
-        if (identical(as.character(fdef@package), thisPackage)) 
-            message(gettextf("Creating a generic function from function %s in %s", 
-                sQuote(f), thisPName), domain = NA)
-        else message(gettextf("Creating a generic function for %s from package %s in %s", 
-            sQuote(f), sQuote(fdef@package), thisPName), domain = NA)
+        if (doMessage) {
+            thisPackage <- getPackageName(where)
+            thisPName <- if (identical(thisPackage, ".GlobalEnv")) 
+                "the global environment"
+            else paste("package", sQuote(thisPackage))
+            if (identical(as.character(fdef@package), thisPackage)) 
+                message(gettextf("Creating a generic function from function %s in %s", 
+                  sQuote(f), thisPName), domain = NA)
+            else message(gettextf("Creating a generic function for %s from package %s in %s", 
+                sQuote(f), sQuote(fdef@package), thisPName), 
+                domain = NA)
+        }
     }
     else if (identical(gwhere, NA)) {
         if (is.null(.BasicFunsList[[f]])) 
@@ -2944,7 +3017,7 @@ setMethod <- function (f, signature = character(), definition, where = topenv(pa
     , className = structure("SClassExtension", package = "methods")
     , package = "methods"
     , subclasses = structure(list(conditionalExtension = S4_object()), .Names = "conditionalExtension")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -2959,7 +3032,7 @@ setMethod <- function (f, signature = character(), definition, where = topenv(pa
     , className = "expression"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -2983,7 +3056,7 @@ setMethod <- function (f, signature = character(), definition, where = topenv(pa
     , className = character(0)
     , package = character(0)
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
     , validity = NULL
@@ -2993,7 +3066,7 @@ setMethod <- function (f, signature = character(), definition, where = topenv(pa
     , subclasses = structure(list(ClassUnionRepresentation = S4_object(), 
     refClassRepresentation = S4_object()), .Names = c("ClassUnionRepresentation", 
 "refClassRepresentation"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3039,7 +3112,7 @@ setRefClass <- function (Class, fields = character(), contains = character(),
     , subclasses = structure(list(integer = S4_object(), 
     factor = S4_object()), .Names = c("integer", 
 "factor"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3049,7 +3122,7 @@ evalSource <- function (source, package = "", lock = TRUE, cache = FALSE)
     if (!nzchar(package)) 
         envp <- .GlobalEnv
     else {
-        pstring <- paste("package", package, sep = ":")
+        pstring <- paste0("package:", package)
         packageIsVisible <- pstring %in% search()
         if (packageIsVisible) {
             envp <- as.environment(pstring)
@@ -3135,7 +3208,7 @@ balanceMethodsList <- function (mlist, args, check = TRUE)
     , className = structure("VIRTUAL", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3187,18 +3260,15 @@ getClassPackage <- function (ClassDef)
 
 
 getClass <- function (Class, .Force = FALSE, where = .classEnv(Class, topenv(parent.frame()), 
-    FALSE), resolve.msg = getOption("getClass.msg", default = TRUE)) 
+    FALSE)) 
 {
-    value <- .getClassFromCache(Class, where, resolve.msg = resolve.msg)
+    value <- getClassDef(Class, where)
     if (is.null(value)) {
-        value <- getClassDef(Class, where, resolve.msg = resolve.msg)
-        if (is.null(value)) {
-            if (!.Force) 
-                stop(gettextf("%s is not a defined class", dQuote(Class)), 
-                  domain = NA)
-            else value <- makeClassRepresentation(Class, package = "base", 
-                virtual = TRUE, where = where)
-        }
+        if (!.Force) 
+            stop(gettextf("%s is not a defined class", dQuote(Class)), 
+                domain = NA)
+        else value <- makeClassRepresentation(Class, package = "base", 
+            virtual = TRUE, where = where)
     }
     value
 }
@@ -3214,7 +3284,7 @@ getClass <- function (Class, .Force = FALSE, where = .classEnv(Class, topenv(par
     , className = "complex"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3349,7 +3419,7 @@ showClass <- function (Class, complete = TRUE, propertiesAreCalled = "Slots")
     , className = "name"
     , package = "methods"
     , subclasses = structure(list(.name = S4_object()), .Names = ".name")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3385,7 +3455,7 @@ NULL
     nonstandardGenericWithTrace = S4_object()), .Names = c("nonstandardGenericFunction", 
 "nonstandardGroupGenericFunction", "nonstandardGenericWithTrace"
 ))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3402,7 +3472,7 @@ NULL
     , className = structure("POSIXct", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3433,7 +3503,7 @@ NULL
     , className = structure("factor", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -3448,7 +3518,7 @@ NULL
     , className = structure("libraryIQR", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3495,7 +3565,7 @@ new <- function (Class, ...)
     , className = structure("listOfMethods", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3520,7 +3590,7 @@ length(findFunction(f, generic, where)) > 0L
     , className = structure(".externalptr", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3538,7 +3608,7 @@ length(findFunction(f, generic, where)) > 0L
     , className = structure("classPrototypeDef", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3636,7 +3706,7 @@ getDataPart <- function (object)
     , className = structure("mtable", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3653,7 +3723,7 @@ getDataPart <- function (object)
     , className = structure("anova", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3679,7 +3749,8 @@ sealClass <- function (Class, where = topenv(parent.frame()))
         substitute(P && N, list(P = prev, N = xpr))
     else xpr
     C <- if (dropVirtual) {
-        isVirtualExt <- function(x) getClass(x@superClass)@virtual
+        isVirtualExt <- function(x) getClassDef(x@superClass, 
+            package = packageSlot(x))@virtual
         quote(!isVirtualExt(exti))
     }
     else expression()
@@ -3731,7 +3802,7 @@ getMethodsMetaData <- function (f, where = topenv(parent.frame()))
     , className = structure("maov", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3933,7 +4004,7 @@ standardGeneric("loadMethod")
     , className = structure("packageInfo", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3949,7 +4020,7 @@ standardGeneric("loadMethod")
     , className = "{"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -3989,7 +4060,7 @@ evalOnLoad <- function (expr, where = topenv(parent.frame()), aname = "")
     , className = structure("MethodWithNextWithTrace", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -4004,7 +4075,7 @@ evalOnLoad <- function (expr, where = topenv(parent.frame()), aname = "")
     , className = structure("dump.frames", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -4130,8 +4201,7 @@ setLoadAction <- function (action, aname = "", where = topenv(parent.frame()))
                 as.name("::"))) {
                 whereF <- as.character(fname[[2L]])
                 require(whereF, character.only = TRUE)
-                whereF <- as.environment(paste("package", whereF, 
-                  sep = ":"))
+                whereF <- as.environment(paste0("package:", whereF))
                 pname <- fname[[2L]]
                 what <- as.character(fname[[3L]])
             }
@@ -4189,6 +4259,15 @@ setLoadAction <- function (action, aname = "", where = topenv(parent.frame()))
             getGeneric(as.character(fname), TRUE, where)
         else def
         def <- selectMethod(what, signature, fdef = fdef, optional = TRUE)
+        if (isRematched(def)) {
+            expr <- substitute(trace(.local, tracer = tr, at = at, 
+                exit = ex, print = pr, edit = ed, where = sys.frame(sys.nframe())), 
+                list(tr = substitute(tracer), ex = exit, at = at, 
+                  pr = print, ed = edit))
+            at <- 3L
+            tracer <- expr
+            print <- FALSE
+        }
         if (is.null(def)) {
             warning(gettextf("cannot untrace method for %s; no method defined for this signature: %s", 
                 sQuote(what), paste(signature, collapse = ", ")), 
@@ -4327,7 +4406,8 @@ setLoadAction <- function (action, aname = "", where = topenv(parent.frame()))
         else "specified method for function"
         object <- paste0(" ", object, " \"", what, "\" ")
         .message(action, object, location)
-        if (nameSpaceCase && !untrace && exists(what, envir = .GlobalEnv)) {
+        if (nameSpaceCase && !untrace && is.null(signature) && 
+            exists(what, envir = .GlobalEnv)) {
             untcall <- paste0("untrace(\"", what, "\", where = getNamespace(\"", 
                 pname, "\"))")
             .message("Warning: Tracing only in the namespace; to untrace you will need:\n    ", 
@@ -4391,7 +4471,7 @@ NULL
 "nonstandardGroupGenericFunction", "standardGenericWithTrace", 
 "groupGenericFunctionWithTrace", "refMethodDefWithTrace", "externalRefMethod", 
 "refObjectGenerator"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -4417,7 +4497,7 @@ NULL
     , subclasses = structure(list(refGeneratorSlot = S4_object(), 
     localRefClass = S4_object()), .Names = c("refGeneratorSlot", 
 "localRefClass"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -4438,7 +4518,7 @@ defaultPrototype <- function ()
     , className = structure("glm", package = "methods")
     , package = "methods"
     , subclasses = structure(list(glm.null = S4_object()), .Names = "glm.null")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -4619,7 +4699,7 @@ dumpMethod <- function (f, signature = character(), file = defaultDumpName(f,
     , className = "if"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -4668,7 +4748,7 @@ dumpMethod <- function (f, signature = character(), file = defaultDumpName(f,
 "libraryIQR", "mtable", "recordedplot", "socket", "packageIQR", 
 "density", "logLik", "rle", "summaryDefault", "mlm", "aov", "glm", 
 "POSIXct", "POSIXlt", "anova.glm.null", "maov", "glm.null"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -4721,7 +4801,7 @@ hasArg <- function (name)
     , className = structure("refGeneratorSlot", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -4904,7 +4984,7 @@ insertClassMethods <- function (methods, Class, value, fieldNames, returnAll)
     , className = "call"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -4926,7 +5006,7 @@ insertClassMethods <- function (methods, Class, value, fieldNames, returnAll)
     , className = structure("data.frame", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -4945,7 +5025,7 @@ standardGeneric("Math")
     , className = "for"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5023,7 +5103,7 @@ removeMethods <- function (f, where = topenv(parent.frame()), all = missing(wher
     , subclasses = structure(list(matrix = S4_object(), 
     mts = S4_object()), .Names = c("matrix", 
 "mts"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5106,7 +5186,7 @@ getPackageName <- function (where = topenv(parent.frame()), create = TRUE)
 "MethodWithNext", "SealedMethodDefinition", "MethodDefinitionWithTrace", 
 "internalDispatchMethod", "MethodWithNextWithTrace", "derivedDefaultMethodWithTrace"
 ))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5126,7 +5206,7 @@ getPackageName <- function (where = topenv(parent.frame()), create = TRUE)
     , className = structure("nonstandardGenericWithTrace", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5154,9 +5234,10 @@ rematchDefinition <- function (definition, generic, mnames, fnames, signature)
         trailingArgs <- fnames[seq.int(to = length(fnames), length.out = ntrail)]
         if (!identical(mnames[seq.int(to = length(mnames), length.out = ntrail)], 
             trailingArgs)) 
-            stop(gettextf("arguments (%s) after '...' in the generic must appear in the method, in the same place at the end of the argument list", 
-                paste(trailingArgs, collapse = ", ")), call. = TRUE, 
-                domain = NA)
+            stop(gettextf("%s arguments (%s) after %s in the generic must appear in the method, in the same place at the end of the argument list", 
+                .renderSignature(generic@generic, signature), 
+                paste(sQuote(trailingArgs), collapse = ", "), 
+                sQuote("...")), call. = FALSE, domain = NA)
         newCallNames <- character(length(newCall))
         newCallNames[seq.int(to = length(newCallNames), length.out = ntrail)] <- trailingArgs
         names(newCall) <- newCallNames
@@ -5331,7 +5412,7 @@ mergeMethods <- function (m1, m2, genericLabel = character())
     , subclasses = structure(list(POSIXct = S4_object(), 
     POSIXlt = S4_object()), .Names = c("POSIXct", 
 "POSIXlt"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5347,15 +5428,23 @@ mergeMethods <- function (m1, m2, genericLabel = character())
 }
 
 
+.undebugMethod <- function (fun, signature) 
+{
+    if (!isdebugged(fun, signature)) {
+        warning("method is not being debugged")
+    }
+    else {
+        if (is.primitive(fun)) 
+            fun <- getGeneric(fun)
+        untrace(fun, signature = signature)
+    }
+}
+
+
 unRematchDefinition <- function (definition) 
 {
-    bdy <- body(definition)
-    if (.identC(class(bdy), "{") && length(bdy) > 1L) {
-        bdy <- bdy[[2L]]
-        if (.identC(class(bdy), "<-") && identical(bdy[[2L]], 
-            as.name(".local"))) 
-            definition <- bdy[[3L]]
-    }
+    if (isRematched(definition)) 
+        definition <- body(definition)[[2]][[3]]
     definition
 }
 
@@ -5383,7 +5472,7 @@ unRematchDefinition <- function (definition)
     , className = structure("refObjectGenerator", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -5398,7 +5487,7 @@ unRematchDefinition <- function (definition)
     , className = structure("Date", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5413,7 +5502,7 @@ unRematchDefinition <- function (definition)
     , className = structure("missing", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5454,13 +5543,13 @@ callGeneric <- function (...)
     , slots = list()
     , contains = structure(list(refObject = S4_object()), .Names = "refObject")
     , virtual = FALSE
-    , prototype = <pointer: (nil)>
+    , prototype = pointer("0x0")
     , validity = NULL
     , access = list()
     , className = "externalptr"
     , package = "methods"
     , subclasses = structure(list(.externalptr = S4_object()), .Names = ".externalptr")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5490,7 +5579,7 @@ callGeneric <- function (...)
     , className = structure("derivedDefaultMethodWithTrace", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5505,7 +5594,7 @@ callGeneric <- function (...)
     , className = structure("ANY", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5539,9 +5628,9 @@ showExtends <- function (ext, printTo = stdout())
             if (!eli@simple) {
                 if (is.function(eli@test) && !identical(body(eli@test), 
                   TRUE)) {
-                  how[i] <- paste(how[i], if (is.function(eli@coerce)) 
+                  how[i] <- paste0(how[i], if (is.function(eli@coerce)) 
                     ", with explicit test and coerce"
-                  else ", with explicit test", sep = "")
+                  else ", with explicit test")
                 }
                 else if (is.function(eli@coerce)) 
                   how[i] <- paste0(how[i], ", with explicit coerce")
@@ -5679,7 +5768,7 @@ makeStandardGeneric <- function (f, fdef)
     , className = structure("className", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -5700,7 +5789,7 @@ makeStandardGeneric <- function (f, fdef)
     className = S4_object(), 
     ObjectsWithPackage = S4_object()), .Names = c("signature", 
 "className", "ObjectsWithPackage"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5740,7 +5829,7 @@ initRefFields(.Object, classDef, selfEnv, list(...))
 "nonstandardGenericFunction", "groupGenericFunction", "genericFunctionWithTrace", 
 "nonstandardGroupGenericFunction", "standardGenericWithTrace", 
 "groupGenericFunctionWithTrace"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5762,7 +5851,7 @@ initRefFields(.Object, classDef, selfEnv, list(...))
     , className = structure("signature", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5780,7 +5869,7 @@ initRefFields(.Object, classDef, selfEnv, list(...))
     , className = structure("uninitializedField", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -5804,7 +5893,7 @@ initRefFields(.Object, classDef, selfEnv, list(...))
     , className = "while"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -5866,7 +5955,7 @@ validObject <- function (object, test = FALSE, complete = FALSE)
         superClass <- exti@superClass
         if (!exti@simple && !is(object, superClass)) 
             next
-        superDef <- getClassDef(superClass, where = where)
+        superDef <- getClassDef(superClass, package = packageSlot(exti))
         if (is.null(superDef)) {
             errors <- c(errors, paste0("superclass \"", superClass, 
                 "\" not defined in the environment of the object's class"))
@@ -5949,7 +6038,7 @@ resetClass <- function (Class, classDef, where)
     , className = structure("hsearch", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6087,7 +6176,7 @@ dumpMethods <- function (f, file = "", signature = NULL, methods = findMethods(f
     , className = structure("conditionalExtension", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -6273,7 +6362,7 @@ testVirtual <- function (properties, extends, prototype, where)
         if (!is.na(match("VIRTUAL", en))) 
             return(TRUE)
         for (what in en) {
-            enDef <- getClassDef(what, where)
+            enDef <- getClassDef(what, package = packageSlot(extends[[what]]))
             if (!is.null(enDef) && identical(enDef@virtual, FALSE)) 
                 return(FALSE)
         }
@@ -6316,7 +6405,7 @@ prohibitGeneric <- function (name, where = topenv(parent.frame()))
     , className = structure("groupGenericFunctionWithTrace", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6364,7 +6453,7 @@ doPrimitiveMethod <- function (name, def, call = sys.call(sys.parent()), ev = sy
     , className = structure("summaryDefault", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6379,7 +6468,7 @@ doPrimitiveMethod <- function (name, def, call = sys.call(sys.parent()), ev = sy
     , className = structure("recordedplot", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6416,7 +6505,7 @@ standardGeneric("show")
     , className = structure("nonstandardGenericFunction", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6428,16 +6517,19 @@ cacheMetaData <- function (where, attach = TRUE, searchWhere = as.environment(wh
 {
     pkg <- getPackageName(where)
     classes <- getClasses(where)
-    for (cl in classes) {
-        cldef <- (if (attach) 
-            get(classMetaName(cl), where)
-        else getClassDef(cl, searchWhere))
-        if (is(cldef, "classRepresentation")) {
-            if (attach) {
+    if (attach) {
+        for (cl in classes) {
+            cldef <- get(classMetaName(cl), where)
+            if (is(cldef, "classRepresentation")) 
                 .cacheClass(cl, cldef, is(cldef, "ClassUnionRepresentation"), 
                   where)
-            }
-            else if (identical(cldef@package, pkg)) {
+        }
+    }
+    else {
+        for (cl in classes) {
+            cldef <- getClassDef(cl, searchWhere)
+            if (is(cldef, "classRepresentation") && identical(cldef@package, 
+                pkg)) {
                 .uncacheClass(cl, cldef)
                 .removeSuperclassBackRefs(cl, cldef, searchWhere)
             }
@@ -6503,7 +6595,7 @@ cacheMetaData <- function (where, attach = TRUE, searchWhere = as.environment(wh
     , className = "repeat"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6596,7 +6688,7 @@ superClassDepth <- function (ClassDef, soFar = ClassDef@className, simpleOnly = 
 "list", "structure", "array", "matrix", "signature", "className", 
 "ObjectsWithPackage", "ts", "mts", "factor", "data.frame", "namedList", 
 "listOfMethods"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6613,7 +6705,7 @@ superClassDepth <- function (ClassDef, soFar = ClassDef@className, simpleOnly = 
     , className = structure("POSIXlt", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6776,7 +6868,7 @@ functionBody <- function (fun = sys.function(sys.parent()))
     , className = "<-"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6823,7 +6915,7 @@ completeExtends <- function (ClassDef, class2, extensionDef, where)
     , className = structure("integrate", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6842,7 +6934,7 @@ completeExtends <- function (ClassDef, class2, extensionDef, where)
     ts = S4_object(), 
     mts = S4_object()), .Names = c("array", 
 "matrix", "ts", "mts"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6929,7 +7021,7 @@ standardGeneric("slotsFromS3")
     , className = structure("genericFunctionWithTrace", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6944,7 +7036,7 @@ standardGeneric("slotsFromS3")
     , className = structure("rle", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -6963,7 +7055,7 @@ standardGeneric("slotsFromS3")
     , className = structure("activeBindingFunction", package = "methods")
     , package = "methods"
     , subclasses = structure(list(defaultBindingFunction = S4_object()), .Names = "defaultBindingFunction")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -6989,7 +7081,7 @@ standardGeneric("Math2")
     refMethodDefWithTrace = S4_object()), .Names = c("character", 
 "refMethodDef", "signature", "className", "ObjectsWithPackage", 
 "refMethodDefWithTrace"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -7221,7 +7313,7 @@ Quote <- function (expr)  .Primitive("quote")
     , className = structure("internalDispatchMethod", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -7323,7 +7415,7 @@ new("classRepresentation", ...)
     , className = structure("localRefClass", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -7349,7 +7441,7 @@ new("classRepresentation", ...)
     , subclasses = structure(list(refMethodDefWithTrace = S4_object(), 
     externalRefMethod = S4_object()), .Names = c("refMethodDefWithTrace", 
 "externalRefMethod"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -7390,9 +7482,20 @@ generic.skeleton <- function (name, fdef, fdefault)
     , className = structure(".name", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
+
+
+isRematched <- function (definition) 
+{
+    bdy <- body(definition)
+    if (.identC(class(bdy), "{") && length(bdy) > 1L) {
+        bdy <- bdy[[2L]]
+        .identC(class(bdy), "<-") && identical(bdy[[2L]], as.name(".local"))
+    }
+    else FALSE
+}
 
 
 hasLoadAction <- function (aname, where = topenv(parent.frame())) 
@@ -7474,7 +7577,7 @@ setAs <- function (from, to, def, replace = NULL, where = topenv(parent.frame())
     , className = structure("aov", package = "methods")
     , package = "methods"
     , subclasses = structure(list(maov = S4_object()), .Names = "maov")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -7523,7 +7626,7 @@ listFromMethods <- function (generic, where, table)
     factor = S4_object()), .Names = c("character", 
 "integer", "signature", "className", "ObjectsWithPackage", "factor"
 ))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -7636,7 +7739,7 @@ getSlots <- function (x)
     , className = "S3"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -7652,7 +7755,7 @@ getSlots <- function (x)
     , className = "S4"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -7663,9 +7766,11 @@ inheritedSlotNames <- function (Class, where = topenv(parent.frame()))
         Class@contains
     else if (isClass(Class, where = where)) 
         getClass(Class, where = where)@contains
-    supcl <- .selectSuperClasses(ext)
-    unique(unlist(lapply(lapply(supcl, getClassDef), slotNames), 
-        use.names = FALSE))
+    supcl <- .selectSuperClasses(ext, namesOnly = FALSE)
+    supdefs <- lapply(supcl, function(s) {
+        getClassDef(s@superClass, package = packageSlot(s))
+    })
+    unique(unlist(lapply(supdefs, slotNames), use.names = FALSE))
 }
 
 
@@ -7910,7 +8015,7 @@ getRefClass <- function (Class, where = topenv(parent.frame()))
     , className = structure("anova.glm", package = "methods")
     , package = "methods"
     , subclasses = structure(list(anova.glm.null = S4_object()), .Names = "anova.glm.null")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -7929,7 +8034,7 @@ standardGeneric("addNextMethod")
     , className = structure("packageIQR", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -8181,7 +8286,7 @@ as <- function (object, Class, strict = TRUE, ext = possibleExtends(thisClass,
     , className = structure("standardGenericWithTrace", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -8206,8 +8311,7 @@ languageEl <- function (object, which)
 }
 
 
-removeClass <- function (Class, where = topenv(parent.frame()), resolve.msg = getOption("removeClass.msg", 
-    default = TRUE)) 
+removeClass <- function (Class, where = topenv(parent.frame())) 
 {
     if (missing(where)) {
         classEnv <- .classEnv(Class, where, FALSE)
@@ -8229,7 +8333,7 @@ removeClass <- function (Class, where = topenv(parent.frame()), resolve.msg = ge
         found <- vapply(subclasses, isClass, NA, where = where, 
             USE.NAMES = TRUE)
         for (what in subclasses[found]) .removeSuperClass(what, 
-            Class, resolve.msg = resolve.msg)
+            Class)
     }
     .removeSuperclassBackRefs(Class, classDef, classWhere)
     .uncacheClass(Class, classDef)
@@ -8250,7 +8354,7 @@ removeClass <- function (Class, where = topenv(parent.frame()), resolve.msg = ge
     , className = structure("nonStructure", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -8260,7 +8364,7 @@ callNextMethod <- function (...)
     method <- nextMethod <- NULL
     dotNextMethod <- as.name(".nextMethod")
     parent <- sys.parent(1)
-    maybeMethod <- sys.function(parent)
+    methodFun <- maybeMethod <- sys.function(parent)
     if (is(maybeMethod, "MethodDefinition")) {
         callEnv <- methodEnv <- parent.frame(1)
         mcall <- sys.call(parent)
@@ -8272,6 +8376,7 @@ callNextMethod <- function (...)
         methodEnv <- parent.frame(2)
         mcall <- sys.call(sys.parent(2))
         dotsenv <- parent.frame(3)
+        maybeMethod <- sys.function(sys.parent(2))
         i <- 2L
     }
     if (!is.null(method <- methodEnv$.Method)) {
@@ -8354,7 +8459,7 @@ callNextMethod <- function (...)
                 call <- as.call(call)
             }
         }
-        else call <- match.call(maybeMethod, mcall, expand.dots = FALSE, 
+        else call <- match.call(methodFun, mcall, expand.dots = FALSE, 
             envir = dotsenv)
         .Call(C_R_nextMethodCall, call, callEnv)
     }
@@ -8481,7 +8586,7 @@ getAccess <- function (ClassDef)
     , className = structure(".NULL", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -8526,7 +8631,7 @@ setGroupGeneric <- function (name, def = NULL, group = list(), valueClass = char
     , className = structure("density", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -8569,7 +8674,7 @@ getFunction <- function (name, generic = TRUE, mustFind = TRUE, where = topenv(p
     , className = structure("logLik", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -8600,7 +8705,7 @@ methodsPackageMetaName("C", name)
     , className = structure("externalRefMethod", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -8620,7 +8725,7 @@ methodsPackageMetaName("C", name)
     , className = structure("MethodSelectionReport", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -8641,7 +8746,6 @@ setClass <- function (Class, representation = list(), prototype = NULL, contains
         classDef <- makeClassRepresentation(Class, properties, 
             contains, prototype, package, validity, access, version, 
             sealed, where = where)
-        superClasses <- names(classDef@contains)
     }
     else if (is(representation, "classRepresentation")) {
         classDef <- representation
@@ -8650,7 +8754,6 @@ setClass <- function (Class, representation = list(), prototype = NULL, contains
             stop("only arguments 'Class' and 'where' can be supplied when argument 'representation' is a 'classRepresentation' object")
         if (length(classDef@package) == 0L) 
             classDef@package <- package
-        superClasses <- allNames(classDef@contains)
     }
     else {
         if (is.character(representation) && length(representation) == 
@@ -8663,8 +8766,8 @@ setClass <- function (Class, representation = list(), prototype = NULL, contains
         classDef <- makeClassRepresentation(Class, properties, 
             superClasses, prototype, package, validity, access, 
             version, sealed, where = where)
-        superClasses <- names(classDef@contains)
     }
+    superClasses <- names(classDef@contains)
     classDef <- completeClassDefinition(Class, classDef, where, 
         doExtends = FALSE)
     .uncacheClass(Class, classDef)
@@ -8768,7 +8871,7 @@ setClass <- function (Class, representation = list(), prototype = NULL, contains
 ".NULL", "MethodWithNextWithTrace", "genericFunctionWithTrace", 
 "standardGenericWithTrace", "groupGenericFunctionWithTrace", 
 "derivedDefaultMethodWithTrace", "refObjectGenerator"))
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -8899,7 +9002,7 @@ getAllSuperClasses <- function (ClassDef, simpleOnly = TRUE)
     , className = structure("ts", package = "methods")
     , package = "methods"
     , subclasses = structure(list(mts = S4_object()), .Names = "mts")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -8980,7 +9083,7 @@ traceOn <- function (what, tracer = browseAll, exit = NULL)
     , className = structure("MethodWithNext", package = "methods")
     , package = "methods"
     , subclasses = structure(list(MethodWithNextWithTrace = S4_object()), .Names = "MethodWithNextWithTrace")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -8995,7 +9098,7 @@ traceOn <- function (what, tracer = browseAll, exit = NULL)
     , className = "logical"
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -9055,7 +9158,7 @@ getMethods <- function (f, where = topenv(parent.frame()), table = FALSE)
     , className = structure("defaultBindingFunction", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -9106,7 +9209,7 @@ findMethodSignatures <- function (..., target = TRUE, methods = findMethods(...)
     , className = structure(".Other", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -9130,7 +9233,7 @@ emptyMethodsList <- function (mlist, thisClass = "ANY", sublist = list())
     , className = structure("summary.table", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = FALSE
 )
 
@@ -9159,7 +9262,7 @@ emptyMethodsList <- function (mlist, thisClass = "ANY", sublist = list())
     , className = structure("mlm", package = "methods")
     , package = "methods"
     , subclasses = structure(list(maov = S4_object()), .Names = "maov")
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -9181,7 +9284,7 @@ emptyMethodsList <- function (mlist, thisClass = "ANY", sublist = list())
     , className = structure("sourceEnvironment", package = "methods")
     , package = "methods"
     , subclasses = list()
-    , versionKey = <pointer: (nil)>
+    , versionKey = pointer("0x0")
     , sealed = TRUE
 )
 
@@ -9192,6 +9295,8 @@ emptyMethodsList <- function (mlist, thisClass = "ANY", sublist = list())
 
 `functionBody<-` <- function (fun, envir = environment(fun), value) 
 {
+    if (!is.function(fun)) 
+        warning("'fun' is not a function")
     if (is.expression(value)) {
         if (length(value) > 1L) 
             warning("using the first element of 'value' of type \"expression\"")
@@ -9216,7 +9321,7 @@ emptyMethodsList <- function (mlist, thisClass = "ANY", sublist = list())
 
 .skeleton_package_title = "Formal Methods and Classes"
 
-.skeleton_package_version = "3.3.0"
+.skeleton_package_version = "3.4.0"
 
 .skeleton_package_depends = ""
 
