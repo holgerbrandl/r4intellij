@@ -21,6 +21,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
@@ -245,7 +246,14 @@ public class RSkeletonGenerator {
                     } else {
                         //noinspection ResultOfMethodCallIgnored
                         failedSkelTag.createNewFile();
-                        LOG.error("Failed to generate a valid skeleton for '" + packageName + "'. Please file a ticket under https://github.com/holgerbrandl/r4intellij/issues");
+
+                        String skelInfo = "helperOutputNull=" + (output == null) +
+                                "\nskeletonFile_exists=" + skeletonFile.exists() +
+                                "\nisComplete=" + isComplete(skeletonFile) +
+                                "\nisCurrentSkelVersion=" + isCurrentSkelVersion(skeletonFile) +
+                                "\nOS=" + SystemInfo.getOsNameAndVersion();
+
+                        LOG.error("Failed to generate a valid skeleton for '" + packageName + "'." + skelInfo + "\n Please file a ticket under https://github.com/holgerbrandl/r4intellij/issues");
 
 
                     }

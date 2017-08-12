@@ -12,9 +12,7 @@ R4Intellij Development Notes
 - [Intentions & inspections](#intentions--inspections)
     - [call arguments](#call-arguments)
     - [best practices & coding style](#best-practices--coding-style)
-- [Note: technially certain assignment can evaluate to boolean](#note-technially-certain-assignment-can-evaluate-to-boolean)
-- [but this seems very bad practice and should be flagged as well](#but-this-seems-very-bad-practice-and-should-be-flagged-as-well)
-    - [dependency management](#dependency-management)
+    - [Dependency management](#dependency-management)
     - [piping support](#piping-support)
     - [Misc](#misc)
 - [Parser](#parser)
@@ -185,9 +183,9 @@ if(a=3){}
 filter(iris, Species="setosa")
 subset(iris, Species="setosa")
 ```
-## Note: technially certain assignment can evaluate to boolean
-if(a=(function(){T})()){ print("foo")}
-## but this seems very bad practice and should be flagged as well
+ Note: technially certain assignment can evaluate to boolean
+`if(a=(function(){T})()){ print("foo")}`
+but this seems very bad practice and should be flagged as well
 ```
 
 * flag double and single quoted operator defs
@@ -200,7 +198,7 @@ if(a=(function(){T})()){ print("foo")}
 
 
 
-### dependency management
+### Dependency management
 
 * remember import choices and show them first in import popup
 * run import in attached console (if any) after auto-import
