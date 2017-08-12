@@ -1,13 +1,12 @@
 <table width="100%" summary="page for group_by {dplyr}"><tr><td>group_by {dplyr}</td><td style="text-align: right;">R Documentation</td></tr></table>
 
-<h2>Group a tbl by one or more variables.</h2>
+<h2>Group by one or more variables</h2>
 
 <h3>Description</h3>
 
-<p>Most data operations are useful done on groups defined by variables in the
-the dataset. The <code>group_by</code> function takes an existing tbl
-and converts it into a grouped tbl where operations are performed
-&quot;by group&quot;.
+<p>Most data operations are done on groups defined by variables.
+<code>group_by()</code> takes an existing tbl and converts it into a grouped tbl
+where operations are performed &quot;by group&quot;. <code>ungroup()</code> removes grouping.
 </p>
 
 
@@ -16,7 +15,7 @@ and converts it into a grouped tbl where operations are performed
 <pre>
 group_by(.data, ..., add = FALSE)
 
-group_by_(.data, ..., .dots, add = FALSE)
+ungroup(x, ...)
 </pre>
 
 
@@ -29,27 +28,26 @@ group_by_(.data, ..., .dots, add = FALSE)
 </td></tr>
 <tr valign="top"><td><code>...</code></td>
 <td>
-<p>variables to group by. All tbls accept variable names,
-some will also accept functions of variables. Duplicated groups
+<p>Variables to group by. All tbls accept variable names.
+Some tbls will accept functions of variables. Duplicated groups
 will be silently dropped.</p>
 </td></tr>
 <tr valign="top"><td><code>add</code></td>
 <td>
-<p>By default, when <code>add = FALSE</code>, <code>group_by</code> will
-override existing groups. To instead add to the existing groups,
-use <code>add = TRUE</code></p>
+<p>When <code>add = FALSE</code>, the default, <code>group_by()</code> will
+override existing groups. To add to the existing groups, use
+<code>add = TRUE</code>.</p>
 </td></tr>
-<tr valign="top"><td><code>.dots</code></td>
+<tr valign="top"><td><code>x</code></td>
 <td>
-<p>Used to work around non-standard evaluation. See
-<code>vignette("nse")</code> for details.</p>
+<p>A <code><a href="psi_element://library/dplyr/help/tbl">tbl()</a></code></p>
 </td></tr>
 </table>
 
 
 <h3>Tbl types</h3>
 
-<p><code>group_by</code> is an S3 generic with methods for the three built-in
+<p><code>group_by()</code> is an S3 generic with methods for the three built-in
 tbls. See the help for the corresponding classes and their manip
 methods for more details:
 </p>
@@ -58,58 +56,70 @@ methods for more details:
 <li><p> data.frame: <a href="psi_element://library/dplyr/help/grouped_df">grouped_df</a>
 </p>
 </li>
-<li><p> data.table: <a href="psi_element://library/dtplyr/html/grouped_dt.html">grouped_dt</a>
+<li><p> data.table: <a href="psi_element://library/dtplyr/html/grouped_dt.html">dtplyr::grouped_dt</a>
 </p>
 </li>
-<li><p> SQLite: <code><a href="psi_element://library/dplyr/help/src_sqlite">src_sqlite</a></code>
+<li><p> SQLite: <code><a href="psi_element://library/dplyr/help/src_sqlite">src_sqlite()</a></code>
 </p>
 </li>
-<li><p> PostgreSQL: <code><a href="psi_element://library/dplyr/help/src_postgres">src_postgres</a></code>
+<li><p> PostgreSQL: <code><a href="psi_element://library/dplyr/help/src_postgres">src_postgres()</a></code>
 </p>
 </li>
-<li><p> MySQL: <code><a href="psi_element://library/dplyr/help/src_mysql">src_mysql</a></code>
+<li><p> MySQL: <code><a href="psi_element://library/dplyr/help/src_mysql">src_mysql()</a></code>
 </p>
 </li></ul>
 
 
 
-<h3>See Also</h3>
+<h3>Scoped grouping</h3>
 
-<p><code><a href="psi_element://library/dplyr/help/ungroup">ungroup</a></code> for the inverse operation,
-<code><a href="psi_element://library/dplyr/help/groups">groups</a></code> for accessors that don't do special evaluation.
+<p>The three <a href="psi_element://library/dplyr/help/scoped">scoped</a> variants (<code><a href="psi_element://library/dplyr/help/group_by_all">group_by_all()</a></code>, <code><a href="psi_element://library/dplyr/help/group_by_if">group_by_if()</a></code> and
+<code><a href="psi_element://library/dplyr/help/group_by_at">group_by_at()</a></code>) make it easy to group a dataset by a selection of
+variables.
 </p>
 
 
 <h3>Examples</h3>
 
 <pre>
-by_cyl &lt;- group_by(mtcars, cyl)
-summarise(by_cyl, mean(disp), mean(hp))
-filter(by_cyl, disp == max(disp))
+by_cyl &lt;- mtcars %&gt;% group_by(cyl)
 
-# summarise peels off a single layer of grouping
-by_vs_am &lt;- group_by(mtcars, vs, am)
-by_vs &lt;- summarise(by_vs_am, n = n())
+# grouping doesn't change how the data looks (apart from listing
+# how it's grouped):
+by_cyl
+
+# It changes how it acts with the other dplyr verbs:
+by_cyl %&gt;% summarise(
+  disp = mean(disp),
+  hp = mean(hp)
+)
+by_cyl %&gt;% filter(disp == max(disp))
+
+# Each call to summarise() removes a layer of grouping
+by_vs_am &lt;- mtcars %&gt;% group_by(vs, am)
+by_vs &lt;- by_vs_am %&gt;% summarise(n = n())
 by_vs
-summarise(by_vs, n = sum(n))
-# use ungroup() to remove if not wanted
-summarise(ungroup(by_vs), n = sum(n))
+by_vs %&gt;% summarise(n = sum(n))
+
+# To removing grouping, use ungroup
+by_vs %&gt;%
+  ungroup() %&gt;%
+  summarise(n = sum(n))
 
 # You can group by expressions: this is just short-hand for
 # a mutate/rename followed by a simple group_by
-group_by(mtcars, vsam = vs + am)
-group_by(mtcars, vs2 = vs)
+mtcars %&gt;% group_by(vsam = vs + am)
 
-# You can also group by a constant, but it's not very useful
-group_by(mtcars, "vs")
+# By default, group_by overrides existing grouping
+by_cyl %&gt;%
+  group_by(vs, am) %&gt;%
+  group_vars()
 
-# By default, group_by sets groups. Use add = TRUE to add groups
-groups(group_by(by_cyl, vs, am))
-groups(group_by(by_cyl, vs, am, add = TRUE))
-
-# Duplicate groups are silently dropped
-groups(group_by(by_cyl, cyl, cyl))
+# Use add = TRUE to instead append
+by_cyl %&gt;%
+  group_by(vs, am, add = TRUE) %&gt;%
+  group_vars()
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>dplyr</em> version 0.5.0 <a href="psi_element://library/dplyr/html/00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>dplyr</em> version 0.7.1 <a href="psi_element://library/dplyr/html/00Index.html">Index</a>]</div>
 </body></html>

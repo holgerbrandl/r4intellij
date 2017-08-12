@@ -120,5 +120,5 @@ tail(library)
 head(stats::ftable(Titanic))
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>utils</em> version 3.3.2 <a href="psi_element://library/utils/html/00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>utils</em> version 3.4.0 <a href="psi_element://library/utils/html/00Index.html">Index</a>]</div>
 </body></html>
