@@ -72,6 +72,7 @@ public class RSkeletonGenerator {
     public static final PluginResourceFile RHELPER_SKELETONIZE_PACKAGE = new PluginResourceFile("skeletonize_package.R");
 
     public static final String SKELETON_DIR_NAME = "r_skeletons";
+    private static final String FAILED_SUFFIX = ".failed";
 
 
     // entry point for configurable interface and action
@@ -159,6 +160,7 @@ public class RSkeletonGenerator {
         Map<String, String> packageVersions = getInstalledPackageVersions();
 
         cleanUpUninstalledPackages(packageVersions);
+        cleanUpFailedTags(packageVersions);
 
         List<String> updated = new ArrayList<>();
 
@@ -195,20 +197,18 @@ public class RSkeletonGenerator {
             String installedVersion = packageVersions.get(packageName);
 //            boolean isCorrectCacheVersion = rPackage != null && Objects.equals(rPackage.getVersion(), installedVersion);
 
-            // blacklist certain packages from being indexed
-
-            if (isValidSkeleton(skeletonFile) && isSamePckgVersion(skeletonFile, installedVersion)) {
-                continue;
-            }
-
-            // skip failed index oprations unless we run force refresh mode
-            File failedSkelTag = new File(skeletonsDir, "." + packageName + ".failed");
+            // skip failed index operations unless we run force refresh mode
+            File failedSkelTag = new File(skeletonsDir, "." + packageName + FAILED_SUFFIX);
             if (failedSkelTag.isFile()) {
                 if (forceFailed) {
                     failedSkelTag.delete();
                 } else {
                     continue;
                 }
+            }
+
+            if (isValidSkeleton(skeletonFile) && isSamePckgVersion(skeletonFile, installedVersion)) {
+                continue;
             }
 
 
@@ -293,7 +293,6 @@ public class RSkeletonGenerator {
 
 
         // remove skeletons of no longer installed from index cache
-
         ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
             noLongerInstalled.forEach(File::delete);
         }));
@@ -305,6 +304,29 @@ public class RSkeletonGenerator {
 //                .collect(Collectors.toList());
 //
 //        RIndexCache.getInstance().updateCache(noLongerInstalledNames);
+    }
+
+
+    private static void cleanUpFailedTags(Map<String, String> packageVersions) {
+
+        File[] failedTags = new File(RSkeletonGenerator.getSkeletonsPath())
+                .listFiles(pathname -> pathname.getName().endsWith(FAILED_SUFFIX));
+
+        List<File> noLongerInstalled = Arrays
+                .stream(failedTags != null ? failedTags : new File[0])
+                .filter(skelFile -> {
+                    String skelPckgeName = skelFile.getName().replace(FAILED_SUFFIX, "");
+                    // remove . prefix
+                    skelPckgeName = skelPckgeName.substring(1, skelPckgeName.length());
+
+                    return !packageVersions.keySet().contains(skelPckgeName);
+                }).collect(Collectors.toList());
+
+
+        // remove skeletons of no longer installed from index cache
+        ApplicationManager.getApplication().invokeLater(() -> ApplicationManager.getApplication().runWriteAction(() -> {
+            noLongerInstalled.forEach(File::delete);
+        }));
     }
 
 
