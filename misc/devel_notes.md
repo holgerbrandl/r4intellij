@@ -10,6 +10,7 @@
 - [Unquoted method names](#unquoted-method-names)
 - [Pipe `%>%` support](#pipe--support)
     - [source_url and source support](#source-url-and-source-support)
+    - [triple dot support](#triple-dot-support)
 - [Open Problems](#open-problems)
     - [Path completion](#path-completion)
 - [Formatter](#formatter)
@@ -229,6 +230,13 @@ See com.intellij.psi.impl.source.resolve.reference.impl.providers.URLReference
 PsiFile document = ExternalResourceManager.getInstance().getResourceLocation(canonicalText, containingFile, tag.getAttributeValue("version"));
 
 ```
+
+### triple dot support
+
+not found by reference search
+/Users/brandl/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2017.1/e6f4c74ac091e55d0ac4e2ad26d91c12a4f23592/ideaIC-2017.1/lib/idea.jar!/com/intellij/psi/impl/search/PsiSearchHelperImpl.class:207
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000515030-Resolved-function-parameter-without-usage
 
 Open Problems
 -------------

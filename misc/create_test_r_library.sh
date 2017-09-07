@@ -42,5 +42,11 @@ sudo rm -rf library
 sudo cp -rf library_work library
 sudo cp -rf library_r4intellij library
 
+sudo chmod -R ugo+w library*
+
+R -e '.libPaths()'
+mv /Users/brandl/Library/R/3.4/library /Users/brandl/Library/R/3.4/library_backup
+mv /Users/brandl/Library/R/3.4/library_backup /Users/brandl/Library/R/3.4/library
+
 
 # TODO automate skeleton creation here and update test-resources accordingly
