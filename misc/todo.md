@@ -3,25 +3,28 @@ R4Intellij Development Notes
 
 [TOC]: # ""
 
-- [0-day bugs](#0-day-bugs)
-- [Next Steps](#next-steps)
-- [v1.1](#v11)
-    - [new](#new)
-    - [bugs](#bugs)
-- [v1.2](#v12)
-- [Intentions & inspections](#intentions--inspections)
-    - [call arguments](#call-arguments)
-    - [best practices & coding style](#best-practices--coding-style)
-    - [Dependency management](#dependency-management)
-    - [piping support](#piping-support)
-    - [Misc](#misc)
-- [Parser](#parser)
-- [Documentation provider](#documentation-provider)
-- [Formatter](#formatter)
-- [Completion Provider](#completion-provider)
-- [Refactorings](#refactorings)
-- [Rnotebook support](#rnotebook-support)
-- [Environment view](#environment-view)
+- [R4Intellij Development Notes](#r4intellij-development-notes)
+    - [0-day bugs](#0-day-bugs)
+    - [Next Steps](#next-steps)
+    - [v1.1](#v11)
+        - [new](#new)
+        - [bugs](#bugs)
+    - [v1.2](#v12)
+    - [Intentions & inspections](#intentions--inspections)
+        - [call arguments](#call-arguments)
+        - [best practices & coding style](#best-practices--coding-style)
+        - [Dependency management](#dependency-management)
+        - [piping support](#piping-support)
+        - [Misc](#misc)
+    - [Parser](#parser)
+    - [Documentation provider](#documentation-provider)
+    - [Formatter](#formatter)
+    - [Completion Provider](#completion-provider)
+    - [Refactorings](#refactorings)
+    - [Rnotebook support](#rnotebook-support)
+    - [Environment view](#environment-view)
+- [Package Manger](#package-manger)
+- [Brainstorming](#brainstorming)
 
 
 
@@ -31,6 +34,10 @@ R4Intellij Development Notes
 
 Next Steps
 ----------
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/208001849-File-Watcher-Not-Triggering
+
+https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000440770-How-to-search-global-library-without-module-attachment
 
 v1.1
 ----
