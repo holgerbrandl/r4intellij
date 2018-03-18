@@ -13,9 +13,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.cache.impl.id.IdTableBuilding;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.psi.api.RCallExpression;
+import com.r4intellij.psi.api.RStringLiteralExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 
 
@@ -42,11 +44,41 @@ public class RCompletionContributor extends CompletionContributor {
     public void fillCompletionVariants(@NotNull final CompletionParameters parameters, @NotNull final CompletionResultSet result) {
 //        if (parameters.getCompletionType() == CompletionType.BASIC && shouldPerformWordCompletion(parameters)) {
 
+        if (isString(parameters.getPosition())) {
+            String text = parameters.getPosition().getText();
+            addPathVariants(result, text);
+        }
+
         if (!isPackageContext(parameters.getPosition())) {
             addWordFromDocument(result, parameters, Collections.<String>emptySet());
         }
     }
 
+    static boolean isString(PsiElement psiElement) {
+        RStringLiteralExpression sl = PsiTreeUtil.getContextOfType(psiElement, RStringLiteralExpression.class);
+        return sl != null;
+    }
+
+    // handle paths in system independent way by using normal slashes for all systems
+    static void addPathVariants(CompletionResultSet result, @NotNull String str) {
+        // unquote string literal
+        str = str.substring(1, str.length());
+        int lastSep = str.lastIndexOf('/');
+        if (lastSep < 0) return;
+
+        // include '/' to properly handle windows root paths e.g. c:/
+        File path = new File(lastSep == 0 ? "/" : str.substring(0, lastSep + 1));
+        if (!path.exists()) return;
+
+        File[] list = path.listFiles();
+        if (list != null) {
+            for (File file : list) {
+                String item = file.getPath().replace(File.separatorChar, '/');
+                item = item.startsWith("/") ? item.substring(1) : item;
+                result.addElement(new PathLookupElement(item, file.isDirectory()));
+            }
+        }
+    }
 
     public static boolean isPackageContext(PsiElement psiElement) {
         RCallExpression pp = PsiTreeUtil.getContextOfType(psiElement, RCallExpression.class);
