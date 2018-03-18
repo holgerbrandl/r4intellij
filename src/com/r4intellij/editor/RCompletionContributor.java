@@ -45,8 +45,17 @@ public class RCompletionContributor extends CompletionContributor {
 //        if (parameters.getCompletionType() == CompletionType.BASIC && shouldPerformWordCompletion(parameters)) {
 
         if (isString(parameters.getPosition())) {
-            String text = parameters.getPosition().getText();
-            addPathVariants(result, text);
+            String text = parameters.getPosition().getText()
+                    // what a mess... all we want is the completion query!
+                    .replace("IntellijIdeaRulezzz ", "")
+                    .trim()
+                    .replace("\"", "");
+
+            // todo use r file and setwd statements to detect user-defined context
+            File context = new File(parameters.getOriginalFile().getVirtualFile().getPath()).getParentFile();
+
+            final CompletionResultSet plainResultSet = result.withPrefixMatcher(CompletionUtil.findAlphanumericPrefix(parameters));
+            addPathVariants(plainResultSet, text, context);
         }
 
         if (!isPackageContext(parameters.getPosition())) {
@@ -54,31 +63,60 @@ public class RCompletionContributor extends CompletionContributor {
         }
     }
 
-    static boolean isString(PsiElement psiElement) {
+
+    private static boolean isString(PsiElement psiElement) {
         RStringLiteralExpression sl = PsiTreeUtil.getContextOfType(psiElement, RStringLiteralExpression.class);
         return sl != null;
     }
 
-    // handle paths in system independent way by using normal slashes for all systems
-    static void addPathVariants(CompletionResultSet result, @NotNull String str) {
-        // unquote string literal
-        str = str.substring(1, str.length());
-        int lastSep = str.lastIndexOf('/');
-        if (lastSep < 0) return;
 
-        // include '/' to properly handle windows root paths e.g. c:/
-        File path = new File(lastSep == 0 ? "/" : str.substring(0, lastSep + 1));
+    // handle paths in system independent way by using normal slashes for all systems
+    private static void addPathVariants(CompletionResultSet result, @NotNull String complQuery, File context) {
+        File path = new File(complQuery);
+
+        // try to infer path from complQuery
+        boolean inContext = false;
+
+        if (path.isDirectory()) {
+            if (!path.isAbsolute()) {
+                path = context.toPath().resolve(path.toPath()).toFile();
+                inContext = true;
+            }
+
+            complQuery = "";
+        } else {
+            path = new File(complQuery).getParentFile();
+
+            if (path == null || path.isDirectory()) {
+                path = context;
+                inContext = true;
+            }
+
+            complQuery = new File(complQuery).getName();
+        }
+
+
         if (!path.exists()) return;
 
-        File[] list = path.listFiles();
-        if (list != null) {
-            for (File file : list) {
-                String item = file.getPath().replace(File.separatorChar, '/');
-                item = item.startsWith("/") ? item.substring(1) : item;
-                result.addElement(new PathLookupElement(item, file.isDirectory()));
+        String finalPrefix = complQuery;
+        File[] list = path.listFiles((dir, name) -> name.startsWith(finalPrefix));
+
+        if (list == null) {
+            return;
+        }
+
+
+        for (File file : list) {
+            // https://docs.oracle.com/javase/tutorial/essential/io/pathOps.html#relativize
+            if (inContext) {
+                file = context.toPath().relativize(file.toPath()).toFile();
             }
+
+            result.addElement(new PathLookupElement(file));
+//            result.addElement(LookupElementBuilder.create(file.toString()));
         }
     }
+
 
     public static boolean isPackageContext(PsiElement psiElement) {
         RCallExpression pp = PsiTreeUtil.getContextOfType(psiElement, RCallExpression.class);
