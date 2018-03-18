@@ -15,6 +15,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.ProjectScopeImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.r4intellij.RPsiUtils;
+import com.r4intellij.interpreter.SkeletonUpdater;
 import com.r4intellij.packages.RIndexCache;
 import com.r4intellij.psi.api.*;
 import com.r4intellij.psi.stubs.RAssignmentNameIndex;
@@ -39,6 +40,8 @@ public class RResolver {
     static void addFromSkeletonsAndRLibrary(@NotNull final PsiElement element,
                                             @NotNull final List<ResolveResult> result,
                                             @NotNull final String... names) {
+
+        SkeletonUpdater.updateSkeletonsLaterOptional(element.getProject());
 
         if (!RIndexCache.getInstance().isReady()) return;
 
