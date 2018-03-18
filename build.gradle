@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.1.1'
+    ext.kotlin_version = '1.2.30'
 
     repositories {
         mavenCentral()
@@ -50,7 +50,7 @@ sourceSets {
 intellij {
 //    version 'IC-LATEST-TRUNK-SNAPSHOT'
 //    version 'IC-2017.1.2'
-    version 'IC-2017.1'
+    version 'IC-2017.3.5'
     pluginName 'R4Intellij'
     downloadSources false
     updateSinceUntilBuild false
