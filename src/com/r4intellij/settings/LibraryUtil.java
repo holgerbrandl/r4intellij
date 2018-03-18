@@ -31,49 +31,46 @@ public class LibraryUtil {
     public static void createLibrary(@NotNull final Project project, final String libraryName, @NotNull final List<String> paths, final boolean isGlobal) {
         ModifiableModelsProvider modelsProvider = ModifiableModelsProvider.SERVICE.getInstance();
 
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                // add all paths to library
-                LibraryTable.ModifiableModel model = isGlobal ?
-                        LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel() :
-                        modelsProvider.getLibraryTableModifiableModel(project);
+        ApplicationManager.getApplication().runWriteAction(() -> {
+            // add all paths to library
+            LibraryTable.ModifiableModel model = isGlobal ?
+                    LibraryTablesRegistrar.getInstance().getLibraryTable().getModifiableModel() :
+                    modelsProvider.getLibraryTableModifiableModel(project);
 
-                Library library = model.getLibraryByName(libraryName);
+            Library library = model.getLibraryByName(libraryName);
 //
 
-                if (library == null) {
-                    library = model.createLibrary(libraryName);
-                }
+            if (library == null) {
+                library = model.createLibrary(libraryName);
+            }
 
-                fillLibrary(library, paths);
-                model.commit();
+            fillLibrary(library, paths);
+            model.commit();
 
-                Library.ModifiableModel libModel = library.getModifiableModel();
-                libModel.commit();
+            Library.ModifiableModel libModel = library.getModifiableModel();
+            libModel.commit();
 
-                // tbd: attachment to modules is disabled for now since we don't have a clear idea
-                // about what this would add over non-attached libraries
+            // tbd: attachment to modules is disabled for now since we don't have a clear idea
+            // about what this would add over non-attached libraries
 
-                // attach to modules if not yet present
+            // attach to modules if not yet present
 //                if (attachToModules) {
-                for (Module module : ModuleManager.getInstance(project).getModules()) {
-                    // https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160370-How-to-list-module-dependencies-
-                    List<Library> moduleLibraries = new ArrayList<>();
-                    OrderEnumerator.orderEntries(module).forEachLibrary(new CommonProcessors.CollectProcessor<>(moduleLibraries));
+            for (Module module : ModuleManager.getInstance(project).getModules()) {
+                // https://intellij-support.jetbrains.com/hc/en-us/community/posts/115000160370-How-to-list-module-dependencies-
+                List<Library> moduleLibraries = new ArrayList<>();
+                OrderEnumerator.orderEntries(module).forEachLibrary(new CommonProcessors.CollectProcessor<>(moduleLibraries));
 
-                    if (moduleLibraries.stream().anyMatch(it -> Objects.equals(libraryName, it.getName()))) {
-                        continue;
-                    }
-
-                    final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
-
-                    modifiableModel.addLibraryEntry(library);
-                    modelsProvider.commitModuleModifiableModel(modifiableModel);
+                if (moduleLibraries.stream().anyMatch(it -> Objects.equals(libraryName, it.getName()))) {
+                    continue;
                 }
+
+                final ModifiableRootModel modifiableModel = modelsProvider.getModuleModifiableModel(module);
+
+                modifiableModel.addLibraryEntry(library);
+                modelsProvider.commitModuleModifiableModel(modifiableModel);
+            }
 
 //                }
-            }
         });
     }
 
