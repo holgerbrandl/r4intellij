@@ -10,6 +10,8 @@ Version History
 * Added refresh trigger to missing package inspection
 * Improve function completion by adding round brackets: `base<caret>` -> `basename(<caret>)`
 * More informative feedback in case of indexing issues
+* Path completion
+* Defer index update until user actually opens an R script
 
 
 ## Changes in v1.0

@@ -2,18 +2,29 @@
 [TOC]: # " Developemn "
 
 # Developemn
-- [Gradle](#gradle)
-- [custom language support](#custom-language-support)
-- [External jars](#external-jars)
-- [plugin loading](#plugin-loading)
+- [Release Action List](#release-action-list)
+- [Setup and Build](#setup-and-build)
+    - [Gradle](#gradle)
+- [Design Consideration](#design-consideration)
+- [API Doc Comments](#api-doc-comments)
+    - [custom language support](#custom-language-support)
+    - [External jars](#external-jars)
+    - [plugin loading](#plugin-loading)
+- [Reference Provider & Resolver](#reference-provider--resolver)
     - [datasets](#datasets)
 - [Unquoted method names](#unquoted-method-names)
 - [Pipe `%>%` support](#pipe--support)
-    - [source_url and source support](#source-url-and-source-support)
+    - [source_url and source support](#source_url-and-source-support)
     - [triple dot support](#triple-dot-support)
 - [Open Problems](#open-problems)
+- [Documentation Provider](#documentation-provider)
+- [Refactoring API](#refactoring-api)
+- [Intentions vs. Inspections](#intentions-vs-inspections)
+- [Completion Provider](#completion-provider)
     - [Path completion](#path-completion)
-- [Formatter](#formatter)
+- [Skeletons](#skeletons)
+    - [Formatter](#formatter)
+- [Misc](#misc)
     - [Action System](#action-system)
     - [Language injection](#language-injection)
     - [Templates](#templates)
@@ -27,7 +38,7 @@ Release Action List
 1. Increase version
 2. Snapshot on github
 3. Run tests
-4. Deploy jar and upload to plugin reposiotry
+4. Run gradle task `publishPlugin` and upload `build/distributions/r4intellij.zip` to repository
 
 
 Setup and Build
