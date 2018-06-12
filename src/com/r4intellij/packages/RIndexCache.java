@@ -185,7 +185,15 @@ public class RIndexCache {
 //
 //
         // remove no longer present packages from index
-        String skeletonsDirURL = RResolver.getSkeletonLibrary(project).getRootProvider().getUrls(OrderRootType.CLASSES)[0];
+        String[] skeletonLibURLs = RResolver.getSkeletonLibrary(project).getRootProvider().getUrls(OrderRootType.CLASSES);
+
+        // we would not expect it to be empty, but it seems to happen as described in multiple tickets such
+        // as https://github.com/holgerbrandl/r4intellij/issues/155
+        if (skeletonLibURLs.length == 0) {
+            return false;
+        }
+
+        String skeletonsDirURL = skeletonLibURLs[0];
         File skeletonsDir = new File(toURL(skeletonsDirURL).getFile());
 //        String skeletonsDir = RSkeletonGenerator.getSkeletonsPath();
 
