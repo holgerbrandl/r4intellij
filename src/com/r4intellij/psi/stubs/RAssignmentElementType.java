@@ -43,7 +43,9 @@ public class RAssignmentElementType extends RStubElementType<RAssignmentStub, RA
 //            System.err.println("invalid stub element:" + psi);
 //        }
 
-        boolean isTopLevelAssign = value.getParent() != null && value.getParent().getParent() != null && value.getParent().getParent() instanceof RFile;
+        // todo instead of testing for null, we should rather throw an exception including the corresponing r-code bits
+
+        boolean isTopLevelAssign = value != null && value.getParent() != null && value.getParent().getParent() != null && value.getParent().getParent() instanceof RFile;
 
         return new RAssignmentStubImpl(name, parentStub, this, value instanceof RFunctionExpression, isTopLevelAssign);
     }
