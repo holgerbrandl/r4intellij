@@ -1,7 +1,7 @@
 <idea-plugin>
     <name>R Language Support</name>
     <id>R4Intellij</id>
-    <version>1.0.12-SNAPSHOT</version>
+    <version>1.1</version>
     <vendor url="http://holgerbrandl.github.io/r4intellij/">Holger Brandl, Ekaterina Tuzova</vendor>
 
     <idea-version since-build="145.258.11"/>
@@ -222,6 +222,8 @@
 
         <!-- playground -->
         <!--<fileIconProvider implementation="com.r4intellij.RFileIconProvider"/>-->
+
+        <spellchecker.support language="R" implementationClass="com.r4intellij.refactoring.RSpellCheckerStrategy"/>
 
     </extensions>
 </idea-plugin>
