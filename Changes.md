@@ -3,6 +3,8 @@ Version History
 
 ## Changes in v1.1
 
+* Enabled spellchecking for comments
+
 
 # Changes in 1.0.X
 
