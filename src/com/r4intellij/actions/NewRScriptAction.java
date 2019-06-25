@@ -51,7 +51,7 @@ public class NewRScriptAction extends CreateElementActionBase {
 
 
     public NewRScriptAction() {
-        super("foo", "bar", RFileType.INSTANCE.getIcon());
+        super("R Script", "Create a new R script", RFileType.INSTANCE.getIcon());
     }
 
 
