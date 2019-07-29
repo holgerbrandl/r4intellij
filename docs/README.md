@@ -62,7 +62,7 @@ Create a R script from the projects tools window:
 ![](readme_images/new_script.png)
 
 
-You can also create a new project (the type does not matter) and organize your work into modules with differen content roots. Read the Intellij [documentation](http://www.jetbrains.com/idea/webhelp/intellij-idea.html) for more details about how to do so.
+You can also create a new project (the type does not matter) and organize your work into modules with different content roots. Read the Intellij [documentation](http://www.jetbrains.com/idea/webhelp/intellij-idea.html) for more details about how to do so.
 
 
 By default the plugin is set to just work with files using the suffix `.R`.  However, IntelliJ allows to associate file extensions to plugins (see _Preferences_->_Editor_->_File Types_).
@@ -150,7 +150,7 @@ Inspections are on-the-fly checks of your R scripts, that highlight problems and
 Intentions
 ----------
 
-Intentions are quick-fixes provided and executed by the the plugin.
+Intentions are quick-fixes provided and executed by the plugin.
 
 * Auto-import of packages given a function name
 ![](readme_images/after_autoimport.png)
@@ -191,13 +191,13 @@ Packages can be installed from the "R Packages" tool window.
 
 ![](readme_images/package_tool_window.png)
 
-There you can also update existing packages if needed. Both CRAN and bioconductor are supported.
+There you can also update existing packages if needed. Both CRAN and Bioconductor are supported.
 
 
 RMarkdown Support
 -----------------
 
-Markdown support is avaialbe for Intellj IDEA as a [separate plugin](https://plugins.jetbrains.com/plugin/7793-markdown-support). Because of the ability to do [language injection](https://www.jetbrains.com/help/idea/2017.1/using-language-injections.html), R support is provided in [Rmarkdown](http://rmarkdown.rstudio.com/) code chunks
+Markdown support is available for Intellj IDEA as a [separate plugin](https://plugins.jetbrains.com/plugin/7793-markdown-support). Because of the ability to do [language injection](https://www.jetbrains.com/help/idea/2017.1/using-language-injections.html), R support is provided in [Rmarkdown](http://rmarkdown.rstudio.com/) code chunks
 
 ![](readme_images/rmarkdown_chunk.png)
 

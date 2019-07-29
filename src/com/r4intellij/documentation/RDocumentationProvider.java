@@ -157,7 +157,7 @@ public class RDocumentationProvider extends AbstractDocumentationProvider {
 
 
         if (!RSettings.hasInterpreter()) {
-            return "Could not lookup documentaiton because R interpreter is not set";
+            return "Could not lookup documentation because R interpreter is not set";
         }
 
         // wait until help server is ready (do it here since we need the port to build the URL)
