@@ -19,6 +19,7 @@ import com.intellij.util.ProcessingContext;
 import com.intellij.util.containers.ContainerUtil;
 import com.r4intellij.RLanguage;
 import com.r4intellij.parsing.RElementTypes;
+import com.r4intellij.parsing.RNodes;
 import com.r4intellij.psi.api.RFile;
 import com.r4intellij.psi.api.ROperator;
 import com.r4intellij.psi.api.ROperatorExpression;
@@ -133,9 +134,22 @@ public class RFormatterBlock implements ASTBlock {
 
         }
 
+        if (RNodes.isBlockParent(myNode) && RNodes.isBlockChild(childNode)) {
+            indent = Indent.getNormalIndent();
+        }
+
+        if (myNode.getElementType() == R_FUNCTION_EXPRESSION
+                && myNode.getTreeParent().getElementType() == R_ASSIGNMENT_STATEMENT
+                && RNodes.isBlockChild(childNode)) {
+            indent = Indent.getNormalIndent();
+        }
+
+        if (myNode.getElementType() == R_ARGUMENT_LIST) {
+            indent = Indent.getNormalIndent();
+        }
+
         return new RFormatterBlock(childNode, alignment, indent, wrap, mySettings, mySpacingBuilder);
     }
-
 
     private final static PatternCondition<ROperatorExpression> IS_BINARY_OP = new PatternCondition<ROperatorExpression>("isBinary") {
         @Override

@@ -78,9 +78,11 @@ abstract class RFormatterTestCase : LightCodeInsightFixtureTestCase() {
     }
 
     protected fun checkFormatting(@Language("R") @NotNull fileText: String, @Language("R") @NotNull expected: String) {
-        myFixture.configureByText(RFileType.INSTANCE, fileText.trim())
-        checkFormatting(expected.trim())
+        myFixture.configureByText(RFileType.INSTANCE, fileText.trimIndent())
+        checkFormatting(expected.trimTodos().trimIndent())
     }
+
+    private fun String.trimTodos() = this.replace(Regex("(?m)[\t ]*# (?:FIXME|TODO|XXX)\\b(?:.*)$"), "")
 
     //    fun doTest() {
     //        def (String before, String after) = TestUtils.readInput(testDataPath + getTestName(true) + ".test")
