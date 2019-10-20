@@ -42,7 +42,7 @@ public class RColorSettingsPage implements ColorSettingsPage {
     private static final AttributesDescriptor[] DESCRIPTORS = new AttributesDescriptor[]{
             new AttributesDescriptor("Comment", RSyntaxHighlighterColors.LINE_COMMENT),
             new AttributesDescriptor("Keyword", RSyntaxHighlighterColors.KEYWORD),
-            new AttributesDescriptor("Parenthesis", RSyntaxHighlighterColors.PARENTHS),
+            new AttributesDescriptor("Parentheses", RSyntaxHighlighterColors.PARENTHS),
             new AttributesDescriptor("Braces", RSyntaxHighlighterColors.BRACES),
             new AttributesDescriptor("Brackets", RSyntaxHighlighterColors.BRACKETS),
             new AttributesDescriptor("Number", RSyntaxHighlighterColors.NUMBER),
