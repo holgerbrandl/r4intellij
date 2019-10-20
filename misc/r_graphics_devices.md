@@ -5,7 +5,7 @@ R allows provide custom bindings for graphics output. See https://stat.ethz.ch/R
 
 
 ---
-[official documetation](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/Devices.html)
+[official documentation](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/Devices.html)
 
 what about https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/dev2bitmap.html
 

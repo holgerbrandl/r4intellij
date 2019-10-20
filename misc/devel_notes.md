@@ -1,7 +1,7 @@
 
-[TOC]: # " Developemn "
+[TOC]: # " Development "
 
-# Developemn
+# Development
 - [Release Action List](#release-action-list)
 - [Setup and Build](#setup-and-build)
     - [Gradle](#gradle)

@@ -34,7 +34,7 @@ Code completion
 require(tidyverse)
 #require(dplyr)
 
-mut # no completion in rstudio because imports are not resolved transitively
+mut # no completion in RStudio because imports are not resolved transitively
 ```
 
 

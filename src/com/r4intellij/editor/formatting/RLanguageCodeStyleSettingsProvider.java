@@ -29,7 +29,7 @@ public class RLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetting
             "    print(i)\n" +
             "}\n" +
             "\n" +
-            "#' some roxygen style function documentaiton\n" +
+            "#' some roxygen style function documentation\n" +
             "#' @param a arggument one \n" +
             "#' @param b arggument b \n" +
             "addTwo <- function(a, b){\n" +
