@@ -54,7 +54,6 @@ abstract class RFormatterTestCase : LightCodeInsightFixtureTestCase() {
         rSettings = settings.clone()
 
         val gr = rSettings!!.getIndentOptions(RFileType.INSTANCE)
-
         TestCase.assertNotSame(gr, settings.OTHER_INDENT_OPTIONS)
         gr.INDENT_SIZE = 2
         gr.CONTINUATION_INDENT_SIZE = 4
@@ -67,12 +66,14 @@ abstract class RFormatterTestCase : LightCodeInsightFixtureTestCase() {
 
     protected fun setSettingsBack() {
         val manager = CodeStyleSettingsManager.getInstance(project)
-        rSettings!!.getIndentOptions(RFileType.INSTANCE).INDENT_SIZE = 200
-        rSettings!!.getIndentOptions(RFileType.INSTANCE).CONTINUATION_INDENT_SIZE = 200
-        rSettings!!.getIndentOptions(RFileType.INSTANCE).TAB_SIZE = 200
+        if(rSettings != null) {
+            rSettings!!.getIndentOptions(RFileType.INSTANCE).INDENT_SIZE = 200
+            rSettings!!.getIndentOptions(RFileType.INSTANCE).CONTINUATION_INDENT_SIZE = 200
+            rSettings!!.getIndentOptions(RFileType.INSTANCE).TAB_SIZE = 200
 
-        rSettings!!.CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND = 5
-        manager.dropTemporarySettings()
+            rSettings!!.CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND = 5
+            manager.dropTemporarySettings()
+        }
         rSettings = null
     }
 

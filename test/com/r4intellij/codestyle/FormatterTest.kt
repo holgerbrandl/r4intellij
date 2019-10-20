@@ -28,6 +28,21 @@ foo = bar %>%
 """)
     }
 
+
+    fun testIndentAfterRBracketEnter() {
+        checkFormatting("""
+mutate(
+iris,
+bla = 1
+)
+""", """
+mutate(
+    iris,
+    bla = 1
+)
+""")
+    }
+
     fun testGgChainWrap() {
         checkFormatting(
                 """
