@@ -6,6 +6,12 @@ This project provides an integration of R, which is a language for statistical c
 
 For documentation and installation instructions see our **[project website](http://holgerbrandl.github.io/r4intellij)**
 
+---
+
+**This project has reached a somewhat stable, usable state but *is no longer* being actively *developed*. It has been superceded by <https://github.com/JetBrains/Rplugin> which provides a much richer set of features, including better console & graphics integration, a working debugger, Rmarkdown support and advanced coding assistance.**
+
+---
+
 
 Developer Info
 --------------
